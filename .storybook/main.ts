@@ -11,7 +11,8 @@ const config = {
     "@storybook/addon-onboarding",
     "@chromatic-com/storybook",
     "@storybook/experimental-addon-test", 
-    '@storybook/addon-styling'
+    '@storybook/addon-styling',
+    '@storybook/addon-measure'
   ],
   typescript: {
     reactDocgen: 'react-docgen-typescript',

@@ -1,6 +1,6 @@
 import React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
-import Buttons, { colors } from "../components/buttons";
+import Buttons, { colors } from "../components/button";
 import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-material';
 const Button = Buttons.Button;
 

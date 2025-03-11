@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Buttons, {colors, variants} from '../components/buttons';
+import Buttons, {colors, variants} from '../components/button';
 const Button = Buttons.Button;
 
 

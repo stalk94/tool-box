@@ -1,14 +1,11 @@
 import React from 'react';
 import { Box, useTheme } from '@mui/material';
-import IconButton from '@mui/material/IconButton';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import InputBase, { InputBaseProps } from '@mui/material/InputBase';
 import FormControl from '@mui/material/FormControl';
 import InputAdornment from '@mui/material/InputAdornment';
 import TextField, { TextFieldProps } from '@mui/material/TextField';
-import SearchIcon from '@mui/icons-material/Search';
-import { colors, variants } from './buttons';
 
 
 type CustomInputProps = {
@@ -23,6 +20,7 @@ type MyInputProps = {
     variant: "fullWidth" | "inset" | "middle"
     onChange?: (value: string)=> void
     success: boolean
+    borderStyle?: 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
 
 
@@ -64,22 +62,26 @@ function Base({ value, start, end, onChange, ...props }: CustomInputProps) {
 }
 function BaseInput({ position, onChange, placeholder, variant, children, ...props }: MyInputProps) {
     const theme = useTheme();
+    
     const chek =()=> {
-        if(props.error) return `1px dotted ${theme.palette.error.light}`;
-        else if(props.disabled) return `1px dotted ${theme.palette.action.disabled}`;
-        else if(props.success) return `1px dotted ${theme.palette.success.light}`;
-        else return `1px dotted ${theme.palette.action.disabled}`;
+        const border = props?.borderStyle ?? 'solid';
+
+        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
+        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
+        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
+        else return `1px ${border} ${theme.palette.action.active}`;
     }
+    
     
     return(
         <Paper
-            component="form"
-            sx={{ 
+            //component="form"
+            style={{ 
                 opacity: props.disabled && 0.6,
                 display: 'flex', 
                 alignItems: 'center', 
-                width: '100%',
-                border: chek()
+                border: chek(),
+                boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)'
             }}
         >
             { children && position === 'start' && 
@@ -89,7 +91,7 @@ function BaseInput({ position, onChange, placeholder, variant, children, ...prop
                 </React.Fragment>
             }
             <InputBase 
-                sx={{ ml: 2, mt: 0.4, flex: 1 }}
+                sx={{ ml: 4, flex: 1, fontSize:'16px' }}
                 placeholder={placeholder}
                 onChange={(event)=> {
                     if(onChange) onChange(event.target.value);
@@ -108,7 +110,8 @@ function BaseInput({ position, onChange, placeholder, variant, children, ...prop
 }
 
 
+
 export default {
-    Input: Base,
-    Base: BaseInput
+    Base: Base,
+    Input: BaseInput
 }

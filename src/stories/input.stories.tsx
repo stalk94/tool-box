@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Inputs from '../components/input';
-import Buttons from "../components/buttons";
-import { colors } from "../components/buttons";
+import Buttons from "../components/button";
+import { colors } from "../components/button";
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 const types = [
@@ -36,6 +36,10 @@ const meta: Meta<typeof Inputs.Input> = {
         position: {
             control: "select",
             options: ['end', 'start']
+        },
+        borderStyle: {
+            control: "select",
+            options: ['dashed', 'solid', 'dotted']
         }
     },
 }
@@ -48,34 +52,34 @@ const Templates =(args)=> {
             <Buttons.IconButton 
                 onClick={()=> setShowPassword(!showPassword)} 
                 color="default" 
-                sx={{ p: '10px', opacity:0.5 }}
+                sx={{ p: '10px' }}
             >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
+                {showPassword ? <VisibilityOff style={{color:'gray'}} /> : <Visibility style={{color:'gray'}}/>}
             </Buttons.IconButton>
         );
     }
     
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.Base
+            <Inputs.Input
                 {...args}
             >
                 { render() }
-            </Inputs.Base>
+            </Inputs.Input>
         </div>
     );
 }
 
 
 type Story = StoryObj<typeof Inputs.Input>;
-export const Base: Story = {
+export const BaseInput: Story = {
     args: {
         disabled: false,
-        success: true,
         error: false,
         multiline: false,
         rows: 4,
-        variant: 'fullWidth',
+        borderStyle: 'solid',
+        variant: 'middle',
         type: 'text',
         color: 'info',
         placeholder: 'test',

@@ -55,6 +55,7 @@ function Base({ children, variant, color, icon, ...props }: ButtonPropsCustom) {
 }
 function Icon({ children, color, icon, ...props }: ButtonIconPropsCustom) {
     const theme = useTheme();
+    
     const chek =()=> {
         if(icon && icons[icon]) return icons[icon];
         else if(children) return children;
