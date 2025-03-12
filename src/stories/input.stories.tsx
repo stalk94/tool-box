@@ -29,10 +29,6 @@ const meta: Meta<typeof Inputs.Input> = {
             control: "select",
             options: types
         },
-        size: {
-            control: "select",
-            options: ['small', 'medium']
-        },
         position: {
             control: "select",
             options: ['end', 'start']
@@ -47,7 +43,7 @@ export default meta;
 
 const Templates =(args)=> {
     const [showPassword, setShowPassword] = React.useState(false);
-    const render =()=> {
+    const left =()=> {
         return (
             <Buttons.IconButton 
                 onClick={()=> setShowPassword(!showPassword)} 
@@ -58,13 +54,19 @@ const Templates =(args)=> {
             </Buttons.IconButton>
         );
     }
+    const right =()=> {
+        
+    }
     
     return(
         <div style={{margin:'20%'}}>
             <Inputs.Input
+                left={left()}
+                right={left()}
+                onChange={console.log}
                 {...args}
             >
-                { render() }
+                
             </Inputs.Input>
         </div>
     );
@@ -76,11 +78,12 @@ export const BaseInput: Story = {
     args: {
         disabled: false,
         error: false,
+        success: false,
         multiline: false,
         rows: 4,
         borderStyle: 'solid',
         variant: 'middle',
-        type: 'text',
+        type: 'number',
         color: 'info',
         placeholder: 'test',
         position: 'start'

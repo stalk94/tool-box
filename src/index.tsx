@@ -4,27 +4,10 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
 import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
-import MovieTable from './components/movie-table';
 import { dark, lite } from './lib/colors';
 import Test from './test';
 import './style/index.css';
 
-
-const Tools =({ toggleTheme, mode })=> {
-    
-    return(
-        <div style={{display:'flex',flexDirection:'row', padding:'5px'}}>
-            <div style={{display:'flex',flexDirection:'row',marginLeft:'auto'}}>
-                <div style={{margin:'auto', marginRight:'25px'}}>
-                    { mode===true ? '☀️' : '🌙' }
-                </div>
-                <Button onClick={toggleTheme} variant="contained">
-                    { mode===true ? 'lite mod' : 'dark mod' }
-                </Button>
-            </div>
-        </div>
-    );
-}
 
 
 function App() {

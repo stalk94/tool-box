@@ -3,7 +3,7 @@ import { NativeSelect, styled, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import Select, { SelectChangeEvent, SelectProps } from '@mui/material/Select';
-import { ArrowDropDown, ArrowDropUp } from '@mui/icons-material';
+import { ArrowDropDown } from '@mui/icons-material';
 import '../style/index.css';
 
 
@@ -30,7 +30,7 @@ type CustomSelectProps = PropsSelect & SelectProps;
 
 
 
-function Base({ value, onChange, items, label, ...props }: CustomSelectProps) {
+function OldSelect({ value, onChange, items, label, ...props }: CustomSelectProps) {
     const theme = useTheme();
     const handleChange =(event: SelectChangeEvent)=> {
         if(onChange) onChange(event.target.value as string);
@@ -175,9 +175,7 @@ function BaseSelect({ value, onChange, items, label, variant, ...props }: BaseSe
     
 
     return(
-        <Paper
-            //component="form"
-            sx={{ 
+        <Paper sx={{ 
                 opacity: props.disabled && 0.6,
                 border: chek(),
                 boxShadow: '0px 3px 3px rgba(0, 0, 0, 0.2)'
