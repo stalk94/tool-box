@@ -54,9 +54,7 @@ const Templates =(args)=> {
             </Buttons.IconButton>
         );
     }
-    const right =()=> {
-        
-    }
+
     
     return(
         <div style={{margin:'20%'}}>

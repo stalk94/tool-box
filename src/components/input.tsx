@@ -3,9 +3,10 @@ import { Box, useTheme, IconButton, Button } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import InputBase, { InputBaseProps } from '@mui/material/InputBase';
-import { VisibilityOff, Visibility, FileCopy, Done, Close } from '@mui/icons-material';
+import { VisibilityOff, Visibility, Done, Close } from '@mui/icons-material';
 import ButtonGroup from '@mui/material/ButtonGroup';
-
+import { DatePickerCustom } from './input.date';
+import { EmailInput, PhoneInput, ColorPicker } from './input.any';
 
 
 type BaseInputProps = {
@@ -107,7 +108,7 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, childre
             
             <InputBase 
                 value={inputValue}
-                sx={{ flex: 1, fontSize: '18px' }}
+                sx={{ flex: 1 }}
                 placeholder={placeholder}
                 inputProps={{
                     style: {
@@ -216,78 +217,6 @@ function VerifyPaswordInput({onVerify, ...props}: {onVerify: any} & PasswordInpu
     );
 }
 
-function ColorPicker({ value, variant, left, onChange, ...props }) {
-    const [inputValue, setInputValue] = React.useState<string>(value);
-    const theme = useTheme();
-
-    const chek =()=> {
-        const border = props?.borderStyle ?? 'solid';
-
-        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
-        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
-    }
-    const useCopy =()=> {
-        navigator.clipboard.writeText(inputValue);
-    }
-    const useFiltre =(value: string)=> {
-        setInputValue(value);
-        if(onChange) onChange(value);
-    }
-
-
-    return(
-        <Paper
-            style={{ 
-                opacity: props.disabled && 0.6,
-                display: 'flex', 
-                alignItems: 'center', 
-                border: chek(),
-                boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)'
-            }}
-        >
-            { left && 
-                <React.Fragment>
-                    <IconButton onClick={useCopy}>
-                        <FileCopy />
-                    </IconButton>
-                    <Divider flexItem orientation="vertical" variant={variant??'middle'} />
-                </React.Fragment>
-            }
-            <InputBase 
-                //style={{color: inputValue}}
-                placeholder={props.placeholder}
-                type='text'
-                value={inputValue}
-                sx={{ flex: 1, fontSize: '18px' }}
-                inputProps={{
-                    style: {
-                        textAlign: 'center'
-                    }
-                }}
-                onChange={(e)=> useFiltre(e.target.value)}
-            />
-            <React.Fragment>
-                {/**<Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />*/}
-                <input
-                    type="color"
-                    value={inputValue}
-                    onChange={(e)=> useFiltre(e.target.value)}
-                    style={{
-                        width: '15%',
-                        height: '40px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        background: 'transparent',
-                        borderRadius: '5px',
-                        marginRight: '3px'
-                    }}
-                />
-            </React.Fragment>
-        </Paper>
-    )
-}
 
 
 
@@ -295,5 +224,8 @@ export default {
     Input: BaseInput,
     PasswordInput,
     ColorPicker,
-    VerifyPaswordInput
+    VerifyPaswordInput,
+    DatePickerCustom,
+    EmailInput,
+    PhoneInput
 }

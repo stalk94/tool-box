@@ -30,38 +30,6 @@ type CustomSelectProps = PropsSelect & SelectProps;
 
 
 
-function OldSelect({ value, onChange, items, label, ...props }: CustomSelectProps) {
-    const theme = useTheme();
-    const handleChange =(event: SelectChangeEvent)=> {
-        if(onChange) onChange(event.target.value as string);
-    }
-
-
-    return(
-        <div className="select-wrapper">
-            <select style={{
-                background: 'none',
-                height: '100%',
-                width: '100%',
-                border: 'none',
-                padding: '1rem',
-                color: theme.palette.grey[400]
-            }}
-                value={value}
-                label={label}
-                onChange={handleChange}
-            >
-                {items.map((elem, index)=>
-                    <option key={index} 
-                        value={elem.value}
-                    >
-                        { elem.label }
-                    </option>
-                )}
-            </select>
-        </div>
-    );
-}
 function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) {
     const theme = useTheme();
     const [isOpen, setIsOpen] = React.useState(false);

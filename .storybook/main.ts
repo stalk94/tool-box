@@ -1,20 +1,41 @@
+import type { StorybookConfig } from "@storybook/react-vite";
 
 
-/** @type { import('@storybook/react-vite').StorybookConfig } */
-const config = {
-  "stories": [
-    "../src/**/*.mdx",
-    "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
-  ],
-  "addons": [
-    "@storybook/addon-essentials",
-    "@storybook/addon-onboarding",
-    "@chromatic-com/storybook",
-    "@storybook/experimental-addon-test", 
-    '@storybook/addon-styling',
-    '@storybook/addon-measure'
-  ],
-  typescript: {
+const config: StorybookConfig = {
+	stories: [
+		"../src/**/*.mdx",
+		"../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+	],
+	addons: [
+		"@storybook/addon-essentials",
+		"@storybook/addon-onboarding",
+		"@chromatic-com/storybook",
+		"@storybook/experimental-addon-test",
+		'@storybook/addon-styling',
+		'@storybook/addon-measure',
+		'@storybook/addon-console'
+	],
+	framework: {
+		"name": "@storybook/react-vite",
+		"options": {}
+	},
+	typescript: {
+		reactDocgen: 'react-docgen-typescript',
+		reactDocgenTypescriptOptions: {
+			shouldExtractLiteralValuesFromEnum: true,
+			propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
+		}
+	},
+	docs: {
+		autodocs: 'tag'
+	}
+};
+export default config;
+
+
+
+/**
+ * typescript: {
     reactDocgen: 'react-docgen-typescript',
     reactDocgenTypescriptOptions: {
       // Speeds up Storybook build time
@@ -32,10 +53,5 @@ const config = {
           ? !/node_modules\/(?!@mui)/.test(prop.parent.fileName)
           : true,
     },
-  },
-  "framework": {
-    "name": "@storybook/react-vite",
-    "options": {}
   }
-};
-export default config;
+ */

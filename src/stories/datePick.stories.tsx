@@ -4,9 +4,9 @@ import Inputs from '../components/input';
 import Buttons from "../components/button";
 
 
-const meta: Meta<typeof Inputs.ColorPicker> = {
+const meta: Meta<typeof Inputs.DatePickerCustom> = {
     title: 'Inputs',
-    component: Inputs.ColorPicker,
+    component: Inputs.DatePickerCustom,
     argTypes: {
         variant: {
             control: "select",
@@ -21,7 +21,8 @@ const Templates =(args)=> {
   
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.ColorPicker
+            <Inputs.DatePickerCustom
+                onChange={console.log}
                 { ...args }
             />
         </div>
@@ -29,11 +30,12 @@ const Templates =(args)=> {
 }
 
 
-type Story = StoryObj<typeof Inputs.ColorPicker>;
-export const ColorPicker: Story = {
+type Story = StoryObj<typeof Inputs.DatePickerCustom>;
+export const DateOrTimePicker: Story = {
     args: {
-        placeholder: '#color',
-        left: true
+        error: true,
+        isTimePicker: true
+
     },
     render: (props)=> <Templates {...props} />
 }

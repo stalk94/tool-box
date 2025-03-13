@@ -34,7 +34,7 @@ const Templates =(args)=> {
 
 
 type Story = StoryObj<typeof Inputs.PasswordInput>;
-export const PasswordInput: Story = {
+export const Password: Story = {
     args: {
         value: 1,
         placeholder: 'password',

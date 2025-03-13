@@ -7,6 +7,7 @@ import Buttons from '../components/button';
 const meta: Meta<typeof AlertProvider> = {
     title: 'Module',
     component: AlertProvider,
+    // tags: ["autodocs"],
     argTypes: {
        
     },

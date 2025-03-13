@@ -72,7 +72,6 @@ export default ({ code, size, margin }: {margin?:string, code:string, size?: {wi
         if(code) code = code.toUpperCase();
         if(code==='EN') code = 'GB';
 
-      
         if(countryCodes[code]) return countryCodes[code];
         else return code;
     }
