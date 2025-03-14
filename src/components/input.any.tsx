@@ -38,7 +38,7 @@ export function EmailInput({ value, onChange, error, helperText, disabled }: Ema
     }
     const chek = () => {
         const border = 'solid';
-        if (error) return `1px ${border} ${theme.palette.error.light}`;
+        if (!isValid) return `1px ${border} ${theme.palette.error.light}`;
         else if (disabled) return `1px ${border} ${theme.palette.action.disabled}`;
         else return `1px ${border} ${theme.palette.action.active}`;
     }
@@ -79,7 +79,7 @@ export function EmailInput({ value, onChange, error, helperText, disabled }: Ema
             </Paper>
 
             {/* Подсказка или сообщение об ошибке */}
-            {!isValid && error && (
+            {!isValid && (
                 <FormHelperText error={true} style={{ marginTop: '4px' }}>
                     {helperText || 'Введите правильный email адрес'}
                 </FormHelperText>
@@ -107,7 +107,7 @@ export function PhoneInput({ value, onChange, error, helperText, disabled }: Pho
 
     const chek = () => {
         const border = 'solid';
-        if (error) return `1px ${border} ${theme.palette.error.light}`;
+        if (!isValid) return `1px ${border} ${theme.palette.error.light}`;
         else if (disabled) return `1px ${border} ${theme.palette.action.disabled}`;
         else return `1px ${border} ${theme.palette.action.active}`;
     }
@@ -148,7 +148,7 @@ export function PhoneInput({ value, onChange, error, helperText, disabled }: Pho
             </Paper>
 
             {/* Подсказка или сообщение об ошибке */}
-            {!isValid && error && (
+            {!isValid && (
                 <FormHelperText error={true} style={{ marginTop: '4px' }}>
                     {helperText || 'Введите корректный номер телефона'}
                 </FormHelperText>
@@ -188,23 +188,7 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                 boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)'
             }}
         >
-            { left && 
-                <React.Fragment>
-                    <IconButton onClick={useCopy}>
-                        <FileCopy />
-                    </IconButton>
-                    <Divider flexItem orientation="vertical" variant={variant??'middle'} />
-                </React.Fragment>
-            }
-            <InputBase 
-                placeholder={props.placeholder}
-                type='text'
-                value={inputValue}
-                sx={{ flex: 1, pl: '1.5rem' }}
-                //inputProps={{style: {textAlign: 'center'}}}
-                onChange={(e)=> useFiltre(e.target.value)}
-            />
-            <React.Fragment>
+             <React.Fragment>
                 {/**<Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />*/}
                 <input
                     type="color"
@@ -220,6 +204,22 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                         marginRight: '3px'
                     }}
                 />
+            </React.Fragment>
+
+            <InputBase 
+                placeholder={props.placeholder}
+                type='text'
+                value={inputValue}
+                sx={{ flex: 1, pl: '1.5rem' }}
+                //inputProps={{style: {textAlign: 'center'}}}
+                onChange={(e)=> useFiltre(e.target.value)}
+            />
+
+            <React.Fragment>
+                <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? 'middle'} />
+                <IconButton color='inherit' onClick={useCopy}>
+                    <FileCopy sx={{opacity:'0.6'}} />
+                </IconButton>
             </React.Fragment>
         </Paper>
     )

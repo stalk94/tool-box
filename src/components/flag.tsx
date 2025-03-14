@@ -1,5 +1,13 @@
 import React from 'react';
 
+type FlagProps = {
+    code: string
+    size?: {
+        width: number
+        height: number
+    }
+    margin?: string
+}
 
 const imgNot = 'https://static.thenounproject.com/png/3405765-200.png';
 const countryCodes = {
@@ -67,7 +75,7 @@ const countryCodes = {
 
 
 
-export default ({ code, size, margin }: {margin?:string, code:string, size?: {width:number, height:number}})=> {
+export default ({ code, size, margin }: FlagProps)=> {
     const chek =(code: string)=> {
         if(code) code = code.toUpperCase();
         if(code==='EN') code = 'GB';

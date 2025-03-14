@@ -105,7 +105,9 @@ export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=
             { left && 
                 <React.Fragment>
                     { left }
-                    <Divider flexItem orientation="vertical" variant={variant??'middle'} />
+                    { variant !== 'none' && 
+                        <Divider flexItem orientation="vertical" variant={variant??'middle'} />
+                    }
                 </React.Fragment>
             }
         
@@ -145,9 +147,14 @@ export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=
             }
 
             <React.Fragment>
-                {/**<Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />*/}
-                <IconButton onClick={() => setOpen(true)}>
-                    {isTimePicker ? <AccessTime /> : <CalendarMonth />}
+                { variant !== 'none' && 
+                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />
+                }
+                <IconButton color='inherit' onClick={() => setOpen(true)}>
+                    { isTimePicker 
+                        ? <AccessTime sx={{opacity:'0.6'}} /> 
+                        : <CalendarMonth sx={{opacity:'0.6'}} />
+                    }
                 </IconButton>
             </React.Fragment>
         </Paper>

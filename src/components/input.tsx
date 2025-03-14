@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, useTheme, IconButton, Button } from '@mui/material';
+import { Box, useTheme, IconButton, Button, FormHelperText } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Paper from '@mui/material/Paper';
 import InputBase, { InputBaseProps } from '@mui/material/InputBase';
@@ -23,7 +23,8 @@ type BaseInputProps = {
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
 type PasswordInputProps = {
-
+    onVerify: (value: string)=> void
+    helperText?: string
 } & BaseInputProps
 
 
@@ -33,7 +34,7 @@ type PasswordInputProps = {
  * - number, text
  * * левый и правый сторона можно реализовать верефикатор индикатор а так же тул панель
  */
-function BaseInput({ value, left, right, onChange, placeholder, variant, children, ...props }: BaseInputProps) {
+function BaseInput({ value, left, right, onChange, placeholder, variant, ...props }: BaseInputProps) {
     const [inputValue, setInputValue] = React.useState<number | string>();
     const theme = useTheme();
     const numberButtonStyle = {
@@ -108,20 +109,16 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, childre
             
             <InputBase 
                 value={inputValue}
-                sx={{ flex: 1 }}
+                sx={{ flex: 1, pl: '15px' }}
                 placeholder={placeholder}
-                inputProps={{
-                    style: {
-                        textAlign: 'center'
-                    }
-                }}
+                //inputProps={{style: {textAlign: 'center'}}}
                 onChange={(e)=> useFiltre(e.target.value)}
                 {...filteredProps()}
             />
          
             { right && props.type !== 'number' &&
                 <React.Fragment>
-                    { variant !== null && <Divider flexItem orientation="vertical" variant={variant} /> }
+                    { variant && <Divider flexItem orientation="vertical" variant={variant} /> }
                     { right }
                 </React.Fragment>
             } 
@@ -150,10 +147,6 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, childre
         </Paper>
     );
 }
-/**
- * Наследник BaseInput, конкретно ввода для паролей
- * ? сделать верификаторы
- */
 function PasswordInput({ value, onChange, placeholder, ...props }: PasswordInputProps) {
     const [type, setType] = React.useState<'password'|'text'>('password');
 
@@ -182,11 +175,13 @@ function PasswordInput({ value, onChange, placeholder, ...props }: PasswordInput
         />
     );
 }
-function VerifyPaswordInput({onVerify, ...props}: {onVerify: any} & PasswordInputProps) {
+
+
+function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} & PasswordInputProps) {
     const theme = useTheme();
-    const [verify, setVerify] = React.useState<boolean|null>(null);
+    const [isValid, setValid] = React.useState<boolean>(true);
 
-
+    //* вариация с иконкой верификатором
     const left =()=> {
         return(
             <IconButton
@@ -202,18 +197,24 @@ function VerifyPaswordInput({onVerify, ...props}: {onVerify: any} & PasswordInpu
     }
     // ? реализовать верификаторы 
     const useVerifyChange =(value: string)=> {
-        if(value.length < 1) setVerify(false);
-        else setVerify(true);
+        if(value.length < 1) setValid(false);
+        else setValid(true);
     }
     
 
     return(
-        <PasswordInput {...props}
-            error={verify !== null && !verify}
-            left={left()}
-            variant={null}
-            onChange={useVerifyChange}
-        />
+        <React.Fragment>
+            <PasswordInput {...props}
+                error={!isValid}
+                onChange={useVerifyChange}
+            />
+
+            { !isValid && (
+                <FormHelperText error={true} style={{ marginTop: '4px' }}>
+                    {helperText || 'Введите правильный пароль'}
+                </FormHelperText>
+            )}
+        </React.Fragment>
     );
 }
 

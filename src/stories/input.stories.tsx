@@ -42,25 +42,10 @@ const meta: Meta<typeof Inputs.Input> = {
 export default meta;
 
 const Templates =(args)=> {
-    const [showPassword, setShowPassword] = React.useState(false);
-    const left =()=> {
-        return (
-            <Buttons.IconButton 
-                onClick={()=> setShowPassword(!showPassword)} 
-                color="default" 
-                sx={{ p: '10px' }}
-            >
-                {showPassword ? <VisibilityOff style={{color:'gray'}} /> : <Visibility style={{color:'gray'}}/>}
-            </Buttons.IconButton>
-        );
-    }
-
     
     return(
         <div style={{margin:'20%'}}>
             <Inputs.Input
-                left={left()}
-                right={left()}
                 onChange={console.log}
                 {...args}
             >

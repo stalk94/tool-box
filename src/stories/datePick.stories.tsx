@@ -10,7 +10,7 @@ const meta: Meta<typeof Inputs.DatePickerCustom> = {
     argTypes: {
         variant: {
             control: "select",
-            options: ["fullWidth", "inset", "middle"],
+            options: ["none", "fullWidth", "inset", "middle"],
         }
     },
 }
@@ -34,8 +34,8 @@ type Story = StoryObj<typeof Inputs.DatePickerCustom>;
 export const DateOrTimePicker: Story = {
     args: {
         error: true,
-        isTimePicker: true
-
+        isTimePicker: true,
+        variant: 'middle'
     },
     render: (props)=> <Templates {...props} />
 }
