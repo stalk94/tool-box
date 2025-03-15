@@ -1,164 +1,30 @@
 import React, { useState } from 'react';
-import { Paper, InputBase, InputLabel, IconButton, Divider, FormHelperText } from '@mui/material';
+import { Paper, InputBase, InputLabel, IconButton, Divider, FormHelperText, Dialog, InputBaseProps } from '@mui/material';
 import { Email, Phone, FileCopy } from '@mui/icons-material';
+import { ChromePicker } from 'react-color';
 import { useTheme } from '@mui/material/styles';
 
 
-type EmailInputProps = {
+ 
+export type EmailInputProps = InputBaseProps & {
     value: string;
     onChange: (value: string) => void;
     error?: boolean;
     helperText?: string;
     disabled?: boolean;
+    placeholder?: string;
 }
-type PhoneInputProps = {
+export type PhoneInputProps = InputBaseProps & {
     value: string;
     onChange: (value: string) => void;
     error?: boolean;
     helperText?: string;
     disabled?: boolean;
+    placeholder?: string;
 }
 
-
-export function EmailInput({ value, onChange, error, helperText, disabled }: EmailInputProps) {
-    const theme = useTheme();
-    const [emailValue, setEmailValue] = useState(value);
-    const [isValid, setIsValid] = useState(true);
-
-    // Проверка валидности email
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return emailRegex.test(email);
-    }
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setEmailValue(newValue);
-        setIsValid(validateEmail(newValue)); // Проверяем на валидность
-        onChange(newValue); // Передаем значение родителю
-    }
-    const chek = () => {
-        const border = 'solid';
-        if (!isValid) return `1px ${border} ${theme.palette.error.light}`;
-        else if (disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
-    }
-
-
-    return (
-        <div style={{ position: 'relative' }}>
-            <Paper
-                style={{
-                    opacity: disabled ? 0.6 : 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    border: chek(),
-                    boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)',
-                    position: 'relative',
-                }}
-            >
-                <IconButton
-                    disabled={disabled}
-                    style={{
-                        marginLeft: '5px',
-                        color: theme.palette.action.active,
-                    }}
-                >
-                    <Email />
-                </IconButton>
-
-                <InputBase
-                    id="email-input"
-                    value={emailValue}
-                    onChange={handleChange}
-                    fullWidth
-                    placeholder="Введите email"
-                    disabled={disabled}
-                    disableUnderline={true}
-                    style={{ paddingLeft: '10px' }}
-                />
-            </Paper>
-
-            {/* Подсказка или сообщение об ошибке */}
-            {!isValid && (
-                <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    {helperText || 'Введите правильный email адрес'}
-                </FormHelperText>
-            )}
-        </div>
-    );
-}
-
-export function PhoneInput({ value, onChange, error, helperText, disabled }: PhoneInputProps) {
-    const theme = useTheme();
-    const [phoneValue, setPhoneValue] = useState(value);
-    const [isValid, setIsValid] = useState(true);
-
-    // Проверка валидности номера телефона
-    const validatePhone = (phone: string) => {
-        const phoneRegex = /^\+?[1-9]\d{1,14}$/; // Международный формат
-        return phoneRegex.test(phone);
-    }
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        setPhoneValue(newValue);
-        setIsValid(validatePhone(newValue)); // Проверяем на валидность
-        onChange(newValue); // Передаем значение родителю
-    }
-
-    const chek = () => {
-        const border = 'solid';
-        if (!isValid) return `1px ${border} ${theme.palette.error.light}`;
-        else if (disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
-    }
-
-
-    return (
-        <div style={{ position: 'relative' }}>
-            <Paper
-                style={{
-                    opacity: disabled ? 0.6 : 1,
-                    display: 'flex',
-                    alignItems: 'center',
-                    border: chek(),
-                    boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)',
-                    position: 'relative',
-                }}
-            >
-                <IconButton
-                    disabled={disabled}
-                    style={{
-                        marginLeft: '5px',
-                        color: theme.palette.action.active,
-                    }}
-                >
-                    <Phone />
-                </IconButton>
-
-                <InputBase
-                    id="phone-input"
-                    value={phoneValue}
-                    onChange={handleChange}
-                    fullWidth
-                    placeholder="+79991234567"
-                    disabled={disabled}
-                    disableUnderline={true}
-                    style={{ paddingLeft: '10px' }}
-                />
-            </Paper>
-
-            {/* Подсказка или сообщение об ошибке */}
-            {!isValid && (
-                <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    {helperText || 'Введите корректный номер телефона'}
-                </FormHelperText>
-            )}
-        </div>
-    );
-}
-
-export function ColorPicker({ value, variant, left, onChange, ...props }) {
-    const [inputValue, setInputValue] = React.useState<string>(value);
+// форма инпутов
+export function InputPaper({ children, ...props }) {
     const theme = useTheme();
 
     const chek =()=> {
@@ -169,58 +35,260 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
         else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
         else return `1px ${border} ${theme.palette.action.active}`;
     }
-    const useCopy =()=> {
-        navigator.clipboard.writeText(inputValue);
-    }
-    const useFiltre =(value: string)=> {
-        setInputValue(value);
-        if(onChange) onChange(value);
-    }
 
 
     return(
         <Paper
-            style={{ 
+            sx={{
+                backgroundColor: theme.palette.background.input,
+                minHeight: '42px',
+                minWidth: '100px',
                 opacity: props.disabled && 0.6,
-                display: 'flex', 
-                alignItems: 'center', 
                 border: chek(),
-                boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)'
+                display: 'flex',
+                alignItems: 'center',
+                boxShadow: 2
             }}
         >
+            { children }
+        </Paper>
+    );
+}
+// базовая форма ввода
+export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
+    const theme = useTheme();
+
+    const filteredProps =()=> {
+        const clone = structuredClone(props);
+        delete clone.borderStyle;
+        return clone;
+    }
+
+    return(
+        <InputBase
+            placeholder={props.placeholder}
+            type={type}
+            value={value}
+            sx={{ 
+                minWidth: '105px',
+                flex: 1, 
+                pl: '15px',
+                '& input::placeholder': {
+                    color: theme.palette.placeholder.main,
+                    opacity: 1,
+                    fontStyle: theme.elements.input.fontStyle
+                },
+                '& textarea::placeholder': {
+                    color: theme.palette.placeholder.main,  
+                    opacity: 1,
+                    fontStyle: theme.elements.input.fontStyle
+                }
+            }}
+            inputProps={{style: {textAlign: theme.elements.input.alight}}}
+            onChange={(e)=> onChange && onChange(e.target.value)}
+            { ...filteredProps() }
+        />
+    );
+}
+
+
+
+
+export function EmailInput({ value, onChange, error, helperText, disabled, placeholder, ...props }: EmailInputProps) {
+    const theme = useTheme();
+    const [emailValue, setEmailValue] = useState(value);
+    const [isValid, setIsValid] = useState(true);
+
+    // Проверка валидности email
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+        return emailRegex.test(email);
+    }
+    const handleChange =(newValue: string)=> {
+        setEmailValue(newValue);
+        setIsValid(validateEmail(newValue)); // Проверяем на валидность
+        onChange(newValue); // Передаем значение родителю
+    }
+    React.useEffect(()=> {
+        setEmailValue(value);
+    }, [value]);
+
+    
+    return (
+        <React.Fragment>
+            <InputPaper disabled={disabled} error={!isValid || error}>
+                <IconButton
+                    disabled={disabled}
+                    style={{
+                        marginLeft: '5px',
+                        color: theme.palette.action.active,
+                    }}
+                >
+                    <Email />
+                </IconButton>
+
+                <InputBaseCustom
+                    value={emailValue}
+                    onChange={handleChange}
+                    fullWidth
+                    placeholder={placeholder ?? "Введите email"}
+                    disabled={disabled}
+                    sx={{ 
+                        pl: '10px',
+                        '& input::placeholder': {
+                            color: theme.palette.placeholder.main,
+                            opacity: 1,
+                            fontStyle: theme.elements.input.fontStyle
+                        }
+                    }}
+                    {...props}
+                />
+            </InputPaper>
+
+            {/* Подсказка или сообщение об ошибке */}
+            {!isValid && (
+                <FormHelperText error={true} style={{ marginTop: '4px' }}>
+                    *{helperText || 'Введите правильный email адрес'}
+                </FormHelperText>
+            )}
+        </React.Fragment>
+    );
+}
+export function PhoneInput({ value, onChange, error, helperText, disabled, placeholder, ...props }: PhoneInputProps) {
+    const theme = useTheme();
+    const [phoneValue, setPhoneValue] = useState('');
+    const [isValid, setIsValid] = useState(true);
+
+    // Проверка валидности номера телефона
+    const validatePhone = (phone: string) => {
+        const phoneRegex = /^\+?[1-9]\d{6,14}$/; // Международный формат
+        return phoneRegex.test(phone);
+    }
+    const handleChange =(newValue)=> {
+        if(/^\+?\d*$/.test(newValue)) {
+            setPhoneValue(newValue);
+            setIsValid(validatePhone(newValue));
+            onChange(newValue);
+        }
+    }
+    React.useEffect(()=> {
+        if(/^\+?\d+$/.test(value)) {
+            setPhoneValue(value);
+            setIsValid(validatePhone(value));
+        }
+    }, [value]);
+
+
+    return (
+        <React.Fragment>
+           <InputPaper disabled={disabled} error={!isValid || error}>
+                <IconButton
+                    disabled={disabled}
+                    style={{
+                        marginLeft: '5px',
+                        color: theme.palette.action.active,
+                    }}
+                >
+                    <Phone />
+                </IconButton>
+
+                <InputBaseCustom
+                    value={phoneValue}
+                    onChange={handleChange}
+                    fullWidth
+                    placeholder={placeholder ?? "+79991234567"}
+                    disabled={disabled}
+                    sx={{
+                        pl: '10px',
+                        '& input::placeholder': {
+                            color: theme.palette.placeholder.main,
+                            opacity: 1,
+                            fontStyle: theme.elements.input.fontStyle
+                        }
+                    }}
+                    { ...props }
+                />
+            </InputPaper>
+
+            {/* Подсказка или сообщение об ошибке */}
+            {!isValid && (
+                <FormHelperText error={true} style={{ marginTop: '4px' }}>
+                    *{helperText || 'Введите корректный номер телефона'}
+                </FormHelperText>
+            )}
+        </React.Fragment>
+    );
+}
+export function ColorPicker({ value, variant, left, onChange, ...props }) {
+    const [open, setopen] = React.useState<boolean>(false);
+    const [inputValue, setInputValue] = React.useState<string>(value ?? 'rgba(255, 0, 0, 1)');
+    const theme = useTheme();
+
+    const useCopy =()=> {
+        navigator.clipboard.writeText(inputValue);
+    }
+    const useTransform =(val)=> {
+        return `rgba(${val.rgb.r}, ${val.rgb.g}, ${val.rgb.b}, ${val.rgb.a})`;
+    }
+    const useFiltre =(newValue)=> {
+        const strRgb = useTransform(newValue);
+
+        setInputValue(strRgb);
+        if(onChange) onChange(strRgb);
+    }
+    const useChange =(newValue)=> {
+        setInputValue(newValue);
+        if(onChange) onChange(newValue);
+    }
+
+
+    return(
+        <InputPaper {...props} >
              <React.Fragment>
                 {/**<Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />*/}
-                <input
-                    type="color"
-                    value={inputValue}
-                    onChange={(e)=> useFiltre(e.target.value)}
-                    style={{
-                        width: '15%',
-                        height: '40px',
+                <div style={{
+                        marginTop: '1px',
+                        width: '30px',
+                        height: '30px',
                         border: 'none',
                         cursor: 'pointer',
-                        background: 'transparent',
+                        background: inputValue,
                         borderRadius: '5px',
-                        marginRight: '3px'
+                        marginLeft: '7px'
                     }}
+                    onClick={()=> setopen(true)}
                 />
+                <Dialog open={open} onClose={()=> setopen(false)} >
+                    <ChromePicker
+                        color={inputValue}
+                        onChange={(value)=> {
+                            useFiltre(value);
+                        }}
+                        disableAlpha={false}
+                    />
+                </Dialog>
             </React.Fragment>
 
-            <InputBase 
+            <InputBaseCustom 
                 placeholder={props.placeholder}
                 type='text'
                 value={inputValue}
-                sx={{ flex: 1, pl: '1.5rem' }}
-                //inputProps={{style: {textAlign: 'center'}}}
-                onChange={(e)=> useFiltre(e.target.value)}
+                onChange={useChange}
+                { ...props }
             />
 
             <React.Fragment>
-                <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? 'middle'} />
-                <IconButton color='inherit' onClick={useCopy}>
-                    <FileCopy sx={{opacity:'0.6'}} />
+                { variant || theme.elements.input.variant &&
+                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
+                }
+                <IconButton onClick={useCopy} >
+                    <FileCopy style={{
+                            color: theme.palette.text.secondary, 
+                            opacity: '0.6'
+                        }} 
+                    />
                 </IconButton>
             </React.Fragment>
-        </Paper>
+        </InputPaper>
     )
 }

@@ -1,8 +1,10 @@
 import React from "react";
+import { IconButton } from '@mui/material';
 import type { Meta, StoryObj } from "@storybook/react";
 import Buttons, { colors } from "../components/button";
 import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-material';
 const Button = Buttons.Button;
+
 
 const icons = {
     Delete: <Delete/>, 
@@ -64,12 +66,12 @@ const Templates =(args)=> {
             </div>
             <div style={{marginBottom:'2%'}}>
                 { Object.values(icons).map((elem, index)=> 
-                    <Buttons.IconButton key={index}
+                    <IconButton key={index}
                         style={{margin:'5px'}} 
                         color="success"
                     >
                         { elem }
-                    </Buttons.IconButton>
+                    </IconButton>
                 )}
             </div>
         </div>

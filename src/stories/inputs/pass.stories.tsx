@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../components/input';
-import Buttons from "../components/button";
+import Inputs from '../../components/input';
+import Buttons from "../../components/button";
 
 
 const meta: Meta<typeof Inputs.PasswordInput> = {
@@ -10,7 +10,7 @@ const meta: Meta<typeof Inputs.PasswordInput> = {
     argTypes: {
         variant: {
             control: "select",
-            options: ["fullWidth", "inset", "middle"],
+            options: [undefined, "fullWidth", "inset", "middle"],
         }
     },
 }
@@ -22,12 +22,12 @@ const Templates =(args)=> {
 
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.VerifyPaswordInput
+            <Inputs.PasswordInput
                 {...args}
                 onChange={console.log}
             >
                 
-            </Inputs.VerifyPaswordInput>
+            </Inputs.PasswordInput>
         </div>
     );
 }
@@ -36,10 +36,8 @@ const Templates =(args)=> {
 type Story = StoryObj<typeof Inputs.PasswordInput>;
 export const Password: Story = {
     args: {
-        
-        value: 1,
-        placeholder: 'password',
-        variant: 'middle'
+        placeholder: 'Password',
+        variant: undefined
     },
     render: (props)=> <Templates {...props} />
 }

@@ -1,12 +1,12 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../components/input';
-import Buttons from "../components/button";
+import Inputs from '../../components/input';
+import Buttons from "../../components/button";
 
 
-const meta: Meta<typeof Inputs.PasswordInput> = {
+const meta: Meta<typeof Inputs.PhoneInput> = {
     title: 'Inputs',
-    component: Inputs.PasswordInput,
+    component: Inputs.PhoneInput,
     argTypes: {
         variant: {
             control: "select",
@@ -21,7 +21,7 @@ const Templates =(args)=> {
   
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.EmailInput
+            <Inputs.PhoneInput
                 onChange={console.log}
                 { ...args }
             />
@@ -30,10 +30,10 @@ const Templates =(args)=> {
 }
 
 
-type Story = StoryObj<typeof Inputs.PasswordInput>;
-export const Email: Story = {
+type Story = StoryObj<typeof Inputs.PhoneInput>;
+export const Phone: Story = {
     args: {
-        error: true,
+        
 
     },
     render: (props)=> <Templates {...props} />

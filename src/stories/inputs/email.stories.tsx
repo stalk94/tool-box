@@ -1,16 +1,16 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../components/input';
-import Buttons from "../components/button";
+import Inputs from '../../components/input';
+import Buttons from "../../components/button";
 
 
-const meta: Meta<typeof Inputs.DatePickerCustom> = {
+const meta: Meta<typeof Inputs.PasswordInput> = {
     title: 'Inputs',
-    component: Inputs.DatePickerCustom,
+    component: Inputs.PasswordInput,
     argTypes: {
         variant: {
             control: "select",
-            options: ["none", "fullWidth", "inset", "middle"],
+            options: ["fullWidth", "inset", "middle"],
         }
     },
 }
@@ -21,7 +21,7 @@ const Templates =(args)=> {
   
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.DatePickerCustom
+            <Inputs.EmailInput
                 onChange={console.log}
                 { ...args }
             />
@@ -30,12 +30,11 @@ const Templates =(args)=> {
 }
 
 
-type Story = StoryObj<typeof Inputs.DatePickerCustom>;
-export const DateOrTimePicker: Story = {
+type Story = StoryObj<typeof Inputs.PasswordInput>;
+export const Email: Story = {
     args: {
-        error: true,
-        isTimePicker: true,
-        variant: 'middle'
+        
+
     },
     render: (props)=> <Templates {...props} />
 }

@@ -1,9 +1,9 @@
 import React from 'react';
 import { NativeSelect, styled, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
 import Select, { SelectChangeEvent, SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
+import { InputPaper } from './input.any';
 import '../style/index.css';
 
 
@@ -21,7 +21,7 @@ type BaseSelectProps = {
     value: any
     onChange?: (newValue: string)=> void
     items: ItemsSelect[]
-    label?: any
+    placeholder?: string
     position?: 'start' | 'end'
     variant: "fullWidth" | "inset" | "middle"
     borderStyle?: 'dashed' | 'solid' | 'dotted'
@@ -34,7 +34,29 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
     const theme = useTheme();
     const [isOpen, setIsOpen] = React.useState(false);
     const [selectedValue, setSelectedValue] = React.useState(value);
+    const [isHovered, setIsHovered] = React.useState(false);
     const selectRef = React.useRef<HTMLDivElement>(null);
+
+    const base = {
+        position: 'relative',
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        flexDirection: 'row'
+    }
+    const dropdown = {
+        position: 'absolute',
+        borderRadius: '3px',
+        top: '100%',
+        left: 0,
+        width: '100%',
+        padding: 0,
+        marginTop: '5px',
+        listStyle: 'none',
+        borderTop: 'none',
+        overflowY: 'auto',
+        zIndex: 10
+    }
 
 
     const chekLabel =()=> {
@@ -62,7 +84,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
 
 
     return(
-        <div className="custom-select" ref={selectRef}>
+        <div style={base} ref={selectRef}>
             <div className="selected"
                 onClick={handleToggleDropdown}
                 style={{
@@ -72,6 +94,9 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                     justifyContent: 'space-between',
                     alignItems: 'center',
                     width: '100%',
+                    height: '100%',
+                    padding: 'auto',
+                    margin: '6px',
                     color: theme.palette.text.secondary
                 }}
             >
@@ -104,9 +129,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                 </div>
             </div>
             { isOpen &&
-                <ul className="dropdown" 
-                    style={{ background: theme.palette.background.paper }}
-                >
+                <ul className='dropdown' style={{...dropdown, background: theme.palette.background.paper }} >
                     { items.map((item)=> (
                         <li key={item.value}
                             onClick={()=> handleSelectItem(item.value, item.label)}
@@ -129,39 +152,16 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
 
 
 
-function BaseSelect({ value, onChange, items, label, variant, ...props }: BaseSelectProps) {
-    const theme = useTheme();
-
-    const chek =()=> {
-        const border = props?.borderStyle ?? 'solid';
-
-        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
-        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
-    }
-    
-
+export default function({ value, onChange, items, placeholder, variant, ...props }: BaseSelectProps) {
     return(
-        <Paper sx={{ 
-                opacity: props.disabled && 0.6,
-                border: chek(),
-                boxShadow: '0px 3px 3px rgba(0, 0, 0, 0.2)'
-            }}
-        >
+        <InputPaper {...props}>
             <Custom 
                 value={value}
                 disabled={props.disabled}
-                label={label} 
+                label={placeholder} 
                 items={items ?? []}
                 onChange={onChange}
             />
-        </Paper>
+        </InputPaper>
     );
-}
-
-
-
-export default {
-    Select: BaseSelect
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../components/input';
-import Buttons from "../components/button";
+import Inputs from '../../components/input';
+import Buttons from "../../components/button";
 
 
 const meta: Meta<typeof Inputs.ColorPicker> = {
@@ -32,7 +32,7 @@ const Templates =(args)=> {
 type Story = StoryObj<typeof Inputs.ColorPicker>;
 export const ColorPicker: Story = {
     args: {
-        placeholder: '#color',
+        placeholder: 'Color',
         left: true
     },
     render: (props)=> <Templates {...props} />

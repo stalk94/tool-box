@@ -2,17 +2,13 @@ import React from 'react';
 import { useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Badge, { badgeClasses, BadgeProps } from '@mui/material/Badge';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-material';
 import Button, { ButtonProps } from '@mui/material/Button';
 
 
-type ButtonPropsCustom = {
+type ButtonPropsCustom = ButtonProps & {
     icon?: 'delete' | 'done' | 'favorite' | 'send' | 'settings' | 'close' | 'add' | React.ReactNode
-} & ButtonProps;
-type ButtonIconPropsCustom = {
-    icon?: 'delete' | 'done' | 'favorite' | 'send' | 'settings' | 'close' | 'add'
-} & IconButtonProps;
+};
 type BadgeIconProps = {
     value: React.ReactNode
 } & BadgeProps
@@ -53,23 +49,6 @@ function Base({ children, variant, color, icon, ...props }: ButtonPropsCustom) {
         </Button>
     );
 }
-function Icon({ children, color, icon, ...props }: ButtonIconPropsCustom) {
-    const theme = useTheme();
-    
-    const chek =()=> {
-        if(icon && icons[icon]) return icons[icon];
-        else if(children) return children;
-    }
-
-    return(
-        <IconButton 
-            color={color} 
-            {...props}
-        >
-            { chek() }
-        </IconButton>
-    );
-}
 function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
     const CartBadge = styled(Badge)`
         & .${badgeClasses.badge} {
@@ -91,6 +70,5 @@ function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
 
 export default {
     Button: Base,
-    IconButton: Icon,
     Badge: BadgeIcon
 }

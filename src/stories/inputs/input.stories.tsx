@@ -1,8 +1,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../components/input';
-import Buttons from "../components/button";
-import { colors } from "../components/button";
+import Inputs from '../../components/input';
+import Buttons from "../../components/button";
+import { colors } from "../../components/button";
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 const types = [
@@ -19,7 +19,7 @@ const meta: Meta<typeof Inputs.Input> = {
     argTypes: {
         variant: {
             control: "select",
-            options: ["fullWidth", "inset", "middle"],
+            options: [undefined, "fullWidth", "inset", "middle"],
         },
         color: {
             control: "select",
@@ -57,19 +57,17 @@ const Templates =(args)=> {
 
 
 type Story = StoryObj<typeof Inputs.Input>;
-export const BaseInput: Story = {
+export const Base: Story = {
     args: {
         disabled: false,
         error: false,
-        success: false,
         multiline: false,
         rows: 4,
         borderStyle: 'solid',
-        variant: 'middle',
+        variant: undefined,
         type: 'number',
         color: 'info',
-        placeholder: 'test',
-        position: 'start'
+        placeholder: 'Test placeholder'
     },
     render: (props)=> <Templates {...props} />
 }

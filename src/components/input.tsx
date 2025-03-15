@@ -1,32 +1,38 @@
 import React from 'react';
-import { Box, useTheme, IconButton, Button, FormHelperText } from '@mui/material';
+import { useTheme, IconButton, FormHelperText } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
 import InputBase, { InputBaseProps } from '@mui/material/InputBase';
-import { VisibilityOff, Visibility, Done, Close } from '@mui/icons-material';
+import { VisibilityOff, Visibility, Done, Close, Add, Remove } from '@mui/icons-material';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { DatePickerCustom } from './input.date';
-import { EmailInput, PhoneInput, ColorPicker } from './input.any';
+import { EmailInput, PhoneInput, ColorPicker, InputPaper, InputBaseCustom } from './input.any';
 
 
-type BaseInputProps = {
+export type BaseInputProps = {
     min?: number
     max?: number
     step?: number
     left?: any 
     right?: any 
     placeholder?: string
+    label?: string
     children?: React.ReactNode
     variant: "fullWidth" | "inset" | "middle"
     onChange?: (value: string | number)=> void
-    success: boolean
+    success?: boolean
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
-type PasswordInputProps = {
+export type PasswordInputProps = {
     onVerify: (value: string)=> void
     helperText?: string
 } & BaseInputProps
-
+export type NumberinputProps = {
+    value?: number
+    min?: number
+    max?: number
+    step?: number
+    onChange?: (value: number)=> void
+} & BaseInputProps
 
 
 /**
@@ -34,22 +40,18 @@ type PasswordInputProps = {
  * - number, text
  * * левый и правый сторона можно реализовать верефикатор индикатор а так же тул панель
  */
-function BaseInput({ value, left, right, onChange, placeholder, variant, ...props }: BaseInputProps) {
-    const [inputValue, setInputValue] = React.useState<number | string>();
+function BaseInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
-    const numberButtonStyle = {
-        margin: 0,
-        padding: 0,
-        border: '1px dotted #dddada45'
-    }
+    const [inputValue, setInputValue] = React.useState<number | string>();
 
+ 
     const useFiltre =(value: string|number)=> {
         if(props.type === 'text' || props.type === 'number' || props.type === 'password') {
             if(props.type === 'number' && !isNaN(+value)) {
                 setInputValue(+value);
                 onChange && onChange(+value);
             }
-            else {
+            else if(props.type !== 'number' ) {
                 setInputValue(value);
                 onChange && onChange(value);
             }
@@ -60,95 +62,105 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, ...prop
         if(clone.type !== 'password') delete clone.type;
         return clone;
     }
-    const handleIncrease =()=> {
-        if (typeof inputValue === 'number' && inputValue < (props.max ?? 100)) {
-            const newValue = inputValue + (props.step ?? 1);
-            setInputValue(newValue);
-            onChange && onChange(newValue);
-        }
-    }
-    const handleDecrease =()=> {
-        if (typeof inputValue === 'number' && inputValue > (props.min ?? 0)) {
-            const newValue = inputValue - (props.step ?? 1);
-            setInputValue(newValue);
-            onChange && onChange(newValue);
-        }
-    }
-    const chek =()=> {
-        const border = props?.borderStyle ?? 'solid';
-
-        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
-        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
-    }
     React.useEffect(()=> {
-        if(props.type === 'number') {
-            if(typeof value !== 'number') setInputValue(0);
-            else setInputValue(value);
-        }
-    }, [props.type]);
+        setInputValue(value);
+    }, [value]);
 
    
     return(
-        <Paper
-            style={{ 
-                opacity: props.disabled && 0.6,
-                display: 'flex', 
-                alignItems: 'center', 
-                border: chek(),
-                boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)'
-            }}
-        >
-            { left && 
+        <InputPaper {...props} >
+            {left &&
                 <React.Fragment>
                     { left }
                     <Divider flexItem orientation="vertical" variant={'middle'} />
                 </React.Fragment>
             }
-            
-            <InputBase 
+
+            <InputBaseCustom
                 value={inputValue}
-                sx={{ flex: 1, pl: '15px' }}
                 placeholder={placeholder}
-                //inputProps={{style: {textAlign: 'center'}}}
-                onChange={(e)=> useFiltre(e.target.value)}
+                onChange={useFiltre}
                 {...filteredProps()}
             />
-         
-            { right && props.type !== 'number' &&
+
+            {right &&
                 <React.Fragment>
-                    { variant && <Divider flexItem orientation="vertical" variant={variant} /> }
+                    {variant || theme.elements.input.variant &&
+                        <Divider flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
+                    }
                     { right }
                 </React.Fragment>
-            } 
-            { props.type === 'number' &&
-                <ButtonGroup orientation="vertical">
-                    <Button 
-                        variant='text' 
-                        color='inherit' 
-                        onClick={handleIncrease} 
-                        disabled={inputValue <= props.min}
-                        style={numberButtonStyle}
-                    >
-                        +
-                    </Button>
-                    <Button 
-                        variant='text' 
-                        color='inherit' 
-                        onClick={handleDecrease} 
-                        disabled={inputValue >= props.max}
-                        style={numberButtonStyle}
-                    >
-                        −
-                    </Button>
-                </ButtonGroup>
             }
-        </Paper>
+
+        </InputPaper>
+    );
+}
+function NumberInput({ value, min=0, max=100, step=1, onChange, ...props }: NumberinputProps) {
+    const theme = useTheme();
+    const [inputValue, setInputValue] = React.useState<number>(value ?? 0);
+
+
+    const handleIncrease =()=> {
+        if (typeof inputValue === 'number' && inputValue < max) {
+            const newValue = inputValue + step;
+            setInputValue(newValue);
+            onChange && onChange(newValue);
+        }
+    }
+    const handleDecrease =()=> {
+        if (typeof inputValue === 'number' && inputValue > min) {
+            const newValue = inputValue - step;
+            setInputValue(newValue);
+            onChange && onChange(newValue);
+        }
+    }
+
+
+    return(
+        <React.Fragment>
+            <BaseInput {...props}
+                value={inputValue}
+                type="number" 
+                onChange={(value)=> {
+                    setInputValue(value);
+                    onChange && onChange(value);
+                }}
+                right={
+                    <ButtonGroup orientation="horizontal" sx={{ml: '5px'}}>
+                        <IconButton
+                            onClick={handleIncrease}
+                            disabled={inputValue >= max}
+                        >
+                            <Add 
+                                style={{
+                                    color: theme.palette.text.secondary, 
+                                    opacity: inputValue >= max ? '0.2' : '0.6',
+                                    fontSize: '20px'
+                                }} 
+                            />
+                        </IconButton>
+                        <IconButton
+                            onClick={handleDecrease}
+                            disabled={inputValue <= min}
+                        >
+                            <Remove 
+                                style={{
+                                    color: theme.palette.text.secondary, 
+                                    opacity: inputValue <= min ? '0.2' : '0.6',
+                                    fontSize: '20px'
+                                }} 
+                            />
+                        </IconButton>
+                    </ButtonGroup>
+                }
+            />
+        </React.Fragment>
     );
 }
 function PasswordInput({ value, onChange, placeholder, ...props }: PasswordInputProps) {
+    const theme = useTheme();
     const [type, setType] = React.useState<'password'|'text'>('password');
+    const iconStyle = {color: theme.palette.text.secondary, opacity: '0.6'};
 
 
     return(
@@ -163,11 +175,11 @@ function PasswordInput({ value, onChange, placeholder, ...props }: PasswordInput
                         setType((old)=> old === 'password' ? 'text' : 'password')
                     }} 
                     color="default" 
-                    sx={{ p: '10px' }}
+                    sx={{ pl: '12px' }}
                 >
                     { type !== 'password' 
-                        ? <VisibilityOff style={{color:'gray'}} /> 
-                        : <Visibility style={{color:'gray'}}/>
+                        ? <VisibilityOff style={iconStyle} /> 
+                        : <Visibility style={iconStyle} />
                     }
                 </IconButton>
             }
@@ -199,6 +211,8 @@ function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} 
     const useVerifyChange =(value: string)=> {
         if(value.length < 1) setValid(false);
         else setValid(true);
+        
+        if(props.onChange) props.onChange(value)
     }
     
 
@@ -211,7 +225,7 @@ function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} 
 
             { !isValid && (
                 <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    {helperText || 'Введите правильный пароль'}
+                    *{helperText || 'Введите правильный пароль'}
                 </FormHelperText>
             )}
         </React.Fragment>
@@ -223,9 +237,10 @@ function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} 
 
 export default {
     Input: BaseInput,
-    PasswordInput,
+    NumberInput,
+    BasePasswordInput: PasswordInput,
     ColorPicker,
-    VerifyPaswordInput,
+    PasswordInput: VerifyPaswordInput,
     DatePickerCustom,
     EmailInput,
     PhoneInput

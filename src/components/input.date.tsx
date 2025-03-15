@@ -1,53 +1,59 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Dialog, DialogActions, DialogContent, Box, useTheme, IconButton, Button } from '@mui/material';
+import { Dialog, DialogActions, DialogContent, useTheme, IconButton, Button } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import Paper from '@mui/material/Paper';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { DateField, DateFieldProps, TimeField } from '@mui/x-date-pickers';
 import { CalendarMonth, AccessTime } from '@mui/icons-material';
-import { InputLabel, TextField } from '@mui/material';  //? разобрать
+import { InputPaper } from './input.any';
 import 'dayjs/locale/ru';
 
 
-type DataPickerCustomProps = {
+export type DataPickerCustomProps = {
     error?: boolean;
     success?: boolean;
     disabled?: boolean;
     borderStyle?: string;
     onChange?: (value: any) => void;
     value: any;
-    variant?: 'middle' | 'fullWidth' | 'inset' | 'none';
+    variant?: 'middle' | 'fullWidth' | 'inset';
     left?: React.ReactNode;
     isTimePicker?: boolean;
 }
 
 
 const Picker =({ value, open, handleClose, onChange, isTimePicker })=> {
-    const [selectedDate, setSelectedDate] = React.useState(value ?? dayjs());
+    const [selectedDate, setSelectedDate] = React.useState(value??dayjs());
 
     const handleDateChange =(newDate: any)=> {
-        setSelectedDate(newDate); // Обновляем выбранную дату
-        onChange(newDate);
+        if (dayjs.isDayjs(newDate) && newDate.isValid()) {
+            setSelectedDate(newDate);
+            onChange(newDate);
+        }
     }
     const handleTimeChange =(newTime: any)=> {
-        setSelectedDate(newTime);
-        onChange(newTime);
+        if (dayjs.isDayjs(newTime) && newTime.isValid()) {
+            setSelectedDate(newTime);
+            onChange(newTime);
+        }
     }
+    
+    
 
     return(
         <Dialog open={open} onClose={handleClose}>
-            <DialogContent>
-
+            <DialogContent sx={{ display: 'none' }}>
                 { isTimePicker ? (
                     <MobileTimePicker
                         value={selectedDate}
                         onChange={handleTimeChange}
                         open={open}
                         onClose={handleClose}
+                        //views={["hours", "minutes"]}
+                        //ampm={false}
                     />
                 ) : (
                     <MobileDatePicker
@@ -59,9 +65,6 @@ const Picker =({ value, open, handleClose, onChange, isTimePicker })=> {
                 )}
             
             </DialogContent>
-            <DialogActions>
-            <Button onClick={handleClose} color="primary">Закрыть</Button>
-            </DialogActions>
         </Dialog>
     );
 }
@@ -71,42 +74,40 @@ const Picker =({ value, open, handleClose, onChange, isTimePicker })=> {
 // ? локализация
 export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=false, ...props }: DataPickerCustomProps) {
     const [open, setOpen] = React.useState(false);
-    const [inputValue, setInputValue] = React.useState<any>(value);
+    const [inputValue, setInputValue] = React.useState<any>();
     const theme = useTheme();
-    dayjs.locale('ru');         //!? это меняет локализацию
 
 
-    const chek =()=> {
-        const border = props?.borderStyle ?? 'solid';
+    const useFiltre =(value)=> {
+        let formatted = value.format();
+        
+        if(isTimePicker) {
+            formatted = value.format('HH:mm');  
+        }
+        else {
+            formatted = value.format('YYYY-MM-DD');  
+        }
 
-        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
-        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
+        if(onChange) onChange(formatted);
     }
-    const useFiltre =(value: string)=> {
-        setInputValue(value);
-        if(onChange) onChange(value);
-    }
 
+    React.useEffect(() => {
+        dayjs.locale('ru');
+    }, []);
+    React.useEffect(() => {
+        if(isTimePicker) setInputValue(dayjs(value, 'HH:mm'));
+        else setInputValue(dayjs(value, 'YYYY-MM-DD'));
+    }, [value]);
     
+
     return(
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-        <Paper
-            style={{ 
-                opacity: props.disabled && 0.6,
-                display: 'flex', 
-                alignItems: 'center', 
-                border: chek(),
-                boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.2)',
-                position: 'relative'
-            }}
-        >
+        <InputPaper {...props} >
             { left && 
                 <React.Fragment>
                     { left }
-                    { variant !== 'none' && 
-                        <Divider flexItem orientation="vertical" variant={variant??'middle'} />
+                    { variant && 
+                        <Divider flexItem orientation="vertical" variant={variant} />
                     }
                 </React.Fragment>
             }
@@ -116,14 +117,23 @@ export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=
                     <TimeField
                         value={inputValue}
                         onChange={(newValue) => useFiltre(newValue)}
+                        ampm={false}
+                        inputProps={{style: {textAlign: theme.elements.input.alight}}}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
                                 variant: 'standard',
                                 InputProps: {
                                     disableUnderline: true,
-                                    sx: { textAlign: 'center', input: { textAlign: 'center' } }, // Центровка ввода
+                                    sx: { textAlign: 'center', ml:'15px' },
                                 },
+                                sx: {
+                                    '& input::placeholder': { 
+                                        color: theme.palette.placeholder.main,
+                                        opacity: 1,
+                                        fontStyle: theme.elements.input.fontStyle
+                                     },
+                                }
                             },
                         }}
                     />
@@ -132,14 +142,22 @@ export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=
                     <DateField 
                         value={inputValue}
                         onChange={(newValue)=> useFiltre(newValue)}
+                        inputProps={{style: {textAlign: theme.elements.input.alight}}}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
                                 variant: 'standard',
                                 InputProps: {
                                     disableUnderline: true,
-                                    sx: { textAlign: 'center', input: { textAlign: 'center' } }, // Центровка ввода
+                                    sx: { textAlign: 'center', ml:'15px' },
                                 },
+                                sx: {
+                                    '& input::placeholder': { 
+                                        color: theme.palette.placeholder.main,
+                                        opacity: 1,
+                                        fontStyle: theme.elements.input.fontStyle
+                                     },
+                                }
                             },
                         }}
                     />
@@ -147,17 +165,17 @@ export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=
             }
 
             <React.Fragment>
-                { variant !== 'none' && 
-                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />
+                { variant || theme.elements.input.variant && 
+                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
                 }
                 <IconButton color='inherit' onClick={() => setOpen(true)}>
                     { isTimePicker 
-                        ? <AccessTime sx={{opacity:'0.6'}} /> 
-                        : <CalendarMonth sx={{opacity:'0.6'}} />
+                        ? <AccessTime style={{color:theme.palette.text.secondary, opacity:'0.6'}} /> 
+                        : <CalendarMonth style={{color:theme.palette.text.secondary, opacity:'0.6'}} />
                     }
                 </IconButton>
             </React.Fragment>
-        </Paper>
+        </InputPaper>
 
         { open &&
             <Picker 

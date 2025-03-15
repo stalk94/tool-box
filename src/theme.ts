@@ -1,4 +1,5 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme, PaletteOptions } from "@mui/material/styles";
+
 
 const shadows = {
     xs: '0px 1px 3px rgba(0, 0, 0, 0.1)',
@@ -7,9 +8,18 @@ const shadows = {
     lg: '0px 6px 18px rgba(0, 0, 0, 0.25)',
     xl: '0px 8px 24px rgba(0, 0, 0, 0.3)',
 }
+// глобальные стили для элементов
+const elements = {
+    input: {
+        fontStyle: "italic",
+        variant: <undefined|"fullWidth"|"inset"|"middle"> 'middle',
+        alight: <'center'|undefined> undefined
+    }
+}
 
 
 export const darkTheme = createTheme({
+    elements,
     palette: {
         mode: "dark",
         primary: {
@@ -21,11 +31,15 @@ export const darkTheme = createTheme({
         text: {
             disabled: 'gray'
         },
+        placeholder: {
+            main: '#808080'   
+        },
         background: {
             default: '#2c303d',
             sidenav: "#1f283e",
             card: "#202940",
             paper: "#3b3b3ba8",
+            input: "#3b3b3ba8"      // цвет фона всех инпутов, селектов
         },
         action: {
             active: '#ffffff21'
@@ -34,6 +48,7 @@ export const darkTheme = createTheme({
 });
 
 export const lightTheme = createTheme({
+    elements,
     palette: {
         mode: "light",
         primary: {
@@ -42,5 +57,8 @@ export const lightTheme = createTheme({
         secondary: {
             main: "#dc004e",
         },
-    },
+        placeholder: {
+            main: '#808080'   
+        },
+    }
 });
