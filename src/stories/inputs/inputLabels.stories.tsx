@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, LabelSelect } from '../components/inputs';
+import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, LabelSelect } from '../../components/input/labels.inputs';
 import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
 
 

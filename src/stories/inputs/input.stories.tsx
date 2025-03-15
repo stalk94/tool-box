@@ -1,9 +1,8 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input';
-import Buttons from "../../components/button";
+import Inputs from '../../components/input/input';
 import { colors } from "../../components/button";
-import { VisibilityOff, Visibility } from '@mui/icons-material';
+
 
 const types = [
     "text", "number", "email", "password", "tel", "url",

@@ -8,6 +8,12 @@ import { DatePickerCustom } from './input.date';
 import { EmailInput, PhoneInput, ColorPicker, InputPaper, InputBaseCustom } from './input.any';
 
 
+export type VerifyHook = {
+    useVerify: (value: string)=> {
+        result: boolean,
+        helperText?: string 
+    }
+}
 export type BaseInputProps = {
     min?: number
     max?: number
@@ -22,12 +28,6 @@ export type BaseInputProps = {
     success?: boolean
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
-export type VerifyHook = {
-    useVerify: (value: string)=> {
-        result: boolean,
-        helperText?: string 
-    }
-}
 export type PasswordInputProps = {
     onVerify: (value: string)=> void
     helperText?: string

@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input';
-import Buttons from "../../components/button";
+import Inputs from '../../components/input/input';
+
 
 
 const meta: Meta<typeof Inputs.ColorPicker> = {

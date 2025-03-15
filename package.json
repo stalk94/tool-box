@@ -14,14 +14,14 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
-    "@joshwooding/vite-plugin-react-docgen-typescript": "^0.5.0",
-    "@mui/x-date-pickers": "^7.27.3",
     "@chromatic-com/storybook": "^3.2.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
+    "@joshwooding/vite-plugin-react-docgen-typescript": "^0.5.0",
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.7",
     "@mui/x-data-grid": "^7.27.3",
+    "@mui/x-date-pickers": "^7.27.3",
     "@storybook/addon-console": "^3.0.0",
     "@storybook/addon-essentials": "^8.6.4",
     "@storybook/addon-measure": "^8.6.4",
@@ -39,8 +39,8 @@
     "framer-motion": "^12.5.0",
     "playwright": "^1.51.0",
     "prop-types": "^15.8.1",
-    "react-color": "^2.19.3",
     "react": "^18.3.1",
+    "react-color": "^2.19.3",
     "react-docgen-typescript-plugin": "^1.0.8",
     "react-dom": "^18.3.1",
     "react-router-dom": "7.3.0",
@@ -53,6 +53,9 @@
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.2",
     "express": "^4.21.1",
-    "nodemon": "^3.1.9"
+    "nodemon": "^3.1.9",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.3",
+    "styled-components": "^6.1.15"
   }
 }

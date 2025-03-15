@@ -70,7 +70,6 @@ const Picker =({ value, open, handleClose, onChange, isTimePicker })=> {
 }
 
 
-// ? доработать момент с календарем если дата введена пользователем в неполном формате
 // ? локализация
 export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=false, ...props }: DataPickerCustomProps) {
     const [open, setOpen] = React.useState(false);

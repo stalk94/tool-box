@@ -1,10 +1,10 @@
 import React from 'react';
 import In, { BaseInputProps, NumberinputProps, PasswordInputProps } from './input';
 import { EmailInputProps, PhoneInputProps } from './input.any'
-import Select, { BaseSelectProps } from './select';
+import Select, { BaseSelectProps } from '../select';
 import { InputLabel, useTheme, Box , InputLabelProps } from '@mui/material';
 import { SxProps, Theme } from '@mui/system';
-import '../style/fonts.css';
+import '../../style/fonts.css';
 
 
 type InputCustomLabelProps = {

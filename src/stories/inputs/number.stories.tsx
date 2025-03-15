@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input';
+import Inputs from '../../components/input/input';
 import { colors } from "../../components/button";
 
 

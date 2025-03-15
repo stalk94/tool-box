@@ -1,13 +1,6 @@
-import { createTheme, PaletteOptions } from "@mui/material/styles";
+import { createTheme, PaletteOptions, Theme } from "@mui/material/styles";
 
 
-const shadows = {
-    xs: '0px 1px 3px rgba(0, 0, 0, 0.1)',
-    sm: '0px 2px 6px rgba(0, 0, 0, 0.15)',
-    md: '0px 4px 12px rgba(0, 0, 0, 0.2)',
-    lg: '0px 6px 18px rgba(0, 0, 0, 0.25)',
-    xl: '0px 8px 24px rgba(0, 0, 0, 0.3)',
-}
 // глобальные стили для элементов
 const elements = {
     input: {
@@ -17,6 +10,27 @@ const elements = {
     }
 }
 
+declare module '@mui/material/styles' {
+    interface Palette {
+        placeholder: {
+            main: string;
+        };
+    }
+
+    interface PaletteOptions {
+        placeholder?: {
+            main: string;
+        };
+    }
+
+    interface Theme {
+        elements: typeof elements;
+    }
+
+    interface ThemeOptions {
+        elements?: typeof elements;
+    }
+}
 
 export const darkTheme = createTheme({
     elements,

@@ -3,7 +3,7 @@ import { NativeSelect, styled, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Select, { SelectChangeEvent, SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
-import { InputPaper } from './input.any';
+import { InputPaper } from './input/input.any';
 import '../style/index.css';
 
 
