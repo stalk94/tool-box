@@ -17,7 +17,7 @@ type PropsSelect = {
     items: ItemsSelect[]
     label?: string
 }
-type BaseSelectProps = {
+export type BaseSelectProps = {
     value: any
     onChange?: (newValue: string)=> void
     items: ItemsSelect[]

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Paper, InputBase, InputLabel, IconButton, Divider, FormHelperText, Dialog, InputBaseProps } from '@mui/material';
-import { Email, Phone, FileCopy } from '@mui/icons-material';
+import { Email, Phone, FileCopy, AlternateEmail } from '@mui/icons-material';
 import { ChromePicker } from 'react-color';
 import { useTheme } from '@mui/material/styles';
 
@@ -13,6 +13,10 @@ export type EmailInputProps = InputBaseProps & {
     helperText?: string;
     disabled?: boolean;
     placeholder?: string;
+    useVerify?: (value: string)=> {
+        result: boolean,
+        helperText?: string 
+    }
 }
 export type PhoneInputProps = InputBaseProps & {
     value: string;
@@ -21,6 +25,10 @@ export type PhoneInputProps = InputBaseProps & {
     helperText?: string;
     disabled?: boolean;
     placeholder?: string;
+    useVerify?: (value: string)=> {
+        result: boolean,
+        helperText?: string 
+    }
 }
 
 // форма инпутов
@@ -72,7 +80,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
             sx={{ 
                 minWidth: '105px',
                 flex: 1, 
-                pl: '15px',
+                pl: props?.pl ?? '5px',
                 '& input::placeholder': {
                     color: theme.palette.placeholder.main,
                     opacity: 1,
@@ -82,7 +90,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
                     color: theme.palette.placeholder.main,  
                     opacity: 1,
                     fontStyle: theme.elements.input.fontStyle
-                }
+                },
             }}
             inputProps={{style: {textAlign: theme.elements.input.alight}}}
             onChange={(e)=> onChange && onChange(e.target.value)}
@@ -94,37 +102,44 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
 
 
 
-export function EmailInput({ value, onChange, error, helperText, disabled, placeholder, ...props }: EmailInputProps) {
+export function EmailInput({ value, useVerify, onChange, helperText, disabled, placeholder, ...props }: EmailInputProps) {
     const theme = useTheme();
+    const [customHelper, setCustomHelper] = React.useState<string>();
     const [emailValue, setEmailValue] = useState(value);
     const [isValid, setIsValid] = useState(true);
 
-    // Проверка валидности email
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-        return emailRegex.test(email);
+    const useHookVerify =(newValue: string)=> {
+        let valid = true;
+
+        if(useVerify) {
+            const res = useVerify(newValue);
+            valid = res.result;
+            setCustomHelper(res.helperText);
+        }
+
+        return valid;
     }
     const handleChange =(newValue: string)=> {
+        setIsValid(useHookVerify(newValue));
         setEmailValue(newValue);
-        setIsValid(validateEmail(newValue)); // Проверяем на валидность
         onChange(newValue); // Передаем значение родителю
     }
     React.useEffect(()=> {
         setEmailValue(value);
+        if(value?.length > 0) setIsValid(useHookVerify(value));
     }, [value]);
 
     
     return (
         <React.Fragment>
-            <InputPaper disabled={disabled} error={!isValid || error}>
+            <InputPaper disabled={disabled} error={!isValid}>
                 <IconButton
                     disabled={disabled}
                     style={{
-                        marginLeft: '5px',
                         color: theme.palette.action.active,
                     }}
                 >
-                    <Email />
+                    <AlternateEmail />
                 </IconButton>
 
                 <InputBaseCustom
@@ -148,44 +163,50 @@ export function EmailInput({ value, onChange, error, helperText, disabled, place
             {/* Подсказка или сообщение об ошибке */}
             {!isValid && (
                 <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    *{helperText || 'Введите правильный email адрес'}
+                    *{customHelper || (helperText ?? 'Введите правильный email адрес')}
                 </FormHelperText>
             )}
         </React.Fragment>
     );
 }
-export function PhoneInput({ value, onChange, error, helperText, disabled, placeholder, ...props }: PhoneInputProps) {
+export function PhoneInput({ value, onChange, useVerify, helperText, disabled, placeholder, ...props }: PhoneInputProps) {
     const theme = useTheme();
+    const [customHelper, setCustomHelper] = React.useState<string>();
     const [phoneValue, setPhoneValue] = useState('');
     const [isValid, setIsValid] = useState(true);
 
-    // Проверка валидности номера телефона
-    const validatePhone = (phone: string) => {
-        const phoneRegex = /^\+?[1-9]\d{6,14}$/; // Международный формат
-        return phoneRegex.test(phone);
+    const useHookVerify =(newValue: string)=> {
+        let valid = true;
+
+        if(useVerify) {
+            const res = useVerify(newValue);
+            valid = res.result;
+            setCustomHelper(res.helperText);
+        }
+
+        return valid;
     }
     const handleChange =(newValue)=> {
         if(/^\+?\d*$/.test(newValue)) {
+            setIsValid(useHookVerify(newValue));
             setPhoneValue(newValue);
-            setIsValid(validatePhone(newValue));
             onChange(newValue);
         }
     }
     React.useEffect(()=> {
         if(/^\+?\d+$/.test(value)) {
             setPhoneValue(value);
-            setIsValid(validatePhone(value));
+            setIsValid(useHookVerify(value));
         }
     }, [value]);
 
 
     return (
         <React.Fragment>
-           <InputPaper disabled={disabled} error={!isValid || error}>
+           <InputPaper disabled={disabled} error={!isValid}>
                 <IconButton
                     disabled={disabled}
                     style={{
-                        marginLeft: '5px',
                         color: theme.palette.action.active,
                     }}
                 >
@@ -213,7 +234,7 @@ export function PhoneInput({ value, onChange, error, helperText, disabled, place
             {/* Подсказка или сообщение об ошибке */}
             {!isValid && (
                 <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    *{helperText || 'Введите корректный номер телефона'}
+                    *{customHelper || (helperText ?? 'Введите корректный номер телефона')}
                 </FormHelperText>
             )}
         </React.Fragment>
@@ -247,7 +268,7 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
              <React.Fragment>
                 {/**<Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />*/}
                 <div style={{
-                        marginTop: '1px',
+                        marginTop: '2px',
                         width: '30px',
                         height: '30px',
                         border: 'none',

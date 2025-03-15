@@ -22,10 +22,16 @@ export type BaseInputProps = {
     success?: boolean
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
+export type VerifyHook = {
+    useVerify: (value: string)=> {
+        result: boolean,
+        helperText?: string 
+    }
+}
 export type PasswordInputProps = {
     onVerify: (value: string)=> void
     helperText?: string
-} & BaseInputProps
+} & VerifyHook & BaseInputProps
 export type NumberinputProps = {
     value?: number
     min?: number
@@ -69,17 +75,22 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, label, 
    
     return(
         <InputPaper {...props} >
-            {left &&
-                <React.Fragment>
+            { left &&
+                <IconButton
+                    disabled={props.disabled}
+                    style={{
+                        color: theme.palette.action.active,
+                    }}
+                >
                     { left }
-                    <Divider flexItem orientation="vertical" variant={'middle'} />
-                </React.Fragment>
+                </IconButton>
             }
 
             <InputBaseCustom
                 value={inputValue}
                 placeholder={placeholder}
                 onChange={useFiltre}
+                pl={left ? '5px' : '20px'}
                 {...filteredProps()}
             />
 
@@ -189,8 +200,9 @@ function PasswordInput({ value, onChange, placeholder, ...props }: PasswordInput
 }
 
 
-function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} & PasswordInputProps) {
+function VerifyPaswordInput({ value, useVerify, helperText, ...props }: PasswordInputProps) {
     const theme = useTheme();
+    const [customHelper, setCustomHelper] = React.useState<string>();
     const [isValid, setValid] = React.useState<boolean>(true);
 
     //* вариация с иконкой верификатором
@@ -207,25 +219,92 @@ function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} 
             </IconButton>
         );
     }
-    // ? реализовать верификаторы 
-    const useVerifyChange =(value: string)=> {
-        if(value.length < 1) setValid(false);
-        else setValid(true);
-        
-        if(props.onChange) props.onChange(value)
+    const useHookVerify =(newValue: string)=> {
+        let valid = true;
+
+        if(useVerify) {
+            const res = useVerify(newValue);
+            valid = res.result;
+            setCustomHelper(res.helperText);
+        }
+
+        return valid;
     }
+    const useVerifyChange =(newValue: string)=> {
+        setValid(useHookVerify(newValue));
+        if(props.onChange) props.onChange(newValue);
+    }
+    React.useEffect(()=> {
+        if(value) setValid(useHookVerify(value));
+    }, [value]);
     
 
     return(
         <React.Fragment>
-            <PasswordInput {...props}
+            <PasswordInput 
+                {...props}
                 error={!isValid}
                 onChange={useVerifyChange}
             />
 
             { !isValid && (
                 <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    *{helperText || 'Введите правильный пароль'}
+                    *{customHelper || (helperText ?? 'Введите правильный пароль')}
+                </FormHelperText>
+            )}
+        </React.Fragment>
+    );
+}
+function LoginInput({ value, useVerify, helperText, ...props }: PasswordInputProps) {
+    const theme = useTheme();
+    const [customHelper, setCustomHelper] = React.useState<string>();
+    const [isValid, setValid] = React.useState<boolean>(true);
+
+    //* вариация с иконкой верификатором
+    const left =()=> {
+        return(
+            <IconButton
+                color="default"
+                sx={{ p: '10px' }}
+            >
+                { (verify !== null && verify)
+                    ? <Done style={{ color: theme.palette.success.dark }} />
+                    : <Close style={{ color: theme.palette.error.dark }} />
+                }
+            </IconButton>
+        );
+    }
+    const useHookVerify =(newValue: string)=> {
+        let valid = true;
+
+        if(useVerify) {
+            const res = useVerify(newValue);
+            valid = res.result;
+            setCustomHelper(res.helperText);
+        }
+
+        return valid;
+    }
+    const useVerifyChange =(newValue: string)=> {
+        setValid(useHookVerify(newValue));
+        if(props.onChange) props.onChange(newValue);
+    }
+    React.useEffect(()=> {
+        if(value) setValid(useHookVerify(value));
+    }, [value]);
+    
+
+    return(
+        <React.Fragment>
+            <BaseInput
+                {...props}
+                error={!isValid}
+                onChange={useVerifyChange}
+            />
+
+            { !isValid && (
+                <FormHelperText error={true} style={{ marginTop: '4px' }}>
+                    *{customHelper || (helperText ?? 'Введите правильный логин')}
                 </FormHelperText>
             )}
         </React.Fragment>
@@ -234,13 +313,12 @@ function VerifyPaswordInput({ onVerify, helperText, ...props }: {onVerify: any} 
 
 
 
-
 export default {
     Input: BaseInput,
     NumberInput,
-    BasePasswordInput: PasswordInput,
     ColorPicker,
     PasswordInput: VerifyPaswordInput,
+    LoginInput,
     DatePickerCustom,
     EmailInput,
     PhoneInput
