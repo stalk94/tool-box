@@ -17,6 +17,7 @@ declare module '@mui/material/styles' {
         sidenav: string;
         card: string;
         input: string;
+        navBar: string;
     }
 
     interface PaletteOptions {
@@ -73,7 +74,8 @@ export const darkTheme = createTheme({
             sidenav: "#1f283e",
             card: "#202940",
             paper: "#3b3b3ba8",
-            input: "#3b3b3ba8"      // цвет фона всех инпутов, селектов
+            input: "#3b3b3ba8",      // цвет фона всех инпутов, селектов
+            navBar: "#86898d61"
         },
         action: {
             active: '#ffffff21'

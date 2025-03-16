@@ -99,13 +99,12 @@ export const DesktopNestedMenuItem: React.FC<{ item: NavLinkItem }> =({ item })=
 
 
     return (
-        <>
+        <React.Fragment>
             <Button
                 color="inherit"
                 startIcon={item.icon || null}
                 endIcon={<KeyboardArrowDown />}
                 onClick={handleClick}
-                //sx={{borderRight:'1px solid red'}}
             >
                 {item.label}
             </Button>
@@ -122,7 +121,7 @@ export const DesktopNestedMenuItem: React.FC<{ item: NavLinkItem }> =({ item })=
                     horizontal: "left",
                 }}
             >
-                {item.children?.map((childItem, childIndex) => (
+                { item.children?.map((childItem, childIndex) => (
                     <MenuItem
                         key={childIndex}
                         onClick={() => handleItemClick(childItem)}
@@ -136,7 +135,7 @@ export const DesktopNestedMenuItem: React.FC<{ item: NavLinkItem }> =({ item })=
                     </MenuItem>
                 ))}
             </Menu>
-        </>
+        </React.Fragment>
     );
 }
 // Выпадающее меню (mobile)
