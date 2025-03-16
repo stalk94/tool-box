@@ -1,4 +1,41 @@
-import { createTheme, PaletteOptions, Theme } from "@mui/material/styles";
+import { createTheme, PaletteOptions } from "@mui/material/styles";
+
+
+declare module '@mui/material/styles' {
+    interface Palette {
+        placeholder: {
+            main: string;
+        };
+        table: {
+            body: string
+            header: string
+            thead: string
+        }
+    }
+
+    interface TypeBackground {
+        sidenav: string;
+        card: string;
+        input: string;
+    }
+
+    interface PaletteOptions {
+        placeholder?: {
+            main: string;
+        };
+        table?: {
+            body: string
+            header: string
+            thead: string
+        }
+    }
+    interface Theme {
+        elements: typeof elements;
+    }
+    interface ThemeOptions {
+        elements?: typeof elements;
+    }
+}
 
 
 // глобальные стили для элементов
@@ -7,28 +44,6 @@ const elements = {
         fontStyle: "italic",
         variant: <undefined|"fullWidth"|"inset"|"middle"> 'middle',
         alight: <'center'|undefined> undefined
-    }
-}
-
-declare module '@mui/material/styles' {
-    interface Palette {
-        placeholder: {
-            main: string;
-        };
-    }
-
-    interface PaletteOptions {
-        placeholder?: {
-            main: string;
-        };
-    }
-
-    interface Theme {
-        elements: typeof elements;
-    }
-
-    interface ThemeOptions {
-        elements?: typeof elements;
     }
 }
 
@@ -48,6 +63,11 @@ export const darkTheme = createTheme({
         placeholder: {
             main: '#808080'   
         },
+        table: {
+            body: "#5151513f",
+            header: "#5c5c5c62",
+            thead: "#353943"
+        },
         background: {
             default: '#2c303d',
             sidenav: "#1f283e",
@@ -60,6 +80,7 @@ export const darkTheme = createTheme({
         }
     },
 });
+
 
 export const lightTheme = createTheme({
     elements,

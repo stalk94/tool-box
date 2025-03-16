@@ -46,7 +46,7 @@ export default meta;
 const Templates =(args)=> {
     
     return(
-        <div style={{ width: '100%', height: '80vh',padding:'1%'}}>
+        <div style={{ width: '100%', height: '80vh',padding:'5%'}}>
             <DataTable
                 virtualScrollerOptions={{ itemSize: 55 }}
                 value={testData}
@@ -57,7 +57,7 @@ const Templates =(args)=> {
                 }
                 footer={
                     <div>
-                        <div>footer</div>
+                        footer
                     </div>
                 }
             >

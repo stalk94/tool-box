@@ -32,41 +32,42 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
 
 
     .p-datatable {
-        background: ${({ theme })=> "#5151513f"};
+        background: ${({ theme })=> theme.palette.table.body};
         border-radius: 5px;
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
     .p-datatable-header {
-        background: ${({ theme })=> "#5f5f5f63"};
-        color: #ffffff;
+        background: ${({ theme })=> theme.palette.table.header};
+        border-bottom: 1px solid #5f5f5f35;
+        color: ${({ theme })=> theme.palette.text.primary};
         font-size: 18px;
         font-weight: bold;
         padding: 12px 16px;
     }
     .p-datatable-footer {
-        background: ${({ theme })=> "#5f5f5f63"};
-        color: #ffffff;
+        background: ${({ theme })=> theme.palette.table.header};
+        color: ${({ theme })=> theme.palette.text.primary};
         font-size: 16px;
         padding: 12px 16px;
     }
     // панель фильтры и сортировка
     .p-datatable-thead > tr > th {
-        background: ${({ theme })=> '#353943'};
+        background: ${({ theme })=> theme.palette.table.thead};
         color: ${({ theme })=> theme.palette.grey[500]};
         font-weight: bold;
         padding: 12px;
         text-align: left;
-        border-bottom: 1px solid ${({ theme })=> 'rgba(0, 0, 0, 0.2)'};
-        box-shadow: 0 3px 4px rgba(0, 0, 0, 0.12);
+        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 3px rgba(0, 0, 0, 0.08) inset, 0 3px 4px rgba(0, 0, 0, 0.08);
     }
     // нечетные row 
     .p-datatable-tbody > tr:nth-child(even) {
         //background: ${({ theme })=> theme.palette.background.card};
     }
-    // стили row текста
+    // стили row текста 
     .p-datatable-tbody > tr {
-        color: #ffffff;
+        color: ${({ theme })=> theme.palette.text.primary};
         font-size: 16px;
         transition: background 0.2s ease-in-out;
     }
@@ -80,11 +81,9 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         padding: 12px;
         border-bottom: 1px solid ${({ theme })=> theme.palette.action.active};
     }
-
     .p-datatable-tbody > tr.p-highlight {
         background: #574b90 !important;
     }
-    
 `;
 
 
@@ -94,7 +93,7 @@ export default function({ value, children, header, footer, ...props }: DataTable
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
     const [height, setHeight] = useState<number>();
-
+    
     
     const getPadding =(element: Element)=> {
         const style = getComputedStyle(element);

@@ -43,7 +43,7 @@ export default function SidebarMenu({ collapsed }) {
     React.useEffect(()=> {
         if(collapsed) setOpenMenus({});
     }, [collapsed]);
-    const handleToggle = (label) => {
+    const handleToggle =(label)=> {
         setOpenMenus((prev) => ({ ...prev, [label]: !prev[label] }));
     }
     const handleItemClick = (label, parent = null) => {
@@ -81,19 +81,19 @@ export default function SidebarMenu({ collapsed }) {
                             {item.divider && item.divider}
 
                             {!item.divider && (
-                                <>
+                                <React.Fragment>
                                     <ListItemButton
                                         onClick={(event) => {
                                             if (item.comand) {
-                                                item.comand(item.label);
+                                                item.comand(item);
                                                 handleItemClick(item.label);
                                             }
                                             if (item.children) {
                                                 if (collapsed) {
                                                     handleOpenPopover(event, item.children, item.label);
-                                                } else {
-                                                    handleToggle(item.label);
-                                                }
+                                                } 
+                                                else handleToggle(item.label);
+                                                
                                             }
                                         }}
                                         sx={{
@@ -128,12 +128,12 @@ export default function SidebarMenu({ collapsed }) {
                                                         key={childIndex}
                                                         sx={{ pl: 4, backgroundColor: selectedItem === child.label ? "#e0e0e0" : "transparent" }}
                                                         onClick={() => {
-                                                            child.comand(child.label);
+                                                            child.comand(child);
                                                             handleItemClick(child.label, item.label);
                                                         }}
                                                     >
                                                         <ListItemIcon sx={{ minWidth: 36, color: "gray" }}>
-                                                            {child.icon}
+                                                            { child.icon }
                                                         </ListItemIcon>
                                                         <ListItemText primary={child.label} />
                                                     </ListItemButton>
@@ -141,7 +141,7 @@ export default function SidebarMenu({ collapsed }) {
                                             </List>
                                         </Collapse>
                                     )}
-                                </>
+                                </React.Fragment>
                             )}
                         </React.Fragment>
                     ))}
@@ -162,13 +162,13 @@ export default function SidebarMenu({ collapsed }) {
                             key={index}
                             sx={{ backgroundColor: selectedItem === child.label ? "#e0e0e0" : "transparent" }}
                             onClick={() => {
-                                child.comand(child.label);
+                                child.comand(child);
                                 handleItemClick(child.label, child.parentLabel); // Используем parentLabel из child
                                 handleClosePopover();
                             }}
                         >
                             <ListItemIcon sx={{ minWidth: 36, color: "gray" }}>
-                                {child.icon}
+                                { child.icon }
                             </ListItemIcon>
                             <ListItemText primary={child.label} />
                         </ListItemButton>
