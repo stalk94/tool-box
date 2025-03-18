@@ -99,7 +99,7 @@ const Templates =(args)=> {
              <LabelSelect
                 onChange={console.log}
                 {...args}
-                items={[{value:'1', label:'test'},{value:'2', label:'test2'},{value:'3', label:'test3'}]}
+                items={[{id:'1', label:'test'},{id:'2', label:'test2'},{id:'3', label:'test3'}]}
                 placeholder='Выбрать'
             />
             <LabelPassword

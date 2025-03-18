@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Toolbar, Divider, Box, useTheme, alpha } from "@mui/material";
+import { AppBar, Toolbar, Divider, Box, useTheme, alpha, lighten } from "@mui/material";
 import { NavMenu } from './fragment';
 import { NavLinkItem } from '../popup/menuItem';
 import NavigationItemsDesktop from './nav-desctop';
@@ -48,7 +48,7 @@ export default function Navbar({ start, end, items }: NavbarProps) {
             sx={{ 
                 padding: 0, 
                 margin: 0, 
-                background: theme.palette.background.navBar,
+                background: (theme)=> lighten(theme.palette.background.paper, 0.1),
                 backdropFilter: "blur(14px)"
             }}
         >

@@ -3,6 +3,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { darkTheme, lightTheme } from "../src/theme";
 import { CssBaseline } from "@mui/material";
 import { withConsole } from '@storybook/addon-console';
+
 import type { Preview } from "@storybook/react";
 
 // Кастомные цвета логов
@@ -42,10 +43,12 @@ const preview: Preview = {
     (Story, context) => {
       const theme = context.globals.theme === "dark" ? darkTheme : lightTheme;
       return (
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          <Story />
-        </ThemeProvider>
+        <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <Story />
+          </ThemeProvider>
+        </div>
       );
     },
   ],

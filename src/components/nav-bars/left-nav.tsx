@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider, Box, 
-    Menu, MenuItem, Badge, useTheme, alpha 
+    Menu, MenuItem, Badge, useTheme, alpha, darken
 } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { BorderTop, ExpandLess, ExpandMore } from "@mui/icons-material";
 import { NavLinkItem } from '../popup/menuItem';
 
 
@@ -10,28 +10,20 @@ type SidebarMenuProps = {
     collapsed: boolean
     onChange?: (item: NavLinkItem)=> void
     items: NavLinkItem[]
+    sx?: {}
 }
-const TopPanel =()=> (
-	<Box
-		sx={{
-			position: "sticky",
-			top: 0,
-			width: "100%",
-			padding: 2,
-			boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
-		}}
-	>
-		top
-	</Box>
-)
+type LeftNavigationProps = SidebarMenuProps & {
+    type: 'box' | 'drawer'
+    end?: NavLinkItem[]
+}
 
 
 /**
- * 
+ * Базовый выдвижной список
  * Можно передавать onChange которая для каждого выполнится выбранного.  
  * * так же у каждого item может быть свой comand()
  */
-export default function SidebarMenu({ collapsed, items, onChange }: SidebarMenuProps) {
+export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps) {
     const theme = useTheme();
     const colorSelect = theme.palette.action.active;
     const [openMenus, setOpenMenus] = useState({});
@@ -58,73 +50,71 @@ export default function SidebarMenu({ collapsed, items, onChange }: SidebarMenuP
         setAnchorEl(event.currentTarget);
         setCurrentChildren(children.map(child => ({ ...child, parentId }))); // Добавляем parentId к детям
     }
+    const handlerClick =(event, item)=> {
+        if(!item.children) handleItemClick(item);
+        else if (item.children) {
+            if (collapsed) {
+                handleOpenPopover(event, item.children, item.id);
+            } 
+            else handleToggle(item.id);
+        }
+    }
     const handleClosePopover = () => {
         setAnchorEl(null);
         setCurrentChildren([]);
     }
-
+    
 
     return (
-        <Drawer
-            variant="permanent"
-            sx={{
-                width: collapsed ? 60 : 200,
-                flexShrink: 0,
-                "& .MuiDrawer-paper": {
-                    width: collapsed ? 60 : 200,
-                    transition: "width 0.3s",
+        <React.Fragment>
+            <Box sx={sx ?? { 
+                    display: "flex", 
+                    flexDirection: "column",
+                    overflowY: "auto", 
                     overflowX: "hidden",
-                    overflowY: "auto",
-                    backgroundColor: (theme) => alpha(theme.palette.background.paper, 1),
-                },
-            }}
-        >
-            <Box sx={{ flexGrow: 1, overflowY: "auto", overflowX: "hidden" }}>
+                    ...theme.elements.scrollbar
+                }}
+            >
                 <List>
                     { items.map((item, index) => (
                         <React.Fragment key={index}>
+                            {/* разделитель */}
                             { item.divider && 
                                 item.divider === true 
-                                    ? <Divider sx={{mt:1, mb:1}}/>
+                                    ? <Divider sx={{mt:1, mb:1, borderStyle: 'dashed'}}/>
                                     : item.divider
                             }
 
-                            {!item.divider && (
+                            {/* элемент */}
+                            { !item.divider && (
                                 <React.Fragment>
                                     <ListItemButton
-                                        onClick={(event) => {
-                                            if (item.comand) {
-                                                handleItemClick(item);
-                                            }
-                                            if (item.children) {
-                                                if (collapsed) {
-                                                    handleOpenPopover(event, item.children, item.id);
-                                                } 
-                                                else handleToggle(item.id);
-                                            }
-                                        }}
+                                        onClick={(e)=> handlerClick(e, item)}
                                         sx={{
                                             justifyContent: collapsed ? "center" : "flex-start",
                                             px: collapsed ? 0 : 2,
-                                            backgroundColor: selectedItem === item.id ? colorSelect : "transparent",
+                                            backgroundColor: (selectedItem === item.id||activeParent === item.id) ? colorSelect : "transparent",
                                         }}
                                     >
                                         <ListItemIcon sx={{ minWidth: collapsed ? "auto" : 36, color: "gray" }}>
-                                            {item.children && collapsed ? (
+                                            {collapsed && item?.state?.badge ? (
                                                 <Badge
+                                                    badgeContent={item.state.badge}
                                                     color="primary"
-                                                    variant={activeParent === item.id ? "dot" : "standard"}
+                                                    variant="standard"
                                                 >
-                                                    {item.icon}
+                                                    { item.icon }
                                                 </Badge>
                                             ) : (
                                                 item.icon
                                             )}
                                         </ListItemIcon>
 
-                                        {!collapsed && <ListItemText primary={item.label} />}
+                                        { !collapsed && 
+                                            <ListItemText primary={item.label} />
+                                        }
 
-                                        {!collapsed && item.children && 
+                                        { !collapsed && item.children && 
                                             (openMenus[item.id] 
                                                 ? <ExpandLess /> 
                                                 : <ExpandMore />
@@ -132,6 +122,7 @@ export default function SidebarMenu({ collapsed, items, onChange }: SidebarMenuP
                                         }
                                     </ListItemButton>
 
+                                    {/* вложенные children */}
                                     {!collapsed && item.children && (
                                         <Collapse in={openMenus[item.id]} timeout="auto" unmountOnExit>
                                             <List component="div" disablePadding>
@@ -191,6 +182,50 @@ export default function SidebarMenu({ collapsed, items, onChange }: SidebarMenuP
                     </MenuItem>
                 ))}
             </Menu>
-        </Drawer>
+        </React.Fragment>
+    );
+}
+
+
+
+
+export default function BaseLeftSideBar({ collapsed, items, onChange, end }: LeftNavigationProps) {
+    const theme = useTheme();
+    const styleEnd = { 
+        borderTop: `1px dotted ${theme.palette.divider}`,
+        backdropFilter: "blur(14px)",
+        backgroundColor: darken(theme.palette.background.paper, 0.15),
+        ...theme.elements.scrollbar
+    }
+
+    
+    return(
+        <Box component='div'
+            sx={{
+                width: collapsed ? 60 : 200,
+                display: 'flex',
+                flexDirection: 'column',
+                maxHeight: '100%',
+                overflowY: 'auto',
+                justifyContent: 'space-between',
+                backgroundColor: (theme)=> alpha(theme.palette.background.paper, 1)
+            }}
+        >
+            <SidebarMenu
+                collapsed={collapsed}
+                items={items}
+                onChange={onChange}
+            />
+            {/* низ */}
+            {end &&
+                <SidebarMenu
+                    collapsed={collapsed}
+                    sx={styleEnd}
+                    items={end}
+                    onChange={onChange}
+                />
+            }
+
+        </Box>
     );
 }

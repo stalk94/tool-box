@@ -1,4 +1,4 @@
-import { createTheme, PaletteOptions } from "@mui/material/styles";
+import { createTheme, PaletteOptions, ThemeOptions, Theme } from "@mui/material/styles";
 
 
 declare module '@mui/material/styles' {
@@ -39,14 +39,27 @@ declare module '@mui/material/styles' {
 }
 
 
+
 // глобальные стили для элементов
 const elements = {
     input: {
         fontStyle: "italic",
         variant: <undefined|"fullWidth"|"inset"|"middle"> 'middle',
         alight: <'center'|undefined> undefined
+    },
+    scrollbar: {
+        "&::-webkit-scrollbar": {
+            width: "3px",
+        },
+        "&::-webkit-scrollbar-thumb": {
+            backgroundColor: "#7e7e7e",
+        },
+        "&::-webkit-scrollbar-track": {
+            background: "#2e2e2e",
+        }
     }
 }
+
 
 export const darkTheme = createTheme({
     elements,

@@ -3,7 +3,9 @@ import { Check, ExpandMore, ChevronRight } from "@mui/icons-material";
 import { MenuItem, ListItemIcon, List, ListItemText, ListItem, Collapse, Box, Divider, useTheme } from "@mui/material";
 
 
-
+export type StateNavLinks = {
+    badge?: number 
+}
 export interface NavLinkItem {
     id: string
     label?: string
@@ -12,6 +14,8 @@ export interface NavLinkItem {
     select?: any
     comand?: (item: any) => void
     divider?: React.ReactNode | boolean
+    /** ℹ️ можно передавать доп данные элемента */
+    state?: StateNavLinks
     children?: NavLinkItem[]
 }
 export type MobailMenuProps = {
@@ -107,7 +111,7 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                                         { childItem.icon }
                                     </ListItemIcon>
                                 }
-                                <ListItemText primary={childItem.label} />
+                                <ListItemText secondary={childItem.label} />
                                 {/* выбранный элемент */}
                                 { childItem.select && renderChek }
                             </ListItem>
