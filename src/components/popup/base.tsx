@@ -1,0 +1,82 @@
+import React, { useState, ReactNode, ReactElement } from "react";
+import { Menu, Divider } from "@mui/material";
+import ItemsList, { NavLinkItem } from './menuItem';
+import { alpha, styled } from '@mui/material/styles';
+
+
+type CustomMenuProps = {
+    children: ReactNode
+    items: NavLinkItem[]
+    /** ❔ слушатель срабатываюший при закрытии/открытии панели */
+    onOpenClose?: (value: boolean)=> void
+    /** 🔥 Функция которая ставит свойство(select: true) на выбранный элемент */
+    onSelect?: (item: NavLinkItem)=> void
+}
+
+
+
+export default function({ children, items, onOpenClose, onSelect }: CustomMenuProps) {
+    const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+    const open = Boolean(anchorEl);
+
+
+    const handleOpen = (event: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(event.currentTarget);
+        if(onOpenClose) onOpenClose(true);
+    }
+    const handleClose = () => {
+        setAnchorEl(null);
+        if(onOpenClose) onOpenClose(false);
+    }
+    // Проверяем, что children - это элемент, с которым можно работать
+    const childWithProps = (React.isValidElement(children)
+        ? React.cloneElement(children as ReactElement, {
+            onClick: (event: React.MouseEvent<HTMLElement>) => {
+                handleOpen(event);                                      // Открытие меню
+                if ((children as ReactElement).props.onClick) {
+                    (children as ReactElement).props.onClick(event);    // Вызов оригинального onClick
+                }
+            },
+        })
+        : children
+    );
+
+
+    return (
+        <React.Fragment>
+            {/* Обертываем переданный children с добавлением onClick */}
+            { childWithProps }
+
+            {/* Меню */}
+            <Menu elevation={2}
+                anchorEl={anchorEl} 
+                open={open} 
+                onClose={handleClose}
+                sx={{
+                    mt: 0.5,
+                    "& .MuiPaper-root": {
+                        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.1),
+                        backdropFilter: "blur(14px)", // Размытие для эффекта стекла
+                    }
+                }}
+                PaperProps={{
+                    style: {
+                        maxHeight: '70vh',
+                        minWidth: '200px'
+                    },
+                }}
+            >
+                { items.map((item, index) => (
+                    <ItemsList 
+                        key={index}
+                        item={item}
+                        onItemClick={(item)=> { 
+                            onSelect && onSelect(item);
+                            handleClose(); 
+                        }}
+                    />
+                ))}
+            </Menu>
+        </React.Fragment>
+    );
+}

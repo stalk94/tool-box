@@ -96,6 +96,12 @@ const Templates =(args)=> {
                 left={<Person />}
                 label={'Login:'}
             />
+             <LabelSelect
+                onChange={console.log}
+                {...args}
+                items={[{value:'1', label:'test'},{value:'2', label:'test2'},{value:'3', label:'test3'}]}
+                placeholder='Выбрать'
+            />
             <LabelPassword
                 onChange={console.log}
                 useVerify={validatePass}
@@ -113,12 +119,6 @@ const Templates =(args)=> {
                 useVerify={validatePhone}
                 onChange={console.log}
                 {...args}
-            />
-            <LabelSelect
-                onChange={console.log}
-                {...args}
-                items={[{value:'1', label:'test'},{value:'2', label:'test2'},{value:'3', label:'test3'}]}
-                placeholder='Выбрать'
             />
         </div>
     );

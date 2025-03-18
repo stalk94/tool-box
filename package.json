@@ -14,6 +14,9 @@
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "primeicons": "^7.0.0",
+    "primereact": "^10.9.3",
+    "styled-components": "^6.1.15",
     "@chromatic-com/storybook": "^3.2.5",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -54,9 +57,6 @@
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.2",
     "express": "^4.21.1",
-    "nodemon": "^3.1.9",
-    "primeicons": "^7.0.0",
-    "primereact": "^10.9.3",
-    "styled-components": "^6.1.15"
+    "nodemon": "^3.1.9"
   }
 }

@@ -5,6 +5,25 @@ import { CssBaseline } from "@mui/material";
 import { withConsole } from '@storybook/addon-console';
 import type { Preview } from "@storybook/react";
 
+// Кастомные цвета логов
+const customConsole = {
+  log: (...args: unknown[]) => console.log("🟢 LOG:", ...args),
+  warn: (...args: unknown[]) => console.warn("🟠 WARN:", ...args),
+  error: (...args: unknown[]) => console.error("🔴 ERROR:", ...args),
+  info: (...args: unknown[]) => console.info("🔵 INFO:", ...args),
+};
+
+
+// Декоратор с кастомным логированием
+const withCustomConsole = (Story, context) => 
+  withConsole({
+    log: customConsole.log,
+    warn: customConsole.warn,
+    error: customConsole.error,
+    info: customConsole.info,
+})(Story)(context);
+
+
 const preview: Preview = {
   globalTypes: {
     theme: {
@@ -19,16 +38,16 @@ const preview: Preview = {
     },
   },
   decorators: [
+    withCustomConsole,
     (Story, context) => {
       const theme = context.globals.theme === "dark" ? darkTheme : lightTheme;
-
-      return withConsole()(() => (
+      return (
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <Story />
         </ThemeProvider>
-      ))(context);
-    }
+      );
+    },
   ],
   parameters: {
     layout: "fullscreen",

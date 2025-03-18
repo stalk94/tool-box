@@ -3,7 +3,8 @@ import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Divider, Box, } from "@mui/material";
-import { NavLinkItem, DesktopNestedMenuItem, NavMenu } from './fragment';
+import { DesktopNestedMenuItem, NavMenu } from './fragment';
+import { NavLinkItem } from '../popup/menuItem';
 
 
 const OverflowNavigationItems =({ hiddenItems }: { hiddenItems: NavLinkItem[] })=> {
@@ -106,7 +107,7 @@ export default function NavigationItemsDesktop({ items }: { items: NavLinkItem[]
                             </Button>
                         ) 
                         : item.icon ? (
-                            <IconButton 
+                            <IconButton
                                 color="inherit" 
                                 onClick={() => item.comand?.(item)}
                             >

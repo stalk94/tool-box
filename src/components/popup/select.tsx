@@ -1,26 +1,24 @@
 import React from 'react';
-import { NativeSelect, styled, useTheme } from '@mui/material';
+import {  Menu, useTheme, alpha, Box } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import Select, { SelectChangeEvent, SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
-import { InputPaper } from './input/input.any';
-import '../style/index.css';
+import { InputPaper } from '../input/input.any';
+import ItemsList, { NavLinkItem } from './menuItem';
+//import '../style/index.css';
 
 
-type ItemsSelect = {
-    value: any
-    label: any
-}
+
 type PropsSelect = {
     value: any
     onChange?: (newValue: string)=> void
-    items: ItemsSelect[]
+    items: NavLinkItem[]
     label?: string
 }
 export type BaseSelectProps = {
     value: any
     onChange?: (newValue: string)=> void
-    items: ItemsSelect[]
+    items: NavLinkItem[]
     placeholder?: string
     position?: 'start' | 'end'
     variant: "fullWidth" | "inset" | "middle"
@@ -32,30 +30,16 @@ type CustomSelectProps = PropsSelect & SelectProps;
 
 function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) {
     const theme = useTheme();
+    const [width, setWidth] = React.useState('200px');
     const [isOpen, setIsOpen] = React.useState(false);
-    const [selectedValue, setSelectedValue] = React.useState(value);
-    const [isHovered, setIsHovered] = React.useState(false);
-    const selectRef = React.useRef<HTMLDivElement>(null);
+    const [selected, setSelected] = React.useState(value);
+    const selectRef = React.useRef(null);
 
     const base = {
-        position: 'relative',
         width: '100%',
         height: '100%',
         display: 'flex',
         flexDirection: 'row'
-    }
-    const dropdown = {
-        position: 'absolute',
-        borderRadius: '3px',
-        top: '100%',
-        left: 0,
-        width: '100%',
-        padding: 0,
-        marginTop: '5px',
-        listStyle: 'none',
-        borderTop: 'none',
-        overflowY: 'auto',
-        zIndex: 10
     }
 
 
@@ -66,25 +50,32 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
     const handleToggleDropdown =()=> {
         if(!props.disabled) setIsOpen(!isOpen);
     }
-    const handleSelectItem =(itemValue: string, itemLabel: string)=> {
-        setSelectedValue(itemValue);
-        if(onChange) onChange(itemValue);
+    const handleSelectItem =(item)=> {
+        setSelected(item);
+        if(onChange) onChange(item);
         setIsOpen(false);
     }
     React.useEffect(()=> {
-        const handleClickOutside =(event: MouseEvent)=> {
-            if(selectRef.current && !selectRef.current.contains(event.target as Node)) {
-                setIsOpen(false);
+        const observer = new ResizeObserver(() => {
+            if (selectRef.current) {
+                setWidth(selectRef.current.getBoundingClientRect().width);
             }
-        };
-    
-        document.addEventListener('mousedown', handleClickOutside);
-        return ()=> document.removeEventListener('mousedown', handleClickOutside);
+        });
+      
+        if (selectRef.current) {
+            observer.observe(selectRef.current);
+        }
+
+        return ()=> {
+            if (selectRef.current) {
+                observer.unobserve(selectRef.current);
+            }
+        }
     }, []);
 
 
     return(
-        <div style={base} ref={selectRef}>
+        <Box component='div' style={base} ref={selectRef}>
             <div className="selected"
                 onClick={handleToggleDropdown}
                 style={{
@@ -97,7 +88,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                     height: '100%',
                     padding: 'auto',
                     margin: '6px',
-                    color: theme.palette.text.secondary
+                    color: selected ? theme.palette.text.primary : theme.palette.text.secondary
                 }}
             >
                 <div style={{
@@ -105,8 +96,8 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                         fontSize: '16px'
                     }}
                 >
-                    { selectedValue && items.find((item)=> item.value === selectedValue)?.label } 
-                    { !selectedValue &&  chekLabel() }
+                    { selected && items.find((item)=> item.id === selected.id)?.label } 
+                    { !selected &&  chekLabel() }
                 </div>
                 <div
                     style={{
@@ -124,29 +115,33 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                             fontSize: '1.8rem',
                             transition: 'transform 0.3s ease',
                             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
+                            color: !isOpen ? theme.palette.text.primary : theme.palette.text.secondary
                         }} 
                     /> 
                 </div>
             </div>
-            { isOpen &&
-                <ul className='dropdown' style={{...dropdown, background: theme.palette.background.paper }} >
-                    { items.map((item)=> (
-                        <li key={item.value}
-                            onClick={()=> handleSelectItem(item.value, item.label)}
-                            style={{
-                                backgroundColor: selectedValue === item.value ? theme.palette.action.active : 'none',
-                                border: selectedValue === item.value && `1px dotted ${theme.palette.primary.dark}`,
-                                borderRadius: '3px',
-                                color: theme.palette.text.secondary,
-                                cursor: 'pointer',
-                            }}
-                        >
-                            { item.label }
-                        </li>
-                    ))}
-                </ul>
-            }
-        </div>
+            <Menu elevation={2}
+                anchorEl={selectRef.current}
+                open={isOpen}
+                onClose={() => setIsOpen(false)}
+                sx={{
+                    mt: 0.5,
+                    "& .MuiPaper-root": {
+                        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.1),
+                        backdropFilter: "blur(14px)",
+                    }
+                }}
+                PaperProps={{ style: { maxHeight: '70vh', minWidth: '200px', width: width } }}
+            >
+                {items.map((item, index)=> 
+                    <ItemsList
+                        key={index}
+                        item={item}
+                        onItemClick={handleSelectItem}
+                    />
+                )}
+            </Menu>    
+        </Box>
     );
 }
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
-import Selects from '../components/select';
+import Selects from '../components/popup/select';
 import { colors } from "../components/button";
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 
@@ -53,7 +53,7 @@ export const Select: Story = {
         disabled: false,
         error: false,
         borderStyle: 'solid',
-        items: [{value:'1', label:'test'},{value:'2', label:'test2'},{value:'3', label:'test3'}]
+        items: [{id:'1', label:'test'},{id:'2', label:'test2'},{id:'3', label:'test3'}]
     },
     render: (props)=> <Templates {...props} />
 }
