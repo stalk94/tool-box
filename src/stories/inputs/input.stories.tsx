@@ -14,7 +14,7 @@ const types = [
 
 const meta: Meta<typeof Inputs.Input> = {
     title: 'Inputs',
-    component: Inputs.Base,
+    component: Inputs.Input,
     argTypes: {
         variant: {
             control: "select",

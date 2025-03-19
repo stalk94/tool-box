@@ -2,12 +2,13 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, LabelSelect } from '../../components/input/labels.inputs';
 import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
+import { Button } from '@mui/material';
 
 
 
 const meta: Meta<typeof LabelLogin> = {
     title: 'Inputs',
-    component: LabelLogin,
+    component: '',
     argTypes: {
         position: {
             control: "select",
@@ -128,6 +129,7 @@ const Templates =(args)=> {
 type Story = StoryObj<typeof LabelLogin>;
 export const All: Story = {
     args: {
+        disabled: false,
         position: 'column',
         placeholder: 'min 10 simbol',
         label: 'Test:'

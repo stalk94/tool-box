@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import SelectButton from '../components/popup/select.button';
-import Buttons, {colors, variants} from '../components/button';
+import {colors, variants} from '../components/button';
 import { Home, Settings, Info } from "@mui/icons-material";
 
 

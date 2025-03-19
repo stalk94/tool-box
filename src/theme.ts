@@ -88,12 +88,13 @@ export const darkTheme = createTheme({
             default: '#2c303d',
             sidenav: "#1f283e",
             card: "#202940",
-            paper: "#3b3b3ba8",
-            input: "#3b3b3ba8",      // цвет фона всех инпутов, селектов
+            paper: "rgb(63, 63, 63)",
+            input: "rgba(59, 59, 59, 0.01)",      // цвет фона всех инпутов, селектов #3b3b3ba8
             navBar: "#86898d61"
         },
+        // это управляет цветами обводок инпутов
         action: {
-            active: '#ffffff21'
+            active: 'rgba(255, 255, 255, 0.25)'  
         }
     },
 });

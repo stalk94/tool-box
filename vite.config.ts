@@ -5,11 +5,5 @@ import reactDocgenTypescript from "@joshwooding/vite-plugin-react-docgen-typescr
 
 
 export default defineConfig({
-    plugins: [react(), reactDocgenTypescript()],
-    server: {
-        headers: {
-            "Cross-Origin-Opener-Policy": "same-origin",
-            "Cross-Origin-Embedder-Policy": "require-corp",
-        },
-    }
+    plugins: [react()]
 });

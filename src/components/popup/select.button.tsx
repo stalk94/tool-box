@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, ButtonProps } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
 import ItemsList, { NavLinkItem } from '../menu/list';
-import { SelectMenu } from '../menu/select-menu';
+import { SelectMenu } from '../menu/atomize';
 
 
 

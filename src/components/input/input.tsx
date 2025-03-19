@@ -5,7 +5,8 @@ import InputBase, { InputBaseProps } from '@mui/material/InputBase';
 import { VisibilityOff, Visibility, Done, Close, Add, Remove } from '@mui/icons-material';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { DatePickerCustom } from './input.date';
-import { EmailInput, PhoneInput, ColorPicker, InputPaper, InputBaseCustom } from './input.any';
+import { EmailInput, PhoneInput, ColorPicker } from './input.any';
+import { InputPaper, InputBaseCustom  } from './atomize';
 
 
 export type VerifyHook = {
@@ -29,7 +30,7 @@ export type BaseInputProps = {
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
 export type PasswordInputProps = {
-    onVerify: (value: string)=> void
+    onVerify?: (value: string)=> void
     helperText?: string
 } & VerifyHook & BaseInputProps
 export type NumberinputProps = {

@@ -6,9 +6,6 @@ import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-m
 import Button, { ButtonProps } from '@mui/material/Button';
 
 
-type ButtonPropsCustom = ButtonProps & {
-    icon?: 'delete' | 'done' | 'favorite' | 'send' | 'settings' | 'close' | 'add' | React.ReactNode
-};
 type BadgeIconProps = {
     value: React.ReactNode
 } & BadgeProps
@@ -27,28 +24,6 @@ const icons = {
 }
 
 
-
-function Base({ children, variant, color, icon, ...props }: ButtonPropsCustom) {
-    const theme = useTheme();
-
-    const getIcon =(icon)=> {
-        if(icon) {
-            if(typeof icon==='string') return icons[icon];
-            else return icon;
-        }
-    }
-
-    return(
-        <Button 
-            startIcon={getIcon(icon)}
-            variant={variant}
-            color={color}
-            {...props}
-        >
-            { children }
-        </Button>
-    );
-}
 function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
     const CartBadge = styled(Badge)`
         & .${badgeClasses.badge} {
@@ -68,7 +43,7 @@ function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
 }
 
 
+
 export default {
-    Button: Base,
     Badge: BadgeIcon
 }

@@ -1,0 +1,88 @@
+import React, { useState } from 'react';
+import { InputBase, Paper, useTheme, InputBaseProps } from '@mui/material';
+import { alpha, lighten, darken } from '@mui/system';
+
+
+
+// БАЗОВАЯ ФОРМА(фон подложка) ИНПУТОВ
+export function InputPaper({ children, ...props }) {
+    const theme = useTheme();
+
+    const getColorBorder =()=> {
+        if(props.error) return theme.palette.error.light;
+        else if(props.disabled) return theme.palette.action.disabled;
+        else if(props.success) return theme.palette.success.light;
+        else return theme.palette.action.active;
+    }
+    const useBorderColor =()=> {
+        const border = props?.borderStyle ?? 'solid';
+        
+        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
+        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
+        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
+        else return `1px ${border} ${theme.palette.action.active}`;
+    }
+
+
+    return(
+        <Paper
+            sx={{
+                //background: '#00000000',
+                backgroundColor: alpha(theme.palette.background.input, 0.1),
+                minHeight: '42px',
+                minWidth: '190px',
+                opacity: props.disabled && 0.6,
+                border: useBorderColor(),
+                display: 'flex',
+                alignItems: 'center',
+                boxShadow: 0,
+                backdropFilter: "blur(6px)",
+                transition: 'background-color 0.3s',
+                '&:focus-within': { 
+                    borderColor: lighten(getColorBorder(), 0.3),
+                    backgroundColor: alpha('rgb(221, 235, 238)', 0.1)
+                }
+            }}
+        >
+            { children }
+        </Paper>
+    );
+}
+
+
+// базовая форма ввода
+export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
+    const theme = useTheme();
+
+    const filteredProps =()=> {
+        const clone = structuredClone(props);
+        delete clone.borderStyle;
+        return clone;
+    }
+
+    return(
+        <InputBase
+            placeholder={props.placeholder}
+            type={type}
+            value={value}
+            sx={{ 
+                minWidth: '105px',
+                flex: 1, 
+                pl: props?.pl ?? '5px',
+                '& input::placeholder': {
+                    color: theme.palette.placeholder.main,
+                    opacity: 1,
+                    fontStyle: theme.elements.input.fontStyle
+                },
+                '& textarea::placeholder': {
+                    color: theme.palette.placeholder.main,  
+                    opacity: 1,
+                    fontStyle: theme.elements.input.fontStyle
+                },
+            }}
+            inputProps={{style: {textAlign: theme.elements.input.alight}}}
+            onChange={(e)=> onChange && onChange(e.target.value)}
+            { ...filteredProps() }
+        />
+    );
+}

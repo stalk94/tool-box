@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { AlertProvider, useAlert } from '../components/alert';
-import Buttons from '../components/button';
+import { Button } from '@mui/material';
 
 
 const meta: Meta<typeof AlertProvider> = {
@@ -43,13 +43,13 @@ const TestComponent =()=> {
 
     return (
         <div>
-            <Buttons.Button 
+            <Button 
                 color='success' 
                 variant='outlined' 
                 onClick={useTextGet}
             >
                 Add Alert
-            </Buttons.Button>
+            </Button>
         </div>
     );
 }

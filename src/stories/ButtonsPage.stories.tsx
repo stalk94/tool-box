@@ -1,9 +1,9 @@
 import React from "react";
-import { IconButton } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import type { Meta, StoryObj } from "@storybook/react";
-import Buttons, { colors } from "../components/button";
+import { colors } from "../components/button";
 import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-material';
-const Button = Buttons.Button;
+
 
 
 const icons = {
@@ -18,9 +18,6 @@ const icons = {
 const meta: Meta = {
     title: 'Buttons',
     component: Button,
-    parameters: {
-        layout: "centered",
-    },
     argTypes: {
         icon: {
             control: "select",
@@ -33,7 +30,8 @@ export default meta;
 
 const Templates =(args)=> {
     return(
-        <div>
+        <div style={{width: '100%', height:'100%', display:'flex', flexDirection:'column'}}>
+            <div style={{margin:'auto'}}>
             <div style={{marginBottom:'2%'}}>
                 { colors.map((color, index)=>
                     <Button style={{margin:'5px'}} key={index} variant='contained' color={color} icon={icons[args.icon]}>
@@ -73,6 +71,7 @@ const Templates =(args)=> {
                         { elem }
                     </IconButton>
                 )}
+            </div>
             </div>
         </div>
     );

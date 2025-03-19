@@ -3,8 +3,8 @@ import type { StorybookConfig } from "@storybook/react-vite";
 
 const config: StorybookConfig = {
 	stories: [
-		"../src/**/*.mdx",
-		"../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"
+		'../src/**/*.stories.@(js|jsx|mjs|ts|tsx)',
+		'../src/**/*.mdx', 
 	],
 	addons: [
 		'@storybook/addon-viewport',
@@ -24,11 +24,16 @@ const config: StorybookConfig = {
 		reactDocgen: 'react-docgen-typescript',
 		reactDocgenTypescriptOptions: {
 			shouldExtractLiteralValuesFromEnum: true,
+			shouldRemoveUndefinedFromOptional: true,
 			propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
+			compilerOptions: {
+				allowSyntheticDefaultImports: false,
+				esModuleInterop: false,
+			},
 		}
 	},
 	docs: {
-		autodocs: 'tag'
+		
 	}
 };
 export default config;

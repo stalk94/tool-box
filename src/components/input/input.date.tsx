@@ -8,7 +8,7 @@ import { MobileDatePicker } from '@mui/x-date-pickers/MobileDatePicker';
 import { MobileTimePicker } from '@mui/x-date-pickers/MobileTimePicker';
 import { DateField, DateFieldProps, TimeField } from '@mui/x-date-pickers';
 import { CalendarMonth, AccessTime } from '@mui/icons-material';
-import { InputPaper } from './input.any';
+import { InputPaper } from './atomize';
 import 'dayjs/locale/ru';
 
 

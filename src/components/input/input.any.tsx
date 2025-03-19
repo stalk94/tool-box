@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { Paper, InputBase, InputLabel, IconButton, Divider, FormHelperText, Dialog, InputBaseProps } from '@mui/material';
-import { Email, Phone, FileCopy, AlternateEmail } from '@mui/icons-material';
+import { IconButton, Divider, FormHelperText, Dialog, InputBaseProps } from '@mui/material';
+import { Phone, FileCopy, AlternateEmail } from '@mui/icons-material';
 import { ChromePicker } from 'react-color';
 import { useTheme } from '@mui/material/styles';
-
+import { InputPaper, InputBaseCustom } from './atomize';
 
  
 export type EmailInputProps = InputBaseProps & {
@@ -31,73 +31,6 @@ export type PhoneInputProps = InputBaseProps & {
     }
 }
 
-// форма инпутов
-export function InputPaper({ children, ...props }) {
-    const theme = useTheme();
-
-    const chek =()=> {
-        const border = props?.borderStyle ?? 'solid';
-
-        if(props.error) return `1px ${border} ${theme.palette.error.light}`;
-        else if(props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else if(props.success) return `1px ${border} ${theme.palette.success.light}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
-    }
-
-
-    return(
-        <Paper
-            sx={{
-                backgroundColor: theme.palette.background.input,
-                minHeight: '42px',
-                minWidth: '100px',
-                opacity: props.disabled && 0.6,
-                border: chek(),
-                display: 'flex',
-                alignItems: 'center',
-                boxShadow: 2
-            }}
-        >
-            { children }
-        </Paper>
-    );
-}
-// базовая форма ввода
-export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
-    const theme = useTheme();
-
-    const filteredProps =()=> {
-        const clone = structuredClone(props);
-        delete clone.borderStyle;
-        return clone;
-    }
-
-    return(
-        <InputBase
-            placeholder={props.placeholder}
-            type={type}
-            value={value}
-            sx={{ 
-                minWidth: '105px',
-                flex: 1, 
-                pl: props?.pl ?? '5px',
-                '& input::placeholder': {
-                    color: theme.palette.placeholder.main,
-                    opacity: 1,
-                    fontStyle: theme.elements.input.fontStyle
-                },
-                '& textarea::placeholder': {
-                    color: theme.palette.placeholder.main,  
-                    opacity: 1,
-                    fontStyle: theme.elements.input.fontStyle
-                },
-            }}
-            inputProps={{style: {textAlign: theme.elements.input.alight}}}
-            onChange={(e)=> onChange && onChange(e.target.value)}
-            { ...filteredProps() }
-        />
-    );
-}
 
 
 

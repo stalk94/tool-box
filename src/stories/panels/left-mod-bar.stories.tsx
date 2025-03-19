@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { Home, Settings, Menu, Logout, VerifiedUser, CloudCircle } from "@mui/icons-material";
 import SideBarAndToolPanel from '../../components/nav-bars/tool-left';
 import { Paper, Box } from '@mui/material';
-import Buttons from '../../components/button';
+
 
 
 
@@ -59,7 +59,6 @@ const Templates =(args)=> {
     ];
     const childtools = [
         <Box/>,
-        <Buttons.Button>test</Buttons.Button>,
         < CloudCircle />,
         <Paper />,
         <h3 style={{color:'green'}}>Инструменты для</h3>,

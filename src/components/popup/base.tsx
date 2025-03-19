@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, ReactElement } from "react";
 import ItemsList, { NavLinkItem } from '../menu/list';
-import { SelectMenu } from '../menu/select-menu';
+import { SelectMenu } from '../menu/atomize';
 
 
 
