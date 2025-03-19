@@ -32,7 +32,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
     const [width, setWidth] = React.useState('200px');
     const [isOpen, setIsOpen] = React.useState(false);
     const [selected, setSelected] = React.useState(value);
-    const selectRef = React.useRef(null);
+    const selectRef = React.useRef<HTMLDivElement>(null);
 
     const base = {
         width: '100%',
@@ -47,7 +47,9 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
         else return 'Выбрать';
     }
     const handleToggleDropdown =()=> {
-        if(!props.disabled) setIsOpen(!isOpen);
+        if(!props.disabled) {
+            setIsOpen(!isOpen);
+        }
     }
     const handleSelectItem =(item)=> {
         setSelected(item);
@@ -74,8 +76,8 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
 
 
     return(
-        <Box component='div' style={base} ref={selectRef}>
-            <div className="selected"
+        <div tabIndex={0} style={base} ref={selectRef}>
+            <div
                 onClick={handleToggleDropdown}
                 style={{
                     cursor: 'pointer',
@@ -120,6 +122,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                 </div>
             </div>
             
+            {/* выпадалка */}
             <SelectMenu
                 anchorEl={selectRef.current}
                 open={isOpen}
@@ -134,7 +137,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                     />
                 )}
             </SelectMenu>    
-        </Box>
+        </div>
     );
 }
 

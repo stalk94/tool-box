@@ -66,7 +66,7 @@ export function LinearNavigation({ items }: { items: NavLinkItem[] }) {
 }
 
 
-
+// ! ему обязательно в схеме нужна `comand`
 export default function Navbar({ start, end, items }: NavbarProps) {
     const theme = useTheme();
 

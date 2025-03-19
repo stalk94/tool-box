@@ -23,7 +23,10 @@ const Templates =(args)=> {
         alignItems: "center",
         width: '100%', 
         opacity: 0.7,
-        mb: 1.5
+        mb: 1.5,
+        whiteSpace: 'nowrap',
+        overflow: 'hidden',
+        textOverflow: 'ellipsis'
     }
 
 
@@ -45,6 +48,7 @@ const Templates =(args)=> {
             </Divider>
 
             <RegForm
+                onRegistration={(state)=> console.log('click registaration', state)}
                 loading={false}
                 scheme={[
                     { placeholder: 'min 6 simbol', type: 'login' },

@@ -15,7 +15,7 @@ export type Schema = {
 export type BaseFormProps = {
     loading: boolean
     scheme: Schema[]
-    onRegistration?: (outScheme: Record<string, string|number>)=> void  
+    onRegistration: (outScheme: Record<string, string|number>)=> void  
     button?: ButtonProps
 }
 
@@ -23,7 +23,7 @@ export type BaseFormProps = {
 // ? сделать error panel и блокировку отправки при non valid
 // ? валидаторы вынести в глобал
 export default function FormRegistration({ scheme, loading, onRegistration, button }: BaseFormProps) {
-    const ref = React.useRef<Record<TypeSchema, boolean|string>>({password: true});
+    const ref = React.useRef<Record<TypeSchema, boolean|string>>({});
     const [isValid, setIsValid] = React.useState(true);
     const [state, setState] = React.useState<Record<TypeSchema, any>>({});
 
@@ -69,12 +69,9 @@ export default function FormRegistration({ scheme, loading, onRegistration, butt
         return find;
     }
     const handlerClickRegistartation =()=> {
-        console.log('click registaration', state);
-        if(onRegistration) onRegistration(state);
+        onRegistration(state);
     }
     const useChangeValue =(name: string, value: any)=> {
-        console.log(name, value);
-
         setState((old)=> {
             old[name] = value;
             return old;
@@ -85,6 +82,7 @@ export default function FormRegistration({ scheme, loading, onRegistration, butt
 
         scheme.map((elem)=> {
             shab[elem.type] = '';
+            ref.current[elem.type] = true;
         });
 
         setState(shab);

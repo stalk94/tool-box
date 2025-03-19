@@ -1,10 +1,18 @@
 import React, { useState } from 'react';
 import { InputBase, Paper, useTheme, InputBaseProps } from '@mui/material';
-import { alpha, lighten, darken } from '@mui/system';
+import { alpha, lighten, darken, styled } from '@mui/system';
+
+
+const AnimatedPaper = styled(Paper)`
+  &:hover {
+    cursor: pointer;
+    background-color: ${alpha('rgb(221, 235, 238)', 0.1)}; // Используем alpha для задания прозрачности
+  }
+`;
 
 
 
-// БАЗОВАЯ ФОРМА(фон подложка) ИНПУТОВ
+// базовая подложка под все инпуты
 export function InputPaper({ children, ...props }) {
     const theme = useTheme();
 
@@ -25,7 +33,7 @@ export function InputPaper({ children, ...props }) {
 
 
     return(
-        <Paper
+        <AnimatedPaper
             sx={{
                 //background: '#00000000',
                 backgroundColor: alpha(theme.palette.background.input, 0.1),
@@ -45,7 +53,7 @@ export function InputPaper({ children, ...props }) {
             }}
         >
             { children }
-        </Paper>
+        </AnimatedPaper>
     );
 }
 

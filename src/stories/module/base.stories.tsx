@@ -90,7 +90,7 @@ const Templates =(args)=> {
         </IconButton>
     );
     const handlerChangeNavigation =(item)=> {
-
+        console.log('left navigation',)
     }
     const handlerChangeTopNavigation =(item)=> {
 
