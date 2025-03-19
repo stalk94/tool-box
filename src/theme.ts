@@ -50,9 +50,11 @@ const elements = {
     scrollbar: {
         "&::-webkit-scrollbar": {
             width: "3px",
+            height: "5px",
         },
         "&::-webkit-scrollbar-thumb": {
             backgroundColor: "#7e7e7e",
+            borderRadius: '7px',
         },
         "&::-webkit-scrollbar-track": {
             background: "#2e2e2e",

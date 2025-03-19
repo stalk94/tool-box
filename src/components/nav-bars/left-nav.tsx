@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Drawer, List, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider, Box, 
+import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider, Box, 
     Menu, MenuItem, Badge, useTheme, alpha, darken
 } from "@mui/material";
 import { BorderTop, ExpandLess, ExpandMore } from "@mui/icons-material";
@@ -12,7 +12,7 @@ type SidebarMenuProps = {
     items: NavLinkItem[]
     sx?: {}
 }
-type LeftNavigationProps = SidebarMenuProps & {
+type LeftNavigationProps = SidebarMenuProps & BoxProps & {
     type: 'box' | 'drawer'
     end?: NavLinkItem[]
 }
@@ -159,7 +159,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                 sx={{ 
                     ml: 0.5,
                     "& .MuiPaper-root": {
-                        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.8),
+                        backgroundColor: (theme)=> alpha(theme.palette.background.paper, 0.8),
                         backdropFilter: "blur(14px)",
                     }
                 }}
@@ -189,7 +189,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
 
 
 
-export default function BaseLeftSideBar({ collapsed, items, onChange, end }: LeftNavigationProps) {
+export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }: LeftNavigationProps) {
     const theme = useTheme();
     const styleEnd = { 
         borderTop: `1px dotted ${theme.palette.divider}`,
@@ -202,6 +202,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end }: Lef
     return(
         <Box component='div'
             sx={{
+                ...sx,
                 width: collapsed ? 60 : 200,
                 display: 'flex',
                 flexDirection: 'column',

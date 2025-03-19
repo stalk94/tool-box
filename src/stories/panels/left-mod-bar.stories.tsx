@@ -2,8 +2,8 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { Home, Settings, Menu, Logout, VerifiedUser, CloudCircle } from "@mui/icons-material";
 import SideBarAndToolPanel from '../../components/nav-bars/tool-left';
-import { Divider, Box } from '@mui/material';
-
+import { Paper, Box } from '@mui/material';
+import Buttons from '../../components/button';
 
 
 
@@ -59,7 +59,11 @@ const Templates =(args)=> {
         { id: "8", label: "Выход", icon: <Logout /> }
     ];
     const childtools = [
-        <h3>Инструменты для</h3>,
+        <Box/>,
+        <Buttons.Button>test</Buttons.Button>,
+        < CloudCircle />,
+        <Paper />,
+        <h3 style={{color:'green'}}>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
         <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
@@ -81,7 +85,15 @@ const Templates =(args)=> {
         <p>Дополнительные инструменты для выбранного пункта меню.</p>
     ];
 
+    const keyAdd =(children)=> {
+        return React.Children.map(children, (child, index) => {
+            if (React.isValidElement(child)) {
+                return React.cloneElement(child, { key: index });
+            }
+        });
+    }
     
+
     return(
         <Box sx={{
                 height: '100%',
@@ -89,9 +101,9 @@ const Templates =(args)=> {
                 flexDirection: 'column'
             }}
         >
-            <div>top</div>
-            
+            <div>head</div>
             <SideBarAndToolPanel
+                sx={{height: '100%'}}
                 schemaNavBar={{
                     items: args.max ? [...menuItems, ...dop] : menuItems,
                     end: args.ends && endItems
@@ -99,12 +111,13 @@ const Templates =(args)=> {
                 onChangeNavigation={console.log}
                 {...args}
             >
-                { args.max ? childtools : childtools.slice(0, 6) }
+                
+                <div style={{paddingLeft: '10px',}}>
+                    { args.max ? keyAdd(childtools) : keyAdd(childtools.slice(0, 6)) }
+                    
+                </div>
             </SideBarAndToolPanel>
-
-            <div>bottom</div>
-            <div>bottom</div>
-            <div>bottom</div>
+            <div>footer</div>
         </Box>
     );
 }

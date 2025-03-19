@@ -70,6 +70,7 @@ const Templates =(args)=> {
             <div>top</div>
             <div>top</div>
             <BaseLeftSideBar
+                sx={{height:'100%'}}        // занять всю область по ширине
                 items={args.max ? [...menuItems, ...dop] : menuItems}
                 end={args.ends && endItems}
                 onChange={console.log}

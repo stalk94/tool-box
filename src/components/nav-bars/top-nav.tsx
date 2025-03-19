@@ -4,7 +4,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { AppBar, Toolbar, Divider, Box, useTheme, alpha, lighten } from "@mui/material";
 import { NavMenu } from './fragment';
 import { NavLinkItem } from '../popup/menuItem';
-import NavigationItemsDesktop from './nav-desctop';
+import NavigationItemsDesktop from './fragment-desctop';
 
 
 type NavbarProps = {
