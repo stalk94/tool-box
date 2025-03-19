@@ -4,9 +4,8 @@ import Divider from '@mui/material/Divider';
 import Select, { SelectChangeEvent, SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
 import { InputPaper } from '../input/input.any';
-import ItemsList, { NavLinkItem } from './menuItem';
-//import '../style/index.css';
-
+import { SelectMenu } from '../menu/select-menu';
+import ItemsList, { NavLinkItem } from '../menu/list';
 
 
 type PropsSelect = {
@@ -120,27 +119,21 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                     /> 
                 </div>
             </div>
-            <Menu elevation={2}
+            
+            <SelectMenu
                 anchorEl={selectRef.current}
                 open={isOpen}
-                onClose={() => setIsOpen(false)}
-                sx={{
-                    mt: 0.5,
-                    "& .MuiPaper-root": {
-                        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.1),
-                        backdropFilter: "blur(14px)",
-                    }
-                }}
-                PaperProps={{ style: { maxHeight: '70vh', minWidth: '200px', width: width } }}
+                handleClose={()=> setIsOpen(false)}
+                width={width}
             >
-                {items.map((item, index)=> 
+                { items.map((item, index)=> 
                     <ItemsList
                         key={index}
                         item={item}
                         onItemClick={handleSelectItem}
                     />
                 )}
-            </Menu>    
+            </SelectMenu>    
         </Box>
     );
 }

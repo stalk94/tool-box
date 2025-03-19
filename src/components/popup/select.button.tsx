@@ -1,8 +1,9 @@
 import React from 'react';
-import { Button, Menu, ButtonProps } from '@mui/material';
+import { Button, ButtonProps } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
-import ItemsList, { NavLinkItem } from './menuItem';
-import { alpha, styled } from '@mui/material/styles';
+import ItemsList, { NavLinkItem } from '../menu/list';
+import { SelectMenu } from '../menu/select-menu';
+
 
 
 type ItemSelect = NavLinkItem & {
@@ -102,27 +103,20 @@ export default function SelectButton({ value, defaultLabel, items, onChange, ...
             >
                 { getLabel() }
             </Button>
-            <Menu elevation={2}
+
+            <SelectMenu
                 anchorEl={ref.current}
                 open={isOpen}
-                onClose={() => setIsOpen(false)}
-                sx={{ 
-                    mt: 0.5,
-                    "& .MuiPaper-root": {
-                        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.1),
-                        backdropFilter: "blur(14px)", // Размытие для эффекта стекла
-                    }
-                }}
-                PaperProps={{ style: { maxHeight: '70vh', minWidth: '200px' } }}
+                handleClose={()=> setIsOpen(false)}
             >
-                {transformedItems.map((item, index) => (
+                { transformedItems.map((item, index) => (
                     <ItemsList 
                         key={index} 
                         item={item} 
                         onItemClick={handleItemClick} 
                     />
                 ))}
-            </Menu>
+            </SelectMenu>
         </React.Fragment>
     );
 }

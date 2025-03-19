@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Box, BoxProps, useTheme, alpha, darken } from "@mui/material";
-import { NavLinkItem } from '../popup/menuItem';
+import { NavLinkItem } from '../menu/list';
 import BaseLeftSideBar from "./left-nav";
-import { Mutators } from '../tools/decorators';
 
 
 type SideBarAndToolPanelProps = {
@@ -54,47 +53,51 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
             />
 
             {/* правая рабочая область */}
-            <Box
-                sx={{
-                    width: width ?? 200,
-                    height: '100%',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    backgroundColor: darken(alpha(theme.palette.background.paper, 1), 0.15),
-                    borderLeft: `1px solid ${theme.palette.divider}`,
-                    overflowY: "auto",
-                    ...theme.elements.scrollbar
-                }}
-            >
-                {/* верхняя панель инструментов */}
-                <Box 
+            { children &&
+                <Box
                     sx={{
-                        position: "sticky",
-                        top: 0,
-                        zIndex: 10,
-                        textAlign: 'center',
-                        background: 'gray',
+                        width: width ?? 200,
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        backgroundColor: darken(alpha(theme.palette.background.paper, 1), 0.15),
+                        border: `1px solid ${darken(theme.palette.divider, 0.3)}`,
+                        borderLeft: 'none',
+                        boxShadow: "inset 3px 0 5px rgba(0, 0, 0, 0.15)",
+                        overflowY: "auto",
+                        ...theme.elements.scrollbar
                     }}
                 >
-                    { start }
-                </Box>
+                    {/* верхняя панель инструментов */}
+                    <Box 
+                        sx={{
+                            position: "sticky",
+                            top: 0,
+                            zIndex: 10,
+                            textAlign: 'center',
+                            background: 'gray',
+                        }}
+                    >
+                        { start }
+                    </Box>
 
-               { children }
+                    { children }
 
-               {/* нижняя панель инструментов */}
-                <Box 
-                    sx={{
-                        position: "sticky",
-                        bottom: 0,
-                        zIndex: 10,
-                        marginTop: 'auto',
-                        textAlign: 'center',
-                        background: 'gray',
-                    }}
-                >
-                    { end }
+                    {/* нижняя панель инструментов */}
+                    <Box 
+                        sx={{
+                            position: "sticky",
+                            bottom: 0,
+                            zIndex: 10,
+                            marginTop: 'auto',
+                            textAlign: 'center',
+                            background: 'gray',
+                        }}
+                    >
+                        { end }
+                    </Box>
                 </Box>
-            </Box>
+            }           
         </Box>
     );
 }

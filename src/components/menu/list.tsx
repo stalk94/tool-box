@@ -44,7 +44,7 @@ export default function({ item, onItemClick }: MobailMenuProps) {
             item.comand?.(item);
         }
     }
-    if (item.divider) {
+    if (item?.divider) {
         if(typeof item.divider === 'boolean') return(
             <Divider sx={{ width: '100%' }}/>
         );
@@ -75,9 +75,7 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                     </ListItemIcon>
                 }
                 {/* текст пункта */}
-                <ListItemText 
-                    primary={item.label} 
-                />
+                <ListItemText primary={item.label} />
                 {/* иконка раскрыть вложенные */}
                 { item.children && (
                     open 

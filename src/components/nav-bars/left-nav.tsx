@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider, Box, 
-    Menu, MenuItem, Badge, useTheme, alpha, darken
+import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider,
+    Box, MenuItem, Badge, useTheme, alpha, darken
 } from "@mui/material";
-import { BorderTop, ExpandLess, ExpandMore } from "@mui/icons-material";
-import { NavLinkItem } from '../popup/menuItem';
+import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { NavLinkItem } from '../menu/list';
+import { LeftNavMenu } from '../menu/nav-menu';
 
 
 type SidebarMenuProps = {
@@ -67,6 +68,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
 
     return (
         <React.Fragment>
+            {/* вертикальный список */}
             <Box sx={sx ?? { 
                     display: "flex", 
                     flexDirection: "column",
@@ -150,19 +152,13 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                 </List>
             </Box>
 
-            <Menu elevation={1}
+            {/* Меню */}
+            <LeftNavMenu
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}
-                onClose={handleClosePopover}
-                anchorOrigin={{ vertical: "center", horizontal: "right" }}
+                handleClose={handleClosePopover}
+                anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "center", horizontal: "left" }}
-                sx={{ 
-                    ml: 0.5,
-                    "& .MuiPaper-root": {
-                        backgroundColor: (theme)=> alpha(theme.palette.background.paper, 0.8),
-                        backdropFilter: "blur(14px)",
-                    }
-                }}
             >
                 { currentChildren.map((child, index)=> (
                     <MenuItem
@@ -181,7 +177,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                         <ListItemText primary={child.label} />
                     </MenuItem>
                 ))}
-            </Menu>
+            </LeftNavMenu>
         </React.Fragment>
     );
 }
@@ -209,6 +205,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
                 maxHeight: '100%',
                 overflowY: 'auto',
                 justifyContent: 'space-between',
+                border: `1px solid ${alpha('#000', 0.25)}`,
                 backgroundColor: (theme)=> alpha(theme.palette.background.paper, 1)
             }}
         >

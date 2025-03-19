@@ -1,7 +1,7 @@
 import React, { useState, ReactNode, ReactElement } from "react";
-import { Menu, Divider } from "@mui/material";
-import ItemsList, { NavLinkItem } from './menuItem';
-import { alpha, styled } from '@mui/material/styles';
+import ItemsList, { NavLinkItem } from '../menu/list';
+import { SelectMenu } from '../menu/select-menu';
+
 
 
 type CustomMenuProps = {
@@ -48,23 +48,10 @@ export default function({ children, items, onOpenClose, onSelect }: CustomMenuPr
             { childWithProps }
 
             {/* Меню */}
-            <Menu elevation={2}
+            <SelectMenu
                 anchorEl={anchorEl} 
                 open={open} 
-                onClose={handleClose}
-                sx={{
-                    mt: 0.5,
-                    "& .MuiPaper-root": {
-                        backgroundColor: (theme) => alpha(theme.palette.background.paper, 0.1),
-                        backdropFilter: "blur(14px)", // Размытие для эффекта стекла
-                    }
-                }}
-                PaperProps={{
-                    style: {
-                        maxHeight: '70vh',
-                        minWidth: '200px'
-                    },
-                }}
+                handleClose={handleClose}
             >
                 { items.map((item, index) => (
                     <ItemsList 
@@ -76,7 +63,7 @@ export default function({ children, items, onOpenClose, onSelect }: CustomMenuPr
                         }}
                     />
                 ))}
-            </Menu>
+            </SelectMenu>
         </React.Fragment>
     );
 }

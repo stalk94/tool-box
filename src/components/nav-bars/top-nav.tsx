@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { AppBar, Toolbar, Divider, Box, useTheme, alpha, lighten } from "@mui/material";
-import { NavMenu } from './fragment';
-import { NavLinkItem } from '../popup/menuItem';
-import NavigationItemsDesktop from './fragment-desctop';
+import { AppBar, Toolbar, Divider, Box, useTheme, alpha, lighten, darken } from "@mui/material";
+import { NavLinkItem } from '../menu/list';
+import NavMenu from '../menu/nav-menu';
+import NavigationItemsDesktop from './fragment';
 
 
 type NavbarProps = {
@@ -13,20 +13,15 @@ type NavbarProps = {
     items: NavLinkItem[]
 }
 
-
-
-// * стилизацию сделать: кнопок, разделителей, выпадаюших Menu, тени
-export default function Navbar({ start, end, items }: NavbarProps) {
-    const theme = useTheme();
+export function LinearNavigation({ items }: { items: NavLinkItem[] }) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = useState(false);
 
-    
     // обработчик данных для внесения правок и форматирования
-    const useTransformator =(items: NavLinkItem[])=> {
-        return items.map((item)=> {
-            if(item.icon && React.isValidElement(item.icon)) {
-                item.icon = React.cloneElement(item.icon, {sx: { opacity: 0.4 }})
+    const useTransformator = (items: NavLinkItem[]) => {
+        return items.map((item) => {
+            if (item.icon && React.isValidElement(item.icon)) {
+                item.icon = React.cloneElement(item.icon, { sx: { opacity: 0.4 } })
             }
 
             return item;
@@ -40,15 +35,50 @@ export default function Navbar({ start, end, items }: NavbarProps) {
         setAnchorEl(null);
         setMenuOpen(false);
     }
-    
 
+
+    return(
+        <React.Fragment>
+            {/* Кнопки навигации (на больших экранах) */}
+            <NavigationItemsDesktop items={useTransformator(items)} />
+
+            {/* Бургер-меню для мобилок */}
+            <IconButton
+                edge="end"
+                color="inherit"
+                aria-label="menu"
+                sx={{ mr: 1, display: { sm: "none" } }}
+                onClick={handleMenuOpen}
+            >
+                <MenuIcon />
+            </IconButton>
+
+            {/* Выпадающее меню mobile */}
+            <NavMenu
+                anchorEl={anchorEl}
+                open={menuOpen}
+                onClose={handleMenuClose}
+                navLinks={items}
+                isMobile={true}
+            />
+        </React.Fragment>
+    );
+}
+
+
+
+export default function Navbar({ start, end, items }: NavbarProps) {
+    const theme = useTheme();
+
+    
     return (
-        <AppBar 
+        <AppBar elevation={2}
             position="static" 
             sx={{ 
                 padding: 0, 
                 margin: 0, 
-                background: (theme)=> lighten(theme.palette.background.paper, 0.1),
+                //background: (theme)=> lighten(theme.palette.background.paper, 0.1),
+                background: (theme)=> lighten(alpha(theme.palette.background.paper, 1), 0.05),
                 backdropFilter: "blur(14px)"
             }}
         >
@@ -66,30 +96,8 @@ export default function Navbar({ start, end, items }: NavbarProps) {
                     { start }
                 </Box>
 
-                {/* Кнопки навигации (на больших экранах) */}
-                <NavigationItemsDesktop 
-                    items={useTransformator(items)}
-                />
-
-                {/* Бургер-меню для мобилок */}
-                <IconButton
-                    edge="end"
-                    color="inherit"
-                    aria-label="menu"
-                    sx={{ mr: 1, display: { sm: "none" } }}
-                    onClick={handleMenuOpen}
-                >
-                    <MenuIcon />
-                </IconButton>
-
-                {/* Выпадающее меню mobile */}
-                <NavMenu
-                    anchorEl={anchorEl}
-                    open={menuOpen}
-                    onClose={handleMenuClose}
-                    navLinks={items}
-                    isMobile={true}
-                />
+                {/* Полоса навигации */}
+                <LinearNavigation items={items} />
 
                 {/* user меню к примеру */}
                 { end &&

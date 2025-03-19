@@ -20,7 +20,6 @@ const meta: Meta<typeof SideBarAndToolPanel> = {
 export default meta;
 
 const Templates =(args)=> {
-    const selectedPanel = 'xro';
     const dop = [
         { id: "5", label: "Выход", icon: < CloudCircle /> },
         { id: "5", label: "Выход", icon: < Logout /> },
@@ -67,21 +66,21 @@ const Templates =(args)=> {
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
         <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для </h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>,
-        <h3>Инструменты для {selectedPanel}</h3>,
+        <h3>Инструменты для</h3>,
         <p>Дополнительные инструменты для выбранного пункта меню.</p>
     ];
 
@@ -101,7 +100,7 @@ const Templates =(args)=> {
                 flexDirection: 'column'
             }}
         >
-            <div>head</div>
+            { args.helpers && <div>header</div> }
             <SideBarAndToolPanel
                 sx={{height: '100%'}}
                 schemaNavBar={{
@@ -117,7 +116,7 @@ const Templates =(args)=> {
                     
                 </div>
             </SideBarAndToolPanel>
-            <div>footer</div>
+            { args.helpers && <div>footer</div> }
         </Box>
     );
 }
@@ -126,10 +125,9 @@ const Templates =(args)=> {
 type Story = StoryObj<typeof SideBarAndToolPanel>;
 export const LeftNavigationAndTool: Story = {
     args: {
-        collapsed: true,
-        type: 'box',
         ends: true,
-        max: false
+        max: false,
+        helpers: false
     },
     render: (props)=> <Templates {...props} />
 }
