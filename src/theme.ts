@@ -44,8 +44,8 @@ declare module '@mui/material/styles' {
 const elements = {
     input: {
         fontStyle: "italic",
-        variant: <undefined|"fullWidth"|"inset"|"middle"> 'middle',
-        alight: <'center'|undefined> undefined
+        variant: 'middle',          //<undefined|"fullWidth"|"inset"|"middle"> 
+        alight: undefined           // <'center'|undefined>
     },
     scrollbar: {
         "&::-webkit-scrollbar": {
@@ -90,7 +90,8 @@ export const darkTheme = createTheme({
             card: "#202940",
             paper: "rgb(63, 63, 63)",
             input: "rgba(59, 59, 59, 0.01)",      // цвет фона всех инпутов, селектов #3b3b3ba8
-            navBar: "#86898d61"
+            navBar: "#86898d61",
+            
         },
         // это управляет цветами обводок инпутов
         action: {

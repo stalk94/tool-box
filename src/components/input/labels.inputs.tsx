@@ -1,50 +1,38 @@
 import React from 'react';
 import In, { BaseInputProps, NumberinputProps, PasswordInputProps } from './input';
-import { EmailInputProps, PhoneInputProps } from './input.any'
+import { EmailInputProps, PhoneInputProps, TooglerInput, TooglerInputProps } from './input.any'
+import { DataPickerCustomProps } from '../input/input.date';
 import Select, { BaseSelectProps } from '../popup/select';
-import { InputLabel, useTheme, Box , InputLabelProps } from '@mui/material';
+import { Box, Slider, SliderProps } from '@mui/material';
+import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';
 import '../../style/fonts.css';
 
 
+type InputTupe = 'text' | 'password' | 'number' | 'color' | 'phone' | 'email' | 'date' 
+| 'time' | 'login' | 'select' | 'slider'
+    
 type InputCustomLabelProps = {
-    label: string
+    label: React.ReactNode
     position?: 'left' | 'right' | 'column'
-    typeInput?: 'text' | 'password' | 'number' | 'color' | 'phone' | 'email' | 'date' | 'time'
+    typeInput?: InputTupe
     children: React.ReactNode
     sx?: SxProps<Theme>
+    id?: string | number
 }
 type LabelTextProps = {
     label: string
     position?: 'left' | 'right' | 'column'
 }
+type LabelSliderProps = SliderProps & {
 
-
-
-function Label({ id, children, sx }: InputLabelProps) {
-    const theme = useTheme();
-    
-    return(
-        <InputLabel 
-            htmlFor={id}
-            sx={{
-                ml: 1,
-                mt: 'auto',
-                mb: 'auto',
-                opacity: 0.9,
-                color: theme.palette.text.secondary,
-                fontFamily: '"Roboto Condensed", Arial, sans-serif',
-                ...sx
-            }}
-        >
-            { children }
-        </InputLabel>
-    );
 }
-function LabelInput({ label, position, typeInput, children, sx }: InputCustomLabelProps) {
-    const id = `input-${typeInput}-${Date.now()}`;
 
 
+
+function LabelInput({ label, position, typeInput, children, sx, id }: InputCustomLabelProps) {
+    const idRef = React.useRef(`input-${typeInput}-${id ?? Date.now()}`).current;       // можно отслеживать
+    
     return(
         <Box sx={{mt: 1.5}}
             display="flex" 
@@ -52,11 +40,11 @@ function LabelInput({ label, position, typeInput, children, sx }: InputCustomLab
         >
             { position === 'left' && 
                 <Label 
-                    id={id}
+                    id={idRef}
                     children={label} 
                     sx={{
-                        flex: 1,
-                        mr: 2,
+                        flex: 0.7,
+                        mr: 0,
                         fontSize: 18,
                         ...sx
                     }}
@@ -64,7 +52,7 @@ function LabelInput({ label, position, typeInput, children, sx }: InputCustomLab
             }
             { position === 'column' && 
                 <Label 
-                    id={id}
+                    id={idRef}
                     children={label} 
                     sx={{
                         flex: 1,
@@ -76,12 +64,12 @@ function LabelInput({ label, position, typeInput, children, sx }: InputCustomLab
                 />
             }
             <Box sx={{ flex: 3 }}>
-                { React.cloneElement(children, {id: id}) }
+                { React.cloneElement(children, {id: idRef}) }
             </Box>
 
             { position === 'right' && 
                 <Label 
-                    id={id} 
+                    id={idRef} 
                     children={label}
                     sx={{
                         flex: 1,
@@ -97,25 +85,52 @@ function LabelInput({ label, position, typeInput, children, sx }: InputCustomLab
 
 
 export function LabelText({ label, position, ...props }: LabelTextProps & BaseInputProps) {
-    return(
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
+            id={props.id}
             typeInput='text'
         >
             <In.Input
+                { ...props }
                 type='text'
+            />
+        </LabelInput>
+    );
+    else return (
+        <In.Input
+            { ...props }
+            type='text'
+        />
+    );
+}
+export function LabelNumber({ label, position, ...props }: LabelTextProps & NumberinputProps) {
+    if(label && typeof label === 'string' && label.length) return(
+        <LabelInput
+            label={label}
+            position={position}
+            id={props.id}
+            typeInput='number'
+        >
+            <In.NumberInput
                 { ...props }
             />
         </LabelInput>
     );
+    else return(
+        <In.NumberInput
+            { ...props }
+        />
+    );
 }
 export function LabelLogin({ label, position, ...props }: LabelTextProps & BaseInputProps) {
-    return(
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
-            typeInput='text'
+            id={props.id}
+            typeInput='login'
         >
             <In.LoginInput
                 type='text'
@@ -123,12 +138,19 @@ export function LabelLogin({ label, position, ...props }: LabelTextProps & BaseI
             />
         </LabelInput>
     );
+    else return (
+        <In.LoginInput
+            type='text'
+            { ...props }
+        />
+    );
 }
 export function LabelPassword({ label, position, ...props }: LabelTextProps & PasswordInputProps) {
-    return(
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
+            id={props.id}
             typeInput='password'
         >
             <In.PasswordInput
@@ -136,12 +158,18 @@ export function LabelPassword({ label, position, ...props }: LabelTextProps & Pa
             />
         </LabelInput>
     );
+    else return (
+        <In.PasswordInput
+            { ...props }
+        />
+    );
 }
 export function LabelColor({ label, position, ...props }: LabelTextProps & BaseInputProps) {
-    return(
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
+            id={props.id}
             typeInput='color'
         >
             <In.ColorPicker
@@ -149,12 +177,18 @@ export function LabelColor({ label, position, ...props }: LabelTextProps & BaseI
             />
         </LabelInput>
     );
+    else return (
+        <In.ColorPicker
+            { ...props }
+        />
+    );
 }
 export function LabelEmail({ label, position, ...props }: LabelTextProps & EmailInputProps) {
-    return(
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
+            id={props.id}
             typeInput='email'
         >
             <In.EmailInput
@@ -162,12 +196,18 @@ export function LabelEmail({ label, position, ...props }: LabelTextProps & Email
             />
         </LabelInput>
     );
+    else return(
+        <In.EmailInput
+            { ...props }
+        />
+    );
 }
 export function LabelPhone({ label, position, ...props }: LabelTextProps & PhoneInputProps) {
-    return(
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
+            id={props.id}
             typeInput='phone'
         >
             <In.PhoneInput
@@ -175,17 +215,92 @@ export function LabelPhone({ label, position, ...props }: LabelTextProps & Phone
             />
         </LabelInput>
     );
+    else return(
+        <In.PhoneInput
+            { ...props }
+        />
+    );
 }
-export function LabelSelect({ label, position, ...props }: LabelTextProps & BaseSelectProps) {
-    return(
+export function LabelDateOrTime({ label, position, ...props }: LabelTextProps & DataPickerCustomProps) {
+    if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
             position={position}
+            id={props.id}
+            typeInput={props.isTimePicker ? 'time' : 'date'}
+        >
+            <In.DatePickerCustom
+                { ...props }
+            />
+        </LabelInput>
+    );
+    else return (
+        <In.DatePickerCustom
+            { ...props }
+        />
+    );
+}
+// ! не показывает выбранный вложенный элемент
+export function LabelSelect({ label, position, ...props }: LabelTextProps & BaseSelectProps) {
+    if(label && typeof label === 'string' && label.length) return(
+        <LabelInput
+            label={label}
+            position={position}
+            id={props.id}
             typeInput='select'
         >
             <Select
                 { ...props }
             />
         </LabelInput>
+    );
+    else return(
+        <Select
+            { ...props }
+        />
+    );
+}
+//! нуждается в проработке
+export function LabelSlider({ label, position, ...props }: LabelTextProps & LabelSliderProps) {
+    return(
+        <LabelInput
+            label={label}
+            position={position}
+            id={props.id}
+            typeInput='slider'
+        >
+          
+            <Slider
+                valueLabelDisplay="auto" 
+                sx={{width: '95%', mt: 1, ml: position==='column'?1:0,minWidth:160 }}
+                size='medium'
+                defaultValue={10} 
+                { ...props }
+                onChange={(e, value)=> props.onChange(value)}
+            />
+            
+        </LabelInput>
+    );
+}
+/** Это группа переключаемых кнопок */
+export function LabelToogler({ label, position, ...props }: LabelTextProps & TooglerInputProps) {
+    if(label && typeof label === 'string' && label.length) return(
+        <LabelInput
+            label={label}
+            position={position}
+            id={props.id}
+            typeInput='toogle'
+        >
+            <TooglerInput
+                label={label}
+                { ...props }
+            />
+        </LabelInput>
+    );
+    else return(
+        <TooglerInput
+            label={label}
+            { ...props }
+        />
     );
 }

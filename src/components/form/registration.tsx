@@ -72,10 +72,7 @@ export default function FormRegistration({ scheme, loading, onRegistration, butt
         onRegistration(state);
     }
     const useChangeValue =(name: string, value: any)=> {
-        setState((old)=> {
-            old[name] = value;
-            return old;
-        });
+        setState((old) => ({ ...old, [name]: value }));
     }
     const useTransform =(scheme: Schema[])=> {
         const shab = {}
@@ -95,6 +92,7 @@ export default function FormRegistration({ scheme, loading, onRegistration, butt
                 const result = Object.values(ref.current).find((elem)=> elem);
                 setIsValid(!Boolean(result));
             }
+            //console.log(ref.current)
         }, 500);
 
         return ()=> {

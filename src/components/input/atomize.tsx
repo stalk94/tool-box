@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InputBase, Paper, useTheme, InputBaseProps } from '@mui/material';
+import { InputBase, Paper, useTheme, InputBaseProps, InputLabel , InputLabelProps } from '@mui/material';
 import { alpha, lighten, darken, styled } from '@mui/system';
 
 
@@ -11,7 +11,27 @@ const AnimatedPaper = styled(Paper)`
 `;
 
 
-
+// базовый лейбл
+export function Label({ id, children, sx }: InputLabelProps) {
+    const theme = useTheme();
+    
+    return(
+        <InputLabel 
+            htmlFor={id}
+            sx={{
+                ml: 1,
+                mt: 'auto',
+                mb: 'auto',
+                opacity: 0.9,
+                color: theme.palette.text.secondary,
+                fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                ...sx
+            }}
+        >
+            { children }
+        </InputLabel>
+    );
+}
 // базовая подложка под все инпуты
 export function InputPaper({ children, ...props }) {
     const theme = useTheme();
@@ -56,8 +76,6 @@ export function InputPaper({ children, ...props }) {
         </AnimatedPaper>
     );
 }
-
-
 // базовая форма ввода
 export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
     const theme = useTheme();

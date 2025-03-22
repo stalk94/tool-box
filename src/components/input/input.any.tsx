@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
-import { IconButton, Divider, FormHelperText, Dialog, InputBaseProps } from '@mui/material';
+import { IconButton, Divider, FormHelperText, Dialog, InputBaseProps, Box, FormControlLabel, styled, alpha } from '@mui/material';
 import { Phone, FileCopy, AlternateEmail } from '@mui/icons-material';
+import ToggleButton, { ToggleButtonProps, ToggleButtonOwnProps } from '@mui/material/ToggleButton';
+import ToggleButtonGroup, { ToggleButtonGroupProps } from '@mui/material/ToggleButtonGroup';
+import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
 import { ChromePicker } from 'react-color';
 import { useTheme } from '@mui/material/styles';
-import { InputPaper, InputBaseCustom } from './atomize';
+import Switch, { SwitchProps } from '@mui/material/Switch';
+import { InputPaper, InputBaseCustom, Label } from './atomize';
 
- 
+
+
 export type EmailInputProps = InputBaseProps & {
     value: string;
     onChange: (value: string) => void;
@@ -30,8 +35,21 @@ export type PhoneInputProps = InputBaseProps & {
         helperText?: string 
     }
 }
-
-
+export type TooglerInputProps = ToggleButtonGroupProps & {
+    value?: string | string[]
+    /** множественный выбор */
+    multi: boolean
+    label: string
+    items: (ToggleButtonOwnProps & {
+        label: string  | React.ReactNode
+        id: string 
+    })[]
+    onChange?: (value: string | string[])=> void
+}
+export type CheckBoxInputProps = CheckboxProps & {
+    value?: boolean
+    onChange?: (value: boolean)=> void
+}
 
 
 export function EmailInput({ value, useVerify, onChange, helperText, disabled, placeholder, ...props }: EmailInputProps) {
@@ -89,6 +107,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
                         }
                     }}
                     {...props}
+                    type='text'
                 />
             </InputPaper>
 
@@ -160,6 +179,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
                         }
                     }}
                     { ...props }
+                    type='text'
                 />
             </InputPaper>
 
@@ -198,7 +218,6 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
     return(
         <InputPaper {...props} >
              <React.Fragment>
-                {/**<Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant??'fullWidth'} />*/}
                 <div style={{
                         marginTop: '2px',
                         width: '30px',
@@ -207,7 +226,8 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                         cursor: 'pointer',
                         background: inputValue,
                         borderRadius: '5px',
-                        marginLeft: '7px'
+                        marginLeft: '7px',
+                        marginRight: '11px'
                     }}
                     onClick={()=> setopen(true)}
                 />
@@ -223,11 +243,11 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
             </React.Fragment>
 
             <InputBaseCustom 
+                { ...props }
                 placeholder={props.placeholder}
                 type='text'
                 value={inputValue}
                 onChange={useChange}
-                { ...props }
             />
 
             <React.Fragment>
@@ -244,4 +264,153 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
             </React.Fragment>
         </InputPaper>
     )
+}
+export function SwitchInput({ value, onChange, ...props }: { value?: boolean, onChange:(v:boolean)=> void } & SwitchProps) {
+    const theme = useTheme();
+    const [curvalue, setCur] = React.useState(value);
+    const Android12Switch = styled(Switch)(({ theme }) => ({
+        padding: 8,
+        '& .MuiSwitch-track': {
+          borderRadius: 22 / 2,
+          '&::before, &::after': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 16,
+            height: 16,
+          },
+          '&::before': {
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+              theme.palette.getContrastText(theme.palette.primary.main),
+            )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+            left: 12,
+          },
+          '&::after': {
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+              theme.palette.getContrastText(theme.palette.primary.main),
+            )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+            right: 12,
+          },
+        },
+        '& .MuiSwitch-thumb': {
+          boxShadow: 'none',
+          width: 16,
+          height: 16,
+          margin: 2,
+        },
+    }));
+    
+
+    return(
+        <Box>
+            <FormControlLabel
+                control={
+                    <Android12Switch 
+                        id={props.id}
+
+                        checked={curvalue}
+                        onChange={(e, v)=> {
+                            onChange && onChange(v);
+                            setCur(v);
+                        }}
+                    />
+                }
+                label={props.label}
+                labelPlacement="end"
+                sx={{ 
+                    gap: 2, 
+                    margin: 0, 
+                    mt: 1,
+                    "& .MuiFormControlLabel-label": {
+                        color: alpha(theme.palette.text.secondary, 0.6),
+                        fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                        fontSize: 16
+                    }
+                }}
+            />
+        </Box>
+    );
+}
+export function TooglerInput({ items, value, label, onChange, ...props }: TooglerInputProps) {
+    const theme = useTheme();
+    const [curentValue, setCurent] = React.useState<string[]>([]);
+
+    const handlerChange =(newValue)=> {
+        if(Array.isArray(value) || props.multi) {
+            setCurent(newValue);
+            onChange && onChange(newValue);
+        }
+        else {
+            const last = newValue[newValue.length - 1];
+            setCurent([last]);
+            onChange && onChange(last);
+        }
+    }
+    React.useEffect(()=> {
+        if(typeof value === 'string') setCurent([value]);
+        else if(Array.isArray(value)) {
+            setCurent([...value]);
+        }
+    }, [value]);
+    
+
+    return(
+        <ToggleButtonGroup
+            value={curentValue}
+            onChange={(e, v)=> handlerChange(v)}
+            aria-label={label}
+            sx={{width:'100%'}}
+            { ...props }
+        >
+            { items.map((elem, index)=> 
+                 <ToggleButton
+                    { ...elem }
+                    sx={{ 
+                        flex: 1,
+                        border: `1px solid ${theme.palette.action.active}`,
+                        ...props.sx
+                    }}
+                    key={index} 
+                    value={elem.id} 
+                    aria-label={elem.id}
+                >
+                    { elem.label }
+                 </ToggleButton>
+            ) }
+        </ToggleButtonGroup>
+    );
+}
+export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps) {
+    const theme = useTheme();
+    const [curentValue, setCurent] = React.useState(value ?? false);
+    
+
+    return(
+        <FormControlLabel
+            value="end"
+            control={
+                <Checkbox 
+                    checked={curentValue}
+                    onChange={(e, v)=> {
+                        setCurent(v);
+                        onChange && onChange(v);
+                    }}
+                    inputProps={{ 'aria-label': props.name ?? 'checkbox' }}
+                    { ...props }
+                />
+            }
+            label={props.label}
+            labelPlacement="end"
+            sx={{ 
+                gap: 2, 
+                margin: 0, 
+                mt: 1,
+                "& .MuiFormControlLabel-label": {
+                    color: alpha(theme.palette.text.secondary, 0.6),
+                    fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                }
+            }}
+        />
+    );
 }

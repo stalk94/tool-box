@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import IconButton from '@mui/material/IconButton';
 import Button, { ButtonProps } from '@mui/material/Button';
 import { Delete } from '@mui/icons-material';
-import Select from './components/select';
+import Select from './components/popup/select';
 import { Typography } from '@mui/material';
 
 

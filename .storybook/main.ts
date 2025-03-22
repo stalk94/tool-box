@@ -14,26 +14,29 @@ const config: StorybookConfig = {
 		"@storybook/experimental-addon-test",
 		'@storybook/addon-styling',
 		'@storybook/addon-measure',
-		'@storybook/addon-console'
+		'@storybook/addon-console',
+		'@storybook/addon-docs'
 	],
 	framework: {
 		"name": "@storybook/react-vite",
-		"options": {}
-	},
-	typescript: {
-		reactDocgen: 'react-docgen-typescript',
-		reactDocgenTypescriptOptions: {
-			shouldExtractLiteralValuesFromEnum: true,
-			shouldRemoveUndefinedFromOptional: true,
-			propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true),
-			compilerOptions: {
-				allowSyntheticDefaultImports: false,
-				esModuleInterop: false,
-			},
+		"options": {
+			builder: {
+				viteConfigPath: 'vite.config.ts',
+			}
 		}
 	},
+	typescript: {
+		check: true,
+		reactDocgen: 'react-docgen-typescript',
+		reactDocgenTypescriptOptions: {
+			tsconfigPath: '../tsconfig.json',
+			include: ['../src/**/*.{js,jsx,ts,tsx}'],
+			shouldExtractLiteralValuesFromEnum: true,
+			propFilter: (prop) => (prop.parent ? !/node_modules/.test(prop.parent.fileName) : true)
+		},
+	},
 	docs: {
-		
+		autodocs: 'tag',
 	}
 };
 export default config;

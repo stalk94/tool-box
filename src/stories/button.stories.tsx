@@ -1,6 +1,6 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import Button from '@mui/material/Button';
+import Button, { ButtonProps } from '@mui/material/Button';
 
 
 
@@ -23,7 +23,7 @@ const Templates =(args)=> {
 
 
 
-export const Base: StoryObj<typeof Button> = {
+export const Base: StoryObj<ButtonProps> = {
     args: {
         disabled: false,
         children: 'test button',

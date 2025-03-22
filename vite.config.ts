@@ -5,5 +5,10 @@ import reactDocgenTypescript from "@joshwooding/vite-plugin-react-docgen-typescr
 
 
 export default defineConfig({
-    plugins: [react()]
+    plugins: [react()],
+    resolve: {
+        alias: {
+          '@': '/src',
+        },
+    },
 });

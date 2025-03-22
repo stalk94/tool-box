@@ -90,10 +90,10 @@ const Templates =(args)=> {
         </IconButton>
     );
     const handlerChangeNavigation =(item)=> {
-        console.log('left navigation',)
+        console.log('left navigation', item)
     }
     const handlerChangeTopNavigation =(item)=> {
-
+        console.log('top navigation', item)
     }
  
 
@@ -109,7 +109,7 @@ const Templates =(args)=> {
                     items={navLinksTest}
                     end={renderRightTopNavigation()}
                     start={renderLeftTopNavigation()}
-                    onChange={handlerChangeTopNavigation}
+                    //onChange={handlerChangeTopNavigation}   // слушателя нет, только comand
                 />
 
                 <SideBarAndToolPanel

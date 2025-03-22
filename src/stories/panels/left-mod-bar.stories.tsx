@@ -126,7 +126,8 @@ export const LeftNavigationAndTool: Story = {
     args: {
         ends: true,
         max: false,
-        helpers: false
+        helpers: false,
+        collapsed: true
     },
     render: (props)=> <Templates {...props} />
 }

@@ -49,9 +49,9 @@ export type NumberinputProps = {
  */
 function BaseInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
-    const [inputValue, setInputValue] = React.useState<number | string>();
+    const [inputValue, setInputValue] = React.useState<number | string>(value);
 
- 
+    
     const useFiltre =(value: string|number)=> {
         if(props.type === 'text' || props.type === 'number' || props.type === 'password') {
             if(props.type === 'number' && !isNaN(+value)) {
@@ -69,9 +69,6 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, label, 
         if(clone.type !== 'password') delete clone.type;
         return clone;
     }
-    React.useEffect(()=> {
-        setInputValue(value);
-    }, [value]);
 
    
     return(
@@ -130,7 +127,8 @@ function NumberInput({ value, min=0, max=100, step=1, onChange, ...props }: Numb
 
     return(
         <React.Fragment>
-            <BaseInput {...props}
+            <BaseInput 
+                {...props}
                 value={inputValue}
                 type="number" 
                 onChange={(value)=> {
@@ -138,7 +136,22 @@ function NumberInput({ value, min=0, max=100, step=1, onChange, ...props }: Numb
                     onChange && onChange(value);
                 }}
                 right={
-                    <ButtonGroup orientation="horizontal" sx={{ml: '5px'}}>
+                    <ButtonGroup 
+                        orientation="horizontal" 
+                        sx={{ml: '5px'}}
+                    >
+                        <IconButton
+                            onClick={handleDecrease}
+                            disabled={inputValue <= min}
+                        >
+                            <Remove
+                                style={{
+                                    color: theme.palette.text.secondary,
+                                    opacity: inputValue <= min ? '0.2' : '0.6',
+                                    fontSize: '20px'
+                                }}
+                            />
+                        </IconButton>
                         <IconButton
                             onClick={handleIncrease}
                             disabled={inputValue >= max}
@@ -147,18 +160,6 @@ function NumberInput({ value, min=0, max=100, step=1, onChange, ...props }: Numb
                                 style={{
                                     color: theme.palette.text.secondary, 
                                     opacity: inputValue >= max ? '0.2' : '0.6',
-                                    fontSize: '20px'
-                                }} 
-                            />
-                        </IconButton>
-                        <IconButton
-                            onClick={handleDecrease}
-                            disabled={inputValue <= min}
-                        >
-                            <Remove 
-                                style={{
-                                    color: theme.palette.text.secondary, 
-                                    opacity: inputValue <= min ? '0.2' : '0.6',
                                     fontSize: '20px'
                                 }} 
                             />

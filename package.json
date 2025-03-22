@@ -45,8 +45,6 @@
     "prop-types": "^15.8.1",
     "react": "^18.3.1",
     "react-color": "^2.19.3",
-    "react-docgen-typescript": "^2.2.2",
-    "react-docgen-typescript-plugin": "^1.0.8",
     "react-dom": "^18.3.1",
     "react-router-dom": "7.3.0",
     "storybook": "^8.6.7",
@@ -56,11 +54,20 @@
   },
   "dependencies": {
     "@mui/toolpad-core": "^0.1.51",
+    "@react-docgen/cli": "^2.0.6",
     "@storybook/addon-interactions": "^8.6.7",
     "axios": "^1.7.9",
+    "boxen": "^8.0.1",
+    "chalk": "^5.4.1",
+    "cli-table3": "^0.6.5",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.2",
     "express": "^4.21.1",
-    "nodemon": "^3.1.9"
+    "figlet": "^1.8.0",
+    "gradient-string": "^3.0.0",
+    "nodemon": "^3.1.9",
+    "ora": "^8.2.0",
+    "react-docgen": "^7.1.1",
+    "react-docgen-typescript": "^2.2.2"
   }
 }
