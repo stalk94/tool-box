@@ -40,7 +40,7 @@ export function InputPaper({ children, ...props }) {
         if(props.error) return theme.palette.error.light;
         else if(props.disabled) return theme.palette.action.disabled;
         else if(props.success) return theme.palette.success.light;
-        else return theme.palette.action.active;
+        else return lighten(theme.palette.action.active, 1);
     }
     const useBorderColor =()=> {
         const border = props?.borderStyle ?? 'solid';
@@ -56,10 +56,10 @@ export function InputPaper({ children, ...props }) {
         <AnimatedPaper
             sx={{
                 //background: '#00000000',
-                backgroundColor: alpha(theme.palette.background.input, 0.1),
+                backgroundColor: alpha(theme.palette.background.input, 0.4),
                 minHeight: '42px',
                 minWidth: '190px',
-                opacity: props.disabled && 0.6,
+                opacity: props.disabled && 0.5,
                 border: useBorderColor(),
                 display: 'flex',
                 alignItems: 'center',
@@ -67,8 +67,9 @@ export function InputPaper({ children, ...props }) {
                 backdropFilter: "blur(6px)",
                 transition: 'background-color 0.3s',
                 '&:focus-within': { 
-                    borderColor: lighten(getColorBorder(), 0.3),
-                    backgroundColor: alpha('rgb(221, 235, 238)', 0.1)
+                    borderColor: lighten(getColorBorder(), 0.1),
+                    color: theme.palette.text.primary,
+                    backgroundColor: alpha('rgb(255, 255, 255)', 0.2)
                 }
             }}
         >

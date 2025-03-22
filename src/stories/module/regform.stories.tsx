@@ -22,7 +22,7 @@ const Templates =(args)=> {
         justifyContent: "space-between",
         alignItems: "center",
         width: '100%', 
-        opacity: 0.7,
+        opacity: 0.85,
         mb: 1.5,
         whiteSpace: 'nowrap',
         overflow: 'hidden',

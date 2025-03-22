@@ -5,7 +5,7 @@ import { createRoot } from 'react-dom/client';
 import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
 import { dark, lite } from './lib/colors';
-import Test from './test';
+
 import './style/index.css';
 
 
@@ -44,7 +44,7 @@ function App() {
                     <Routes>
                         <Route path="/" element={
                             <div style={{display:'flex',flexDirection:'column',height:'100%'}}>
-                                <Test />
+                                
                             </div>
                         } />
                         <Route path="*" element={<Navigate to='/' replace />} />

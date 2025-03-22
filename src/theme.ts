@@ -85,11 +85,11 @@ export const darkTheme = createTheme({
             thead: "#353943"
         },
         background: {
-            default: '#2c303d',
+            default: '#222222',         //  '#2c303d'
             sidenav: "#1f283e",
             card: "#202940",
-            paper: "rgb(63, 63, 63)",
-            input: "rgba(59, 59, 59, 0.01)",      // цвет фона всех инпутов, селектов #3b3b3ba8
+            paper: "rgb(63, 63, 63)",       //  rgb(63, 63, 63)
+            input: "#393E46",      // цвет фона всех инпутов, селектов #3b3b3ba8
             navBar: "#86898d61",
             
         },

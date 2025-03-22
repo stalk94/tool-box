@@ -26,7 +26,7 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
  */
 export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps) {
     const theme = useTheme();
-    const colorSelect = theme.palette.action.active;
+    const colorSelect = alpha(theme.palette.action.active, 0.1);
     const [openMenus, setOpenMenus] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
     const [currentChildren, setCurrentChildren] = useState([]);
@@ -190,7 +190,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
     const styleEnd = { 
         borderTop: `1px dotted ${theme.palette.divider}`,
         backdropFilter: "blur(14px)",
-        backgroundColor: darken(theme.palette.background.paper, 0.15),
+        backgroundColor: darken(theme.palette.background.paper, 0.16),
         ...theme.elements.scrollbar
     }
 
@@ -206,7 +206,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
                 overflowY: 'auto',
                 justifyContent: 'space-between',
                 border: `1px solid ${alpha('#000', 0.25)}`,
-                backgroundColor: (theme)=> alpha(theme.palette.background.paper, 1)
+                backgroundColor: (theme)=> alpha(theme.palette.background.paper, 0.65)
             }}
         >
             <SidebarMenu

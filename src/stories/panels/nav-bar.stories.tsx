@@ -50,11 +50,12 @@ const Templates =(args)=> {
     const left =()=> (
         <Box
             component="img"
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Meta-Logo.png/2560px-Meta-Logo.png" // Замените на ваш логотип
+            src="https://arenadata.tech/wp-content/uploads/2024/10/logo-white-short.png" // Замените на ваш логотип
             alt="Logo"
             sx={{
                 maxWidth: '100%',
                 maxHeight: '50px',
+                padding: '5px',
                 objectFit: 'contain',
                 borderRadius: '3px'
             }}

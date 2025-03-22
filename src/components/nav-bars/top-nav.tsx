@@ -80,7 +80,7 @@ export default function Navbar({ start, end, items }: NavbarProps) {
                 padding: 0, 
                 margin: 0, 
                 //background: (theme)=> lighten(theme.palette.background.paper, 0.1),
-                background: (theme)=> lighten(alpha(theme.palette.background.paper, 1), 0.05),
+                backgroundColor: alpha(theme.palette.background.input, 0.35),
                 backdropFilter: "blur(14px)"
             }}
         >
