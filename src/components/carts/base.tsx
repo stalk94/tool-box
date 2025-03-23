@@ -61,16 +61,17 @@ export default function SimpleCard({ children, footer, ...props }: CardProps & P
             </CardContent>
         );
     }
-
+    
     
     return (
-        <Card 
+        <Card elevation={1}
             { ...props }
             sx={{ 
-                backgroundColor: 'background.card', 
+                backgroundColor: (theme)=> alpha(theme.palette.background.navBar, 0.1), 
                 borderRadius: '5px',
                 border: '1px solid',
-                borderColor: 'background.card',
+                borderColor: 'action.active',
+                boxShadow: '0 3px 4px rgba(0, 0, 0, 0.2)',
                 ...props.sx
             }}
         >

@@ -15,13 +15,14 @@ const config: StorybookConfig = {
 		'@storybook/addon-styling',
 		'@storybook/addon-measure',
 		'@storybook/addon-console',
-		'@storybook/addon-docs'
+		'@storybook/addon-docs',
+		"@storybook/addon-controls"
 	],
 	framework: {
 		"name": "@storybook/react-vite",
 		"options": {
 			builder: {
-				viteConfigPath: 'vite.config.ts',
+				viteConfigPath: 'vite.config.js',
 			}
 		}
 	},

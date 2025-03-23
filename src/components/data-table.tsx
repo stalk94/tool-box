@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, ComponentProps } from 'react';
-import { Theme } from "@mui/material/styles";
+import { alpha, darken, Theme } from "@mui/material/styles";
 import { DataTable, DataTableValueArray } from "primereact/datatable";
 import styled from 'styled-components';
 import { useTheme } from '@mui/material';
@@ -13,7 +13,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
 
     // прокрутка
     ::-webkit-scrollbar-track {
-        background-color:#2a2a2b85
+        background-color:#2a2a2b85;
     }
     ::-webkit-scrollbar-thumb {
         -webkit-border-radius: 3px;
@@ -36,9 +36,11 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         border-radius: 5px;
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        border: 1px solid;
+        border-color: ${({ theme })=> alpha(theme.palette.action.active, 0.18)};
     }
     .p-datatable-header {
-        background: ${({ theme })=> theme.palette.table.header};
+        background: ${({ theme })=> alpha(theme.palette.background.navBar, 0.1)};
         border-bottom: 1px solid #5f5f5f35;
         color: ${({ theme })=> theme.palette.text.primary};
         font-size: 18px;
@@ -46,7 +48,9 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         padding: 12px 16px;
     }
     .p-datatable-footer {
-        background: ${({ theme })=> theme.palette.table.header};
+        border-top: 1px solid;
+        border-color: ${({ theme })=> alpha(theme.palette.action.active, 0.1)};
+        background: ${({ theme })=> alpha(theme.palette.background.navBar, 0.1)};
         color: ${({ theme })=> theme.palette.text.primary};
         font-size: 16px;
         padding: 12px 16px;

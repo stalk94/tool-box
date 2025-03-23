@@ -11,6 +11,7 @@ import { InputPaper, InputBaseCustom, Label } from './atomize';
 
 
 
+
 export type EmailInputProps = InputBaseProps & {
     value: string;
     onChange: (value: string) => void;
@@ -414,3 +415,4 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
         />
     );
 }
+
