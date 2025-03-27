@@ -17,7 +17,8 @@ const Item = styled(Paper)(({ theme }) => ({
     alignItems: 'center',
     justifyContent: 'center'
 }));
-export const Toolbar =({ useUndo, useAdd, useClick, current })=> {
+export const Toolbar =({ useUndo, useAdd, useClick, current, tools })=> {
+
     return (
         <Item sx={{ px: 2, backgroundColor: '#32313bab' }}>
             <Button
@@ -40,26 +41,7 @@ export const Toolbar =({ useUndo, useAdd, useClick, current })=> {
                 <Delete />
             </Button>
 
-            <Stack direction="row" spacing={1}>
-                <Button 
-                    //disabled={disabled}
-                    onClick={()=> {
-                        useClick('save');
-                    }}
-                    sx={{my: 1, ml: 1}} 
-                >
-                    save
-                </Button>
-                <Button 
-                    //disabled={disabled}
-                    onClick={()=> {
-                        useClick('import');
-                    }}
-                    sx={{my: 1, ml: 1}} 
-                >
-                    import
-                </Button>
-            </Stack>
+            { tools }
         </Item>
     );
 }
@@ -77,11 +59,11 @@ export const Components =({ visibility, onChange, items })=> {
             sx={{
                 margin: '1%',
                 position: 'fixed',
-                background: '#0000004d',
+                background: '#00000084',
                 left: 0,
                 bottom: 0,
                 width: '50%',
-                maxHeight: '27%',
+                maxHeight: '25%',
                 zIndex: 3,
                 overflowY: "auto",
                 visibility: visibility ? 'visible' : 'hidden'
@@ -89,8 +71,16 @@ export const Components =({ visibility, onChange, items })=> {
         >
             <Stack>
                 { items.map((elem, index)=> 
-                    <div key={index} onClick={(e)=> handlerClick(elem, index)}>
-                        { elem }
+                    <div 
+                        style={{
+                            borderBottom: '1px dotted #726e6e66',
+                            marginTop: '3px',
+                            maxWidth: '100%',
+                        }}
+                        key={index} 
+                        onClick={(e)=> handlerClick(elem, index)}
+                    >
+                        { elem.label }
                     </div>
                 )}
             </Stack>

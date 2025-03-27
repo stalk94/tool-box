@@ -1,8 +1,8 @@
 import React from "react";
-import { Button } from "@mui/material";
+import { Button, useTheme } from "@mui/material";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import { Toolbar, Components } from './tools-bar';
-import StaticGrid from '../grid/static';
+import StaticGrid from './static';
 import "react-grid-layout/css/styles.css";
 import "../../style/grid.css"
 
@@ -14,15 +14,16 @@ type LayoutCustom = Layout & {
 type GridEditorProps = {
     setLayout: (old: Layout[])=> void
     layout: LayoutCustom[]
-    renderItems: React.ReactNode
+    renderItems: React.ReactNode[]
 }
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 
 // сетка редактор (с верхней панелькой и панелью заполнителей ячейки)
-export default function ({ setLayout, layout, renderItems }: GridEditorProps) {
-    const [preview, setPreview] = React.useState(true);
+export default function ({ setLayout, layout, renderItems, tools }: GridEditorProps) {
+    const theme = useTheme();
+    const [preview, setPreview] = React.useState(false);
     const [current, setCurrent] = React.useState<string | undefined>();
     const [margin, setMargin] = React.useState<[number, number]>([5, 5]);
     const containerRef = React.useRef(null);
@@ -77,10 +78,26 @@ export default function ({ setLayout, layout, renderItems }: GridEditorProps) {
             return [...items];
         });
     }
-    
+
 
     return(
         <div style={{width: '100%', height: '100%'}}>
+            {/* верхняя tool панель */}
+            <div>
+                <Toolbar
+                    current={current}
+                    useAdd={handlerAddItem}
+                    useUndo={handlerDeleteItem}
+                    tools={tools}
+                />
+            </div>
+            {/* выбор заполнения ячейки */}
+            <Components
+                visibility={Boolean(current)}
+                onChange={setItemContent}
+                items={renderItems}
+            />
+
             <div 
                 ref={containerRef}
                 onClick={()=> setCurrent(undefined)}
@@ -92,23 +109,6 @@ export default function ({ setLayout, layout, renderItems }: GridEditorProps) {
                     position: "relative", // Для правильного позиционирования в родителе
                 }}
             >
-
-                {/* верхняя tool панель */}
-                <div>
-                    <Toolbar
-                        current={current}
-                        useAdd={handlerAddItem}
-                        useUndo={handlerDeleteItem}
-                        useClick={console.log}
-                    />
-                </div>
-                {/* выбор заполнения ячейки */}
-                <Components 
-                    visibility={Boolean(current)}
-                    onChange={setItemContent}
-                    items={renderItems}
-                />
-
                 <ResponsiveGridLayout
                     className="layout"
                     layouts={{ lg: layout }}                             
@@ -124,17 +124,19 @@ export default function ({ setLayout, layout, renderItems }: GridEditorProps) {
                         <div className="react-grid-item"
                             key={item.i}
                             style={{
-                                background: item.i === current ? '#f66a6a85' : "#7dbce361",
+                                //textAlign: "center",
                                 display: "flex",
+                                justifyContent: 'center',
                                 alignItems: "center",
-                                justifyContent: "center",
-                                overflow: 'auto'
+                                flex: 1,
+                                background: item.i === current ? '#f66a6a85' : theme.palette.background.paper,
+                                overflow: 'auto',
                             }}
                             onClick={(e) => handleItemClick(item.i, e)}
                         >
-                            { item.content !== undefined
-                                ? renderItems[item.content] 
-                                : `Block ${index}`
+                            { renderItems?.[item.content]?.render
+                                ? renderItems[item.content].render()
+                                : <div style={{textAlign:'center'}}>{`Block ${index}`}</div>
                             }
                         </div>
                     ))}
@@ -145,37 +147,24 @@ export default function ({ setLayout, layout, renderItems }: GridEditorProps) {
             <React.Fragment>
                 <div
                     style={{
-                        margin: '1%',
+                        //margin: '1%',
                         position: 'fixed',
-                        background: '#0000004d',
+                        background: preview ? theme.palette.background.default : '#00000069',
                         right: 0,
                         bottom: 0,
-                        width: '30%',
-                        maxHeight: '40%',
+                        top: preview && 0,
+                        width: preview ? '90%' : '30%',
+                        height: preview ? '100%' : '23%',
                         zIndex: 3,
-                        visibility: preview ? 'visible' : 'hidden'
                         //overflowY: "auto"
                     }}
-                    onClick={() => setPreview(false)}
+                    onClick={() => setPreview(!preview)}
                 >
                     <StaticGrid
                         layout={layout}
+                        viewContent={renderItems}
                     />
                 </div>
-                { !preview &&
-                    <Button 
-                        onClick={()=> setPreview(true)}
-                        style={{
-                            margin:'1%',
-                            position:'fixed',
-                            right: 0,
-                            bottom: 0,
-                            zIndex: 3
-                        }}
-                    >
-                        x
-                    </Button>
-                }
             </React.Fragment>
         </div>
     );

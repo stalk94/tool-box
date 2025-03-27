@@ -69,6 +69,9 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, label, 
         if(clone.type !== 'password') delete clone.type;
         return clone;
     }
+    React.useEffect(()=> {
+        if(value) setInputValue(value);
+    }, [value]);
 
    
     return(

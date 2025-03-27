@@ -5,9 +5,13 @@ import "../../style/grid.css"
 
 
 type StaticGridProps = {
-    layout: Layout[]
+    layout: Layout & {
+        /** id рендер элемента */
+        content?: number
+    }[]
     margin?: [number, number]
-    viewContent?: boolean
+    /** массив компонентов с которым будут сопоставлятся ячейки, усли `undefined` то будет визуализация в режиме макета */
+    viewContent?: React.ReactNode[]
 }
 
 
@@ -90,9 +94,9 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
 
                 // Рассчитываем количество строк, исходя из переданной схемы
                 const maxY = Math.max(...layout.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
-                const rows = maxY + 1; // Количество строк = максимальное значение y + 1
+                const rows = maxY; // Количество строк = максимальное значение y + 1
 
-                const totalVerticalMargin = margin[1] * (rows - 1); // Суммарные вертикальные отступы для всех строк
+                const totalVerticalMargin = margin[1] * (rows+1) ; // Суммарные вертикальные отступы для всех строк
                 const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
 
                 setRowHeight(availableHeight / rows); // Вычисляем высоту строки
@@ -112,8 +116,8 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
         <div
             ref={containerRef}
             style={{
-                border: "1px dotted #ccc", // Для наглядности
                 position: "relative", // Для правильного позиционирования в родителе
+                height: '100%',
             }}
         >
             <ResponsiveGridLayout
@@ -127,16 +131,25 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
                 isDraggable={false}             // Отключить перетаскивание
                 isResizable={false}             // Отключить изменение размера
                 margin={margin ?? [5, 5]}
-             
             >
                 {!viewContent && layout.map((item) => (
-                    <div key={item.i} style={{ background: "lightgray", textAlign: "center" }}>
-                    </div>
+                    <div key={item.i} style={{ background: "lightgray", textAlign: "center" }}/>
                 ))}
+
+                {/* рабочий режим (отображаем контент в ячейках) */}
                 {viewContent && layout.map((item, index) => (
-                    <React.Fragment key={item.i}>
-                        { item.content }
-                    </React.Fragment>
+                    <div 
+                        key={item.i} 
+                        style={{ 
+                            display: "flex",
+                            flex: 1,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            overflow: 'auto'
+                        }}
+                    >
+                        { viewContent[item?.content]?.render() || 'empty' }
+                    </div>
                 ))}
             </ResponsiveGridLayout>
         </div>
