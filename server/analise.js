@@ -3,6 +3,8 @@ const fs = require("fs");
 const reactDocgen = require("react-docgen");
 
 
+
+
 function analyzeComponent(filePath) {
     try {
         const componentCode = fs.readFileSync(filePath, "utf8");
@@ -26,6 +28,7 @@ function analyzeComponent(filePath) {
     }
 }
 
-  // Укажите путь к файлу компонента
-const componentPath = "../node_modules/@mui/material/Button/Button.js";
+
+// Укажите путь к файлу компонента
+const componentPath = "../node_modules/@mui/material/CardHeader/CardHeader.js";
 analyzeComponent(componentPath);

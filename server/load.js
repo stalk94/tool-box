@@ -19,4 +19,4 @@ ${exportList}
 };
 `;
 
-fs.writeFileSync("./icons.js", output);
+fs.writeFileSync("./icons.js", output);  
