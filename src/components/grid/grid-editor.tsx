@@ -15,6 +15,7 @@ type GridEditorProps = {
     setLayout: (old: Layout[])=> void
     layout: LayoutCustom[]
     renderItems: React.ReactNode[]
+    tools: React.ReactNode
 }
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -144,28 +145,26 @@ export default function ({ setLayout, layout, renderItems, tools }: GridEditorPr
             </div>
 
             {/* превью нашего компонента */}
-            <React.Fragment>
-                <div
-                    style={{
-                        //margin: '1%',
-                        position: 'fixed',
-                        background: preview ? theme.palette.background.default : '#00000069',
-                        right: 0,
-                        bottom: 0,
-                        top: preview && 0,
-                        width: preview ? '90%' : '30%',
-                        height: preview ? '100%' : '23%',
-                        zIndex: 3,
-                        //overflowY: "auto"
-                    }}
-                    onClick={() => setPreview(!preview)}
-                >
-                    <StaticGrid
-                        layout={layout}
-                        viewContent={renderItems}
-                    />
-                </div>
-            </React.Fragment>
+            <div
+                style={{
+                    //margin: '1%',
+                    position: 'fixed',
+                    background: preview ? theme.palette.background.default : '#00000069',
+                    right: 0,
+                    bottom: 0,
+                    top: preview && 0,
+                    width: preview ? '90%' : '30%',
+                    height: preview ? '100%' : '23%',
+                    zIndex: 3,
+                    //overflowY: "auto"
+                }}
+                onClick={() => setPreview(!preview)}
+            >
+                <StaticGrid
+                    layout={layout}
+                //viewContent={renderItems}
+                />
+            </div>
         </div>
     );
 }

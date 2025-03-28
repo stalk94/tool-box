@@ -7,7 +7,10 @@ sk-proj-LbVDCQupTb_hGxbkXwR5eWEhjG8flngTo_HIRI0S6SQdi2SDnMlrdXBZei5wpnaJoNvigvza
 **NAVBAR**
 - стилизацию сделать: кнопок, разделителей, выпадаюших Menu, тени
 
+## LIB
+- Надо собрать основные компоненты которые можно будет собрать как либу и таскать везде
 
+## Editor
 - Надо сделать стилизатор элементов (выбираем элемент м работаем с его стилями)
 
 
@@ -21,5 +24,6 @@ xl — для экстра больших экранов.
 
 
 
-* Ссылки на нужное
+
+## Ссылки на нужное
 - https://mui.com/material-ui/customization/creating-themed-components/     свои компоненты

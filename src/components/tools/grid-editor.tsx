@@ -29,6 +29,7 @@ export default function({ components }) {
 
         return result;
     }
+    //! Вынести отдельно как провайдер данных
     const handlerSave =()=> {
         setAll((all)=> {
             const newList = {...all, [name]: layout};
@@ -37,6 +38,7 @@ export default function({ components }) {
             return newList;
         });
     }
+    //! Вынести отдельно как провайдер данных
     React.useEffect(()=> {
         const cache = localStorage.getItem('GRIDS');
 

@@ -81,11 +81,6 @@ export function InputPaper({ children, ...props }) {
 export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
     const theme = useTheme();
 
-    const filteredProps =()=> {
-        const clone = structuredClone(props);
-        delete clone.borderStyle;
-        return clone;
-    }
 
     return(
         <InputBase
@@ -95,7 +90,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
             sx={{ 
                 minWidth: '105px',
                 flex: 1, 
-                pl: props?.pl ?? '5px',
+                pl: '5px',
                 '& input::placeholder': {
                     color: theme.palette.placeholder.main,
                     opacity: 1,
@@ -106,10 +101,11 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
                     opacity: 1,
                     fontStyle: theme.elements.input.fontStyle
                 },
+                ...props.sx
             }}
             inputProps={{style: {textAlign: theme.elements.input.alight}}}
             onChange={(e)=> onChange && onChange(e.target.value)}
-            { ...filteredProps() }
+            { ...props }
         />
     );
 }

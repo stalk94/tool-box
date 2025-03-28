@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material';
 
 
 type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
+// ! нужны стили по умолчанию
 const StyledTableWrapper = styled.div<{ theme: Theme }>`
     height: 100%;
     display: flex;

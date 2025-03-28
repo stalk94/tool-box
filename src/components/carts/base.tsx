@@ -4,10 +4,12 @@ import CardContent from '@mui/material/CardContent';
 import { Avatar, Button, CardActionArea, CardActions, CardHeader, IconButton, Typography } from '@mui/material';
 import { alpha, darken, lighten, styled, useTheme } from '@mui/system';
 import { iconsList } from '../tools/icons';
+import { MediaImage, FlexContent, Header } from './atomize';
 
 
 type Props = {
-    children?: [],
+    children?: [typeof MediaImage | typeof FlexContent| typeof Header ],
+    actionAreaDisabled?: boolean
     footer?: [],
 }
 
@@ -78,18 +80,21 @@ export default function SimpleCard({ children, footer, ...props }: CardProps & P
 
             { !children && getHeaderData() }
             { !children && getBody() }
+            <CardActionArea disabled={props.actionAreaDisabled}>
+                { children }
             
-            <CardActions 
-                sx={{ 
-                    //borderTop: '1px dotted gray' 
-                }}
-            >
-                { footer ??
-                    <Button size="small" color="primary">
-                        Share
-                    </Button>
-                }
-            </CardActions>
+                <CardActions 
+                    sx={{ 
+                        //borderTop: '1px dotted gray' 
+                    }}
+                >
+                    { footer ??
+                        <Button size="small" color="primary">
+                            Share
+                        </Button>
+                    }
+                </CardActions>
+            </CardActionArea>
         </Card>
     );
 }
