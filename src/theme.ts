@@ -89,6 +89,7 @@ export const darkTheme = createTheme({
         text: {
             disabled: 'gray'
         },
+        // ! надо изменить структуру. Сейчас это текст color placeholder
         placeholder: {
             main: '#808080'   
         },

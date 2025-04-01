@@ -10,10 +10,6 @@ const meta: Meta<typeof Input> = {
     title: 'Inputs',
     component: Input,
     argTypes: {
-        variant: {
-            control: "select",
-            options: [undefined, "fullWidth", "inset", "middle"],
-        },
         color: {
             control: "select",
             options: colors
@@ -31,9 +27,6 @@ const Templates =(args)=> {
     return(
         <div style={{margin:'20%'}}>
             <Input
-                sx={{
-                    background: '#00000000'
-                }}
                 onChange={console.log}
                 {...args}
             >
@@ -50,7 +43,6 @@ export const Number: Story = {
         disabled: false,
         error: false,
         borderStyle: 'solid',
-        variant: undefined,
         placeholder: 'test',
     },
     render: (props)=> <Templates {...props} />

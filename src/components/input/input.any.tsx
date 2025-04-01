@@ -83,7 +83,11 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
     
     return (
         <React.Fragment>
-            <InputPaper disabled={disabled} error={!isValid}>
+            <InputPaper 
+                disabled={disabled} 
+                error={!isValid}
+                { ...props }
+            >
                 <IconButton
                     disabled={disabled}
                     style={{
@@ -100,14 +104,8 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
                     placeholder={placeholder ?? "Введите email"}
                     disabled={disabled}
                     sx={{ 
-                        pl: '10px',
-                        '& input::placeholder': {
-                            color: theme.palette.placeholder.main,
-                            opacity: 1,
-                            fontStyle: theme.elements.input.fontStyle
-                        }
+                        ml: 1,
                     }}
-                    {...props}
                     type='text'
                 />
             </InputPaper>
@@ -155,7 +153,11 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
 
     return (
         <React.Fragment>
-           <InputPaper disabled={disabled} error={!isValid}>
+            <InputPaper 
+                disabled={disabled} 
+                error={!isValid}
+                { ...props }
+            >
                 <IconButton
                     disabled={disabled}
                     style={{
@@ -171,15 +173,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
                     fullWidth
                     placeholder={placeholder ?? "+79991234567"}
                     disabled={disabled}
-                    sx={{
-                        pl: '10px',
-                        '& input::placeholder': {
-                            color: theme.palette.placeholder.main,
-                            opacity: 1,
-                            fontStyle: theme.elements.input.fontStyle
-                        }
-                    }}
-                    { ...props }
+                    sx={{ pl: 1 }}
                     type='text'
                 />
             </InputPaper>

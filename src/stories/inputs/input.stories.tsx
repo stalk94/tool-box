@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input/input';
+import Text from '../../components/input/text';
 import { colors } from "../../components/button";
 
 
@@ -12,14 +12,10 @@ const types = [
 ];
 
 
-const meta: Meta<typeof Inputs.Input> = {
+const meta: Meta<typeof Text> = {
     title: 'Inputs',
-    component: Inputs.Input,
+    component: Text,
     argTypes: {
-        variant: {
-            control: "select",
-            options: [undefined, "fullWidth", "inset", "middle"],
-        },
         color: {
             control: "select",
             options: colors
@@ -44,18 +40,18 @@ const Templates =(args)=> {
     
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.Input
+            <Text
                 onChange={console.log}
                 {...args}
             >
                 
-            </Inputs.Input>
+            </Text>
         </div>
     );
 }
 
 
-type Story = StoryObj<typeof Inputs.Input>;
+type Story = StoryObj<typeof Text>;
 export const Base: Story = {
     args: {
         disabled: false,
@@ -63,7 +59,6 @@ export const Base: Story = {
         multiline: false,
         rows: 4,
         borderStyle: 'solid',
-        variant: undefined,
         type: 'number',
         color: 'info',
         placeholder: 'Test placeholder'

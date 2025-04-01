@@ -59,9 +59,8 @@ export default function LoginInput({ value, helperText, useVerify, ...props }: l
 
                 <InputBaseCustom
                     sx={{
-                        minWidth: '40px',
                         flex: 1, 
-                        ml: props.left ? 0 : 3
+                        pl: 1
                     }}
                     placeholder={props.placeholder}
                     error={!isValid}

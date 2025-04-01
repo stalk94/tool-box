@@ -1,16 +1,24 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input/input';
+import DatePickerCustom from '../../components/input/date';
+import { colors } from "../../components/button";
 
 
-
-const meta: Meta<typeof Inputs.DatePickerCustom> = {
+const meta: Meta<typeof DatePickerCustom> = {
     title: 'Inputs',
-    component: Inputs.DatePickerCustom,
+    component: DatePickerCustom,
     argTypes: {
-        variant: {
+        color: {
             control: "select",
-            options: [undefined, "fullWidth", "inset", "middle"],
+            options: colors
+        },
+        position: {
+            control: "select",
+            options: ['end', 'start']
+        },
+        borderStyle: {
+            control: "select",
+            options: ['dashed', 'solid', 'dotted']
         }
     },
 }
@@ -27,23 +35,24 @@ const Templates =(args)=> {
 
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.DatePickerCustom
+            <DatePickerCustom
                 onChange={useChange}
                 isTimePicker={args.isTimePicker}
                 value={value}
+                { ...args }
             />
         </div>
     );
 }
 
 
-type Story = StoryObj<typeof Inputs.DatePickerCustom>;
+type Story = StoryObj<typeof DatePickerCustom>;
 export const DateOrTimePicker: Story = {
     args: {
         value: '23:06',
         error: false,
+        disabled: false,
         isTimePicker: true,
-        variant: undefined
     },
     render: (props)=> <Templates {...props} />
 }

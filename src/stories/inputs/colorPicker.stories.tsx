@@ -1,16 +1,24 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input/input';
+import { ColorPicker } from '../../components/input/input.any';
+import { colors } from "../../components/button";
 
 
-
-const meta: Meta<typeof Inputs.ColorPicker> = {
+const meta: Meta<typeof ColorPicker> = {
     title: 'Inputs',
-    component: Inputs.ColorPicker,
+    component: ColorPicker,
     argTypes: {
-        variant: {
+        color: {
             control: "select",
-            options: ["fullWidth", "inset", "middle"],
+            options: colors
+        },
+        position: {
+            control: "select",
+            options: ['end', 'start']
+        },
+        borderStyle: {
+            control: "select",
+            options: ['dashed', 'solid', 'dotted']
         }
     },
 }
@@ -21,7 +29,7 @@ const Templates =(args)=> {
   
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.ColorPicker
+            <ColorPicker
                 { ...args }
             />
         </div>
@@ -29,11 +37,12 @@ const Templates =(args)=> {
 }
 
 
-type Story = StoryObj<typeof Inputs.ColorPicker>;
-export const ColorPicker: Story = {
+type Story = StoryObj<typeof ColorPicker>;
+export const ColorPick: Story = {
     args: {
         placeholder: 'Color',
-        left: true
+        disabled: false,
+        error: false,
     },
     render: (props)=> <Templates {...props} />
 }

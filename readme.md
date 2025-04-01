@@ -1,5 +1,9 @@
 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
 
+## Inputs
+- доработать 
+- упразднить label inputs
+- 
 
 **TABLE**
 - Prime таблицу, надо простилизировать выпадалку фильтров а так же разобратся с локализацией

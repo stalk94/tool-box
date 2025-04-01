@@ -1,13 +1,9 @@
 import React from 'react';
-import { useTheme, IconButton, FormHelperText } from '@mui/material';
+import { IconButton, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { InputBaseProps } from '@mui/material/InputBase';
-import { DatePickerCustom } from './date';
-import { EmailInput, PhoneInput, ColorPicker } from './input.any';
 import { InputPaper, InputBaseCustom  } from './atomize';
-import InputNumber from './number';
-import PasswordInput from './password';
-import LoginInput from './login';
+
 
 
 export type BaseInputProps = {
@@ -26,12 +22,9 @@ export type BaseInputProps = {
 } & InputBaseProps
 
 
-/**
- * Базовое поле ввода. На данный момент работает:
- * - number, text
- * * левый и правый сторона можно реализовать верефикатор индикатор а так же тул панель
- */
-function BaseInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
+
+
+export default function ({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number | string>(value);
 
@@ -60,8 +53,15 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, label, 
    
     return(
         <InputPaper {...props} >
-
-            { left }
+            <IconButton
+                disabled={props.disabled}
+                sx={{
+                    color: theme.palette.action.active,
+                }}
+            >
+                { left }
+            </IconButton>
+           
 
             <InputBaseCustom
                 value={inputValue}
@@ -81,18 +81,4 @@ function BaseInput({ value, left, right, onChange, placeholder, variant, label, 
 
         </InputPaper>
     );
-}
-
-
-
-
-export default {
-    Input: BaseInput,
-    NumberInput: InputNumber,
-    ColorPicker,
-    PasswordInput,
-    LoginInput,
-    DatePickerCustom,
-    EmailInput,
-    PhoneInput
 }

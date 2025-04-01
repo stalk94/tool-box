@@ -1,6 +1,10 @@
 import React from 'react';
-import In, { BaseInputProps } from './input';
-import { EmailInputProps, PhoneInputProps, TooglerInput, TooglerInputProps } from './input.any'
+import Text, { BaseInputProps } from './text';
+import Number, { NumberinputProps } from './number';
+import Login, { loginInputProps } from './login';
+import Password, { PasswordInputProps } from './password';
+import { EmailInputProps, PhoneInputProps, TooglerInputProps } from './input.any';
+import { EmailInput, PhoneInput, TooglerInput, ColorPicker } from './input.any'
 import { DataPickerCustomProps } from './date';
 import Select, { BaseSelectProps } from './select';
 import { Box, Slider, SliderProps } from '@mui/material';
@@ -92,14 +96,14 @@ export function LabelText({ label, position, ...props }: LabelTextProps & BaseIn
             id={props.id}
             typeInput='text'
         >
-            <In.Input
+            <Text
                 { ...props }
                 type='text'
             />
         </LabelInput>
     );
     else return (
-        <In.Input
+        <Text
             { ...props }
             type='text'
         />
@@ -113,18 +117,18 @@ export function LabelNumber({ label, position, ...props }: LabelTextProps & Numb
             id={props.id}
             typeInput='number'
         >
-            <In.NumberInput
+            <Number
                 { ...props }
             />
         </LabelInput>
     );
     else return(
-        <In.NumberInput
+        <Number
             { ...props }
         />
     );
 }
-export function LabelLogin({ label, position, ...props }: LabelTextProps & BaseInputProps) {
+export function LabelLogin({ label, position, ...props }: LabelTextProps & loginInputProps) {
     if(label && typeof label === 'string' && label.length) return(
         <LabelInput
             label={label}
@@ -132,15 +136,13 @@ export function LabelLogin({ label, position, ...props }: LabelTextProps & BaseI
             id={props.id}
             typeInput='login'
         >
-            <In.LoginInput
-                type='text'
+            <Login
                 { ...props }
             />
         </LabelInput>
     );
     else return (
-        <In.LoginInput
-            type='text'
+        <Login
             { ...props }
         />
     );
@@ -153,13 +155,13 @@ export function LabelPassword({ label, position, ...props }: LabelTextProps & Pa
             id={props.id}
             typeInput='password'
         >
-            <In.PasswordInput
+            <Password
                 { ...props }
             />
         </LabelInput>
     );
     else return (
-        <In.PasswordInput
+        <Password
             { ...props }
         />
     );
@@ -172,13 +174,13 @@ export function LabelColor({ label, position, ...props }: LabelTextProps & BaseI
             id={props.id}
             typeInput='color'
         >
-            <In.ColorPicker
+            <ColorPicker
                 { ...props }
             />
         </LabelInput>
     );
     else return (
-        <In.ColorPicker
+        <ColorPicker
             { ...props }
         />
     );
@@ -191,13 +193,13 @@ export function LabelEmail({ label, position, ...props }: LabelTextProps & Email
             id={props.id}
             typeInput='email'
         >
-            <In.EmailInput
+            <EmailInput
                 { ...props }
             />
         </LabelInput>
     );
     else return(
-        <In.EmailInput
+        <EmailInput
             { ...props }
         />
     );
@@ -210,13 +212,13 @@ export function LabelPhone({ label, position, ...props }: LabelTextProps & Phone
             id={props.id}
             typeInput='phone'
         >
-            <In.PhoneInput
+            <PhoneInput
                 { ...props }
             />
         </LabelInput>
     );
     else return(
-        <In.PhoneInput
+        <PhoneInput
             { ...props }
         />
     );

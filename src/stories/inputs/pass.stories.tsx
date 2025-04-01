@@ -1,16 +1,24 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input/input';
-import Buttons from "../../components/button";
+import PasswordInput from '../../components/input/password';
+import { colors } from "../../components/button";
 
 
-const meta: Meta<typeof Inputs.PasswordInput> = {
+const meta: Meta<typeof PasswordInput> = {
     title: 'Inputs',
-    component: Inputs.PasswordInput,
+    component: PasswordInput,
     argTypes: {
-        variant: {
+        color: {
             control: "select",
-            options: [undefined, "fullWidth", "inset", "middle"],
+            options: colors
+        },
+        position: {
+            control: "select",
+            options: ['end', 'start']
+        },
+        borderStyle: {
+            control: "select",
+            options: ['dashed', 'solid', 'dotted']
         }
     },
 }
@@ -22,25 +30,23 @@ const Templates =(args)=> {
 
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.PasswordInput
+            <PasswordInput
                 {...args}
-                sx={{
-                    background: "#00000000"
-                }}
                 onChange={console.log}
             >
                 
-            </Inputs.PasswordInput>
+            </PasswordInput>
         </div>
     );
 }
 
 
-type Story = StoryObj<typeof Inputs.PasswordInput>;
+type Story = StoryObj<typeof PasswordInput>;
 export const Password: Story = {
     args: {
-        placeholder: 'Password',
-        variant: undefined
+        disabled: false,
+        error: false,
+        placeholder: 'Password'
     },
     render: (props)=> <Templates {...props} />
 }

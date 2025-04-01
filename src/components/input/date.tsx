@@ -1,6 +1,6 @@
 import React from 'react';
 import dayjs from 'dayjs';
-import { Dialog, DialogActions, DialogContent, useTheme, IconButton, Button } from '@mui/material';
+import { Dialog, DialogContent, useTheme, IconButton } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -71,7 +71,7 @@ const Picker =({ value, open, handleClose, onChange, isTimePicker })=> {
 
 
 // ? локализация
-export function DatePickerCustom({ value, variant, left, onChange, isTimePicker=false, ...props }: DataPickerCustomProps) {
+export default function DatePickerCustom({ value, variant, left, onChange, isTimePicker=false, ...props }: DataPickerCustomProps) {
     const [open, setOpen] = React.useState(false);
     const [inputValue, setInputValue] = React.useState<any>();
     const theme = useTheme();

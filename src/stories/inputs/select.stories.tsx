@@ -1,8 +1,8 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
-import Selects from '../components/input/select';
-import { colors } from "../components/button";
+import Selects from '../../components/input/select';
+import { colors } from "../../components/button";
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 
@@ -12,6 +12,14 @@ const meta: Meta<typeof Selects> = {
     title: 'Inputs',
     component: Selects,
     argTypes: {
+        color: {
+            control: "select",
+            options: colors
+        },
+        position: {
+            control: "select",
+            options: ['end', 'start']
+        },
         borderStyle: {
             control: "select",
             options: ['dashed', 'solid', 'dotted']
@@ -53,6 +61,7 @@ export const Select: Story = {
         disabled: false,
         error: false,
         borderStyle: 'solid',
+        placeholder: 'Select',
         items: [{id:'1', label:'test'},{id:'2', label:'test2'},{id:'3', label:'test3'}]
     },
     render: (props)=> <Templates {...props} />

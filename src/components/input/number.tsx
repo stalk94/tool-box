@@ -115,7 +115,6 @@ export default function NumberInput({ value, min=0, max=100, step=1, onChange, .
                     onChange && onChange(value);
                 }}
                 sx={{ 
-                    minWidth: '40px',
                     flex: 1, 
                     '& input': {
                         justifyItems: {
@@ -126,24 +125,7 @@ export default function NumberInput({ value, min=0, max=100, step=1, onChange, .
                             xs: 0,
                             md: 3
                         }
-                    },
-                    "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
-                        display: "none",
-                    },
-                    "input[type=number]": {
-                        MozAppearance: "textfield", // Убирает стрелки в Firefox
-                    },
-                    '& input::placeholder': {
-                        color: theme.palette.placeholder.main,
-                        opacity: 1,
-                        fontStyle: theme.elements.input.fontStyle
-                    },
-                    '& textarea::placeholder': {
-                        color: theme.palette.placeholder.main,  
-                        opacity: 1,
-                        fontStyle: theme.elements.input.fontStyle
-                    },
-                    
+                    },                
                 }}
             />
 

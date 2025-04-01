@@ -3,7 +3,7 @@ import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import { ArrowDropDown } from '@mui/icons-material';
 import { alpha, darken, lighten, Avatar, Button, Grid2, Stack } from '@mui/material';
 import GridEditor from '../grid/grid-editor';
-import In from '../input/input';
+import In from '../input/text';
 import BasePopUp from '../popup/base';
 
 
