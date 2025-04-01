@@ -5,11 +5,14 @@ declare module '@mui/material/styles' {
     interface Palette {
         placeholder: {
             main: string;
-        };
+        }
         table: {
             body: string
             header: string
             thead: string
+        }
+        navigation: {
+            main: string
         }
     }
 
@@ -18,6 +21,8 @@ declare module '@mui/material/styles' {
         card: string;
         input: string;
         navBar: string;
+        appBar: string;
+        menu: string;
     }
 
     interface PaletteOptions {
@@ -29,6 +34,9 @@ declare module '@mui/material/styles' {
             header: string
             thead: string
         }
+        navigation: {
+            main: string
+        }
     }
     interface Theme {
         elements: typeof elements;
@@ -37,14 +45,19 @@ declare module '@mui/material/styles' {
         elements?: typeof elements;
     }
 }
-
+// расщирения интерфейсов buttons
+declare module '@mui/material/Button' {
+    interface ButtonPropsColorOverrides {
+        navigation: true;
+    }
+}
 
 
 // глобальные стили для элементов
 const elements = {
     input: {
         fontStyle: "italic",
-        variant: 'middle',          //<undefined|"fullWidth"|"inset"|"middle"> 
+        variant: undefined,          //<undefined|"fullWidth"|"inset"|"middle"> 
         alight: undefined           // <'center'|undefined>
     },
     scrollbar: {
@@ -79,18 +92,24 @@ export const darkTheme = createTheme({
         placeholder: {
             main: '#808080'   
         },
+        // app bar цвет navigation link
+        navigation: {
+            main: "rgba(255, 255, 255, 0.8)",
+        },
         table: {
             body: "#5151513f",
             header: "#5c5c5c62",
             thead: "#353943"
         },
         background: {
-            default: '#222222',         //  '#2c303d'
+            default: '#222222',                     //  '#2c303d'
             sidenav: "#1f283e",
             card: "#202940",
-            paper: "rgb(63, 63, 63)",       //  rgb(63, 63, 63)
-            input: "#393E46",      // цвет фона всех инпутов, селектов #3b3b3ba8
-            navBar: "#86898d61",
+            paper: "rgb(63, 63, 63)",
+            input: "#393E46",                       // цвет фона всех инпутов, селектов
+            navBar: "#86898d61",                    // ? переделать
+            appBar: "rgba(57, 62, 70, 0.35)",
+            menu: "rgba(63, 63, 63, 0.5)"
             
         },
         // это управляет цветами обводок инпутов

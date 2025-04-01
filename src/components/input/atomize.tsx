@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { InputBase, Paper, useTheme, InputBaseProps, InputLabel , InputLabelProps } from '@mui/material';
 import { alpha, lighten, darken, styled } from '@mui/system';
 
@@ -9,6 +9,7 @@ const AnimatedPaper = styled(Paper)`
     background-color: ${alpha('rgb(221, 235, 238)', 0.1)}; // Используем alpha для задания прозрачности
   }
 `;
+
 
 
 // базовый лейбл
@@ -57,8 +58,9 @@ export function InputPaper({ children, ...props }) {
             sx={{
                 //background: '#00000000',
                 backgroundColor: alpha(theme.palette.background.input, 0.4),
-                minHeight: '42px',
-                minWidth: '190px',
+                minHeight: '40px',
+                minWidth: '160px',
+                ...props.sx,
                 opacity: props.disabled && 0.5,
                 border: useBorderColor(),
                 display: 'flex',
@@ -88,9 +90,8 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
             type={type}
             value={value}
             sx={{ 
-                minWidth: '105px',
+                minWidth: '60px',
                 flex: 1, 
-                pl: '5px',
                 '& input::placeholder': {
                     color: theme.palette.placeholder.main,
                     opacity: 1,

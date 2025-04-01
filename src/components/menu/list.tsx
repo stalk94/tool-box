@@ -24,7 +24,7 @@ export type MobailMenuProps = {
 }
 
 
-
+// todo: разобратся со структурой 
 // Компонент для рендера элементов меню с поддержкой подменю
 export default function({ item, onItemClick }: MobailMenuProps) {
     const theme = useTheme();
@@ -71,7 +71,7 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                 {/* иконка */}
                 { item.icon && 
                     <ListItemIcon>
-                        { React.cloneElement(item.icon, {sx: {opacity: 1}}) }
+                        { item.icon }
                     </ListItemIcon>
                 }
                 {/* текст пункта */}

@@ -1,8 +1,8 @@
 import React from 'react';
-import In, { BaseInputProps, NumberinputProps, PasswordInputProps } from './input';
+import In, { BaseInputProps } from './input';
 import { EmailInputProps, PhoneInputProps, TooglerInput, TooglerInputProps } from './input.any'
-import { DataPickerCustomProps } from '../input/input.date';
-import Select, { BaseSelectProps } from '../popup/select';
+import { DataPickerCustomProps } from './date';
+import Select, { BaseSelectProps } from './select';
 import { Box, Slider, SliderProps } from '@mui/material';
 import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';

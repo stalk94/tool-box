@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import NavBar from '../../components/nav-bars/top-nav';
+import NavBar from '../../components/app-bar/linear-nav';
 import { IconButton } from '@mui/material';
 import { AccountBox, Home, Settings, Info } from "@mui/icons-material";
 import { Box } from '@mui/material';

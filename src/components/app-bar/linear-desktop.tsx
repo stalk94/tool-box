@@ -3,9 +3,21 @@ import Button from "@mui/material/Button";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
-import { Divider, Box, } from "@mui/material";
+import { Divider, Box, SxProps, useTheme, alpha, } from "@mui/material";
 import { NavLinkItem } from '../menu/list';
-import NavMenu from '../menu/nav-menu';
+import AppBarMenu from '../menu/app-bar';
+
+
+type OverflowNavigationItemsProps = { 
+    hiddenItems: NavLinkItem[] 
+    element?: React.ReactNode 
+}
+type NavigationItemsDesktopProps = { 
+    items: NavLinkItem[] 
+    /** кастомный элемент в режиме переполнения */
+    elementOverflow?: React.ReactNode 
+    sx?: SxProps
+}
 
 
 // Компонент для отображения элемента с вложенным меню в десктопном режиме
@@ -23,25 +35,24 @@ export const DesktopNestedMenuItem =({ item }: { item: NavLinkItem })=> {
     return (
         <React.Fragment>
             <Button
-                color="inherit"
+                color="navigation"
                 startIcon={item.icon || null}
                 endIcon={<KeyboardArrowDown />}
                 onClick={handleClick}
             >
                 { item.label }
             </Button>
-            <NavMenu
+            <AppBarMenu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
                 navLinks={item.children}
-                isMobile={false}
             />
         </React.Fragment>
     );
 }
 // то что не помешается в десктопном виде
-const OverflowNavigationItems =({ hiddenItems }: { hiddenItems: NavLinkItem[] })=> {
+const OverflowNavigationItems =({ hiddenItems, element }: OverflowNavigationItemsProps)=> {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const [menuOpen, setMenuOpen] = useState(false);
 
@@ -49,39 +60,53 @@ const OverflowNavigationItems =({ hiddenItems }: { hiddenItems: NavLinkItem[] })
         setAnchorEl(null);
         setMenuOpen(false);
     }
+    const renderDefaultElement = () => {
+        return(
+            <IconButton
+                edge="end"
+                color="navigation"
+                aria-label="menu-overflow"
+                sx={{ mr: 0 }}
+            >
+                <MenuIcon />
+            </IconButton>
+        );
+    }
 
     return(
         <React.Fragment>
-            <IconButton
-                edge="end"
-                color="inherit"
-                aria-label="menu-overflow"
-                sx={{ mr: 0, color: 'gray' }}
+            <Box 
+                sx={{
+                    //ml: 1,
+                    mr: 2
+                }}
                 onClick={(e) => {
                     setAnchorEl(e.currentTarget);
                     setMenuOpen(true);
                 }}
             >
-                <MenuIcon />
-            </IconButton>
-            <NavMenu
+                { element ?? renderDefaultElement() }
+            </Box>
+            
+            <AppBarMenu
                 anchorEl={anchorEl}
                 open={menuOpen}
                 onClose={handleMenuClose}
                 navLinks={hiddenItems}
-                isMobile={false}
             />
         </React.Fragment>
     );
 }
 
 
-
-export default function NavigationItemsDesktop({ items }: { items: NavLinkItem[] }) {
+/** линейная навигация для больших экранов */
+export default function LinearNavigationItemsDesktop({ items, elementOverflow, sx }: NavigationItemsDesktopProps) {
     const containerRef = React.useRef<HTMLDivElement | null>(null);
     const [visibleItems, setVisibleItems] = useState<NavLinkItem[]>(items);
     const [hiddenItems, setHiddenItems] = useState<NavLinkItem[]>([]);
   
+
+    //? надо придумать отслежку размера либо типо того
     React.useEffect(()=> {
         const updateVisibleItems =()=> {
             if (!containerRef.current) return;
@@ -115,11 +140,16 @@ export default function NavigationItemsDesktop({ items }: { items: NavLinkItem[]
 
 
     return(
-        <Box ref={containerRef}
+        <Box 
+            ref={containerRef}
             sx={{
-                display: { xs: "none", sm: "flex" },
+                display: { 
+                    xs: "none", 
+                    sm: "flex" 
+                },
                 justifyContent: "flex-end",
                 flexGrow: 1,
+                ...sx
             }}
         >
             { visibleItems.map((item, index) => (
@@ -133,7 +163,7 @@ export default function NavigationItemsDesktop({ items }: { items: NavLinkItem[]
                         ) 
                         : item.label ? (
                             <Button
-                                color="inherit"
+                                color="navigation"
                                 startIcon={item.icon || null}
                                 onClick={() => item.comand?.(item)}
                             >
@@ -141,12 +171,12 @@ export default function NavigationItemsDesktop({ items }: { items: NavLinkItem[]
                             </Button>
                         ) 
                         : item.icon ? (
-                            <IconButton
-                                color="inherit" 
+                            <Button
+                                color="navigation"
                                 onClick={() => item.comand?.(item)}
                             >
                                 { item.icon }
-                            </IconButton>
+                            </Button>
                         ) 
                         : null
                     }
@@ -168,7 +198,10 @@ export default function NavigationItemsDesktop({ items }: { items: NavLinkItem[]
 
             {/* то что не помещается выносим в выделенную вкладку */}
             { hiddenItems.length > 0 &&
-                <OverflowNavigationItems hiddenItems={hiddenItems}/>
+                <OverflowNavigationItems 
+                    hiddenItems={hiddenItems}
+                    element={elementOverflow}
+                />
             }
         </Box>
     );

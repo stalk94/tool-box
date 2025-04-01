@@ -2,25 +2,30 @@ import React from "react";
 import { Menu, alpha, MenuProps } from "@mui/material";
 
 
-type SelectMenuProps = {
+type CustomMenuProps = MenuProps & {
     anchorEl: any
     open: boolean
-    handleClose: ()=> void
+    onClose: ()=> void
     width?: string | number
     children: React.ReactNode
 }
 
 
-export function SelectMenu({ anchorEl, open, handleClose, width, children }: SelectMenuProps) {
+/**
+ * Базовый Menu (выпадаюшее меню)   
+ * наследуется от MUI Menu
+ */
+export default function ({ anchorEl, open, onClose, width, children, ...props }: CustomMenuProps) {
     return(
-        <Menu elevation={2}
+        <Menu 
+            elevation={0}
             anchorEl={anchorEl}
             open={open}
-            onClose={handleClose}
+            onClose={onClose}
             sx={{
-                mt: 0.5,
+                mt: 1.5,
                 "& .MuiPaper-root": {
-                    backgroundColor: (theme)=> alpha(theme.palette.background.paper, 0.1),
+                    backgroundColor: (theme)=> theme.palette.background.menu,
                     backdropFilter: "blur(14px)", // Размытие для эффекта стекла
                 }
             }}
@@ -31,6 +36,7 @@ export function SelectMenu({ anchorEl, open, handleClose, width, children }: Sel
                     width
                 },
             }}
+            { ...props }
         >
             { children }
         </Menu>

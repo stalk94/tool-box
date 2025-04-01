@@ -1,6 +1,6 @@
 import React, { useState, ReactNode, ReactElement } from "react";
 import ItemsList, { NavLinkItem } from '../menu/list';
-import { SelectMenu } from '../menu/atomize';
+import Menu from '../menu';
 
 
 
@@ -48,10 +48,10 @@ export default function({ children, items, onOpenClose, onSelect }: CustomMenuPr
             { childWithProps }
 
             {/* Меню */}
-            <SelectMenu
+            <Menu
                 anchorEl={anchorEl} 
                 open={open} 
-                handleClose={handleClose}
+                onClose={handleClose}
             >
                 { items.map((item, index) => (
                     <ItemsList 
@@ -63,7 +63,7 @@ export default function({ children, items, onOpenClose, onSelect }: CustomMenuPr
                         }}
                     />
                 ))}
-            </SelectMenu>
+            </Menu>
         </React.Fragment>
     );
 }

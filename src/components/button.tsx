@@ -1,5 +1,4 @@
 import React from 'react';
-import { useTheme } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Badge, { badgeClasses, BadgeProps } from '@mui/material/Badge';
 import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-material';
@@ -24,7 +23,7 @@ const icons = {
 }
 
 
-function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
+export default function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
     const CartBadge = styled(Badge)`
         & .${badgeClasses.badge} {
             top: -8px;
@@ -40,10 +39,4 @@ function BadgeIcon({ value, color, ...props }: BadgeIconProps) {
             {...props}
         />
     );
-}
-
-
-
-export default {
-    Badge: BadgeIcon
 }

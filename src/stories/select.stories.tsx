@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
-import Selects from '../components/popup/select';
+import Selects from '../components/input/select';
 import { colors } from "../components/button";
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 

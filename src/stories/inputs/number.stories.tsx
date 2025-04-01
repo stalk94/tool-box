@@ -1,14 +1,14 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Inputs from '../../components/input/input';
+import Input from '../../components/input/number';
 import { colors } from "../../components/button";
 
 
 
 
-const meta: Meta<typeof Inputs.NumberInput> = {
+const meta: Meta<typeof Input> = {
     title: 'Inputs',
-    component: Inputs.Base,
+    component: Input,
     argTypes: {
         variant: {
             control: "select",
@@ -30,18 +30,21 @@ const Templates =(args)=> {
     
     return(
         <div style={{margin:'20%'}}>
-            <Inputs.NumberInput
+            <Input
+                sx={{
+                    background: '#00000000'
+                }}
                 onChange={console.log}
                 {...args}
             >
                 
-            </Inputs.NumberInput>
+            </Input>
         </div>
     );
 }
 
 
-type Story = StoryObj<typeof Inputs.NumberInput>;
+type Story = StoryObj<typeof Input>;
 export const Number: Story = {
     args: {
         disabled: false,

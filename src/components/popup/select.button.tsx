@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, ButtonProps } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
 import ItemsList, { NavLinkItem } from '../menu/list';
-import { SelectMenu } from '../menu/atomize';
+import Menu from '../menu';
 
 
 
@@ -104,10 +104,10 @@ export default function SelectButton({ value, defaultLabel, items, onChange, ...
                 { getLabel() }
             </Button>
 
-            <SelectMenu
+            <Menu
                 anchorEl={ref.current}
                 open={isOpen}
-                handleClose={()=> setIsOpen(false)}
+                onClose={()=> setIsOpen(false)}
             >
                 { transformedItems.map((item, index) => (
                     <ItemsList 
@@ -116,7 +116,7 @@ export default function SelectButton({ value, defaultLabel, items, onChange, ...
                         onItemClick={handleItemClick} 
                     />
                 ))}
-            </SelectMenu>
+            </Menu>
         </React.Fragment>
     );
 }

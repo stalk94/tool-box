@@ -4,7 +4,7 @@ import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, D
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { NavLinkItem } from '../menu/list';
-import { LeftNavMenu } from '../menu/nav-menu';
+import LeftNavMenu from '../menu/left-nav';
 
 
 type SidebarMenuProps = {
@@ -19,7 +19,9 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
 }
 
 
+
 /**
+ * todo: надо декомпозировать и рефакторить
  * Базовый выдвижной список (располагается слева)
  * Можно передавать onChange которая для каждого выполнится выбранного.  
  * * так же у каждого item может быть свой comand()
@@ -156,7 +158,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
             <LeftNavMenu
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}
-                handleClose={handleClosePopover}
+                onClose={handleClosePopover}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "center", horizontal: "left" }}
             >

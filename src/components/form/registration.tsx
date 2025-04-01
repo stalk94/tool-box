@@ -2,7 +2,7 @@ import React from 'react';
 import { LabelLogin, LabelPassword, LabelEmail, LabelPhone, LabelSelect } from '../../components/input/labels.inputs';
 import { Button, ButtonProps, CircularProgress } from '@mui/material';
 import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
-import { validateEmail, validateLogin, validatePass, validatePhone } from '../../app/verify.hooks';
+import { validateEmail, validateLogin, validatePass, validatePhone } from '../../app/verify';
 
 
 //? еше надо выбор из двух варриантов

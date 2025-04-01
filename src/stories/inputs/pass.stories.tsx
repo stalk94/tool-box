@@ -24,6 +24,9 @@ const Templates =(args)=> {
         <div style={{margin:'20%'}}>
             <Inputs.PasswordInput
                 {...args}
+                sx={{
+                    background: "#00000000"
+                }}
                 onChange={console.log}
             >
                 

@@ -1,7 +1,7 @@
 import Slider, { SliderProps } from '@mui/material/Slider';
 import { NavLinkItem } from '../menu/list';
 import { TooglerProps } from '../input/input.any';
-import { DataPickerCustomProps } from '../input/input.date';
+import { DataPickerCustomProps } from '../input/date';
 
 //? не реализованы: 'slider' | 'switch' | 'toogle' | 'slider'
 export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' 

@@ -1,10 +1,10 @@
 import React from 'react';
-import {  Menu, useTheme, alpha, Box } from '@mui/material';
+import { useTheme, alpha, Box } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import Select, { SelectProps } from '@mui/material/Select';
+import { SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
-import { InputPaper } from '../input/atomize';
-import { SelectMenu } from '../menu/atomize';
+import { InputPaper } from './atomize';
+import Menu from '../menu/index';
 import ItemsList, { NavLinkItem } from '../menu/list';
 
 
@@ -123,10 +123,10 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
             </div>
             
             {/* выпадалка */}
-            <SelectMenu
+            <Menu
                 anchorEl={selectRef.current}
                 open={isOpen}
-                handleClose={()=> setIsOpen(false)}
+                onClose={()=> setIsOpen(false)}
                 width={width}
             >
                 { items.map((item, index)=> 
@@ -136,7 +136,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                         onItemClick={handleSelectItem}
                     />
                 )}
-            </SelectMenu>    
+            </Menu>    
         </div>
     );
 }
