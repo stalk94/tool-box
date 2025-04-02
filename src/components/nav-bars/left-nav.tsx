@@ -4,7 +4,7 @@ import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, D
 } from "@mui/material";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { NavLinkItem } from '../menu/list';
-import LeftNavMenu from '../menu/left-nav';
+import Menu from '../menu/atomize';
 
 
 type SidebarMenuProps = {
@@ -155,12 +155,19 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
             </Box>
 
             {/* Меню */}
-            <LeftNavMenu
+            <Menu
                 open={Boolean(anchorEl)}
                 anchorEl={anchorEl}
                 onClose={handleClosePopover}
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 transformOrigin={{ vertical: "center", horizontal: "left" }}
+                sx={{
+                    ml: 1,
+                    mt: {
+                        xs: 1.5,
+                        md: 0
+                    }
+                }}
             >
                 { currentChildren.map((child, index)=> (
                     <MenuItem
@@ -173,13 +180,13 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                             handleClosePopover();
                         }}
                     >
-                        <ListItemIcon sx={{ minWidth: 36, color: "gray" }}>
+                        <ListItemIcon sx={{ minWidth: 36 }}>
                             { child.icon }
                         </ListItemIcon>
                         <ListItemText primary={child.label} />
                     </MenuItem>
                 ))}
-            </LeftNavMenu>
+            </Menu>
         </React.Fragment>
     );
 }

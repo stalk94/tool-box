@@ -1,5 +1,5 @@
 import React from 'react'
-import { Avatar, CardContent, CardActionArea, CardActions, CardHeader, IconButton, Typography, CardMedia } from '@mui/material';
+import { Avatar, CardContent, CardActionArea, CardActions, CardHeader, CardMedia, CardMediaProps } from '@mui/material';
 import { alpha, darken, lighten, styled, useTheme } from '@mui/system';
 
 
@@ -15,14 +15,20 @@ type HeaderProps = {
     /** можно немного изменить цвет фона header передав одно из этих свойств */
     bcg?: 'dark' | 'light' | 'alpha'
 }
+type MediaImageProps = CardMediaProps & {
+    src: string
+    height?: string|number 
+    width?: string|number
+}
 
 
 /**
  * Элемент картинки для карточки
  * 
  */
-export const MediaImage = ({ src, height, width }: {src: string, height?: string|number, width?: string|number }) => (
+export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) => (
     <CardMedia
+        { ...props }
         component="img"
         height={height}
         width={width}

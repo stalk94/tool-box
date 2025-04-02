@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, IconButton } from '@mui/material';
 import type { Meta, StoryObj } from "@storybook/react";
-import { colors } from "../components/button";
+import { colors } from "../../components/button";
 import { Delete, Done, Favorite, Send, Settings, Close, Add } from '@mui/icons-material';
 
 

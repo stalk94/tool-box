@@ -51,7 +51,7 @@ export default function LoginInput({ value, helperText, useVerify, ...props }: l
                 <IconButton
                     disabled={props.disabled}
                     style={{
-                        color: theme.palette.action.active,
+                        color: theme.palette.input.placeholder,
                     }}
                 >
                     { props.left }
@@ -62,6 +62,7 @@ export default function LoginInput({ value, helperText, useVerify, ...props }: l
                         flex: 1, 
                         pl: 1
                     }}
+                    disabled={props.disabled}
                     placeholder={props.placeholder}
                     error={!isValid}
                     onChange={useVerifyChange}

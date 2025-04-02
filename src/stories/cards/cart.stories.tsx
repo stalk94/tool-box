@@ -1,9 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import CardContent from '@mui/material/CardContent';
-import { alpha, darken, lighten, Avatar, Button, CardActionArea, CardActions, CardHeader, CardMedia, 
-    IconButton, Typography, useTheme, TypographyProps
-} from '@mui/material';
+import { Avatar, Button,  IconButton, Typography, useTheme, TypographyProps } from '@mui/material';
 import Card from '../../components/carts/base';
 import { Header, MediaImage } from '../../components/carts/atomize';
 
@@ -68,7 +66,7 @@ const Templates =(args)=> {
         >
             <Card {...args} 
                 children={[
-                    <Header
+                    <Header key='header'
                         avatar={
                             <Avatar sx={{ bgcolor: '#f05c5c' }} aria-label="action">
                                 R
@@ -82,11 +80,11 @@ const Templates =(args)=> {
                             </Button>
                         }
                     />,
-                    <MediaImage
+                    <MediaImage key='img'
                         height={args.imageHeight}
                         src={args.imageSrc}
                     />,
-                    <CardContent>
+                    <CardContent key='content'>
                         <Typography variant={args.variant} color={args.color ?? "text.secondary"}>
                             { args.text }
                         </Typography>
@@ -94,13 +92,13 @@ const Templates =(args)=> {
                 ]}
                 
                 footer={[
-                    <Button size="small" variant='outlined' color="info">
+                    <Button key='btn1' size="small" variant='outlined' color="info">
                         small
                     </Button>,
-                    <Button size="medium" variant='contained' color="success">
+                    <Button key='btn2' size="medium" variant='contained' color="success">
                         medium
                     </Button>,
-                    <Button size="large" color="secondary">
+                    <Button key='btn3' size="large" color="secondary">
                         large
                     </Button>
                 ]}
@@ -118,7 +116,7 @@ export const Simple: StoryObj<typeof Card> = {
         variant: 'body2',
         imageHeight: 300,
         imageSrc: 'https://www.industrialempathy.com/img/remote/ZiClJf-1920w.jpg',
-        actionAreaDisabled: false
+        actionAreaEnabled: false
     },
     render: Templates
 }

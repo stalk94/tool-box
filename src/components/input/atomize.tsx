@@ -11,7 +11,7 @@ const AnimatedPaper = styled(Paper)`
 `;
 
 
-
+// ! не стилизован
 // базовый лейбл
 export function Label({ id, children, sx }: InputLabelProps) {
     const theme = useTheme();
@@ -37,33 +37,47 @@ export function Label({ id, children, sx }: InputLabelProps) {
 export function InputPaper({ children, ...props }) {
     const theme = useTheme();
 
-    //? работает ли это так как надо
-    const useColorBorderFocus = () => {
-        if (props.error) return theme.palette.error.light;
-        else if (props.disabled) return theme.palette.action.disabled;
-        else if (props.success) return theme.palette.success.light;
-        else return lighten(theme.palette.action.active, 1);
-    }
     // цвет бордера в зависимости от состояния (error, sucess, disabled)
     const useBorderColor = () => {
         const border = props?.borderStyle ?? 'solid';
+        const colors = theme.palette.input;
 
-        if (props.error) return `1px ${border} ${theme.palette.error.light}`;
-        else if (props.disabled) return `1px ${border} ${theme.palette.action.disabled}`;
-        else if (props.success) return `1px ${border} ${theme.palette.success.light}`;
-        else return `1px ${border} ${theme.palette.action.active}`;
+        if (props.error) return `1px ${border} ${colors.error}`;
+        else if (props.success) return `1px ${border} ${colors.success}`;
+        else return `1px ${border} ${colors.mainBorder}`;
     }
-    //! цвет фона в зависимости от состояния (error, sucess, disabled)
-    const useBackgroundColor =()=> {
+    // цвет бордера при фокусе в зависимости от состояния (error, sucess, disabled)
+    const useColorBorderFocus = () => {
+        const colors = theme.palette.input;
 
+        if (props.error) return lighten(colors.error, 0.2);
+        else if (props.success) return lighten(colors.success, 0.2);
+        else return lighten(colors.mainBorder, 0.3);
+    }
+    // цвет фона в зависимости от состояния (error, sucess, disabled)
+    const useBackgroundColor = () => {
+        const colors = theme.palette.input;
+
+        if (props.error) return alpha(colors.error, 0.05);
+        else if (props.success) return alpha(colors.success, 0.05);
+        else return colors.main;
+    }
+    // цвет фона при фокусе  в зависимости от состояния (error, sucess, disabled)
+    // ? можно сделать отключение выделения через глобал темы
+    const useBackgroundColorFocus = () => {
+        const colors = theme.palette.input;
+
+        if (props.error) return alpha(colors.error, 0.2);
+        else if (props.success) return alpha(colors.success, 0.2);
+        else return alpha(colors.mainBorder, 0.15);
     }
     
-    
+
     return (
         <AnimatedPaper
             sx={{
                 //background: '#00000000',
-                backgroundColor: alpha(theme.palette.background.input, 0.4),
+                background: useBackgroundColor(),
                 minHeight: '40px',
                 minWidth: '160px',
                 ...props.sx,
@@ -75,9 +89,9 @@ export function InputPaper({ children, ...props }) {
                 backdropFilter: "blur(6px)",
                 transition: 'background-color 0.3s',
                 '&:focus-within': {
-                    borderColor: lighten(useColorBorderFocus(), 0.1),
+                    borderColor: useColorBorderFocus(),
                     color: theme.palette.text.primary,
-                    backgroundColor: alpha('rgb(255, 255, 255)', 0.2)
+                    backgroundColor: useBackgroundColorFocus()
                 }
             }}
         >
@@ -90,25 +104,30 @@ export function InputPaper({ children, ...props }) {
 /** Базовый инпут */
 export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
     const theme = useTheme();
-    
+    const filtre =()=> {
+        delete props.borderStyle;
+        delete props.success;
+        return props;
+    }
 
     return (
         <InputBase
-            {...props}
+            {...filtre()}
             placeholder={props.placeholder}
             type={type}
             value={value}
+            disabled={props.disabled}
             sx={{
                 minWidth: '60px',
                 minHeight: '42px',
                 flex: 1,
                 '& input::placeholder': {
-                    color: theme.palette.placeholder.main,
+                    color: theme.palette.input.placeholder,
                     opacity: 1,
                     fontStyle: theme.elements.input.fontStyle
                 },
                 '& textarea::placeholder': {
-                    color: theme.palette.placeholder.main,
+                    color: theme.palette.input.placeholder,
                     opacity: 1,
                     fontStyle: theme.elements.input.fontStyle
                 },

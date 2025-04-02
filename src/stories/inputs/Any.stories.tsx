@@ -1,14 +1,15 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, LabelSelect } from '../../components/input/labels.inputs';
+import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, 
+    LabelSelect, LabelToogler, LabelDateOrTime } from '../../components/input/labels.inputs';
+import { CheckBoxInput, SwitchInput } from '../../components/input/input.any';
 import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
-import { Button } from '@mui/material';
 
 
 
 const meta: Meta<typeof LabelLogin> = {
     title: 'Inputs',
-    component: '',
+    component: LabelLogin,
     argTypes: {
         position: {
             control: "select",
@@ -89,7 +90,8 @@ const Templates =(args)=> {
     
 
     return(
-        <div style={{margin:'30%', marginTop:'10%'}}>
+        <div style={{height:'100%', overflowY:'auto'}}>
+        <div style={{margin:'30%', marginTop:'5%'}}>
             <LabelLogin
                 onChange={console.log}
                 useVerify={validateLogin}
@@ -121,6 +123,38 @@ const Templates =(args)=> {
                 onChange={console.log}
                 {...args}
             />
+            <LabelColor
+                onChange={console.log}
+                {...args}
+            />
+            <LabelDateOrTime
+                isTimePicker={true}
+                onChange={console.log}
+                { ...args }
+            />
+            <LabelToogler
+                onChange={console.log}
+                items={[
+                    {id: 1, label: 'one'},
+                    {id: 2, label: 'two'}
+                ]}
+                {...args}
+                label={'Toogle:'}
+                sx={{
+                    height: '42px'
+                }}
+            />
+            <SwitchInput
+                { ...args }
+                onChange={console.log}
+                label={'on/off'}
+            />
+            <CheckBoxInput
+                { ...args }
+                onChange={console.log}
+                label={'check'}
+            />
+        </div>
         </div>
     );
 }
@@ -130,6 +164,8 @@ type Story = StoryObj<typeof LabelLogin>;
 export const All: Story = {
     args: {
         disabled: false,
+        success: false,
+        error: false,
         position: 'column',
         placeholder: 'min 10 simbol',
         label: 'Test:'

@@ -5,7 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Divider, Box, SxProps, useTheme, alpha, } from "@mui/material";
 import { NavLinkItem } from '../menu/list';
-import AppBarMenu from '../menu/app-bar';
+import AppBarMenu from '../menu/atomize';
 
 
 type OverflowNavigationItemsProps = { 

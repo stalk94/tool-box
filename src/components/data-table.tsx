@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material';
 
 
 type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
-// ! нужны стили по умолчанию
+// todo: стилизировать
 const StyledTableWrapper = styled.div<{ theme: Theme }>`
     height: 100%;
     display: flex;
@@ -38,10 +38,10 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         border: 1px solid;
-        border-color: ${({ theme })=> alpha(theme.palette.action.active, 0.18)};
+        border-color: ${({ theme })=> theme.palette.card.border };
     }
     .p-datatable-header {
-        background: ${({ theme })=> alpha(theme.palette.background.navBar, 0.1)};
+        background: ${({ theme })=> alpha(theme.palette.table.header, 0.1)};
         border-bottom: 1px solid #5f5f5f35;
         color: ${({ theme })=> theme.palette.text.primary};
         font-size: 18px;
@@ -51,7 +51,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
     .p-datatable-footer {
         border-top: 1px solid;
         border-color: ${({ theme })=> alpha(theme.palette.action.active, 0.1)};
-        background: ${({ theme })=> alpha(theme.palette.background.navBar, 0.1)};
+        background: ${({ theme })=> alpha(theme.palette.table.header, 0.1)};
         color: ${({ theme })=> theme.palette.text.primary};
         font-size: 16px;
         padding: 12px 16px;
@@ -84,7 +84,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
     // границы row
     .p-datatable-tbody > tr > td {
         padding: 12px;
-        border-bottom: 1px solid ${({ theme })=> theme.palette.action.active};
+        border-bottom: 1px dashed ${({ theme })=> theme.palette.card.border};
     }
     .p-datatable-tbody > tr.p-highlight {
         background: #574b90 !important;

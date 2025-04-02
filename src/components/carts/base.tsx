@@ -2,20 +2,20 @@ import React from 'react'
 import Card, { CardProps } from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import { Avatar, Button, CardActionArea, CardActions, CardHeader, IconButton, Typography } from '@mui/material';
-import { alpha, darken, lighten, styled, useTheme } from '@mui/system';
 import { iconsList } from '../tools/icons';
 import { MediaImage, FlexContent, Header } from './atomize';
 
 
-type Props = {
-    children?: [typeof MediaImage | typeof FlexContent| typeof Header ],
-    actionAreaDisabled?: boolean
+type Props = CardProps & {
+    children?: React.ReactNode | [typeof MediaImage | typeof FlexContent| typeof Header ],
+    /** делает карточку кликабельной как кнопка */
+    actionAreaEnabled?: boolean
     footer?: [],
 }
 
 
 
-export default function SimpleCard({ children, footer, ...props }: CardProps & Props) {
+export default function SimpleCard({ children, footer, ...props }: Props) {
     const getIcon =(name: string, color?: string)=> {
         const IconComponent = iconsList[name];
 
@@ -66,35 +66,49 @@ export default function SimpleCard({ children, footer, ...props }: CardProps & P
     
     
     return (
-        <Card elevation={1}
-            { ...props }
+        <Card component="div"
+            elevation={1}  
             sx={{ 
-                backgroundColor: (theme)=> alpha(theme.palette.background.navBar, 0.1), 
+                backgroundColor: (theme)=> theme.palette.card.main, 
                 borderRadius: '5px',
                 border: '1px solid',
-                borderColor: 'action.active',
-                boxShadow: '0 3px 4px rgba(0, 0, 0, 0.2)',
+                borderColor: (theme)=> theme.palette.card.border,
+                //boxShadow: '0 3px 4px rgba(0, 0, 0, 0.2)',
                 ...props.sx
             }}
         >
 
             { !children && getHeaderData() }
             { !children && getBody() }
-            <CardActionArea disabled={props.actionAreaDisabled}>
-                { children }
-            
-                <CardActions 
-                    sx={{ 
-                        //borderTop: '1px dotted gray' 
-                    }}
-                >
-                    { footer ??
-                        <Button size="small" color="primary">
-                            Share
-                        </Button>
+
+            { props.actionAreaEnabled
+                ? <CardActionArea>
+                    { children }
+
+                    {footer &&
+                        <CardActions
+                            sx={{
+                                //borderTop: '1px dotted gray' 
+                            }}
+                        >
+                            { footer }
+                        </CardActions>
                     }
-                </CardActions>
-            </CardActionArea>
+                 </CardActionArea>
+                : <React.Fragment>
+                    { children }
+
+                    {footer &&
+                        <CardActions
+                            sx={{
+                                //borderTop: '1px dotted gray' 
+                            }}
+                        >
+                            { footer }
+                        </CardActions>
+                    }
+                </React.Fragment>
+            }
         </Card>
     );
 }

@@ -91,7 +91,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
                 <IconButton
                     disabled={disabled}
                     style={{
-                        color: theme.palette.action.active,
+                        color: theme.palette.input.placeholder,
                     }}
                 >
                     <AlternateEmail />
@@ -161,7 +161,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
                 <IconButton
                     disabled={disabled}
                     style={{
-                        color: theme.palette.action.active,
+                        color: theme.palette.input.placeholder,
                     }}
                 >
                     <Phone />
@@ -249,7 +249,7 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                 { variant || theme.elements.input.variant &&
                     <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
                 }
-                <IconButton onClick={useCopy} >
+                <IconButton onClick={useCopy} disabled={props.disabled}>
                     <FileCopy style={{
                             color: theme.palette.text.secondary, 
                             opacity: '0.6'
@@ -277,34 +277,46 @@ export function SwitchInput({ value, onChange, ...props }: { value?: boolean, on
           },
           '&::before': {
             backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-              theme.palette.getContrastText(theme.palette.primary.main),
+                useColor('icon'),
             )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
             left: 12,
           },
           '&::after': {
             backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-              theme.palette.getContrastText(theme.palette.primary.main),
+                
             )}" d="M19,13H5V11H19V13Z" /></svg>')`,
             right: 12,
           },
+          backgroundColor: curvalue ? useColor('trackOn') : useColor('trackOff'),
+          border: `1px solid ${useColor('border')}`
         },
         '& .MuiSwitch-thumb': {
-          boxShadow: 'none',
-          width: 16,
-          height: 16,
-          margin: 2,
-        },
+            boxShadow: 'none',
+            width: 16,
+            height: 16,
+            margin: 2,
+            backgroundColor: useColor('thumb')
+        }
     }));
     
+    const useColor =(type: 'trackOn'|'trackOff'|'thumb'|'icon'|'border')=> {
+        const color = theme.palette.switch[type];
+
+        if((type!=='trackOff' && type!=='trackOn' && type!=='border') && props.disabled){
+            return alpha(color, 0.1);
+        } 
+        else return color;
+    }
 
     return(
         <Box>
             <FormControlLabel
+                disabled={props.disabled}
                 control={
                     <Android12Switch 
                         id={props.id}
-
                         checked={curvalue}
+                        color='default'
                         onChange={(e, v)=> {
                             onChange && onChange(v);
                             setCur(v);
@@ -318,7 +330,7 @@ export function SwitchInput({ value, onChange, ...props }: { value?: boolean, on
                     margin: 0, 
                     mt: 1,
                     "& .MuiFormControlLabel-label": {
-                        color: alpha(theme.palette.text.secondary, 0.6),
+                        color: alpha(theme.palette.text.secondary, 0.6),  // label color
                         fontFamily: '"Roboto Condensed", Arial, sans-serif',
                         fontSize: 16
                     }
@@ -327,10 +339,26 @@ export function SwitchInput({ value, onChange, ...props }: { value?: boolean, on
         </Box>
     );
 }
+//! доработать темизацию
 export function TooglerInput({ items, value, label, onChange, ...props }: TooglerInputProps) {
     const theme = useTheme();
     const [curentValue, setCurent] = React.useState<string[]>([]);
 
+
+    const filtre =()=> {
+        delete props.borderStyle;
+        delete props.success;
+        delete props.error;
+        return props;
+    }
+    const useColorBackground =()=> {
+        const colors = theme.palette.input;
+
+        if(props.disabled) return 
+    }
+    const useColorText =()=> {
+
+    }
     const handlerChange =(newValue)=> {
         if(Array.isArray(value) || props.multi) {
             setCurent(newValue);
@@ -355,16 +383,24 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
             value={curentValue}
             onChange={(e, v)=> handlerChange(v)}
             aria-label={label}
-            sx={{width:'100%'}}
-            { ...props }
+            { ...filtre() }
+            sx={{
+                width: '100%',
+                ...props.sx
+            }}
         >
             { items.map((elem, index)=> 
                  <ToggleButton
-                    { ...elem }
+                    //{ ...elem }
                     sx={{ 
                         flex: 1,
-                        border: `1px solid ${theme.palette.action.active}`,
-                        ...props.sx
+                        border: `1px solid ${theme.palette.input.mainBorder}`,
+                        "&.Mui-selected": {
+                            //backgroundColor: "red", // Цвет фона выделенной кнопки
+                            //color: "white", // Цвет текста выделенной кнопки
+                            //"&:hover": { backgroundColor: "darkred",},
+                            opacity: props.disabled ? 0.5 : 1
+                        },
                     }}
                     key={index} 
                     value={elem.id} 
@@ -380,9 +416,22 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
     const theme = useTheme();
     const [curentValue, setCurent] = React.useState(value ?? false);
     
+    const useColor =()=> {
+        const colors = theme.palette.chekbox;
+
+        if(props.disabled) return alpha(colors.border, 0.1);
+        else return colors.border;
+    }
+    const useColorCheck =()=> {
+        const colors = theme.palette.chekbox;
+
+        if(props.disabled) return alpha(colors.success, 0.2);
+        else return colors.success;
+    }
 
     return(
         <FormControlLabel
+            disabled={props.disabled}
             value="end"
             control={
                 <Checkbox 
@@ -392,7 +441,15 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
                         onChange && onChange(v);
                     }}
                     inputProps={{ 'aria-label': props.name ?? 'checkbox' }}
-                    { ...props }
+                    sx={{
+                        "& .MuiSvgIcon-root": {
+                            color: useColor(), // Цвет обводки (обычное состояние)
+                        },
+                        "&.Mui-checked .MuiSvgIcon-root": {
+                            color: useColorCheck(), // Цвет обводки при выборе
+                        },
+                        ...props.sx
+                    }}
                 />
             }
             label={props.label}

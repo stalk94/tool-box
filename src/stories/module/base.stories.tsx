@@ -20,7 +20,7 @@ const meta: Meta<typeof AlertProvider> = {
 const Templates =(args)=> {
     const menuItems = [
         { id: "1", label: "Меню", icon: <Menu />, children: [
-            { id: "1:1", label: "Вложенный 1", icon: <Home /> },
+            { id: "1:1", label: "Вложенный 1"},
             { id: "1:2", label: "Вложенный 2", icon: <Settings /> },
         ] },
         { divider: true },
@@ -46,17 +46,29 @@ const Templates =(args)=> {
                 <AppBarPreview
                   
                 />
-                <SideBarAndToolPanel
-                    sx={{ height: '100%' }}
-                    schemaNavBar={{
-                        items: menuItems,
-                        end: endItems
+                <div
+                    style={{
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'row'
                     }}
-                    onChangeNavigation={console.log}
-                    {...args}
                 >
-                    { args.toolPanelopen }
-                </SideBarAndToolPanel>
+                    <SideBarAndToolPanel
+                        sx={{ height: '100%' }}
+                        schemaNavBar={{
+                            items: menuItems,
+                            end: endItems
+                        }}
+                        onChangeNavigation={console.log}
+                        {...args}
+                    >
+                        { args.toolPanelopen }
+                    </SideBarAndToolPanel>
+
+                    <div style={{margin:'auto'}}>
+                        WORK AREA
+                    </div>
+                </div>
             </AlertProvider>
         </div>
     );

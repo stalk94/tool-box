@@ -69,7 +69,7 @@ const Picker =({ value, open, handleClose, onChange, isTimePicker })=> {
     );
 }
 
-
+//! форматирование вывода
 // ? локализация
 export default function DatePickerCustom({ value, variant, left, onChange, isTimePicker=false, ...props }: DataPickerCustomProps) {
     const [open, setOpen] = React.useState(false);
@@ -87,15 +87,26 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
             formatted = value.format('YYYY-MM-DD');  
         }
 
-        if(onChange) onChange(formatted);
+        //? Invalid Date - отсеиваем
+        if(onChange && formatted !== "Invalid Date") onChange(formatted);
+    }
+    const useChangePicker =(newValue)=> {
+        useFiltre(newValue);
+        setInputValue(newValue);
+    }
+    const useChangeForm =(newValue)=> {
+        useFiltre(newValue);
+        setInputValue(newValue);
     }
 
     React.useEffect(() => {
         dayjs.locale('ru');
     }, []);
     React.useEffect(() => {
-        if(isTimePicker) setInputValue(dayjs(value, 'HH:mm'));
-        else setInputValue(dayjs(value, 'YYYY-MM-DD'));
+        if(value) {
+            if(isTimePicker) setInputValue(dayjs(value, 'HH:mm'));
+            else setInputValue(dayjs(value, 'YYYY-MM-DD'));
+        }
     }, [value]);
     
 
@@ -115,20 +126,21 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                 ? (
                     <TimeField
                         value={inputValue}
-                        onChange={(newValue) => useFiltre(newValue)}
+                        disabled={props.disabled}
+                        onChange={(newValue) => useChangeForm(newValue)}
                         ampm={false}
-                        inputProps={{style: {textAlign: theme.elements.input.alight}}}
+                        inputProps={{style: {textAlign: theme.elements.input.alight}}}      //?
                         slotProps={{
                             textField: {
                                 fullWidth: true,
                                 variant: 'standard',
                                 InputProps: {
                                     disableUnderline: true,
-                                    sx: { textAlign: 'center', ml:'15px' },
+                                    sx: { textAlign: 'center', ml:3 },
                                 },
                                 sx: {
                                     '& input::placeholder': { 
-                                        color: theme.palette.placeholder.main,
+                                        color: theme.palette.input.placeholder,
                                         opacity: 1,
                                         fontStyle: theme.elements.input.fontStyle
                                      },
@@ -140,7 +152,8 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                 : (
                     <DateField 
                         value={inputValue}
-                        onChange={(newValue)=> useFiltre(newValue)}
+                        disabled={props.disabled}
+                        onChange={(newValue)=> useChangeForm(newValue)}
                         inputProps={{style: {textAlign: theme.elements.input.alight}}}
                         slotProps={{
                             textField: {
@@ -148,11 +161,11 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                                 variant: 'standard',
                                 InputProps: {
                                     disableUnderline: true,
-                                    sx: { textAlign: 'center', ml:'15px' },
+                                    sx: { textAlign: 'center', ml: 3 },
                                 },
                                 sx: {
                                     '& input::placeholder': { 
-                                        color: theme.palette.placeholder.main,
+                                        color: theme.palette.input.placeholder,
                                         opacity: 1,
                                         fontStyle: theme.elements.input.fontStyle
                                      },
@@ -163,11 +176,16 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                 )
             }
 
+            {/* кнопка открытия пикера */}
             <React.Fragment>
                 { variant || theme.elements.input.variant && 
                     <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
                 }
-                <IconButton color='inherit' onClick={() => setOpen(true)}>
+                <IconButton 
+                    disabled={props.disabled}
+                    color='inherit' 
+                    onClick={() => setOpen(true)}
+                >
                     { isTimePicker 
                         ? <AccessTime style={{color:theme.palette.text.secondary, opacity:'0.6'}} /> 
                         : <CalendarMonth style={{color:theme.palette.text.secondary, opacity:'0.6'}} />
@@ -176,11 +194,12 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
             </React.Fragment>
         </InputPaper>
 
+        {/* окно пикера */}
         { open &&
             <Picker 
                 value={inputValue} 
                 open={open} 
-                onChange={useFiltre} 
+                onChange={useChangePicker} 
                 handleClose={()=> setOpen(false)}
                 isTimePicker={isTimePicker}
             />

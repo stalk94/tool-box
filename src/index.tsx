@@ -3,27 +3,15 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
 import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
-import { dark, lite } from './lib/colors';
+import { darkTheme, lightTheme } from './_theme/index';
+//import { dark, lite } from './lib/colors';
 
 import './style/index.css';
-
 
 
 function App() {
     const savedTheme = localStorage.getItem('theme');
     const [darkMode, setDarkMode] = React.useState(savedTheme === 'dark' ? true : false);
-    const themeLight = createTheme({
-        palette: {
-            mode: 'light',
-            ...lite
-        },
-    });
-    const themeDark = createTheme({
-        palette: {
-            mode: 'dark',
-            ...dark
-        },
-    });
 
     
     const toggleTheme =()=> {
@@ -37,7 +25,7 @@ function App() {
     
     return(
         <ErrorBoundary>
-            <ThemeProvider theme={darkMode?themeDark:themeLight}>
+            <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
                 <CssBaseline />
                 <BrowserRouter>
                     <Routes>

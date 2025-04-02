@@ -1,8 +1,8 @@
 import React from "react";
-import { Menu, alpha, MenuProps } from "@mui/material";
+import Menu, { CustomMenuProps } from './atomize';
 
 
-type CustomMenuProps = MenuProps & {
+type MenuProps = CustomMenuProps & {
     anchorEl: any
     open: boolean
     onClose: ()=> void
@@ -15,7 +15,8 @@ type CustomMenuProps = MenuProps & {
  * Базовый Menu (выпадаюшее меню)   
  * наследуется от MUI Menu
  */
-export default function ({ anchorEl, open, onClose, width, children, ...props }: CustomMenuProps) {
+export default function ({ anchorEl, open, onClose, width, children, ...props }: MenuProps) {
+    
     return(
         <Menu 
             elevation={0}
@@ -23,11 +24,7 @@ export default function ({ anchorEl, open, onClose, width, children, ...props }:
             open={open}
             onClose={onClose}
             sx={{
-                mt: 1.5,
-                "& .MuiPaper-root": {
-                    backgroundColor: (theme)=> theme.palette.background.menu,
-                    backdropFilter: "blur(14px)", // Размытие для эффекта стекла
-                }
+                mt: 0.5,
             }}
             PaperProps={{
                 style: {

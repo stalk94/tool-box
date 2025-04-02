@@ -50,13 +50,14 @@ export default function ({ start, center, end, ...props }: AppBarCustomProps) {
     return(
         <AppBar 
             position="static" 
+            { ...props }
             sx={{ 
                 p: 0, 
                 m: 0, 
-                backgroundColor: theme.palette.background.appBar,
+                backgroundColor: theme.palette.appBar.main,
                 backdropFilter: "blur(14px)",
+                ...props.sx
             }}
-            { ...props }
         >
             <Toolbar 
                 disableGutters 

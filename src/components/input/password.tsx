@@ -57,6 +57,7 @@ export default function PasswordInput({ value, helperText, useVerify, ...props }
                         flex: 1, 
                         ml: 3
                     }}
+                    disabled={props.disabled}
                     placeholder={props.placeholder}
                     type={type}
                     error={!isValid}
@@ -65,6 +66,7 @@ export default function PasswordInput({ value, helperText, useVerify, ...props }
 
                 {/* правая иконка смены видимости поля */}
                 <IconButton
+                    disabled={props.disabled}
                     onClick={() => {
                         setType((old) => old === 'password' ? 'text' : 'password')
                     }}

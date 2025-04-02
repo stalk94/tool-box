@@ -5,7 +5,7 @@ import Login, { loginInputProps } from './login';
 import Password, { PasswordInputProps } from './password';
 import { EmailInputProps, PhoneInputProps, TooglerInputProps } from './input.any';
 import { EmailInput, PhoneInput, TooglerInput, ColorPicker } from './input.any'
-import { DataPickerCustomProps } from './date';
+import DatePickerCustom, { DataPickerCustomProps } from './date';
 import Select, { BaseSelectProps } from './select';
 import { Box, Slider, SliderProps } from '@mui/material';
 import { Label } from './atomize';
@@ -231,13 +231,13 @@ export function LabelDateOrTime({ label, position, ...props }: LabelTextProps & 
             id={props.id}
             typeInput={props.isTimePicker ? 'time' : 'date'}
         >
-            <In.DatePickerCustom
+            <DatePickerCustom
                 { ...props }
             />
         </LabelInput>
     );
     else return (
-        <In.DatePickerCustom
+        <DatePickerCustom
             { ...props }
         />
     );

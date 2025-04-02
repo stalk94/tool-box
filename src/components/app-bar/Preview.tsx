@@ -33,9 +33,9 @@ export default function({ linkItems }: Props) {
             id: 'descr',
             label: "О нас",
             children: [
-                { id: '1', label: "Услуга 1", icon: <Home /> },
-                { id: '2', label: "Услуга 2" },
-                { id: '3', label: "Услуга 3" },
+                { id: '1', label: "Вложенный 1", icon: <Home /> },
+                { id: '2', label: "Вложенный 2" },
+                { id: '3', label: "Вложенный 3" },
             ]
         },
     ];
@@ -44,6 +44,7 @@ export default function({ linkItems }: Props) {
     const handlerClickNavigation =(path: 'string')=> {
         console.log(path);
     }
+    // ANCHOR - трансформатор id в rout
     const transformUseRouter =()=> {
         const func =(items, parent?: string)=> {
             return items.map((elem, index)=> {

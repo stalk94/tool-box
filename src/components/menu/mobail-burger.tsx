@@ -29,7 +29,7 @@ export default function({ anchorEl, open, onClose, navLinks, children }: NavMenu
             width={'100%'}
         >
             { children }
-            {navLinks && navLinks.map((item, index) => (
+            { navLinks && navLinks.map((item, index) => (
                 <ItemMenuList 
                     key={index}
                     item={item} 
