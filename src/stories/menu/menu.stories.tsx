@@ -1,13 +1,13 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import MenuBase from '../components/popup/base';
+import MenuBase from '../../components/popup/base';
 import { AccountBox, Home, Settings, Info } from "@mui/icons-material";
 import { Button } from '@mui/material';
 
 
 
 const meta: Meta<typeof MenuBase> = {
-    title: 'Popups',
+    title: 'Menu',
     component: MenuBase,
     // tags: ["autodocs"],
     argTypes: {

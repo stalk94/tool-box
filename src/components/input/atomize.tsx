@@ -29,7 +29,7 @@ export function Label({ id, children, sx }: InputLabelProps) {
                 ...sx
             }}
         >
-            {children}
+            { children }
         </InputLabel>
     );
 }
@@ -44,7 +44,7 @@ export function InputPaper({ children, ...props }) {
 
         if (props.error) return `1px ${border} ${colors.error}`;
         else if (props.success) return `1px ${border} ${colors.success}`;
-        else return `1px ${border} ${colors.mainBorder}`;
+        else return `1px ${border} ${colors.border}`;
     }
     // цвет бордера при фокусе в зависимости от состояния (error, sucess, disabled)
     const useColorBorderFocus = () => {
@@ -52,7 +52,7 @@ export function InputPaper({ children, ...props }) {
 
         if (props.error) return lighten(colors.error, 0.2);
         else if (props.success) return lighten(colors.success, 0.2);
-        else return lighten(colors.mainBorder, 0.3);
+        else return lighten(colors.border, 0.3);
     }
     // цвет фона в зависимости от состояния (error, sucess, disabled)
     const useBackgroundColor = () => {
@@ -69,7 +69,7 @@ export function InputPaper({ children, ...props }) {
 
         if (props.error) return alpha(colors.error, 0.2);
         else if (props.success) return alpha(colors.success, 0.2);
-        else return alpha(colors.mainBorder, 0.15);
+        else return alpha(colors.border, 0.15);
     }
     
 
@@ -107,8 +107,10 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
     const filtre =()=> {
         delete props.borderStyle;
         delete props.success;
+        delete props.toolVisible;
         return props;
     }
+
 
     return (
         <InputBase
@@ -124,12 +126,12 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
                 '& input::placeholder': {
                     color: theme.palette.input.placeholder,
                     opacity: 1,
-                    fontStyle: theme.elements.input.fontStyle
+                    fontStyle: theme.elements.input.fontStyle,
                 },
                 '& textarea::placeholder': {
                     color: theme.palette.input.placeholder,
                     opacity: 1,
-                    fontStyle: theme.elements.input.fontStyle
+                    fontStyle: theme.elements.input.fontStyle,
                 },
                 "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
                     display: "none",

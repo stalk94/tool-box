@@ -1,0 +1,26 @@
+.p-accordion-header {
+    padding: 10px;
+    background-color: rgba(241, 241, 241, 0.06);
+    border-bottom: 1px solid rgba(169, 168, 168, 0.162);
+    margin-bottom: 4px;
+}
+.p-accordion-header-text {
+    font-size: 16px;
+    font-weight: bold;
+    color: #f1f3f49d;
+    text-transform: uppercase;
+}
+.p-accordion-toggle-icon {
+    color: #f1f3f49d;
+    width: 16px;
+    height: 16px;
+    transition: transform 0.3s ease;
+}
+.p-accordion-content {
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(80, 79, 79, 0.474);
+}
+.p-accordion-tab-active .p-accordion-content {
+    margin-bottom: 8px;
+    margin-top: -4px;
+}

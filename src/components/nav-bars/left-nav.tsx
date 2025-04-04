@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, Divider,
     Box, MenuItem, Badge, useTheme, alpha, darken
 } from "@mui/material";
-import { ExpandLess, ExpandMore } from "@mui/icons-material";
+import { ExpandLess, ExpandMore, FiberManualRecord } from "@mui/icons-material";
 import { NavLinkItem } from '../menu/list';
 import Menu from '../menu/atomize';
 
@@ -28,7 +28,6 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
  */
 export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps) {
     const theme = useTheme();
-    const colorSelect = alpha(theme.palette.action.active, 0.1);
     const [openMenus, setOpenMenus] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
     const [currentChildren, setCurrentChildren] = useState([]);
@@ -66,6 +65,23 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
         setAnchorEl(null);
         setCurrentChildren([]);
     }
+    const renderIcon =(item)=> {
+        if(item.icon) return (
+            React.cloneElement(item.icon, {
+                sx: { 
+                    fontSize: 18 
+                }
+            })
+        )
+        else if(!item.icon) return(
+            <FiberManualRecord 
+                sx={{ 
+                    fontSize: 10, 
+                    pl: 0.5 
+                }} 
+            />
+        );
+    }
     
 
     return (
@@ -97,15 +113,28 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                                         sx={{
                                             justifyContent: collapsed ? "center" : "flex-start",
                                             px: collapsed ? 0 : 2,
-                                            backgroundColor: (selectedItem === item.id||activeParent === item.id) ? colorSelect : "transparent",
                                         }}
                                     >
-                                        <ListItemIcon sx={{ minWidth: collapsed ? "auto" : 36, color: "gray" }}>
+                                        <ListItemIcon 
+                                            sx={{ 
+                                                minWidth: collapsed ? "auto" : 36,
+                                                color: (selectedItem === item.id||activeParent === item.id) 
+                                                    ? theme.palette?.toolNavBar?.select
+                                                    : theme.palette?.toolNavBar?.icon 
+                                            }}
+                                        >
                                             {collapsed && item?.state?.badge ? (
                                                 <Badge
+                                                    showZero={false}
                                                     badgeContent={item.state.badge}
-                                                    color="primary"
+                                                    color="info"
                                                     variant="standard"
+                                                    sx={{
+                                                        '& .MuiBadge-badge': {
+                                                            backgroundColor: theme.palette?.toolNavBar?.badgeBcg,
+                                                            color: theme.palette?.toolNavBar?.badgeText,
+                                                        }
+                                                    }}
                                                 >
                                                     { item.icon }
                                                 </Badge>
@@ -133,7 +162,10 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                                                 {item.children.map((child, childIndex) => (
                                                     <ListItemButton
                                                         key={childIndex}
-                                                        sx={{ pl: 4, backgroundColor: selectedItem === child.id ? colorSelect : "transparent" }}
+                                                        sx={{ 
+                                                            pl: 4, 
+                                                            backgroundColor: selectedItem === child.id ? colorSelect : "transparent" 
+                                                        }}
                                                         onClick={() => {
                                                             handleItemClick(child, item.id);
                                                         }}
@@ -173,15 +205,17 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                     <MenuItem
                         key={index}
                         sx={{ 
-                            backgroundColor: selectedItem === child.id ? colorSelect : "transparent" 
+                            backgroundColor: selectedItem === child.id 
+                                ? theme.palette?.toolNavBar?.select 
+                                : "transparent" 
                         }}
                         onClick={()=> {
                             handleItemClick(child, child.parentId); // Используем parentLabel из child
                             handleClosePopover();
                         }}
                     >
-                        <ListItemIcon sx={{ minWidth: 36 }}>
-                            { child.icon }
+                        <ListItemIcon sx={{ minWidth: 36, opacity: 0.6 }}>
+                            { renderIcon(child) }
                         </ListItemIcon>
                         <ListItemText primary={child.label} />
                     </MenuItem>
@@ -199,7 +233,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
     const styleEnd = { 
         borderTop: `1px dotted ${theme.palette.divider}`,
         backdropFilter: "blur(14px)",
-        backgroundColor: darken(theme.palette.background.paper, 0.16),
+        backgroundColor: darken(theme.palette.toolNavBar.main, 0.1),
         ...theme.elements.scrollbar
     }
 
@@ -215,7 +249,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
                 overflowY: 'auto',
                 justifyContent: 'space-between',
                 border: `1px solid ${alpha('#000', 0.25)}`,
-                backgroundColor: (theme)=> alpha(theme.palette.background.paper, 0.65)
+                backgroundColor: theme.palette?.toolNavBar?.main
             }}
         >
             <SidebarMenu

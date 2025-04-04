@@ -2,8 +2,12 @@ sk-proj-LbVDCQupTb_hGxbkXwR5eWEhjG8flngTo_HIRI0S6SQdi2SDnMlrdXBZei5wpnaJoNvigvza
 
 ## Inputs
 - доработать Select, Slider, DateOrTime
+- Slider диапазон сделать
 - вынести label input настройки в тему
 - подумать над системой стилей через тему и доработать компоненты под нее
+
+## Tipography
+- сделать вывод всех варриантов и редактор под них
 
 ## Editor
 - Делаем пока локальные эдиторы (к примеру кнопок, инпутов)

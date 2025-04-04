@@ -1,11 +1,24 @@
 {
     "input": {
-        "main": "rgba(255, 255, 255, 0.05)"
+        "main": "rgba(255, 255, 255, 0.05)",
+        "border": "rgba(255, 255, 255, 0.2)",
+        "error": "#f34f4fcc",
+        "success": "rgba(120, 227, 114, 0.6)",
+        "placeholder": "#808080"
     },
-    "chekbox": {
-
-    },
+    "chekbox": {},
     "switch": {
-        
+        "trackOn": "rgba(255, 255, 255, 0.25)",
+        "trackOff": "rgba(255, 255, 255, 0.05)",
+        "thumb": "rgb(215, 215, 215)",
+        "border": "rgba(255, 255, 255, 0.6)",
+        "icon": "rgb(215, 215, 215)"
+    },
+    "appBar": {
+        "main": "rgba(57, 62, 70, 0.35)",
+        "border": "rgba(255, 255, 255, 0)"
+    },
+    "navigation": {
+
     }
 }

@@ -1,12 +1,14 @@
 import React, { useState } from "react";
-import { Box, BoxProps, useTheme, alpha, darken } from "@mui/material";
+import { Box, BoxProps, useTheme, alpha, darken, SxProps } from "@mui/material";
 import { NavLinkItem } from '../menu/list';
 import BaseLeftSideBar from "./left-nav";
 
 
 type SideBarAndToolPanelProps = {
+    /** слоты навигационной панели */
     schemaNavBar: {
         items: NavLinkItem[]
+        /** нижняя субпанелька, всегда поверх базовой */
         end?: NavLinkItem[]
     }
     /** ⬇️ Нижняя панелька для дополнительных элементов(tool) */
@@ -19,7 +21,8 @@ type SideBarAndToolPanelProps = {
     onChangeNavigation?: (item: NavLinkItem)=> void
     /** 📏 Ширина рабочей области (без учета навигации) */
     width?: string | number
-} & BoxProps
+    sx: SxProps
+}
 
 
 
@@ -29,21 +32,42 @@ type SideBarAndToolPanelProps = {
  * - слушаем `onChangeNavigation`
  * - меняем `children`
  */
-export default function SideBarAndToolPanel({ schemaNavBar, start, end, children, onChangeNavigation, sx, width }: SideBarAndToolPanelProps) {
+export default function SideBarAndToolPanel({ schemaNavBar, start, end, children, onChangeNavigation, ...props }: SideBarAndToolPanelProps) {
     const theme = useTheme();
     
+    const useBackgroundColor =()=> {
+        const mainColor = theme.palette.toolNavBar.main;
+        return darken(mainColor, 0.1);
+    }
+    const useTopOrEndColor =(type: 'start' | 'end')=> {
+        const color = theme.palette?.toolNavBar?.[type];
+
+        if(!color) {
+            const bcgColor = useBackgroundColor();
+            return darken(bcgColor, 0.1);
+        }
+    }
+    const useTopOrEndBorder =(type: 'startBorder' | 'endBorder')=> {
+        const color = theme.palette?.toolNavBar?.[type];
+
+        if(!color) {
+            const bcgColor = useBackgroundColor();
+            return darken(bcgColor, 0.1);
+        }
+    }
     
+
     return(
         <Box component='div'
             sx={{
-                ...sx,
                 display: 'flex',
                 flexDirection: 'row',
                 maxHeight: '100%',
                 overflow: 'hidden',
+                ...props.sx
             }}
         >
-            {/* левая навигационное меню */}
+            {/* ANCHOR - левое навигационное меню */}
             <BaseLeftSideBar
                 type="drawer"
                 collapsed={true}
@@ -52,15 +76,15 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                 end={schemaNavBar.end}
             />
 
-            {/* правая рабочая область */}
+            {/* ANCHOR - рабочая область */}
             { children &&
                 <Box
                     sx={{
-                        width: width ?? 200,
+                        width: props.width ?? '100%',
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column',
-                        backgroundColor: darken(alpha(theme.palette.background.paper, 1), 0.15),
+                        backgroundColor: useBackgroundColor(),
                         border: `1px solid ${darken(theme.palette.divider, 0.3)}`,
                         borderLeft: 'none',
                         boxShadow: "inset 3px 0 5px rgba(0, 0, 0, 0.15)",
@@ -68,14 +92,14 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                         ...theme.elements.scrollbar
                     }}
                 >
-                    {/* верхняя панель инструментов */}
+                    {/* верхняя панель инструментов рабочей области */}
                     <Box 
                         sx={{
                             position: "sticky",
                             top: 0,
                             zIndex: 10,
                             textAlign: 'center',
-                            background: 'gray',
+                            background: useTopOrEndColor('start'),
                         }}
                     >
                         { start }
@@ -83,7 +107,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
 
                     { children }
 
-                    {/* нижняя панель инструментов */}
+                    {/* нижняя панель инструментов рабочей области */}
                     <Box 
                         sx={{
                             position: "sticky",
@@ -91,7 +115,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                             zIndex: 10,
                             marginTop: 'auto',
                             textAlign: 'center',
-                            background: 'gray',
+                            background: useTopOrEndColor('end'),
                         }}
                     >
                         { end }

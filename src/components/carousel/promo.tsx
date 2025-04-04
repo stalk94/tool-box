@@ -19,7 +19,7 @@ const testData = [
         buttonText: "ПОДРОБНЕЕ",
         description: 'Лучшее решение для вашего дома!',
         images: [
-            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
+            "https://i.pinimg.com/736x/c7/28/d8/c728d805149bad291e3cbc307d544e38.jpg",
             "https://lesenka-market.ru/upload/iblock/ca2/5rmqmnanoek18isp3oyi1u5ixkkgmrze.jpeg",
             'https://titanremont.ru/assets/img/fornews/konsolnaya-lestnica.jpg',
             'https://lestnicy-minsk.by/upload/medialibrary/0e8/0e8bcb456f274f4457870a058929f340.jpg',
@@ -55,8 +55,8 @@ const IconGroop = ({ active, setActive, count }) => {
                     onClick={()=> setActive(i)}
                 >
                     { i === active 
-                        ? <AdjustOutlined />
-                        : <FiberManualRecord />
+                        ? <AdjustOutlined sx={{fontSize:'14px',color:'#c11619'}} />
+                        : <FiberManualRecord sx={{fontSize:'12px'}} />
                     }
                 </IconButton>
             );
@@ -76,10 +76,14 @@ const PhotoColage = ({ images }) => {
         <Box
             sx={{
                 width: "100%",
-                height: "100%",
+                height:  {
+                    xs: '20%',
+                    sm: "100%",
+                },
                 display: "flex",
                 flexDirection: { 
                     xs: "row",
+                    sm: "row",
                     md: "column" 
                 }, // В ряд на мобильных, в колонку на больших
                 flexWrap: "wrap", // Картинки переносятся, если их много
@@ -88,7 +92,10 @@ const PhotoColage = ({ images }) => {
                     md: "flex-start" 
                 },
                 alignItems: "center",
-                gap: 1,
+                gap: {
+                    xs: 0.5,
+                    md: 1
+                },
                 mt: {
                     xs: 0,
                     md: 6
@@ -223,7 +230,9 @@ export default function PromoSlider ({ items }: Props) {
                         top: 0,
                         left: 0,
                         width: "100%",
-                        height: "100%",
+                        height: {
+                            sm: "100%"
+                        },
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",

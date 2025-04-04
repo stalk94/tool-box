@@ -6,7 +6,7 @@ import { iconsList } from '../tools/icons';
 import { MediaImage, FlexContent, Header } from './atomize';
 
 
-type Props = CardProps & {
+export type Props = CardProps & {
     children?: React.ReactNode | [typeof MediaImage | typeof FlexContent| typeof Header ],
     /** делает карточку кликабельной как кнопка */
     actionAreaEnabled?: boolean

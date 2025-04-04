@@ -18,11 +18,13 @@ type Props = {
  */
 export default function({ linkItems }: Props) {
     const navLinksTest = [
-        { id: 'base', label: "Главная", icon: <Home />},
+        { id: 'base', label: "Главная", icon: <Home />, divider: true },
+        { id: 'info', label: "Информация", icon: <Info />, divider: true  },
         {
             id: 'services',
             label: "Услуги", 
             icon: <Settings />,
+            divider: true ,
             children: [
                 {  id: '1', label: "Услуга 1", icon: <Home /> },
                 {  id: '2', label: "Услуга 2" },
@@ -76,7 +78,6 @@ export default function({ linkItems }: Props) {
                         src="https://arenadata.tech/wp-content/uploads/2024/10/logo-white-short.png" // Замените на ваш логотип
                         alt="Logo"
                         sx={{
-                            maxWidth: '100%',
                             maxHeight: '40px',
                             padding: '5px',
                             objectFit: 'contain',
@@ -87,6 +88,10 @@ export default function({ linkItems }: Props) {
             }
             center={
                 <Center
+                    sx={{
+                        justifyContent: 'flex-end',
+                        mr: 2
+                    }}
                     items={transformUseRouter()}
                 />
             }

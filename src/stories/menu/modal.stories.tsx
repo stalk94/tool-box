@@ -5,7 +5,7 @@ import Dialog from '../../components/modal';
 
 
 const meta: Meta<typeof ialog> = {
-    title: 'Popups',
+    title: 'Menu',
     component: Dialog,
     // tags: ["autodocs"],
     argTypes: {

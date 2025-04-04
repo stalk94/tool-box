@@ -1,13 +1,14 @@
 import React from 'react';
 import Text, { BaseInputProps } from './text';
 import Number, { NumberinputProps } from './number';
+import Slider, { CustomSliderProps } from './slider';
 import Login, { loginInputProps } from './login';
 import Password, { PasswordInputProps } from './password';
 import { EmailInputProps, PhoneInputProps, TooglerInputProps } from './input.any';
 import { EmailInput, PhoneInput, TooglerInput, ColorPicker } from './input.any'
 import DatePickerCustom, { DataPickerCustomProps } from './date';
 import Select, { BaseSelectProps } from './select';
-import { Box, Slider, SliderProps } from '@mui/material';
+import { Box } from '@mui/material';
 import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';
 import '../../style/fonts.css';
@@ -28,13 +29,10 @@ type LabelTextProps = {
     label: string
     position?: 'left' | 'right' | 'column'
 }
-type LabelSliderProps = SliderProps & {
-
-}
 
 
 
-function LabelInput({ label, position, typeInput, children, sx, id }: InputCustomLabelProps) {
+export function LabelInput({ label, position, typeInput, children, sx, id }: InputCustomLabelProps) {
     const idRef = React.useRef(`input-${typeInput}-${id ?? Date.now()}`).current;       // можно отслеживать
     
     return(
@@ -67,7 +65,7 @@ function LabelInput({ label, position, typeInput, children, sx, id }: InputCusto
                     }}
                 />
             }
-            <Box sx={{ flex: 3 }}>
+            <Box sx={{ flex: 2 }}>
                 { React.cloneElement(children, {id: idRef}) }
             </Box>
 
@@ -262,8 +260,7 @@ export function LabelSelect({ label, position, ...props }: LabelTextProps & Base
         />
     );
 }
-//! нуждается в проработке
-export function LabelSlider({ label, position, ...props }: LabelTextProps & LabelSliderProps) {
+export function LabelSlider({ label, position, ...props }: LabelTextProps & CustomSliderProps) {
     return(
         <LabelInput
             label={label}
@@ -274,11 +271,11 @@ export function LabelSlider({ label, position, ...props }: LabelTextProps & Labe
           
             <Slider
                 valueLabelDisplay="auto" 
-                sx={{width: '95%', mt: 1, ml: position==='column'?1:0,minWidth:160 }}
-                size='medium'
-                defaultValue={10} 
+                sx={{
+                    ml: position==='column' ? 1 : 0 
+                }}
+
                 { ...props }
-                onChange={(e, value)=> props.onChange(value)}
             />
             
         </LabelInput>

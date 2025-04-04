@@ -189,7 +189,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
 }
 export function ColorPicker({ value, variant, left, onChange, ...props }) {
     const [open, setopen] = React.useState<boolean>(false);
-    const [inputValue, setInputValue] = React.useState<string>(value ?? 'rgba(255, 0, 0, 1)');
+    const [inputValue, setInputValue] = React.useState<string>('rgba(255, 0, 0, 1)');
     const theme = useTheme();
 
     const useCopy =()=> {
@@ -208,6 +208,9 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
         setInputValue(newValue);
         if(onChange) onChange(newValue);
     }
+    React.useEffect(()=> {
+        if(value) setInputValue(value);
+    }, [value]);
 
 
     return(
@@ -226,7 +229,13 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                     }}
                     onClick={()=> setopen(true)}
                 />
-                <Dialog open={open} onClose={()=> setopen(false)} >
+                <Dialog 
+                    open={open} 
+                    onClose={()=> {
+                        setopen(false);
+                        props.onClose && props.onClose()
+                    }} 
+                >
                     <ChromePicker
                         color={inputValue}
                         onChange={(value)=> {
@@ -245,18 +254,20 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                 onChange={useChange}
             />
 
-            <React.Fragment>
-                { variant || theme.elements.input.variant &&
-                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
-                }
-                <IconButton onClick={useCopy} disabled={props.disabled}>
-                    <FileCopy style={{
-                            color: theme.palette.text.secondary, 
-                            opacity: '0.6'
-                        }} 
-                    />
-                </IconButton>
-            </React.Fragment>
+            { props.toolVisible &&
+                <React.Fragment>
+                    { variant || theme.elements.input.variant &&
+                        <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
+                    }
+                    <IconButton onClick={useCopy} disabled={props.disabled}>
+                        <FileCopy style={{
+                                color: theme.palette.text.secondary, 
+                                opacity: '0.6'
+                            }} 
+                        />
+                    </IconButton>
+                </React.Fragment>
+            }
         </InputPaper>
     )
 }
@@ -394,7 +405,7 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
                     //{ ...elem }
                     sx={{ 
                         flex: 1,
-                        border: `1px solid ${theme.palette.input.mainBorder}`,
+                        border: `1px solid ${theme.palette.input.border}`,
                         "&.Mui-selected": {
                             //backgroundColor: "red", // Цвет фона выделенной кнопки
                             //color: "white", // Цвет текста выделенной кнопки

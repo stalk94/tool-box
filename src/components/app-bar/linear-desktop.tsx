@@ -147,7 +147,7 @@ export default function LinearNavigationItemsDesktop({ items, elementOverflow, s
                     xs: "none", 
                     sm: "flex" 
                 },
-                justifyContent: "flex-end",
+                justifyContent: "flex-start",
                 flexGrow: 1,
                 ...sx
             }}
@@ -182,7 +182,7 @@ export default function LinearNavigationItemsDesktop({ items, elementOverflow, s
                     }
 
                     {/* Разделитель, кроме последнего элемента */}
-                    { (hiddenItems.length > 0 || index < visibleItems.length - 1) && (
+                    { item.divider && (hiddenItems.length > 0 || index < visibleItems.length - 1) && (
                         <Divider
                             orientation="vertical"
                             flexItem

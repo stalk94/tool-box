@@ -17,7 +17,7 @@ export const usePopover = () => {
 }
 
 
-//todo: стилизировать
+//? что это я делал
 export function PopoverProvider({ children }: { children: React.ReactNode }) {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
     const [content, setContent] = React.useState<string>('');

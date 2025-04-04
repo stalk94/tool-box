@@ -11,6 +11,7 @@ type CustomMenuProps = {
     onOpenClose?: (value: boolean)=> void
     /** 🔥 Функция которая ставит свойство(select: true) на выбранный элемент */
     onSelect?: (item: NavLinkItem)=> void
+    test?: boolean
 }
 
 

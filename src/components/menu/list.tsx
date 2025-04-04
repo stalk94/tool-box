@@ -5,7 +5,8 @@ import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
 
 
 export type StateNavLinks = {
-    badge?: number 
+    /** данные для badge */
+    badge?: number | React.ReactNode
 }
 export interface NavLinkItem {
     id: string
@@ -33,9 +34,23 @@ export default function({ item, onItemClick }: MobailMenuProps) {
     const [open, setOpen] = useState(false);
 
 
-    const renderChek = (
-        <Check sx={{color:'#6bef62',opacity: 0.6,fontSize:16}} />
-    );
+    const renderIcon =(item, isTop: boolean)=> {
+        if(item.icon) return (
+            React.cloneElement(item.icon, {
+                sx: { 
+                    fontSize: isTop ? 20 : 18 
+                }
+            })
+        )
+        else if(!item.icon) return(
+            <FiberManualRecordIcon 
+                sx={{ 
+                    fontSize: isTop ? 12 : 10, 
+                    pl: 0.5 
+                }} 
+            />
+        );
+    }
     const handleClick = () => {
         if (item.children) {
             setOpen(!open);
@@ -71,17 +86,7 @@ export default function({ item, onItemClick }: MobailMenuProps) {
             >
                 {/* иконка */}
                 <ListItemIcon sx={{ minWidth: 26 }}>
-                    {item.icon && React.cloneElement(item.icon, {
-                        sx: { fontSize: '20px' }
-                    })}
-                    {!item.icon && 
-                        <FiberManualRecordIcon 
-                            sx={{ 
-                                fontSize: 12, 
-                                pl: 0.5 
-                            }} 
-                        />
-                    }
+                    { renderIcon(item, true) }
                 </ListItemIcon>
 
                 {/* текст пункта */}
@@ -92,10 +97,6 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                         ? <ExpandMore sx={{opacity: 0.6}} /> 
                         : <ChevronRight sx={{opacity: 0.6}}  />
                 )}
-                {/* выбранный элемент */}
-                { item.select && 
-                    <Check sx={{color:'#6bef62',opacity: 0.6,fontSize:16}} />
-                }
             </MenuItem>
 
             {/* Если имеются вложенные */}
@@ -110,30 +111,21 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                                     cursor: 'pointer', 
                                     pl: 3, 
                                     background: childItem.select ? colorSelect : '#0000001a',
+                                    opacity: 0.8,
                                 }}
                                 onClick={()=> {
                                     childItem.comand?.(childItem);
                                     onItemClick(childItem);
                                 }}
                             >
-                                 
+                                {/* иконка вложенного */}
                                 <ListItemIcon sx={{ minWidth: '32px' }}>
-                                    { childItem.icon && React.cloneElement(childItem.icon, {
-                                        sx: {fontSize:'18px'}
-                                    }) }
-                                    { !childItem.icon && 
-                                        <FiberManualRecordIcon 
-                                            sx={{
-                                                fontSize: 10,
-                                                pl: 0.5
-                                            }}
-                                        /> 
-                                    }
+                                    { renderIcon(item, false) }
                                 </ListItemIcon>
                                 
-                                <ListItemText primary={childItem.label} />
-                                {/* выбранный элемент */}
-                                { childItem.select && renderChek }
+                                <ListItemText 
+                                    primary={childItem.label} 
+                                />
                             </ListItem>
                         ))}
                     </List>

@@ -90,7 +90,7 @@ const Templates =(args)=> {
     
 
     return(
-        <div style={{height:'100%', overflowY:'auto'}}>
+        <div style={{height:'100%', width:'100%', overflowY:'auto'}}>
         <div style={{margin:'30%', marginTop:'5%'}}>
             <LabelLogin
                 onChange={console.log}
@@ -125,6 +125,7 @@ const Templates =(args)=> {
             />
             <LabelColor
                 onChange={console.log}
+                toolVisible
                 {...args}
             />
             <LabelDateOrTime

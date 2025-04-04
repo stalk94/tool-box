@@ -13,7 +13,7 @@ declare module '@mui/material/styles' {
     interface Palette {
         input: {
             main: string
-            mainBorder: string
+            border: string
             error: string
             success: string
             placeholder: string

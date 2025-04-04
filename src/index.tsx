@@ -5,7 +5,6 @@ import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './_theme/index';
 //import { dark, lite } from './lib/colors';
-
 import './style/index.css';
 
 

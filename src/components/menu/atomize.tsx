@@ -15,6 +15,7 @@ export interface CustomMenuProps extends MenuProps {
 // todo: застилизировать красиво
 /** Базовое выпадаюшее меню */ 
 export default function({ anchorEl, open, onClose, navLinks, children, ...props }: CustomMenuProps) {
+    
     return (
         <Menu
             PaperProps={{
@@ -28,7 +29,7 @@ export default function({ anchorEl, open, onClose, navLinks, children, ...props 
             sx={{ 
                 mt: 2, 
                 "& .MuiPaper-root": {
-                    backgroundColor: (theme)=> theme.palette.menu.main,
+                    backgroundColor: (theme)=> theme.palette?.menu?.main,
                     backdropFilter: "blur(14px)",
                 },
                 ...props.sx

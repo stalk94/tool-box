@@ -19,7 +19,6 @@ export const Start =({ children })=> {
             sx={{
                 display: "flex",
                 justifyContent: "flex-start",
-                flexGrow: 1,
                 alignItems: "center"
             }}
         >
@@ -55,6 +54,8 @@ export default function ({ start, center, end, ...props }: AppBarCustomProps) {
                 p: 0, 
                 m: 0, 
                 backgroundColor: theme.palette.appBar.main,
+                border: `1px solid`,
+                borderColor: theme.palette.appBar.border,
                 backdropFilter: "blur(14px)",
                 ...props.sx
             }}
