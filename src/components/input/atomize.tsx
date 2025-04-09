@@ -1,9 +1,9 @@
 import React from 'react';
-import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps } from '@mui/material';
+import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps, Box } from '@mui/material';
 import { alpha, lighten, darken, styled } from '@mui/system';
 
 
-const AnimatedPaper = styled(Paper)`
+const AnimatedBox = styled(Box)`
     &:hover {
         cursor: pointer;
         background-color: ${alpha('rgb(221, 235, 238)', 0.1)}; // Используем alpha для задания прозрачности
@@ -34,7 +34,7 @@ export function Label({ id, children, sx }: InputLabelProps) {
     );
 }
 // базовая подложка под все инпуты (! тшательно доработать, я почти у цели)
-export function InputPaper({ children, ...props }) {
+export function InputPaper({ children, elevation, ...props }) {
     const theme = useTheme();
 
     // цвет бордера в зависимости от состояния (error, sucess, disabled)
@@ -71,21 +71,45 @@ export function InputPaper({ children, ...props }) {
         else if (props.success) return alpha(colors.success, 0.2);
         else return alpha(colors.border, 0.15);
     }
+    // эксперементальная
+    const useElevation =()=> {
+        const sx = {
+            boxShadow: 0
+        }
+
+        if(elevation) {
+            if(Math.sign(elevation) === -1) {
+                const cur = Math.abs(elevation) * 0.07;
+                const curb = Math.abs(elevation) * 0.02;
+                sx.boxShadow = `inset 0px 0px 15px rgba(0, 0, 0, ${cur})`
+                // + `, 0px 0px 7px rgba(255, 255, 255, ${curb})`
+            }
+            else {
+                const cur = elevation * 0.05;
+                const curb = elevation * 0.02;
+                sx.boxShadow = `0px 0px 15px rgba(0, 0, 0, ${cur})`
+                // + `, inset 0px 0px 15px rgba(255, 255, 255, ${curb})`
+            }
+        }
+
+        return sx;
+    }
     
 
     return (
-        <AnimatedPaper
+        <AnimatedBox
             sx={{
-                //background: '#00000000',
+                //backgroundColor: '#00000000',
                 background: useBackgroundColor(),
                 minHeight: '40px',
                 minWidth: '160px',
+                borderRadius: 1,
                 ...props.sx,
                 opacity: props.disabled && 0.4,
                 border: useBorderColor(),
                 display: 'flex',
                 alignItems: 'center',
-                boxShadow: 0,
+                boxShadow: useElevation(),
                 backdropFilter: "blur(6px)",
                 transition: 'background-color 0.3s',
                 '&:focus-within': {
@@ -96,7 +120,7 @@ export function InputPaper({ children, ...props }) {
             }}
         >
             { children }
-        </AnimatedPaper>
+        </AnimatedBox>
     );
 }
 

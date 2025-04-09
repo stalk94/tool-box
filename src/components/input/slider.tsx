@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid2, Slider, SliderProps } from '@mui/material';
+import { Box, Grid2, Slider, SliderProps, useTheme } from '@mui/material';
 import Input from '@mui/material/Input';
 
 
@@ -11,9 +11,24 @@ export type CustomSliderProps = SliderProps & {
 }
 
 
-// todo: добавить стилизацию
+
 export default function({ value, onChange, start, end, ...props }: CustomSliderProps) {
+    const theme = useTheme();
     const [curValue, setValue] = React.useState(10);
+
+    const style = {
+        color: '#00000000',
+        '& .MuiSlider-thumb': {
+            backgroundColor: theme.palette.slider.thumb,  // Цвет "пальца" ползунка
+        },
+        '& .MuiSlider-track': {
+            backgroundColor: theme.palette.slider.track,  // Цвет пути ползунка
+        },
+        '& .MuiSlider-rail': {
+            backgroundColor: theme.palette.slider.rail,  // Цвет "рельсы" (основной фон)
+        }
+    }
+    
 
     const useFiltre =()=> {
         delete props.position;
@@ -29,8 +44,13 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
     const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = event.target.value === '' ? 0 : Number(event.target.value);
 
+        if(!props.max) props.max = 100;
+        if(props.min === undefined) props.min = 0;
+        
         if(Array.isArray(curValue)) {
-            if(curValue[0] < newValue) handlerChange([curValue[0], newValue]);
+            if(curValue[0] < newValue) {
+                if(newValue < props.max) handlerChange([curValue[0], newValue]);
+            }
             else handlerChange([curValue[0], curValue[0] + 1]);
         }
         else handlerChange(newValue);
@@ -49,7 +69,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
             sx={{
                 display: 'flex',
                 width: '100%',
-                ...props.sx
+                opacity: props.disabled && 0.5,
             }}
         >
              <Slider
@@ -60,6 +80,8 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                 sx={{
                     minWidth: 80,
                     maxWidth: '95%',
+                    ...style,
+                    ...props.sx
                 }}
                 { ...useFiltre() }
                 onChange={(e, v) => handlerChange(v)}
@@ -70,7 +92,10 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         <Grid2
             container
             spacing={2}
-            sx={{ alignItems: 'center', ...props.sx }}
+            sx={{ 
+                alignItems: 'center', 
+                opacity: props.disabled && 0.5,
+            }}
         >
             {start &&
                 <Grid2>
@@ -87,6 +112,8 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                     sx={{
                         mt: 1,
                         minWidth: 80,
+                        ...style,
+                        ...props.sx
                     }}
                     { ...useFiltre() }
                     onChange={(e, v) => handlerChange(v)}
@@ -100,6 +127,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                             disabled={props.disabled}
                             value={Array.isArray(curValue) ? curValue[1] : curValue}
                             onChange={handleInputChange}
+                            disableUnderline
                             size="small"
                             sx={{
                                 width: 42,

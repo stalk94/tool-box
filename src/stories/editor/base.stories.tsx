@@ -11,6 +11,8 @@ import MenuBase from '../../components/popup/base';
 import SideBarAndToolPanel from '../../components/nav-bars/tool-left';
 import { Button } from '@mui/material';
 
+//! глобальное хранилище наблюдаемых пропов 
+globalThis._props_ = new Map<HTMLElement, any>();
 
 
 const meta: Meta<typeof LabelLogin> = {
@@ -88,7 +90,6 @@ const MenuTest =({ })=> {
 const Templates =(args)=> {
     const [name, setName] = React.useState();
     const [test, setTest] = React.useState([]);
-    const [dops, setDops] = React.useState([]);
 
     const inputs = [
         <LabelLogin
@@ -166,11 +167,17 @@ const Templates =(args)=> {
         />
     ];
 
+    
     const useDops =()=> {
         if(args.name === 'appBar') return ['navigation'];
         
         return;
     }
+    const handleGlobalClick = (e) => {
+        console.log('Клик по странице', e.target);
+    }
+
+
     React.useEffect(()=> {
         if(args.name === 'input') setTest(inputs);
         else if(args.name === 'switch') setTest(switchs);
@@ -215,9 +222,17 @@ const Templates =(args)=> {
                     <div>content</div>
                 </div>
             </SideBarAndToolPanel>
-        ])
+        ]);
+        else if(args.name === 'text') setTest([
+            
+        ]);
 
         setName(args.name);
+        window.addEventListener('click', handleGlobalClick);
+
+        return () => {
+            window.removeEventListener('click', handleGlobalClick);
+        };
     }, [args]);
 
 

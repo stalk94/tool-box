@@ -20,7 +20,7 @@ const Templates =(args)=> {
         <div>
             <Button
                 onClick={()=> {
-                    writeFile('src/_theme/cfg', 'test.txt', 'Hello xro from Storybook!')
+                    writeFile('src/theme/cfg', 'test.txt', 'Hello xro from Storybook!')
                         .then(console.log)
                         .catch(console.error);
                 }}

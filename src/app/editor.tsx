@@ -1,15 +1,19 @@
 import React from 'react';
-import '../style/editor.css';
 import { writeFile } from './plugins';
-import { Accordion, AccordionTab } from 'primereact/accordion';
-import { Button, Box, useTheme, Badge, darken } from '@mui/material';
+import Accordion from '../components/accordion';
+import { Button, Box, useTheme, Badge, darken, Typography } from '@mui/material';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { RestartAlt, Save, ExpandMore, ArrowBackIosNew, ArrowForwardIos  } from '@mui/icons-material';
 import { LabelColor, LabelInput } from '../components/input/labels.inputs';
 import { ColorPicker } from '../components/input/input.any';
-import { palleteStd } from '../_theme/dark';
-import colors from '../_theme/color.json';
+import { palleteStd } from '../theme/dark';
+import colors from '../theme/color.json';
 
+type EditorProps = {
+    test: React.ReactNode[]
+    name: string
+    dops?: string[]
+}
 
 const Tools =({ name, onChange, theme, onSaveFile })=> {
     const [story, setStory] = React.useState<Record<string, string>[]>([]);
@@ -155,7 +159,7 @@ const Tools =({ name, onChange, theme, onSaveFile })=> {
                 </Button>
             </Box>
 
-            <Box sx={{ mx: 0.5 }}>
+            <Box sx={{ mx: 0.5, my: 2, }}>
                 { current && Object.keys(current).map((key, index)=> { 
                     return(
                         <LabelInput
@@ -188,8 +192,7 @@ const Tools =({ name, onChange, theme, onSaveFile })=> {
     );
 }
 
-export default function({ test, name, dops }) {
-    const [activeIndex, setActiveIndex] = React.useState(0);
+export default function({ test, name, dops }: EditorProps) {
     const [theme, setTheme] = React.useState(useTheme());
     const [render, setRender] = React.useState([]);
     const [open, setOpen] = React.useState(true);
@@ -197,7 +200,7 @@ export default function({ test, name, dops }) {
     
     const useSaveFileConfig = (name, data) => {
         colors[name] = data;
-        writeFile('src/_theme', 'color.json', JSON.stringify(colors, null, 4));
+        writeFile('src/theme', 'color.json', JSON.stringify(colors, null, 4));
     }
     const updateThemeColors = (params) => {
         setTheme({...params});
@@ -255,37 +258,36 @@ export default function({ test, name, dops }) {
                         }}
                     >
                         <Accordion 
-                            multiple
-                            activeIndex={activeIndex} 
-                            onTabChange={(e)=> setActiveIndex(e.index)}
-                        >
-                            <AccordionTab 
-                                header={name}
-                            >
-                                <Tools 
-                                    name={name} 
-                                    theme={theme}
-                                    onChange={updateThemeColors} 
-                                    onSaveFile={(data)=> useSaveFileConfig(name, data)}
-                                />
-                            </AccordionTab>
-                            
-                        { dops &&
-                            dops.map((elem, index)=> 
-                                <AccordionTab key={index} header={elem}>
-                                    <Tools 
-                                        name={elem} 
-                                        theme={theme}
-                                        onChange={updateThemeColors} 
-                                        onSaveFile={(data)=> useSaveFileConfig(elem, data)}
-                                    />
-                                </AccordionTab>
-                            )
-                        }
-                        </Accordion>
+                            tabStyle={{paddingBottom: 10}}
+                            items={[
+                                {
+                                    header: <Typography sx={{textTransform:'uppercase',pl:2}}>{name}</Typography>, 
+                                    content: (
+                                        <Tools 
+                                            name={name} 
+                                            theme={theme}
+                                            onChange={updateThemeColors} 
+                                            onSaveFile={(data)=> useSaveFileConfig(name, data)}
+                                        />
+                                    )
+                                }, 
+                                ...(dops ? dops.map((elem, index) => ({
+                                    header: <Typography sx={{textTransform:'uppercase',pl:2}}>{elem}</Typography>,
+                                    content: (
+                                        <Tools 
+                                            name={elem} 
+                                            theme={theme}
+                                            onChange={updateThemeColors} 
+                                            onSaveFile={(data) => useSaveFileConfig(elem, data)}
+                                        />
+                                    )
+                                })) : [])
+                            ]}
+                        />
                     </Box> 
                 }
             </Box>
+
             {/* preview */}
             <Box
                 sx={{

@@ -10,5 +10,6 @@ export const mixins = {
         "@media (min-width:600px)": {
             padding: "20px",
         },
-    }
+    },
+    
 }

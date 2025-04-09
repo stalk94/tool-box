@@ -169,7 +169,8 @@ export const All: Story = {
         error: false,
         position: 'column',
         placeholder: 'min 10 simbol',
-        label: 'Test:'
+        label: 'Test:',
+        elevation: -1
     },
     render: (props)=> <Templates {...props} />
 }

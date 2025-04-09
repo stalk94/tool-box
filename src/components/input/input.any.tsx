@@ -350,7 +350,7 @@ export function SwitchInput({ value, onChange, ...props }: { value?: boolean, on
         </Box>
     );
 }
-//! доработать темизацию
+//! доработать темизацию (groop button)
 export function TooglerInput({ items, value, label, onChange, ...props }: TooglerInputProps) {
     const theme = useTheme();
     const [curentValue, setCurent] = React.useState<string[]>([]);

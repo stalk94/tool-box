@@ -21,17 +21,31 @@ export default function NumberInput({ value, min=0, max=100, step=1, onChange, .
 
 
     const handleIncrease =()=> {
-        if (typeof inputValue === 'number' && inputValue < max) {
+        if (inputValue < max) {
             const newValue = inputValue + step;
             setInputValue(newValue);
             onChange && onChange(newValue);
         }
     }
     const handleDecrease =()=> {
-        if (typeof inputValue === 'number' && inputValue > min) {
+        if (inputValue > min) {
             const newValue = inputValue - step;
             setInputValue(newValue);
             onChange && onChange(newValue);
+        }
+    }
+    const handleChange = (value) => {
+        const newValue = parseInt(value, 10);
+        
+        if (!isNaN(newValue)) {
+            if(newValue < max && newValue > min) {
+                setInputValue(newValue);
+                onChange && onChange(newValue);
+            }
+        }
+        else {
+            setInputValue(0);
+            onChange && onChange(0);
         }
     }
     const renderleft =()=> {
@@ -109,11 +123,8 @@ export default function NumberInput({ value, min=0, max=100, step=1, onChange, .
 
             <InputBaseCustom
                 value={inputValue}
-                type="number" 
-                onChange={(value)=> {
-                    setInputValue(value);
-                    onChange && onChange(value);
-                }}
+                type="text" 
+                onChange={handleChange}
                 sx={{ 
                     flex: 1, 
                     '& input': {

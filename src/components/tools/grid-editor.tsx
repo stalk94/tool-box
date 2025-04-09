@@ -38,10 +38,18 @@ export default function({ components }) {
             return newList;
         });
     }
+    const handlerImport =()=> {
+        layout.map((l, index)=> {
+            if(components[l.content]) {
+                const Render = components[l.content].render();
+                console.log(<Render/>)
+            }
+        });
+    }
     //! Вынести отдельно как провайдер данных
     React.useEffect(()=> {
         const cache = localStorage.getItem('GRIDS');
-
+        
         if(cache) {
             const loadData = JSON.parse(cache);
             const curName = Object.keys(loadData).pop();
@@ -83,7 +91,7 @@ export default function({ components }) {
                             save
                         </Button>
                         <Button
-                            //disabled={disabled}
+                            onClick={handlerImport}
                             sx={{ my: 1, ml: 1 }}
                         >
                             import

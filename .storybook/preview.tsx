@@ -1,6 +1,6 @@
 import React from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import { darkTheme, lightTheme } from "../src/_theme/index";
+import { darkTheme, lightTheme } from "../src/theme/index";
 import { CssBaseline } from "@mui/material";
 import { withConsole } from '@storybook/addon-console';
 

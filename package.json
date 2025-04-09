@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "dev": "vite src --port=3001",
+    "dev": "vite editor --port=3001",
     "build": "vite build src --outDir=../dist --watch --sourcemap",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -72,10 +72,10 @@
     "react-dom": ">=18.0.0"
   },
   "dependencies": {
+    "@craftjs/core": "^0.2.12",
     "@mui/material": "^6.4.7",
     "@mui/x-data-grid": "^7.27.3",
     "@mui/x-date-pickers": "^7.27.3",
-    "@tailwindcss/vite": "^4.1.0",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.3",
     "react-draggable": "^4.4.6",

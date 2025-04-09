@@ -22,7 +22,9 @@ export const palleteStd = {
         icon: 'rgb(215, 215, 215)',
     },
     slider: {
-
+        thumb: 'rgb(255, 255, 255)',            // Цвет "пальца" ползунка
+        track: 'lightgrey',                       // Цвет пути ползунка
+        rail: 'darkgrey'                          // Цвет "рельсы" (основной фон)
     },
 
     // верхняя навигационная панель
@@ -38,6 +40,16 @@ export const palleteStd = {
         badgeBcg: undefined,
         badgeText: 'rgba(255, 255, 255, 0.7)'
     },
+    accordion: {
+        headerMain: 'rgba(255, 255, 255, 0.05)',
+        headerContent: 'rgba(255, 255, 255, 0.6)',
+        headerIcon: undefined
+    },
+    table: {
+        body: "#5151513f",
+        header: "#5c5c5c62",
+        thead: "#353943",
+    },
 
     card: {
         main: "rgba(255, 255, 255, 0.05)",
@@ -47,15 +59,10 @@ export const palleteStd = {
         main: "rgba(63, 63, 63, 0.5)",
         select: "rgba(255, 255, 255, 0.1)",
     },
-    table: {
-        body: "#5151513f",
-        header: "#5c5c5c62",
-        thead: "#353943",
-    },
     background: {
         default: '#222222',                     // базовый цвет фона '#2c303d'
         sidenav: "#1f283e",                     //? что это
-        paper: "rgb(63, 63, 63)",
+        paper: "rgba(7, 7, 7, 0.05)",   // с какого цвета начинается
     },
     // app bar цвет navigation link
     navigation: {

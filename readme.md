@@ -1,8 +1,5 @@
-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
-
 ## Inputs
-- доработать Select, Slider, DateOrTime
-- Slider диапазон сделать
+- доработать Select, DateOrTime
 - вынести label input настройки в тему
 - подумать над системой стилей через тему и доработать компоненты под нее
 
@@ -33,9 +30,3 @@ sm — (600 - 900, планшетов).
 md — (900 - 1200, ноутбуков).     
 lg — (1200 - 1536, десктопов).       
 xl — для экстра больших экранов. (> 1536)
-
-
-
-
-## Ссылки на нужное
-- https://mui.com/material-ui/customization/creating-themed-components/     свои компоненты
