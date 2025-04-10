@@ -129,7 +129,7 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                         disabled={props.disabled}
                         onChange={(newValue) => useChangeForm(newValue)}
                         ampm={false}
-                        inputProps={{style: {textAlign: theme.elements.input.alight}}}      //?
+                        inputProps={{style: {textAlign: theme.mixins.input.alight}}}      //?
                         slotProps={{
                             textField: {
                                 fullWidth: true,
@@ -142,7 +142,7 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                                     '& input::placeholder': { 
                                         color: theme.palette.input.placeholder,
                                         opacity: 1,
-                                        fontStyle: theme.elements.input.fontStyle
+                                        fontStyle: theme.mixins.input.fontStyle
                                      },
                                 }
                             },
@@ -154,7 +154,7 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                         value={inputValue}
                         disabled={props.disabled}
                         onChange={(newValue)=> useChangeForm(newValue)}
-                        inputProps={{style: {textAlign: theme.elements.input.alight}}}
+                        inputProps={{style: {textAlign: theme.mixins.input.alight}}}
                         slotProps={{
                             textField: {
                                 fullWidth: true,
@@ -167,7 +167,7 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
                                     '& input::placeholder': { 
                                         color: theme.palette.input.placeholder,
                                         opacity: 1,
-                                        fontStyle: theme.elements.input.fontStyle
+                                        fontStyle: theme.mixins.input.fontStyle
                                      },
                                 }
                             },
@@ -178,8 +178,8 @@ export default function DatePickerCustom({ value, variant, left, onChange, isTim
 
             {/* кнопка открытия пикера */}
             <React.Fragment>
-                { variant || theme.elements.input.variant && 
-                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
+                { variant || theme.mixins.input.variant && 
+                    <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.mixins.input.variant} />
                 }
                 <IconButton 
                     disabled={props.disabled}

@@ -2,6 +2,10 @@ import React from 'react';
 import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps, Box } from '@mui/material';
 import { alpha, lighten, darken, styled } from '@mui/system';
 
+type PropsInputBaseCustom = InputBaseProps & {
+    onChange: (value: string)=> void
+}
+
 
 const AnimatedBox = styled(Box)`
     &:hover {
@@ -11,7 +15,7 @@ const AnimatedBox = styled(Box)`
 `;
 
 
-// ! не стилизован
+
 // базовый лейбл
 export function Label({ id, children, sx }: InputLabelProps) {
     const theme = useTheme();
@@ -25,7 +29,7 @@ export function Label({ id, children, sx }: InputLabelProps) {
                 mb: 'auto',
                 opacity: 0.9,
                 color: theme.palette.text.secondary,
-                fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                fontFamily: '"Roboto Condensed", Arial, sans-serif',    //! жестко закреплен стиль шрифта
                 ...sx
             }}
         >
@@ -126,9 +130,10 @@ export function InputPaper({ children, elevation, ...props }) {
 
 
 /** Базовый инпут */
-export function InputBaseCustom({ value, onChange, type, ...props }: InputBaseProps) {
+export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputBaseCustom) {
     const theme = useTheme();
-    const filtre =()=> {
+
+    const filtreProps =()=> {
         delete props.borderStyle;
         delete props.success;
         delete props.toolVisible;
@@ -138,7 +143,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
 
     return (
         <InputBase
-            {...filtre()}
+            { ...filtreProps() }
             placeholder={props.placeholder}
             type={type}
             value={value}
@@ -150,12 +155,12 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
                 '& input::placeholder': {
                     color: theme.palette.input.placeholder,
                     opacity: 1,
-                    fontStyle: theme.elements.input.fontStyle,
+                    fontStyle: theme.mixins.input.fontStyle,
                 },
                 '& textarea::placeholder': {
                     color: theme.palette.input.placeholder,
                     opacity: 1,
-                    fontStyle: theme.elements.input.fontStyle,
+                    fontStyle: theme.mixins.input.fontStyle,
                 },
                 "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
                     display: "none",
@@ -165,7 +170,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: InputBasePr
                 },
                 ...props.sx
             }}
-            inputProps={{ style: { textAlign: theme.elements.input.alight } }}
+            inputProps={{ style: { textAlign: theme.mixins.input.alight } }}
             onChange={(e) => onChange && onChange(e.target.value)}
         />
     );

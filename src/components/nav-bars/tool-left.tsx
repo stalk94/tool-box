@@ -4,7 +4,7 @@ import { NavLinkItem } from '../menu/list';
 import BaseLeftSideBar from "./left-nav";
 
 
-type SideBarAndToolPanelProps = {
+export type SideBarAndToolPanelProps = {
     /** слоты навигационной панели */
     schemaNavBar: {
         items: NavLinkItem[]
@@ -27,7 +27,10 @@ type SideBarAndToolPanelProps = {
 
 
 /**
- * Боковая панель со связаным полем справа
+ * Это модернизация `<LeftSideBar>`   
+ * Боковая панель со связаным полем справа  
+ * 
+ * как это работать должно:  
  * - подаем `schemaNavBar`
  * - слушаем `onChangeNavigation`
  * - меняем `children`
@@ -35,6 +38,7 @@ type SideBarAndToolPanelProps = {
 export default function SideBarAndToolPanel({ schemaNavBar, start, end, children, onChangeNavigation, ...props }: SideBarAndToolPanelProps) {
     const theme = useTheme();
     
+
     const useBackgroundColor =()=> {
         const mainColor = theme.palette.toolNavBar.main;
         return darken(mainColor, 0.1);
@@ -89,7 +93,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                         borderLeft: 'none',
                         boxShadow: "inset 3px 0 5px rgba(0, 0, 0, 0.15)",
                         overflowY: "auto",
-                        ...theme.elements.scrollbar
+                        ...theme.mixins?.scrollbar
                     }}
                 >
                     {/* верхняя панель инструментов рабочей области */}

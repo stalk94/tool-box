@@ -100,6 +100,7 @@ const Tools =({ name, onChange, theme, onSaveFile })=> {
         }
     }, [name]);
     
+    
     return(
         <React.Fragment>
             <Box
@@ -124,6 +125,7 @@ const Tools =({ name, onChange, theme, onSaveFile })=> {
                     <Badge
                         badgeContent='default'
                         sx={{
+                            wordBreak: 'normal',
                             "& .MuiBadge-badge": {
                                 color: "#f3b14fb2",
                                 mt: 2.5,
@@ -249,12 +251,12 @@ export default function({ test, name, dops }: EditorProps) {
                             height: '100%',
                             display: 'flex',
                             flexDirection: 'column',
-                            backgroundColor: darken(theme.palette.background.paper, 0.2),
+                            backgroundColor: "rgba(104, 104, 104, 0.15)",
                             border: `1px solid ${theme.palette.divider}`,
                             borderLeft: 'none',
                             boxShadow: "inset 3px 0 5px rgba(0, 0, 0, 0.15)",
                             overflowY: "auto",
-                            ...theme.elements.scrollbar
+                            ...theme.mixins.scrollbar
                         }}
                     >
                         <Accordion 

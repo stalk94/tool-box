@@ -17,7 +17,7 @@ type PropsOauthForm = {
 
 
 /**
- *  Виртуальная форма кнопок входа через соц сети  
+ *  форма кнопок входа через соц сети  
  *  - `handlerClickOauth` - должен вызывать обработчик авторизации из глобала
  */
 export default function({ scheme, loading, handlerClickOauth }: PropsOauthForm) {

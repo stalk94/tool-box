@@ -3,6 +3,7 @@ import { AppBar, Toolbar, Box, useTheme, AppBarProps, alpha } from "@mui/materia
 import LinearNavigationDesktop from './linear-desktop';
 import MobailBurgerNavigation from './mobail-burger';
 
+
 type AppBarCustomProps = AppBarProps & {
     start: React.ReactNode
     center: React.ReactNode
@@ -10,8 +11,11 @@ type AppBarCustomProps = AppBarProps & {
 }
 
 
-/** 
- * шаблон левого слота 
+/**
+ * 📦 Шаблон для левого слота (например, логотип)
+ * 
+ * @param {Object} props
+ * @param {React.ReactNode} props.children - Элемент, который будет отображён в левом слоте (например, логотип)
  */
 export const Start =({ children })=> {
     return(
@@ -27,13 +31,16 @@ export const Start =({ children })=> {
     );
 }
 /** 
- * шаблон центрального слота, (! это линейная навигация она видна только на desktop) 
+ * шаблон центрального слота, (! это линейная навигация она видна только на desktop)    
+ * * ❗ внимание отключается видимость на экранах МЕНЬШЕ 600px ширины
  */
 export const Center = LinearNavigationDesktop;
 /** 
- * компонент мобильного меню заменяет LinearNavigation на маленьких экранах 
+ * компонент мобильного меню заменяет LinearNavigation на маленьких экранах     
+ * * ❗ внимание отключается видимость на экранах БОЛЬШЕ 600px ширины
  */
 export const MobailBurger = MobailBurgerNavigation;
+
 
 
 /**

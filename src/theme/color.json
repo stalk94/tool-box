@@ -1,6 +1,5 @@
 {
-    "input": {
-    },
+    "input": {},
     "chekbox": {},
     "switch": {
         "trackOn": "rgba(255, 255, 255, 0.25)",
@@ -13,7 +12,10 @@
         "main": "rgba(57, 62, 70, 0.35)",
         "border": "rgba(255, 255, 255, 0)"
     },
-    "navigation": {
-
+    "navigation": {},
+    "table": {
+        "body": "#5151513f",
+        "header": "rgba(113, 113, 113, 0.3843137254901961)",
+        "thead": "rgba(56, 57, 57, 0.7)"
     }
 }

@@ -1,60 +1,31 @@
-import Slider, { SliderProps } from '@mui/material/Slider';
-import { NavLinkItem } from '../menu/list';
-import { TooglerProps } from '../input/input.any';
-import { DataPickerCustomProps } from '../input/date';
+import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
+    DataPickerInputProps, CheckBoxInputProps, ToogleeInputProps, ColorPickerProps, 
+    SelectInputProps
 
-//? не реализованы: 'slider' | 'switch' | 'toogle' | 'slider'
+} from '../input/index';
+
+
 export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' 
 | 'switch' | 'toggle' | 'select' | 'checkbox';
 
 
 
-interface Base {
-    label?: string | undefined
-    position?: 'column' | 'left' | 'right' | undefined
-}
-
-export interface Text extends Base {
+export interface Text extends TextInputProps {
     value?: string
     onChange?: (value: string)=> void
     validator?: (value: string)=> boolean
 }
-export interface Number extends Base {
-    value?: number
-    min?: number
-    max?: number 
-    step?: number
-    onChange?: (value: number)=> void
+export interface Number extends NumberInputProps {
     validator?: (value: number)=> boolean
 }
-export interface Switch extends Base {
-    value?: boolean
-    onChange?: (value: boolean)=> void
-}
-export interface Checkbox extends Base {
-    value?: boolean
-    onChange?: (value: boolean)=> void
-}
 /** на самом деле button groop */
-export interface Toogler extends TooglerProps {
+export interface Toogler extends ToogleeInputProps {
     //label: string | undefined
     position: 'column' | 'left' | 'right' | undefined
     validator?: (value: string | string[])=> boolean
 }
 export interface TextMultiline extends Text {
     multiline: true
-}
-export interface Color extends Text {
-}
-export interface Time extends Text {
-}
-export interface Date extends Text {
-}
-export interface Slider extends SliderProps {
-    value: any,
-    items: NavLinkItem[]
-}
-export interface Select extends Text {
 }
 
 
@@ -69,14 +40,14 @@ type TypeToSchema = {
     text: Text
     multiText: TextMultiline
     number: Number
-    date: Date
-    color: Color
-    time: Time
-    slider: Slider
-    select: Select
-    switch: Switch
+    date: DataPickerInputProps          // ! тут отличие от основного есть
+    color: ColorPickerProps
+    time: DataPickerInputProps          // ! тут отличие от основного есть
+    slider: SliderInputProps
+    select: SelectInputProps
+    switch: SwitchInputProps
     toggle: Toogler
-    checkbox: Checkbox
+    checkbox: CheckBoxInputProps
 }
 
 
@@ -86,7 +57,9 @@ export type Schema<T extends TypeSchema = TypeSchema> = BaseSchema & {
 } & TypeToSchema[T];
 
 
-// =========================================
+
+
+// ========================================= пример
 const textInputTest: Schema<'text'> = {
     label: 'name',
     position: 'column',
@@ -97,4 +70,11 @@ const textInputTest: Schema<'text'> = {
     validator: (val)=> val.length > 3
 }
 
-
+const numberInputTest: Schema<'number'> = {
+    label: 'number',
+    position: 'column',
+    id: "test",
+    value: 1,
+    onChange: (val)=> console.log(val),
+    validator: (val)=> val > 0
+}

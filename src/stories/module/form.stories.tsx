@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Form from '../../components/form/general';
-import { Schema, TypeSchema } from '../../components/form/interfaces.general';
+import Form from '../../components/form';
+import { Schema, TypeSchema } from '../../components/form/types';
 import { Button, ButtonProps, Divider, Typography } from '@mui/material';
 import Icons, { Equalizer, Calculate, AccountBox } from "@mui/icons-material";
 

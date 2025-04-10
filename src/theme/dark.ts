@@ -75,6 +75,8 @@ export const palleteStd = {
 }
 
 
+
+
 const transform =()=> {
     const result = {};
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
 import Card from '../../components/carts/base';
 import GridEditor from '../../components/tools/grid-editor';
-import Form from '../../components/form/general';
+import Form from '../../components/form';
 import { Button } from '@mui/material';
 import Icons, { Equalizer, Calculate, AccountBox } from "@mui/icons-material";
 

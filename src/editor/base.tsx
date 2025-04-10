@@ -3,8 +3,8 @@ import React from 'react';
 import { useHasVisibleBorder, getElementBorderStyle, getElementBoxStyle } from './hooks';
 import { BaseType, FlexType, TextType, testListTypes } from './type';
 import { Box, Button } from '@mui/material';
-import { Schema } from '../components/form/interfaces.general';
-import Form from '../components/form/general';
+import { Schema } from '../components/form/types';
+import Form from '../components/form';
 
 
 // type: text

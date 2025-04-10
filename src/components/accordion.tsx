@@ -6,10 +6,16 @@ import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
 
 type AccordionItem = {
+    /** label аккордеона */
     header: React.ReactNode
+    /** тело аккордеона */
     content: React.ReactNode
 }
-type AccordionProps = {
+/**
+ * * `activeIndexs` - массив индексов развернутых вкладок [0, 1, 2 ...]       
+ * * `tabStyle` - стили для одного раздела акордеона (header + content) ❗ только в свернутом состоянии применяется
+ */
+export type AccordionProps = {
     items: AccordionItem[] 
     /** массив индексов развернутых вкладок [0, 1, 2 ...] */
     activeIndexs?: number[]
@@ -61,7 +67,7 @@ export default function ({ items, activeIndexs, tabStyle }: AccordionProps) {
     const [activeIndex, setActiveIndex] = React.useState(activeIndexs ?? [0, 1]);
     
     const useActive =(index: number)=> {
-        if(activeIndex.find(i => i===index) !== undefined) return true;
+        if(activeIndex.find(i => (i === index)) !== undefined) return true;
         else return false;
     }
     

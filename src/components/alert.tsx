@@ -13,10 +13,14 @@ type AlertItem = {
 type AlertContextType = {
     addAlert: (type: 'error' | 'info' | 'success' | 'warning', message: string | React.ReactNode)=> void;
 }
-type AlertManagerProps = {
+export type AlertManagerProps = {
     children: React.ReactNode
+    /** задержка перед удалением алерта в ms по умолчанию `6000 ms` */
     delDelay?: number
+    /** по умолчанию `top-right` */
+    variant?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right'
 }
+
 
 const AlertContext = React.createContext<AlertContextType | undefined>(undefined);
 export const useAlert =()=> {
@@ -27,7 +31,10 @@ export const useAlert =()=> {
 }
 
 
-export function AlertProvider({ children, delDelay }: AlertManagerProps) {
+/**
+ *  провайдер для подключения всплывающих ошибок
+ */
+export function AlertProvider({ children, delDelay, variant }: AlertManagerProps) {
     const [stack, setStack] = React.useState<AlertItem[]>([]);
     const bgColors = {
         error: "rgba(211, 47, 47, 0.03)",
@@ -36,6 +43,25 @@ export function AlertProvider({ children, delDelay }: AlertManagerProps) {
         info: "rgba(2, 136, 209, 0.02)",
     }
 
+
+    const usePosition =()=> {
+        if(variant === 'bottom-left') return {
+            bottom: 0,
+            left: 0
+        }
+        else if(variant === 'bottom-right') return {
+            bottom: 0,
+            right: 0
+        }
+        else if(variant === 'top-left') return {
+            top: 0,
+            left: 0
+        }
+        else return {
+            top: 0,
+            right: 0
+        }
+    }
     const getStyle =(type:'error'|'info'|'success'|'warning')=> ({
         display: "flex",
         alignItems: "center",
@@ -72,10 +98,8 @@ export function AlertProvider({ children, delDelay }: AlertManagerProps) {
                     position: 'fixed',
                     zIndex: 999,
                     maxWidth: '25%',
-                    top: 0,
-                    right: 0,
-                    //bottom: 0,
                     margin: '1%',
+                    ...usePosition()
                 }}
             >
                 <Stack spacing={1}>

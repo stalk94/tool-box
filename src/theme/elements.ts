@@ -1,26 +1,50 @@
+import { ThemeOptions } from '@mui/material/styles'
+
 /*
     глобальные стили для элементов
-    ! это наверное не совсем правильное решение
 */
 
 
-export const elements = {
-    input: {
-        fontStyle: "italic",
-        variant: undefined,          //<undefined|"fullWidth"|"inset"|"middle"> 
-        alight: undefined           // <'center'|undefined>
+
+/** Установки для типографии */
+export const typography: ThemeOptions = {
+    typography: {
+        fontFamily: '"Inter", "Arial", sans-serif',
+        fontWeightRegular: 400,
+        allVariants: {
+            wordBreak: 'break-word',        // перенос с разрывом
+            letterSpacing: '0.5px',
+        },
+        h4: {
+            fontSize: '2rem',
+            fontWeight: 'bold',
+            textTransform: 'uppercase',
+        },
+        body1: {
+            
+        },
+        body2: {
+            
+        },
+        subtitle1: {
+            opacity: 0.7
+        },
+        subtitle2: {
+            opacity: 0.5
+        },
+        caption: {
+            opacity: 0.5
+        },
+        button: {
+            textTransform: 'uppercase',
+            fontWeight: 600,
+        },
     },
-    scrollbar: {
-        "&::-webkit-scrollbar": {
-            width: "3px",
-            height: "5px",
-        },
-        "&::-webkit-scrollbar-thumb": {
-            backgroundColor: "#7e7e7e",
-            borderRadius: '7px',
-        },
-        "&::-webkit-scrollbar-track": {
-            background: "#2e2e2e",
-        }
+}
+
+/** предустановки компонентов */
+export const components: ThemeOptions = {
+    components: {
+        
     }
 }

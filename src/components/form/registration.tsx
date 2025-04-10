@@ -19,7 +19,7 @@ export type BaseFormProps = {
     button?: ButtonProps
 }
 
-
+//! бардак
 // ? сделать error panel и блокировку отправки при non valid
 // ? валидаторы вынести в глобал
 export default function FormRegistration({ scheme, loading, onRegistration, button }: BaseFormProps) {

@@ -23,8 +23,8 @@ export type BaseInputProps = {
 
 
 
-
-export default function ({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
+// ?
+export default function TextInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number | string>(value);
 
@@ -72,8 +72,8 @@ export default function ({ value, left, right, onChange, placeholder, variant, l
 
             {right &&
                 <React.Fragment>
-                    {variant || theme.elements.input.variant &&
-                        <Divider flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
+                    {variant || theme.mixins.input.variant &&
+                        <Divider flexItem orientation="vertical" variant={variant ?? theme.mixins.input.variant} />
                     }
                     { right }
                 </React.Fragment>

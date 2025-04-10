@@ -1,10 +1,10 @@
 import React from 'react';
-import { LabelText, LabelNumber, LabelColor, LabelSlider, LabelSelect, LabelToogler, LabelDateOrTime } from '../../components/input/labels.inputs';
+import { LabelText, LabelNumber, LabelColor, LabelSlider, LabelSelect, LabelToogler, LabelDateOrTime } from '../input/labels.inputs';
 import { SwitchInput, CheckBoxInput } from '../input/input.any';
-import { Schema, TypeSchema } from './interfaces.general';
+import { Schema, TypeSchema } from './types';
 
 
-type FormProps = {
+export type FormProps = {
     scheme: Schema[]
     onChange: (state: Record<string, any>)=> void
 }
@@ -106,7 +106,7 @@ const fabrics = {
 ////////////////////////////////////////////////////////////////////
 
 
-// форма (пока без кнопок на каждом поле)
+// todo: задокументировать
 export default function Form({ scheme, onChange }: FormProps) {
     const stateRef = React.useRef<Record<string, any>>({});
     const [state, setState] = React.useState<Record<string, any>>({});          // первый рендер

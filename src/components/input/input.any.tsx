@@ -51,6 +51,16 @@ export type CheckBoxInputProps = CheckboxProps & {
     value?: boolean
     onChange?: (value: boolean)=> void
 }
+export type ColorPickerProps = InputBaseProps & {
+    value?: boolean
+    onChange?: (value: string)=> void
+    /** включить ли кнопку копирования данных ввода */
+    toolVisible?: boolean 
+}
+export type SwitchInputProps = SwitchProps & { 
+    value?: boolean, 
+    onChange: (v:boolean)=> void 
+}
 
 
 export function EmailInput({ value, useVerify, onChange, helperText, disabled, placeholder, ...props }: EmailInputProps) {
@@ -187,10 +197,12 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
         </React.Fragment>
     );
 }
-export function ColorPicker({ value, variant, left, onChange, ...props }) {
+// todo: чучуть доработать (modal)
+export function ColorPicker({ value, onChange, ...props }:  ColorPickerProps) {
     const [open, setopen] = React.useState<boolean>(false);
     const [inputValue, setInputValue] = React.useState<string>('rgba(255, 0, 0, 1)');
     const theme = useTheme();
+
 
     const useCopy =()=> {
         navigator.clipboard.writeText(inputValue);
@@ -229,6 +241,7 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
                     }}
                     onClick={()=> setopen(true)}
                 />
+                {/* модалка с выбором цвета */}
                 <Dialog 
                     open={open} 
                     onClose={()=> {
@@ -256,9 +269,6 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
 
             { props.toolVisible &&
                 <React.Fragment>
-                    { variant || theme.elements.input.variant &&
-                        <Divider sx={{mr:'5px'}} flexItem orientation="vertical" variant={variant ?? theme.elements.input.variant} />
-                    }
                     <IconButton onClick={useCopy} disabled={props.disabled}>
                         <FileCopy style={{
                                 color: theme.palette.text.secondary, 
@@ -271,7 +281,7 @@ export function ColorPicker({ value, variant, left, onChange, ...props }) {
         </InputPaper>
     )
 }
-export function SwitchInput({ value, onChange, ...props }: { value?: boolean, onChange:(v:boolean)=> void } & SwitchProps) {
+export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
     const theme = useTheme();
     const [curvalue, setCur] = React.useState(value);
     const Android12Switch = styled(Switch)(({ theme }) => ({

@@ -25,8 +25,10 @@ type InputCustomLabelProps = {
     sx?: SxProps<Theme>
     id?: string | number
 }
-type LabelTextProps = {
-    label: string
+export type LabelTextProps = {
+    /** ❗ не передав `label` инпут будет без label */
+    label?:  React.ReactNode
+    /** не передав `position` label не отрисуется но будет лишняя обертка, по этому лучше не передать `label` */
     position?: 'left' | 'right' | 'column'
 }
 

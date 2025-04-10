@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material';
 
 
 type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
-// todo: стилизировать
+// todo: стилизировать через тему
 const StyledTableWrapper = styled.div<{ theme: Theme }>`
     height: 100%;
     display: flex;
@@ -61,10 +61,11 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         background: ${({ theme })=> theme.palette.table.thead};
         color: ${({ theme })=> theme.palette.grey[500]};
         font-weight: bold;
-        padding: 12px;
+        padding: 1.5%;
         text-align: left;
-        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-        box-shadow: 0 4px 3px rgba(0, 0, 0, 0.08) inset, 0 3px 4px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 4px 3px rgba(0, 0, 0, 0.08) inset, 0 3px 4px rgba(0, 0, 0, 0.06);
+        backdrop-filter: blur(10px);
+        font-size:  14px;
     }
     // нечетные row 
     .p-datatable-tbody > tr:nth-child(even) {
@@ -92,7 +93,12 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
 `;
 
 
-// обертка над DataTable primereact с корректным расчетом ширины контейнера
+
+/**
+ * 🎁 Декоратор над PrimeReact `<DataTable>`:           
+ * добавляет автоматическую подстройку высоты контейнера,       
+ * сохраняя оригинальное API компонента.
+ */
 export default function({ value, children, header, footer, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);

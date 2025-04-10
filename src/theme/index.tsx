@@ -1,6 +1,6 @@
 import { createTheme, PaletteOptions, ThemeOptions, Theme } from "@mui/material/styles";
 import { CSSProperties } from "react";
-import { elements } from './elements';
+import { typography, components } from './elements';
 import { darkPallete } from './dark';
 import { lightPallete } from './light';
 import { mixins } from './mixins';
@@ -69,9 +69,6 @@ declare module '@mui/material/styles' {
     interface Theme {
         elements: typeof elements;
     }
-    interface ThemeOptions {
-        elements?: typeof elements;
-    }
 }
 
 // расщирения интерфейсов buttons
@@ -84,12 +81,12 @@ declare module '@mui/material/Button' {
 
 
 export const darkTheme = createTheme({
-    elements,
+    typography: typography.typography,
     mixins,
-    palette: darkPallete.palette
+    palette: darkPallete.palette,
+    components: components.components,
 });
 export const lightTheme = createTheme({
-    elements,
     mixins,
-    palette: lightPallete.palette
+    palette: lightPallete.palette,
 });

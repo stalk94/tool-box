@@ -92,7 +92,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
                     flexDirection: "column",
                     overflowY: "auto", 
                     overflowX: "hidden",
-                    ...theme.elements.scrollbar
+                    ...theme.mixins.scrollbar
                 }}
             >
                 <List>
@@ -234,7 +234,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
         borderTop: `1px dotted ${theme.palette.divider}`,
         backdropFilter: "blur(14px)",
         backgroundColor: darken(theme.palette.toolNavBar.main, 0.1),
-        ...theme.elements.scrollbar
+        ...theme.mixins.scrollbar
     }
 
     
@@ -258,7 +258,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
                 onChange={onChange}
             />
             {/* низ */}
-            {end &&
+            { end &&
                 <SidebarMenu
                     collapsed={collapsed}
                     sx={styleEnd}
