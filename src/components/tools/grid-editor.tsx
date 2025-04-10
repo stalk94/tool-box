@@ -8,6 +8,7 @@ import BasePopUp from '../popup/base';
 
 
 export default function({ components }) {
+    const cache = React.useRef([]);
     const [all, setAll] = React.useState<Record<string, Layout[]>>({});
     const [layout, setLayout] = React.useState<Layout[]>([]);
     const [name, setName] = React.useState<string>('component-0');
@@ -39,10 +40,12 @@ export default function({ components }) {
         });
     }
     const handlerImport =()=> {
-        layout.map((l, index)=> {
+        console.log(layout);
+        navigator.clipboard.writeText(JSON.stringify(layout));
+
+        if(false) layout.map((l, index)=> {
             if(components[l.content]) {
                 const Render = components[l.content].render();
-                console.log(<Render/>)
             }
         });
     }
@@ -63,6 +66,7 @@ export default function({ components }) {
     return(
         <div style={{width: '100%', height: '100%', display:'flex', flexDirection:'row'}}>
             <GridEditor 
+                cache={cache}
                 layout={layout}
                 setLayout={setLayout}
                 renderItems={components ?? []}

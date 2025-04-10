@@ -4,9 +4,13 @@ import { SwitchInput, CheckBoxInput } from '../input/input.any';
 import { Schema, TypeSchema } from './types';
 
 
+
 export type FormProps = {
     scheme: Schema[]
-    onChange: (state: Record<string, any>)=> void
+    /** все данные форм при изменении данных */
+    onChange?: (state: Record<string, any>)=> void
+    /** показывает изменение конкретного значения инпута, старое => новое */
+    onSpecificChange?: (old: Record<string, any>, news: Record<string, any>)=> void
 }
 
 
@@ -107,23 +111,31 @@ const fabrics = {
 
 
 // todo: задокументировать
-export default function Form({ scheme, onChange }: FormProps) {
+export default function Form({ scheme, onChange, onSpecificChange }: FormProps) {
     const stateRef = React.useRef<Record<string, any>>({});
     const [state, setState] = React.useState<Record<string, any>>({});          // первый рендер
 
-   
+    
+    const useChek =(type: string)=> {
+        if(fabrics[type]) return true;
+        else console.warn(
+            'Был передан тип неизвестной схемы %c%s', 
+            'color: gray; font-style: italic;',
+            `'${type}'`
+        );
+    }
     const getScheme =(id: string)=> {
         const find = scheme.find((elem)=> elem.id === id);
         return find;
     }
     const useChangeValue = React.useCallback((id: string, value: any) => {
-        stateRef.current = { ...stateRef.current, [id]: value };
-        onChange(stateRef.current);
+        if(onSpecificChange) onSpecificChange(
+            { [id]: structuredClone(stateRef.current[id]) },
+            { [id]: value }
+        );
 
-        //setState((old) => {
-        //    const newState = { ...old, [id]: value };
-        //    return newState;
-        //});
+        stateRef.current = { ...stateRef.current, [id]: value };
+        onChange && onChange(stateRef.current);
     }, []);
     const useTransform =(scheme: Schema[])=> {
         const sbd = {};
@@ -142,14 +154,14 @@ export default function Form({ scheme, onChange }: FormProps) {
 
     return(
         <React.Fragment>
-            { Object.keys(state).map((keyName, index)=> {
+            { state && Object.keys(state).map((keyName, index)=> {
                 const element = getScheme(keyName);
                 if(element) element.onChange =(value)=> useChangeValue(keyName, value);
                 
 
                 if(element?.type) return(
                     <React.Fragment key={index}>
-                        { fabrics[element.type](element) }
+                        { useChek(element.type) && fabrics[element.type](element) }
                     </React.Fragment>
                 );
             })}

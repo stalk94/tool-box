@@ -74,6 +74,7 @@
   },
   "dependencies": {
     "@craftjs/core": "^0.2.12",
+    "@hookstate/core": "^4.0.2",
     "@mui/material": "^6.4.7",
     "@mui/x-data-grid": "^7.27.3",
     "@mui/x-date-pickers": "^7.27.3",
@@ -83,6 +84,8 @@
     "react-grid-layout": "^1.5.1",
     "react-resizable": "^3.0.5",
     "react-slick": "^0.30.3",
+    "slate": "^0.112.0",
+    "slate-react": "^0.112.1",
     "slick-carousel": "^1.8.1",
     "vite-plugin-dts": "^4.5.3"
   }

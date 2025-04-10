@@ -3,8 +3,8 @@ import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, D
     Box, MenuItem, Badge, useTheme, alpha, darken
 } from "@mui/material";
 import { ExpandLess, ExpandMore, FiberManualRecord } from "@mui/icons-material";
-import { NavLinkItem } from '../menu/list';
-import Menu from '../menu/atomize';
+import { NavLinkItem } from '../menu/type';
+import Menu from '../menu/index';
 
 
 type SidebarMenuProps = {
@@ -12,10 +12,13 @@ type SidebarMenuProps = {
     onChange?: (item: NavLinkItem)=> void
     items: NavLinkItem[]
     sx?: {}
+    isFocusSelected?: boolean 
 }
 type LeftNavigationProps = SidebarMenuProps & BoxProps & {
     type: 'box' | 'drawer'
     end?: NavLinkItem[]
+    /** показывать выделленным цветом текуший выбранный элемент */
+    isFocusSelected?: boolean 
 }
 
 
@@ -26,7 +29,7 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
  * Можно передавать onChange которая для каждого выполнится выбранного.  
  * * так же у каждого item может быть свой comand()
  */
-export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps) {
+export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected }: SidebarMenuProps) {
     const theme = useTheme();
     const [openMenus, setOpenMenus] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
@@ -45,7 +48,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
         if(onChange) onChange(item);
         item.comand?.(item);
 
-        setSelectedItem(item.id);
+        if(isFocusSelected) setSelectedItem(item.id);
         setActiveParent(parent); // Устанавливаем активного родителя (или null)
     }
     const handleOpenPopover = (event, children, parentId) => {
@@ -227,8 +230,12 @@ export function SidebarMenu({ collapsed, items, sx, onChange }: SidebarMenuProps
 
 
 
-
-export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }: LeftNavigationProps) {
+/**
+ * 
+ * Панель навигации как в vs code (без рабочей области)     
+ * с рабочей областью отдельный компонент
+ */
+export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx, ...props }: LeftNavigationProps) {
     const theme = useTheme();
     const styleEnd = { 
         borderTop: `1px dotted ${theme.palette.divider}`,
@@ -243,6 +250,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
             sx={{
                 ...sx,
                 width: collapsed ? 60 : 200,
+                minWidth: 50,
                 display: 'flex',
                 flexDirection: 'column',
                 maxHeight: '100%',
@@ -256,6 +264,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx }:
                 collapsed={collapsed}
                 items={items}
                 onChange={onChange}
+                isFocusSelected={props.isFocusSelected}
             />
             {/* низ */}
             { end &&

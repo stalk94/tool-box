@@ -2,21 +2,21 @@ import React from "react";
 import AppBar, { Start, Center, MobailBurger } from "./index";
 import { AccountBox, Home, Settings, Info } from "@mui/icons-material";
 import { IconButton, Box } from "@mui/material";
+import { NavLinkItem } from '../menu/type';
+
 
 type Props = {
-    linkItems: {
-        /** !должно быть уникальным */
-        id: string
-        label: string 
-        icon?: React.ReactNode
-    }[]
+    linkItems?: NavLinkItem[]
+    onClick?: (path: string)=> void
 }
 
 
 /**
- * Презентационный AppBar скомпонованный по базовой схеме
+ * Презентационный AppBar скомпонованный по базовой схеме       
+ * конструирует роуты из id и по клику(! id на каждом из уровней должен быть уникальным, либо будут коллизии)     
  */
-export default function({ linkItems }: Props) {
+export default function({ linkItems, onClick }: Props) {
+    // тестовые данные, использовать как образец
     const navLinksTest = [
         { id: 'base', label: "Главная", icon: <Home />, divider: true },
         { id: 'info', label: "Информация", icon: <Info />, divider: true  },
@@ -45,6 +45,7 @@ export default function({ linkItems }: Props) {
     // вяжется на все элементы навигации, получает rout нажатого элемента
     const handlerClickNavigation =(path: 'string')=> {
         console.log(path);
+        onClick && onClick(path);
     }
     // ANCHOR - трансформатор id в rout
     const transformUseRouter =()=> {

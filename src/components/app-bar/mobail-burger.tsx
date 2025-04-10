@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { NavLinkItem } from '../menu/list';
+import { NavLinkItem } from '../menu/type';
 import { IconButton } from "@mui/material";
-import MobailMenu from '../menu/mobail-burger';
+import Menu from '../menu';
+import ItemMenuList from '../menu/list';
 
 
 type MobailBurgerProps = {
@@ -30,6 +31,7 @@ export default function ({ items, children }: MobailBurgerProps) {
         setAnchorEl(null);
         setMenuOpen(false);
     }
+    
 
 
     return(
@@ -50,12 +52,24 @@ export default function ({ items, children }: MobailBurgerProps) {
 
 
             {/* Выпадающее меню mobile */}
-            <MobailMenu
+            <Menu
                 anchorEl={anchorEl}
                 open={menuOpen}
                 onClose={handleMenuClose}
-                navLinks={items}
-            />
+                sx={{
+                    mt: 2
+                }}
+            >
+                { items && items.map((item, index) => {
+                    return(
+                        <ItemMenuList
+                            key={index}
+                            item={item}
+                            onItemClick={() => handleMenuClose()}
+                        />
+                    );
+                })}
+            </Menu>
         </React.Fragment>
     );
 }

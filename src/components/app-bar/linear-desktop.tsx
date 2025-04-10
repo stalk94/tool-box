@@ -4,8 +4,9 @@ import { KeyboardArrowDown } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
 import { Divider, Box, SxProps, useTheme, alpha, } from "@mui/material";
-import { NavLinkItem } from '../menu/list';
-import AppBarMenu from '../menu/atomize';
+import { NavLinkItem } from '../menu/type';
+import Menu from '../menu';
+import ItemMenuList from '../menu/list';
 
 
 type OverflowNavigationItemsProps = { 
@@ -42,12 +43,22 @@ export const DesktopNestedMenuItem =({ item }: { item: NavLinkItem })=> {
             >
                 { item.label }
             </Button>
-            <AppBarMenu
+            <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
-                navLinks={item.children}
-            />
+                sx={{
+                    mt: 2
+                }}
+            >
+                { item.children && item.children.map?.((item, index) => (
+                    <ItemMenuList
+                        key={index}
+                        item={item}
+                        onItemClick={() => handleClose()}
+                    />
+                ))}
+            </Menu>
         </React.Fragment>
     );
 }
@@ -77,7 +88,6 @@ const OverflowNavigationItems =({ hiddenItems, element }: OverflowNavigationItem
         <React.Fragment>
             <Box 
                 sx={{
-                    //ml: 1,
                     mr: 2
                 }}
                 onClick={(e) => {
@@ -88,12 +98,22 @@ const OverflowNavigationItems =({ hiddenItems, element }: OverflowNavigationItem
                 { element ?? renderDefaultElement() }
             </Box>
             
-            <AppBarMenu
+            <Menu
                 anchorEl={anchorEl}
-                open={menuOpen}
+                open={Boolean(anchorEl)}
                 onClose={handleMenuClose}
-                navLinks={hiddenItems}
-            />
+                sx={{
+                    mt: 2
+                }}
+            >
+                { hiddenItems && hiddenItems.map?.((item, index) => (
+                    <ItemMenuList
+                        key={index}
+                        item={item}
+                        onItemClick={() => handleMenuClose()}
+                    />
+                ))}
+            </Menu>
         </React.Fragment>
     );
 }

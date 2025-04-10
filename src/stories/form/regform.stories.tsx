@@ -7,7 +7,7 @@ import { Divider, Typography } from '@mui/material';
 
 
 const meta: Meta<typeof RegForm> = {
-    title: 'Module',
+    title: 'Form',
     component: RegForm,
     argTypes: {
         

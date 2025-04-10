@@ -8,7 +8,7 @@ import Icons, { Equalizer, Calculate, AccountBox } from "@mui/icons-material";
 
 
 const meta: Meta<typeof Form> = {
-    title: 'Module',
+    title: 'Form',
     component: Form,
     argTypes: {
         

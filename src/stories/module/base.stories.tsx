@@ -43,9 +43,8 @@ const Templates =(args)=> {
             }}
         >
             <AlertProvider>
-                <AppBarPreview
-                  
-                />
+                <AppBarPreview />
+                
                 <div
                     style={{
                         height: '100%',
@@ -59,6 +58,7 @@ const Templates =(args)=> {
                             items: menuItems,
                             end: endItems
                         }}
+                        width={180}
                         onChangeNavigation={console.log}
                         {...args}
                     >

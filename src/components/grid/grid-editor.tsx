@@ -3,38 +3,35 @@ import { Button, useTheme } from "@mui/material";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import { Toolbar, Components } from './tools-bar';
 import StaticGrid from './static';
+import ContentEdit from './editor-text';
+import { Descendant } from 'slate';
 import "react-grid-layout/css/styles.css";
 import "../../style/grid.css"
-
-
-type LayoutCustom = Layout & {
-    /** id рендер элемента */
-    content?: number
-}
-type GridEditorProps = {
-    setLayout: (old: Layout[])=> void
-    layout: LayoutCustom[]
-    renderItems: React.ReactNode[]
-    tools: React.ReactNode
-}
+import { GridEditorProps, LayoutCustom } from './type';
+import context from './context';
+import { useHookstate } from "@hookstate/core";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 
 // сетка редактор (с верхней панелькой и панелью заполнителей ячейки)
-export default function ({ setLayout, layout, renderItems, tools }: GridEditorProps) {
+export default function ({ setLayout, layout, renderItems, tools, cache }: GridEditorProps) {
     const theme = useTheme();
     const [preview, setPreview] = React.useState(false);
     const [current, setCurrent] = React.useState<string | undefined>();
     const [margin, setMargin] = React.useState<[number, number]>([5, 5]);
     const containerRef = React.useRef(null);
+    const layoutState = useHookstate(context.layout);
    
 
     const handlerLayoutChange =(currentLayout: Layout[], allLayouts: Layouts)=> {
         layout.map((elem)=> {
             if(elem.content) {
                 const findIndex = currentLayout.findIndex(ce => ce.i === elem.i);
-                if(findIndex !== -1) currentLayout[findIndex].content = elem.content;
+                if(findIndex !== -1) {
+                    currentLayout[findIndex].content = elem.content;
+                    layoutState.set(currentLayout);
+                }
             }
         });
 
@@ -79,6 +76,18 @@ export default function ({ setLayout, layout, renderItems, tools }: GridEditorPr
             return [...items];
         });
     }
+    // для contenEditable
+    const handlerChangeEditor =(value: Descendant, item: LayoutCustom)=> {
+        const text = value[0].children[0].text;
+        const findindex = cache.current.findIndex((cv)=> cv.i === item.i);
+
+        if(findindex !== -1) {
+            cache.current[findindex].content = text;
+        }
+    }
+    React.useEffect(()=> {
+        cache.current = layout;
+    }, [layout]);
 
 
     return(
@@ -92,7 +101,7 @@ export default function ({ setLayout, layout, renderItems, tools }: GridEditorPr
                     tools={tools}
                 />
             </div>
-            {/* выбор заполнения ячейки */}
+            {/* выбор заполнения ячейки ! доработать */}
             <Components
                 visibility={Boolean(current)}
                 onChange={setItemContent}
@@ -135,10 +144,13 @@ export default function ({ setLayout, layout, renderItems, tools }: GridEditorPr
                             }}
                             onClick={(e) => handleItemClick(item.i, e)}
                         >
-                            { renderItems?.[item.content]?.render
-                                ? renderItems[item.content].render()
-                                : <div style={{textAlign:'center'}}>{`Block ${index}`}</div>
-                            }
+                            <ContentEdit
+                                key={item.i}
+                                idLayout={item.i}
+                                value={item.content ? item.content : `Block ${index}`}
+                                onChange={(v)=> handlerChangeEditor(v, item)}
+                            />
+                            
                         </div>
                     ))}
                 </ResponsiveGridLayout>
@@ -162,6 +174,7 @@ export default function ({ setLayout, layout, renderItems, tools }: GridEditorPr
             >
                 <StaticGrid
                     layout={layout}
+                    margin={[5, 5]}
                 //viewContent={renderItems}
                 />
             </div>

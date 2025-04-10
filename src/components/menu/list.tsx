@@ -1,39 +1,27 @@
 import React, { useState } from "react";
 import { Check, ExpandMore, ChevronRight } from "@mui/icons-material";
-import { MenuItem, ListItemIcon, List, ListItemText, ListItem, Collapse, Box, Divider, useTheme } from "@mui/material";
+import { MenuItem, ListItemIcon, List, ListItemText, ListItem, Collapse, MenuItemProps, Divider, useTheme } from "@mui/material";
 import FiberManualRecordIcon from '@mui/icons-material/FiberManualRecord';
+import { NavLinkItem } from './type';
 
 
-export type StateNavLinks = {
-    /** данные для badge */
-    badge?: number | React.ReactNode
-}
-export interface NavLinkItem {
-    id: string
-    label?: string
-    icon?: React.ReactNode
-    /** 🔥 кастомный параметр подсветит элемент как выбранный */
-    select?: any
-    comand?: (item: any) => void
-    divider?: React.ReactNode | boolean
-    /** ℹ️ можно передавать доп данные элемента */
-    state?: StateNavLinks
-    children?: NavLinkItem[]
-}
-export type MobailMenuProps = {
+export type ListProps = MenuItemProps & {
     item: NavLinkItem
     onItemClick: (item: NavLinkItem) => void
 }
 
 
-// todo: застилизировать
-// Компонент для рендера элементов меню с поддержкой подменю
-export default function({ item, onItemClick }: MobailMenuProps) {
+
+/** 
+ * Компонент для рендера элементов списка выпадающего меню, с поддержкой вложенности(1 lvl)     
+ * наследуется от MenuItem MUI
+ */ 
+export default function({ item, onItemClick }: ListProps) {
     const theme = useTheme();
-    const colorSelect = theme.palette.menu.select;
+    const colorSelect = theme.palette?.menu?.select;
     const [open, setOpen] = useState(false);
-
-
+    
+    
     const renderIcon =(item, isTop: boolean)=> {
         if(item.icon) return (
             React.cloneElement(item.icon, {
@@ -59,17 +47,6 @@ export default function({ item, onItemClick }: MobailMenuProps) {
             onItemClick(item);
             item.comand?.(item);
         }
-    }
-    if (item?.divider) {
-        if(typeof item.divider === 'boolean') return(
-            <Divider sx={{ width: '100%' }}/>
-        );
-
-        return (
-            <Box sx={{mt:1,mb:1}} display="flex" justifyContent="center" width="100%">
-                { item.divider }
-            </Box>
-        );
     }
     React.useEffect(()=> {
         if(item.children) {
@@ -99,11 +76,11 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                 )}
             </MenuItem>
 
-            {/* Если имеются вложенные */}
+            {/* Если имеются вложенные, это вложенный список */}
             { item.children && (
                 <Collapse in={open} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding sx={{ml:0.5, mr: 0.5}}>
-                        { item.children.map((childItem, childIndex) => (
+                        { item.children.map?.((childItem, childIndex) => (
                             <ListItem
                                 key={childIndex}
                                 button='true'
@@ -131,6 +108,15 @@ export default function({ item, onItemClick }: MobailMenuProps) {
                     </List>
                 </Collapse>
             )}
+            {/* если в схеме есть свойство `divider` */}
+            { item.divider &&  
+                <Divider 
+                    style={{ 
+                        width: '100%',
+                        margin: 0 
+                    }}
+                />
+            }
         </React.Fragment>
     );
 }

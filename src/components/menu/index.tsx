@@ -1,35 +1,30 @@
 import React from "react";
-import Menu, { CustomMenuProps } from './atomize';
+import { Menu, MenuProps } from '@mui/material';
 
 
-type MenuProps = CustomMenuProps & {
-    anchorEl: any
-    open: boolean
-    onClose: ()=> void
+type CustomMenuProps = MenuProps & {
     width?: string | number
-    children: React.ReactNode
 }
+
 
 
 /**
  * Базовый Menu (выпадаюшее меню)   
- * наследуется от MUI Menu
+ * применяется во всех внутренних компонентах системы
+ * оборачивает atomize доп свойством `width`
+ * ! надо его упразднить, он добавляет сложности
  */
-export default function ({ anchorEl, open, onClose, width, children, ...props }: MenuProps) {
+export default function ({ anchorEl, open, onClose, width, children, ...props }: CustomMenuProps) {
     
+
     return(
         <Menu 
             elevation={0}
             anchorEl={anchorEl}
             open={open}
             onClose={onClose}
-            sx={{
-                mt: 0.5,
-            }}
             PaperProps={{
                 style: {
-                    maxHeight: '70vh',
-                    minWidth: '200px',
                     width
                 },
             }}

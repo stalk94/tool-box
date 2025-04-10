@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Box, BoxProps, useTheme, alpha, darken, SxProps } from "@mui/material";
-import { NavLinkItem } from '../menu/list';
+import { NavLinkItem } from '../menu/type';
 import BaseLeftSideBar from "./left-nav";
 
 
@@ -21,6 +21,7 @@ export type SideBarAndToolPanelProps = {
     onChangeNavigation?: (item: NavLinkItem)=> void
     /** 📏 Ширина рабочей области (без учета навигации) */
     width?: string | number
+    /** настройки стиля обшего контейнера */
     sx: SxProps
 }
 
@@ -51,14 +52,6 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
             return darken(bcgColor, 0.1);
         }
     }
-    const useTopOrEndBorder =(type: 'startBorder' | 'endBorder')=> {
-        const color = theme.palette?.toolNavBar?.[type];
-
-        if(!color) {
-            const bcgColor = useBackgroundColor();
-            return darken(bcgColor, 0.1);
-        }
-    }
     
 
     return(
@@ -67,6 +60,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                 display: 'flex',
                 flexDirection: 'row',
                 maxHeight: '100%',
+                minWidth: 100,
                 overflow: 'hidden',
                 ...props.sx
             }}
@@ -77,6 +71,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                 collapsed={true}
                 onChange={onChangeNavigation}
                 items={schemaNavBar.items}
+                isFocusSelected={true}
                 end={schemaNavBar.end}
             />
 

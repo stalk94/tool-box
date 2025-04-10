@@ -1,12 +1,13 @@
 import { ThemeOptions } from '@mui/material/styles'
+import { Zoom, Tooltip } from '@mui/material';
 
 /*
-    глобальные стили для элементов
+    *********************************************
+        глобальные стили для элементов
+    *********************************************
 */
 
-
-
-/** Установки для типографии */
+// Установки для типографии
 export const typography: ThemeOptions = {
     typography: {
         fontFamily: '"Inter", "Arial", sans-serif',
@@ -45,6 +46,34 @@ export const typography: ThemeOptions = {
 /** предустановки компонентов */
 export const components: ThemeOptions = {
     components: {
-        
+        MuiTooltip: {
+            styleOverrides: {
+                tooltip: {
+                    fontSize: '14px',
+                    borderRadius: '8px',
+                    padding: '8px 12px',
+                },
+            },
+            defaultProps: {
+                slots: {
+                    transition: Zoom,
+                },
+                arrow: true,
+            },
+        },
+        MuiMenu: {
+            styleOverrides: {
+                // todo: ! опа новый трюк, запомнить
+                paper: ({ theme }) => ({
+                    maxHeight: '70vh',
+                    minWidth: '200px',
+                    backgroundColor: theme.palette?.menu?.main,
+                    backdropFilter: 'blur(14px)',
+                }),
+            },
+            defaultProps: {
+                elevation: 0,
+            },
+        },
     }
 }

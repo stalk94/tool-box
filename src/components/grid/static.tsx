@@ -2,17 +2,9 @@ import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "../../style/grid.css"
-
-
-type StaticGridProps = {
-    layout: Layout & {
-        /** id рендер элемента */
-        content?: number
-    }[]
-    margin?: [number, number]
-    /** массив компонентов с которым будут сопоставлятся ячейки, усли `undefined` то будет визуализация в режиме макета */
-    viewContent?: React.ReactNode[]
-}
+import context from './context';
+import { useHookstate } from "@hookstate/core";
+import { GridEditorProps, LayoutCustom } from './type';
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -39,9 +31,11 @@ const initLayouts: Layouts = {
 
 
 // сетка будет соответствовать схеме
-export default function StaticGrid({ layout, margin, viewContent }: StaticGridProps) {;
+export default function StaticGrid({ margin }) {
+    const [render, setRender] = React.useState<LayoutCustom []>([]);
     const containerRef = React.useRef(null);
     const [rowHeight, setRowHeight] = React.useState(30);
+    const layout = useHookstate(context.layout);
 
     
     const normalizeLayout = (layout: Layout[]) => {
@@ -84,7 +78,10 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
         return maxColumns; // Убедиться, что минимум 12 колонок
     }
     React.useEffect(() => {
-        if(!margin) margin = [5, 5];
+        if(!margin) margin = [1, 1];
+        const cur = layout.get({ noproxy: true });
+        setRender(cur);
+
         // Обновляем максимальное количество колонок
         const resizeObserver = new ResizeObserver(() => {          
             if (containerRef.current) {
@@ -93,7 +90,7 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
                 
 
                 // Рассчитываем количество строк, исходя из переданной схемы
-                const maxY = Math.max(...layout.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
+                const maxY = Math.max(...cur.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
                 const rows = maxY; // Количество строк = максимальное значение y + 1
 
                 const totalVerticalMargin = margin[1] * (rows+1) ; // Суммарные вертикальные отступы для всех строк
@@ -110,7 +107,7 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
             resizeObserver.disconnect();
         };
     }, [layout]);
-
+    
    
     return (
         <div
@@ -123,33 +120,17 @@ export default function StaticGrid({ layout, margin, viewContent }: StaticGridPr
             <ResponsiveGridLayout
                 //measureBeforeMount={true}
                 className="layout"
-                layouts={{ lg: layout }}        // Схема сетки
+                layouts={{ lg: render }}        // Схема сетки
                 breakpoints={{ lg: 0 }}         // Точки для респонсива
                 cols={{ lg: 12 }}
                 rowHeight={rowHeight}
                 compactType={null}              // Отключение автоматической компоновки
                 isDraggable={false}             // Отключить перетаскивание
                 isResizable={false}             // Отключить изменение размера
-                margin={margin ?? [5, 5]}
+                margin={margin ?? [1, 1]}
             >
-                {!viewContent && layout.map((item) => (
+                { render.map((item) => (
                     <div key={item.i} style={{ background: "lightgray", textAlign: "center" }}/>
-                ))}
-
-                {/* рабочий режим (отображаем контент в ячейках) */}
-                {viewContent && layout.map((item, index) => (
-                    <div 
-                        key={item.i} 
-                        style={{ 
-                            display: "flex",
-                            flex: 1,
-                            alignItems: "center",
-                            justifyContent: "center",
-                            overflow: 'auto'
-                        }}
-                    >
-                        { viewContent[item?.content]?.render() || 'empty' }
-                    </div>
                 ))}
             </ResponsiveGridLayout>
         </div>
