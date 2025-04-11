@@ -137,6 +137,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
         delete props.borderStyle;
         delete props.success;
         delete props.toolVisible;
+        delete props.labelSx
         return props;
     }
 
@@ -170,7 +171,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
                 },
                 ...props.sx
             }}
-            inputProps={{ style: { textAlign: theme.mixins.input.alight } }}
+            inputProps={{ style: { textAlign: theme.mixins.input.alight, resize: 'both', } }}
             onChange={(e) => onChange && onChange(e.target.value)}
         />
     );

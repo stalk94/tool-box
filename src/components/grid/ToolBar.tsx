@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, useTheme, Box, Paper, Typography, Tooltip, SxProps, IconButton } from "@mui/material";
 import { Delete as DeleteIcon, MoreVert as MoreVertIcon,
-    RadioButtonChecked, Assignment, Input, Build 
+    RadioButtonChecked, Assignment, Input, BorderStyle, ColorLens, FormatColorText, More
 } from '@mui/icons-material';
 import { ContentFromCell, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
@@ -101,6 +101,7 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
                 onChange={(v) => {
                     setCurrentTool(v);
                 }}
+                sx={{px:0.2}}
                 items={[
                     { label: <Assignment sx={{fontSize:18}}/>, id: 'text' },
                     { label: <RadioButtonChecked sx={{fontSize:18}} />, id: 'button' },
@@ -113,15 +114,27 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
         children: components[currentTool] || null
     };
 }
-const useComponent = (elem, onChange) => {
+const useComponent = (elem, onChange, curSub, setSub) => {
     return {
         start: (
-            <div>
-
-            </div>
+            <TooglerInput
+                value={curSub}
+                disabled={!elem.get()}
+                onChange={(v) => {
+                    setSub(v);
+                }}
+                sx={{px:0.2}}
+                items={[
+                    { label: <More sx={{fontSize:18}}/>, id: 'props' },
+                    { label: <ColorLens sx={{fontSize:18}} />, id: 'base' },
+                    { label: <BorderStyle sx={{fontSize:18}} />, id: 'flex' },
+                    { label: <FormatColorText sx={{fontSize:20}} />, id: 'text' },
+                ]}
+            />
         ),
         children: (
             <Forms
+                type={curSub}
                 elemLink={elem}
                 onChange={onChange}
             />
@@ -134,7 +147,8 @@ const useComponent = (elem, onChange) => {
 export default function ({ addComponentToLayout, useDump, useEditProps }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
-    const [currentToolPanel, setCurrentToolPanel] = React.useState('items');
+    const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState('component');
     const [currentTool, setCurrentTool] = React.useState('button');
 
     const menuItems = [
@@ -165,13 +179,14 @@ export default function ({ addComponentToLayout, useDump, useEditProps }: Props)
     }
     const changeEditor =(newDataProps)=> {
         console.log('change props: ', newDataProps);
+        useEditProps(select.content.get({ noproxy: true }), newDataProps)
     }
     const renderProps = () => {
         if (currentToolPanel === 'items') {
             return useElements(currentTool, setCurrentTool, addComponentToLayout);
         }
         else if(currentToolPanel === 'component') {
-            return useComponent(select.content, changeEditor);
+            return useComponent(select.content, changeEditor, curSubpanel, setSubPanel);
         }
 
         return { start: null, children: null }

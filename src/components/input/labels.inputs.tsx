@@ -94,6 +94,7 @@ export function LabelText({ label, position, ...props }: LabelTextProps & BaseIn
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='text'
         >
             <Text
@@ -115,6 +116,7 @@ export function LabelNumber({ label, position, ...props }: LabelTextProps & Numb
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='number'
         >
             <Number
@@ -134,6 +136,7 @@ export function LabelLogin({ label, position, ...props }: LabelTextProps & login
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='login'
         >
             <Login
@@ -153,6 +156,7 @@ export function LabelPassword({ label, position, ...props }: LabelTextProps & Pa
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='password'
         >
             <Password
@@ -172,6 +176,7 @@ export function LabelColor({ label, position, ...props }: LabelTextProps & BaseI
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='color'
         >
             <ColorPicker
@@ -191,6 +196,7 @@ export function LabelEmail({ label, position, ...props }: LabelTextProps & Email
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='email'
         >
             <EmailInput
@@ -210,6 +216,7 @@ export function LabelPhone({ label, position, ...props }: LabelTextProps & Phone
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='phone'
         >
             <PhoneInput
@@ -229,6 +236,7 @@ export function LabelDateOrTime({ label, position, ...props }: LabelTextProps & 
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput={props.isTimePicker ? 'time' : 'date'}
         >
             <DatePickerCustom
@@ -249,6 +257,7 @@ export function LabelSelect({ label, position, ...props }: LabelTextProps & Base
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='select'
         >
             <Select
@@ -268,6 +277,7 @@ export function LabelSlider({ label, position, ...props }: LabelTextProps & Cust
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='slider'
         >
           
@@ -290,6 +300,7 @@ export function LabelToogler({ label, position, ...props }: LabelTextProps & Too
             label={label}
             position={position}
             id={props.id}
+            sx={props.labelSx}
             typeInput='toogle'
         >
             <TooglerInput

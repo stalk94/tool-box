@@ -13,15 +13,14 @@ export { Start, Center, MobailBurger } from './components/app-bar';
 export { default as LeftSideBar } from './components/nav-bars/left-nav';
 export { default as LeftSideBarAndTool } from './components/nav-bars/tool-left';
 
-
+export type { AccordionProps } from './components/accordion';
 export { default as Accordion } from './components/accordion';
-export { AccordionProps } from './components/accordion';
 
 // всплываюшие информационные окна
-export { AlertProvider, useAlert, AlertManagerProps } from './components/alert';
-
+export { AlertProvider, useAlert } from './components/alert';
+export type { AlertManagerProps } from './components/alert';
 
 // базовая форма работаюшая со схемой
 export { default as Form } from './components/form';
 // интерфейс базовой схемы
-export { Schema } from './components/form/types';
+export type { Schema } from './components/form/types';

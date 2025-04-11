@@ -42,7 +42,10 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
         flexDirection: 'row'
     }
 
-
+    const chekSelected =(item, selected)=> {
+        if(props.onlyId && item.id === selected) return item.label;
+        else if(item.id === selected.id) return item.label;
+    }
     const chekLabel =()=> {
         if(label && label.length > 0) return label;
         else return 'Выбрать';
@@ -54,7 +57,10 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
     }
     const handleSelectItem =(item)=> {
         setSelected(item);
-        if(onChange) onChange(item);
+        if(onChange) {
+            if(props.onlyId) onChange(item.id);
+            else onChange(item);
+        }
         setIsOpen(false);
     }
     React.useEffect(()=> {
@@ -98,7 +104,9 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                         fontSize: '16px'
                     }}
                 >
-                    { selected && items.find((item)=> item.id === selected.id)?.label } 
+                    { selected && items.find((item)=> 
+                        chekSelected(item, selected))?.label
+                    } 
                     { !selected &&  chekLabel() }
                 </div>
                 <div
@@ -153,6 +161,7 @@ export default function({ value, onChange, items, placeholder, variant, ...props
                 label={placeholder} 
                 items={items ?? []}
                 onChange={onChange}
+                onlyId={props.onlyId}
             />
         </InputPaper>
     );

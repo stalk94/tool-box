@@ -370,6 +370,7 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
         delete props.borderStyle;
         delete props.success;
         delete props.error;
+        delete props.labelSx;
         return props;
     }
     const useColorBackground =()=> {
@@ -406,6 +407,8 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
             aria-label={label}
             { ...filtre() }
             sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
                 width: '100%',
                 ...props.sx
             }}

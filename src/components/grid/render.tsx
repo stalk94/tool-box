@@ -1,18 +1,17 @@
-import React, { useState } from "react";
+import React from "react";
+import html2canvas from 'html2canvas';
 import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
-import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "../../style/grid.css";
 import "../../style/edit.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
-import Draggable, { DraggableData } from 'react-draggable';
 import { ToolBarInfo } from './RenderTools';
 import { listAllComponents, listConfig } from './config/render';
 import Tools from './ToolBar';
+import GridComponentEditor from './GridCompone';
+import { writeFile } from "../../app/plugins";
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
-const margin: [number, number] = [5, 5];
 
 
 
@@ -20,30 +19,71 @@ const margin: [number, number] = [5, 5];
 export default function ({ height }) {
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const [render, setRender] = React.useState<LayoutCustom []>([]);
-    const containerRef = React.useRef(null);
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
-    const [rowHeight, setRowHeight] = React.useState(30);
-    const layoutCellEditor = useHookstate(context.layout);            // синхронизация с редактором сетки
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     
    
-    // todo: здесь работаем
-    const dumpRender =()=> {
-        const cache = cellsCache.get({noproxy: true});
-        const sizeContainer = {
-            width: info.container.width.get(),
-            height: info.container.height.get()
+    
+    const makePrewiew = async(elem: HTMLElement) => {
+        const canvas = await html2canvas(elem, { useCORS: true, scrollY: -window.scrollY });
+        return canvas.toDataURL();
+    }
+    const dumpRender =(name: string)=> {
+        const gridContainer: HTMLDivElement = document.querySelector('.GRID-EDITOR');
+        const children = Array.from(gridContainer.children);
+        const cache = cellsCache.get({ noproxy: true });
+         
+        const meta = {
+            name: name ?? Date.now(),
+            data: new Date().toJSON(),
+            screen: undefined,
+            container: {
+                width: info.container.width.get(),
+                height: info.container.height.get()
+            },
+            layers: []
         }
         
+        
         Object.keys(cache).map((idLayout)=> {
-            //? рендер компоненты все свойства держат внутри props в data атрибутах 
-            //? (но к ним нет доступа на запись после рендера)
-            const findRenderLayot = render.find(l => l.i === idLayout);
-            const cacheLayout = cache[idLayout];
+            const found = children.find(el => el.getAttribute('data-id') === idLayout);
+            
+            if(found) {
+                const cacheLayout = cache[idLayout];
+                const bound = found.getBoundingClientRect();
+                const findLayout = context.layout.get().find((l)=> l.i === idLayout);
+                const findRenderLayot = render.find(l => l.i === idLayout);
+                
+                meta.layers.push({
+                    ...findRenderLayot,
+                    name: findLayout?.content,
+                    size: {
+                        width: bound.width,
+                        height: bound.height,
+                    },
+                    content: cacheLayout
+                });
+            }
+        });
 
-            console.log(findRenderLayot);
-            console.log(cacheLayout);
+        makePrewiew(gridContainer).then((v)=> {
+            const filename = `screenshot_${meta.name}.png`;
+            meta.screen = '/db/editor/screen/'+filename;
+            const content = v;
+
+            writeFile(
+                '/db/editor/screen', 
+                filename,
+                content,
+                { image: true }
+            ).then(()=> {
+                writeFile(
+                    '/db/editor', 
+                    `${meta.name+'.json'}`, 
+                    JSON.stringify(meta, null, 2)
+                ).then(console.log)
+            });
         });
     }
     // добавить/изменить пропс (применится везде/сохранится)
@@ -79,10 +119,6 @@ export default function ({ height }) {
 
             return [...newLayers];
         });
-    }
-    const onSelectCell =(cell: LayoutCustom, target: HTMLDivElement)=> {
-        curCell.set(cell);
-        info.select.cell.set(target);
     }
     const serrialize =(component: React.ReactNode, cellId: string)=> {
         const serlz = JSON.stringify(component, null, 2);
@@ -138,119 +174,6 @@ export default function ({ height }) {
             return updatedRender;
         });
     }
-    const removeComponentFromCell = (cellId: string, componentIndex: number) => {
-        setRender((prev) => {
-            const updatedRender = [...prev];
-            const cellIndex = updatedRender.findIndex(item => item.i === cellId);
-            
-            if (cellIndex !== -1) {
-                if(Array.isArray(updatedRender[cellIndex]?.content)) {
-                    // Удаляем компонент из ячейки
-                    updatedRender[cellIndex]?.content?.splice(componentIndex, 1);
-
-                    cellsCache.set((old)=> {
-                        const content = updatedRender[cellIndex].content;
-                        //old[cellId].findIndex(e => e.id === )
-                        old[cellId].splice(componentIndex, 1);
-            
-                        return old;
-                    });
-                }
-            }
-            return updatedRender;
-        });
-    }
-    const useSetClassRef =(id: number|string, className: string)=> {
-        setTimeout(()=> {
-            if(refs.current[id]) refs.current[id].classList.add('editor-'+className);
-        }, 300);
-    }
-    const useRemoveClassRef =(id: number|string|'all', className?: string)=> {
-        setTimeout(()=> 
-            Object.keys(refs.current).map((elId)=> {
-                if(elId === String(id) || id === 'all') {
-                    const el = refs.current[elId];
-
-                    if(className) el.classList.remove('editor-' + className);
-                    else el.classList.forEach((className: string) => {
-                        if(className.includes('editor-')) el.classList.remove(className);
-                    });
-                }
-            }), 200
-        );
-    }
-    const dragableOnStop =(item: ContentFromCell, cellId: string, data: DraggableData)=> {
-        editRenderComponentProps(
-            item, 
-            {'data-offset': { x: data.x, y: data.y }}
-        );
-    }
-    const consolidation =(list: LayoutCustom[])=> {
-        return list.map((layer)=> {
-            const cache = cellsCache.get({ noproxy: true });
-            const curCacheLayout = cache[layer.i];
-
-            if(curCacheLayout) {
-                const resultsLayer = [];
-
-                Object.values(curCacheLayout).map((content)=> {
-                    const result = desserealize(content);
-                    if(result) resultsLayer.push(result);
-                });
-                layer.content = resultsLayer;
-            }
-
-            return layer;
-        });
-    }
-
-    React.useEffect(() => {
-        const cur = render;
-        // Обновляем максимальное количество колонок
-        const resizeObserver = new ResizeObserver(() => {
-            if (containerRef.current) {
-                const parentHeight = containerRef.current.clientHeight; // Получаем высоту родительского контейнера
-                const containerWidth = containerRef.current.offsetWidth;
-
-                info.container.height.set(parentHeight);
-                info.container.width.set(containerWidth);
-
-                // Рассчитываем количество строк, исходя из переданной схемы
-                const maxY = Math.max(...cur.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
-                const rows = maxY; // Количество строк = максимальное значение y + 1
-
-                const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
-                const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
-
-                setRowHeight(availableHeight / rows); // Вычисляем высоту строки
-            }
-        });
-
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current);
-        }
-        return () => {
-            resizeObserver.disconnect();
-        };
-    }, [render]);
-    React.useEffect(() => {
-        const cur = layoutCellEditor.get({noproxy: true});
-        console.log('layoutCellEditor: ', cur);
-
-        if(cur[0]) setRender(cur);
-    }, [layoutCellEditor]);
-    React.useEffect(() => {
-        const cache = localStorage.getItem('GRIDS');
-
-        if (cache) {
-            const loadData = JSON.parse(cache);
-            const curName = Object.keys(loadData).pop();
-            const result = consolidation(loadData[curName]);
-
-            setRender(result);
-            info.contentAllRefs.set(refs.current);
-        }
-    }, []);
     
     
     return(
@@ -268,54 +191,12 @@ export default function ({ height }) {
                     useEditProps={editRenderComponentProps}
                 />
                 {/* область редактора сетки */}
-                <div style={{width: '100%', height: height ? height+'%' : '100%'}} ref={containerRef}>
-                <ResponsiveGridLayout
-                    className="layout"
-                    layouts={{ lg: render }}        // Схема сетки
-                    breakpoints={{ lg: 0 }}         // Точки для респонсива
-                    cols={{ lg: 12 }}
-                    rowHeight={rowHeight}
-                    compactType={null}              // Отключение автоматической компоновки
-                    isDraggable={false}             // Отключить перетаскивание
-                    isResizable={false}             // Отключить изменение размера
-                    margin={margin}
-                >
-                    { render.map((layer) => (
-                        <div 
-                            onClick={(e)=> onSelectCell(layer, e.currentTarget)}
-                            key={layer.i}
-                            style={{ 
-                                overflow: 'hidden',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                textAlign: "center", 
-                                border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb50b5' : '#fb505055'}`,
-                                background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
-                            }} 
-                        >
-                            { Array.isArray(layer.content) && layer.content.map((component, index)=> (
-                                <Draggable 
-                                    grid={[10, 10]}
-                                    defaultPosition={component.props['data-offset']}
-                                    key={index}
-                                    bounds="parent"
-                                    onStart={(e, data)=> {
-                                        info.select.content.set(component);
-                                        useRemoveClassRef('all');
-                                        useSetClassRef(component.props['data-id'], 'blink');
-                                    }}
-                                    onStop={(e, data)=> dragableOnStop(component, layer.i, data)}
-                                >
-                                    {/* ❗ новая фича style={{ width: 'fit-content' }} */}
-                                    
-                                    { component }
-                                      
-                                </Draggable>
-                            ))}
-                        </div>
-                    ))}
-                </ResponsiveGridLayout>
-            </div>
+                <GridComponentEditor
+                    render={render}
+                    setRender={setRender}
+                    desserealize={desserealize}
+                    height={height}
+                />
             </div>
         </div>
     );

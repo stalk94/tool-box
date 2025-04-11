@@ -17,7 +17,7 @@ export default function writeFilePlugin() {
                 req.on('data', (chunk) => (body += chunk));
                 req.on('end', () => {
                     try {
-                        const { folder = 'public', filename, content } = JSON.parse(body);
+                        const { folder = 'public', filename, content, settings } = JSON.parse(body);
 
                         if (!filename || !content) {
                             res.statusCode = 400;
@@ -33,10 +33,16 @@ export default function writeFilePlugin() {
                             fs.mkdirSync(dirPath, { recursive: true });
                         }
 
-                        // Записываем файл
-                        fs.writeFileSync(filePath, content, 'utf8');
+                        if(settings && settings.image) {
+                            const base64Data = content.split(',')[1];
+                            fs.writeFileSync(filePath, base64Data, 'base64');
+                        }
+                        else {
+                            // Записываем файл
+                            fs.writeFileSync(filePath, content, 'utf8');
+                        }
 
-                        res.end(`File written successfully to ${filePath}`);
+                        res.end(`${filePath}`);
                     } 
                     catch (error) {
                         console.error('Error writing file:', error);

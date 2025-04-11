@@ -1,3 +1,4 @@
+import { SxProps } from '@mui/material';
 import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
     DataPickerInputProps, CheckBoxInputProps, ToogleeInputProps, ColorPickerProps, 
     SelectInputProps
@@ -54,6 +55,7 @@ type TypeToSchema = {
 //export type Schema<T extends TypeSchema = TypeSchema> = BaseSchema & TypeToSchema[T];
 export type Schema<T extends TypeSchema = TypeSchema> = BaseSchema & {
     type: T
+    labelSx?: SxProps
 } & TypeToSchema[T];
 
 

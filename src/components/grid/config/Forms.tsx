@@ -3,18 +3,19 @@ export { TextInput, NumberInput, SliderInput } from '../../input';
 import { Form, Schema } from '../../../index';
 import { listAllComponents, listConfig } from './render';
 import { TextType } from './type';
-import { Box, useTheme } from "@mui/material";
+import { Box, Theme, useTheme } from "@mui/material";
 import { useHookstate } from "@hookstate/core";
 import { infoState } from "../context";
 
 type PropsForm = {
     elemLink: any
+    type: 'props'|'base'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
 }
 
 
-const getColors =()=> {
-    const palette = useTheme().palette;
+const getColors =(theme: Theme)=> {
+    const palette = theme.palette;
 
     const color = {
         primary: palette.primary.main,
@@ -34,6 +35,7 @@ const getColors =()=> {
         }
     });
 }
+// todo: доделать фабрику схем
 const fabrickStyle =(listTypes, tStyle)=> {
     const result: Schema[] = [];
 
@@ -77,8 +79,10 @@ const fabrickStyle =(listTypes, tStyle)=> {
 }
 
 
-export default function({ elemLink, onChange }: PropsForm) {
+export default function({ type, elemLink, onChange }: PropsForm) {
+    const theme = useTheme();
     const copyDataContent = React.useRef({});
+    const [schema, setSchema] = React.useState<Schema[]>([]);
     const [story, setStory] = React.useState<Record<string, string>[]>([]);
     const [future, setFuture] = React.useState<Record<string, string>[]>([]);
     const [current, setCurrent] = React.useState<Record<string, any>>(null);
@@ -115,7 +119,7 @@ export default function({ elemLink, onChange }: PropsForm) {
         // Update future array
         setFuture(newFuture);
     }
-    const useAddStory = () => {
+    const useAddStory = (current) => {
         // Only add to story if we have a current state and it's different from the last entry
         if (current && (story.length === 0 || JSON.stringify(current) !== JSON.stringify(story[story.length - 1]))) {
             setStory(prev => [...prev, structuredClone(current)]);
@@ -123,32 +127,55 @@ export default function({ elemLink, onChange }: PropsForm) {
         }
     }
     const useEdit = (key: string, newValue: string) => {
-        const copy = structuredClone(current);
-        copy[key] = newValue;
+        setCurrent((copy)=> {
+            copy[key] = newValue;
         
-        // Update current state
-        setCurrent(copy);
-        onChange();
+            // Update current state
+            useAddStory(copy);
+            onChange(copy);
+            return copy;
+        });
     }
-    const useCreateScheme =(type, propsElem)=> {
+    const useCreateScheme =(typeContent, propsElem)=> {
         const schema: Schema[] = [];
 
-        if (type === 'Typography') {
+        if (typeContent === 'Typography') {
             const props = listConfig.Typography.props;
             
             schema.push({
-                type: 'text', id: 'children', multiline: true, value: propsElem.children, label: 'children'
+                type: 'text', 
+                id: 'children', 
+                multiline: true, 
+                value: propsElem.children, 
+                label: 'children',
+                labelSx: {fontSize:'12px'},
+                sx: { fontSize: 14 }
             }, {
-                type: 'toggle', id: 'color', items: getColors(), label: 'color', value: propsElem.color
+                type: 'toggle', 
+                id: 'color', 
+                items: getColors(theme), 
+                label: 'color', 
+                value: propsElem.color,
+                labelSx: {fontSize:'12px'}
             }, {
-                type: 'select', label: 'variant', value: propsElem.variant, items: props.variant.map((key)=> ({
+                type: 'select', 
+                id: 'variant', 
+                label: 'variant', 
+                labelSx: {fontSize:'12px'},
+                onlyId: true,
+                value: propsElem.variant, 
+                items: props.variant.map((key)=> ({
                     id: key,
                     label: key
                 }))
-            });
+            },
+            );
         }
+        
+        return schema;
     }
 
+    
     React.useEffect(() => {
         if(elemLink) {
             const elem = elemLink.get({ noproxy: true });
@@ -160,19 +187,27 @@ export default function({ elemLink, onChange }: PropsForm) {
                     id: elem.props['data-id'],
                     offset: elem.props['data-offset']
                 });
-    
-                setStory([elem.props]);
-                setCurrent(elem.props);
+
+                const copyProps = structuredClone(elem.props);
+                setStory([copyProps]);
+                setCurrent(copyProps);
                 setFuture([]);
-                useCreateScheme(elem.props['data-type'], elem.props);
+                const schema = useCreateScheme(elem.props['data-type'], copyProps);
+                setSchema(schema);
             }
         }
-    }, [elemLink]);
+    }, [elemLink, type]);
 
 
     return(
         <Box sx={{display:'flex', flexDirection: 'column'}} >
-
+            <Form
+                scheme={schema}
+                labelPosition="column"
+                onSpecificChange={(old, news)=> {
+                    Object.keys(news).map((key)=> useEdit(key, news[key]))
+                }}
+            />
         </Box>
     );
 }

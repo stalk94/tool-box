@@ -1,8 +1,7 @@
-import { height } from '@mui/system';
 import { hookstate, extend } from "@hookstate/core";
 import { ComponentSerrialize, LayoutCustom } from './type';
 import { localstored } from '@hookstate/localstored';
-import select from '../input/select';
+
 
 
 export default hookstate(
@@ -15,9 +14,8 @@ export default hookstate(
 );
 
 
-
-
-// сохраняемое состояние в localStorage (! это не дамп финальный)
+// последнее сохранение
+// сохраняемое состояние в localStorage редактора сетки (! это не дамп финальный)
 export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     {
 
