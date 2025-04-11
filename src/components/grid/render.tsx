@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Button, useTheme, Box } from "@mui/material";
 import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
@@ -7,7 +6,8 @@ import "../../style/grid.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import Draggable, { DraggableData } from 'react-draggable';
-import { Tools, listAllComponents, ToolBarInfo } from './RenderTools';
+import { listAllComponents, ToolBarInfo } from './RenderTools';
+import Tools from './ToolBar';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -44,7 +44,7 @@ export default function ({ height }) {
         });
     }
     // добавить/изменить пропс (применится везде)
-    const editRenderComponentProps =(component: ContentFromCell, data)=> {
+    const editRenderComponentProps =(component: ContentFromCell, data: Record<string, any>)=> {
         const cellId = curCell.get()?.i;
         const curCache = cellsCache.get({ noproxy: true });
         const clone = React.cloneElement(component, data);
