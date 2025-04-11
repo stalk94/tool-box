@@ -43,7 +43,7 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
             </Box>
         ),
         button: ([
-            <Box sx={{display:'flex',flexDirection:'row',mb:1}}>
+            <Box key='Button' sx={{display:'flex',flexDirection:'row',mb:1}}>
                 <IconButton>
                     <Settings sx={{color:'gray',fontSize:18}} />
                 </IconButton>
@@ -65,7 +65,7 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
                     Кнопка
                 </Button>
             </Box>,
-            <Box sx={{display:'flex',flexDirection:'row',mb:1}}>
+            <Box key='IconButton' sx={{display:'flex',flexDirection:'row',mb:1}}>
                 <IconButton>
                     <Settings sx={{color:'gray',fontSize:18}} />
                 </IconButton>
@@ -113,7 +113,7 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
         children: components[currentTool] || null
     };
 }
-const useComponent = (type, data, onChange) => {
+const useComponent = (elem, onChange) => {
     return {
         start: (
             <div>
@@ -122,7 +122,8 @@ const useComponent = (type, data, onChange) => {
         ),
         children: (
             <Forms
-
+                elemLink={elem}
+                onChange={onChange}
             />
         )
     };
@@ -156,18 +157,21 @@ export default function ({ addComponentToLayout, useDump, useEditProps }: Props)
         }
     }, [select.content]);
 
-    
+
     const changeNavigation = (item) => {
         if (item.id === 'items') setCurrentToolPanel('items');
         else if (item.id === 'component') setCurrentToolPanel('component');
         else if(item.id === 'save') useDump();
+    }
+    const changeEditor =(newDataProps)=> {
+        console.log('change props: ', newDataProps);
     }
     const renderProps = () => {
         if (currentToolPanel === 'items') {
             return useElements(currentTool, setCurrentTool, addComponentToLayout);
         }
         else if(currentToolPanel === 'component') {
-            return useComponent();
+            return useComponent(select.content, changeEditor);
         }
 
         return { start: null, children: null }

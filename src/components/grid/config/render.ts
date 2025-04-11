@@ -13,9 +13,9 @@ export const listConfig = {
         props: propsButton,
     },
     Typography: {
-        props: propsIconButton
+        props: propsTypography
     },
     IconButton: {
-        props: propsTypography
+        props: propsIconButton
     }
 }

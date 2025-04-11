@@ -1,15 +1,87 @@
 import React from "react";
 export { TextInput, NumberInput, SliderInput } from '../../input';
-import Form from '../../form';
+import { Form, Schema } from '../../../index';
 import { listAllComponents, listConfig } from './render';
-import { Box } from "@mui/material";
+import { TextType } from './type';
+import { Box, useTheme } from "@mui/material";
+import { useHookstate } from "@hookstate/core";
+import { infoState } from "../context";
+
+type PropsForm = {
+    elemLink: any
+    onChange: (data: Record<string, any>)=> void
+}
 
 
+const getColors =()=> {
+    const palette = useTheme().palette;
 
-export default function({ type, elem }) {
+    const color = {
+        primary: palette.primary.main,
+        secondary: palette.secondary.main,
+        error: palette.error.main,
+        success: palette.success.main,
+        info: palette.info.main,
+        warning: palette.warning.main,
+        textPrimary: palette.text.primary,
+        textSecondary: palette.text.secondary
+    }
+
+    return Object.keys(color).map((key)=> {
+        return {
+            label: <div style={{width:'20px',height:'20px',background:color[key]}}/>,
+            id: key
+        }
+    });
+}
+const fabrickStyle =(listTypes, tStyle)=> {
+    const result: Schema[] = [];
+
+    Object.keys(listTypes).forEach((key, index) => {
+        if (Array.isArray(listTypes[key])) {
+            const length = listTypes[key].length;
+
+            const schema = {
+                id: key,
+                type: length > 4 ? 'select' : 'toggle',
+                label: key,
+                value: tStyle[key],
+                labelSx: {
+                    fontSize: '14px',
+                    color: '#f8f7f4'
+                },
+                items: listTypes[key].map((label, id) => ({
+                    label: label,
+                    id: label
+                }))
+            }
+            result.push(schema);
+        }
+        // диапазоны
+        else if(true) {
+            const schema = {
+                id: key,
+                type: 'text',
+                label: key,
+                value: tStyle[key],
+                labelSx: {
+                    fontSize: '14px',
+                    color: '#fcfbfa'
+                },
+            }
+            result.push(schema);
+        }
+    });
+
+    return result;
+}
+
+
+export default function({ elemLink, onChange }: PropsForm) {
+    const copyDataContent = React.useRef({});
     const [story, setStory] = React.useState<Record<string, string>[]>([]);
     const [future, setFuture] = React.useState<Record<string, string>[]>([]);
-    const [current, setCurrent] = React.useState<Record<string, string>>(null);
+    const [current, setCurrent] = React.useState<Record<string, any>>(null);
 
     const undo = () => {
         if (story.length <= 1) return; // Nothing to undo
@@ -56,18 +128,46 @@ export default function({ type, elem }) {
         
         // Update current state
         setCurrent(copy);
-        onChange(theme);
+        onChange();
+    }
+    const useCreateScheme =(type, propsElem)=> {
+        const schema: Schema[] = [];
+
+        if (type === 'Typography') {
+            const props = listConfig.Typography.props;
+            
+            schema.push({
+                type: 'text', id: 'children', multiline: true, value: propsElem.children, label: 'children'
+            }, {
+                type: 'toggle', id: 'color', items: getColors(), label: 'color', value: propsElem.color
+            }, {
+                type: 'select', label: 'variant', value: propsElem.variant, items: props.variant.map((key)=> ({
+                    id: key,
+                    label: key
+                }))
+            });
+        }
     }
 
     React.useEffect(() => {
-        console.log('RENDER');
-
-        if(elem) {
-            setStory([]);
-            setCurrent();
-            setFuture([]);
+        if(elemLink) {
+            const elem = elemLink.get({ noproxy: true });
+            console.log('OBJECT EDITOR: ', elem);
+    
+            if(elem?.props) {
+                copyDataContent.current = ({
+                    type: elem.props['data-type'],
+                    id: elem.props['data-id'],
+                    offset: elem.props['data-offset']
+                });
+    
+                setStory([elem.props]);
+                setCurrent(elem.props);
+                setFuture([]);
+                useCreateScheme(elem.props['data-type'], elem.props);
+            }
         }
-    }, [elem]);
+    }, [elemLink]);
 
 
     return(

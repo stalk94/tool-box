@@ -5,7 +5,8 @@ import { SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
 import { InputPaper } from './atomize';
 import Menu from '../menu/index';
-import ItemsList, { NavLinkItem } from '../menu/list';
+import ItemsList from '../menu/list';
+import { NavLinkItem } from '../menu/type';
 
 
 type PropsSelect = {

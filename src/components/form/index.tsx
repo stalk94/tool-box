@@ -11,6 +11,7 @@ export type FormProps = {
     onChange?: (state: Record<string, any>)=> void
     /** показывает изменение конкретного значения инпута, старое => новое */
     onSpecificChange?: (old: Record<string, any>, news: Record<string, any>)=> void
+    labelPosition?:  "left" | "right" | "column"
 }
 
 
@@ -111,7 +112,7 @@ const fabrics = {
 
 
 // todo: задокументировать
-export default function Form({ scheme, onChange, onSpecificChange }: FormProps) {
+export default function Form({ scheme, onChange, onSpecificChange, labelPosition }: FormProps) {
     const stateRef = React.useRef<Record<string, any>>({});
     const [state, setState] = React.useState<Record<string, any>>({});          // первый рендер
 
@@ -142,6 +143,7 @@ export default function Form({ scheme, onChange, onSpecificChange }: FormProps) 
 
         scheme.forEach((elem)=> {
             sbd[elem.id] = elem.value;
+            if(labelPosition) elem.position = labelPosition;
         });
 
         stateRef.current = sbd;

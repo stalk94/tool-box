@@ -1,6 +1,8 @@
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
+import React from 'react'
 
 
+/** серриализованный вид */
 export type ComponentSerrialize = {
     id: string
     /** id ячейки */
@@ -16,7 +18,7 @@ export type ComponentSerrialize = {
     
 }
 /** все дочерние компоненты установленные редактором */
-export type ContentFromCell = {
+export type ContentFromCell = React.ReactElement & {
     props: {
         "data-type": string,
         "data-offset"?: { x: number; y: number },

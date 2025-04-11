@@ -37,7 +37,7 @@ export const infoState = hookstate(new Proxy({
             /** это выбранный HTML layoout   */
             cell: <HTMLDivElement> undefined,
             /** это выбранный (react рендер) элемент  */
-            content: <React.ReactNode> undefined,
+            content: <React.ReactElement> undefined,
         },
         contentAllRefs: <Record<string, Element>> undefined
     }, {
