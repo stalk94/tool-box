@@ -6,77 +6,11 @@ import "react-grid-layout/css/styles.css";
 import "../../style/grid.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
-import LeftSideBarAndTool from '../nav-bars/tool-left'
-import { Settings, Menu, Logout, VerifiedUser, CloudCircle, Save } from "@mui/icons-material";
-import ExtensionIcon from '@mui/icons-material/Extension';
 import Draggable, { DraggableData } from 'react-draggable';
-import { useElements, useComponent, listAllComponents, ToolBarInfo } from './RenderTools';
+import { Tools, listAllComponents, ToolBarInfo } from './RenderTools';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
-
-
-const Tools = ({ addComponentToLayout, useDump, useEditProps }) => {
-    const select = useHookstate(infoState.select);
-    const [currentToolPanel, setCurrentToolPanel] = useState('items');
-    const [currentTool, setCurrentTool] = useState('button');
-
-
-    const menuItems = [
-        { id: "items", label: "Главная", icon: <ExtensionIcon /> },
-        { id: "component", label: "Главная", icon: <Settings /> },
-    ];
-    const endItems = [
-        { id: "save", label: "Настройки", icon: <Save /> },
-        { id: "exit", label: "Выход", icon: <Logout /> }
-    ];
-    
-    
-    React.useEffect(()=> {
-        const content = select.content.get({ noproxy: true });
-
-        if(content?.props) {
-            setCurrentToolPanel('component');
-        }
-    }, [select.content]);
-    
-
-    const changeNavigation = (item) => {
-        if (item.id === 'items') setCurrentToolPanel('items');
-        else if (item.id === 'component') setCurrentToolPanel('component');
-        else if(item.id === 'save') useDump();
-    }
-    const renderProps = () => {
-        if (currentToolPanel === 'items') {
-            return useElements(currentTool, setCurrentTool, addComponentToLayout);
-        }
-        else if(currentToolPanel === 'component') {
-            return useComponent();
-        }
-
-        return { start: null, children: null }
-    }
-
-    const { start, children } = renderProps();
-
-
-    return (
-        <LeftSideBarAndTool
-            sx={{ height: '100%' }}
-            schemaNavBar={{
-                items: menuItems,
-                end: endItems
-            }}
-            width={240}
-            onChangeNavigation={changeNavigation}
-            start={ start }
-        >
-            <Box sx={{ mt: 1, mx: 1 }}>
-                { children }
-            </Box>
-        </LeftSideBarAndTool>
-    );
-}
 
 
 
@@ -300,7 +234,7 @@ export default function ({ height }) {
                     render={render}
                     setRender={setRender}
                 />
-                
+                {/* область редактора сетки */}
                 <div style={{width: '100%', height: height ? height+'%' : '100%'}} ref={containerRef}>
                 <ResponsiveGridLayout
                     className="layout"
