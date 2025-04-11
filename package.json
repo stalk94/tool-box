@@ -75,11 +75,13 @@
   "dependencies": {
     "@craftjs/core": "^0.2.12",
     "@hookstate/core": "^4.0.2",
+    "@hookstate/localstored": "^4.0.2",
     "@mui/material": "^6.4.7",
     "@mui/x-data-grid": "^7.27.3",
     "@mui/x-date-pickers": "^7.27.3",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.3",
+    "react-beautiful-dnd": "^13.1.1",
     "react-draggable": "^4.4.6",
     "react-grid-layout": "^1.5.1",
     "react-resizable": "^3.0.5",

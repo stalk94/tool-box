@@ -63,7 +63,7 @@ const AccordionHeader = ({ header, isExpanded }) => {
 }
 
 
-export default function ({ items, activeIndexs, tabStyle }: AccordionProps) {
+export default function CustomAccordion({ items, activeIndexs, tabStyle }: AccordionProps) {
     const [activeIndex, setActiveIndex] = React.useState(activeIndexs ?? [0, 1]);
     
     const useActive =(index: number)=> {

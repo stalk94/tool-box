@@ -60,7 +60,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                 display: 'flex',
                 flexDirection: 'row',
                 maxHeight: '100%',
-                minWidth: 100,
+                minWidth: 50,
                 overflow: 'hidden',
                 ...props.sx
             }}

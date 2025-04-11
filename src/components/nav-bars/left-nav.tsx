@@ -49,19 +49,21 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected }:
         item.comand?.(item);
 
         if(isFocusSelected) setSelectedItem(item.id);
-        setActiveParent(parent); // Устанавливаем активного родителя (или null)
+        if(parent) setActiveParent(parent); // Устанавливаем активного родителя (или null)
     }
     const handleOpenPopover = (event, children, parentId) => {
         setAnchorEl(event.currentTarget);
         setCurrentChildren(children.map(child => ({ ...child, parentId }))); // Добавляем parentId к детям
     }
     const handlerClick =(event, item)=> {
-        if(!item.children) handleItemClick(item);
-        else if (item.children) {
-            if (collapsed) {
-                handleOpenPopover(event, item.children, item.id);
-            } 
-            else handleToggle(item.id);
+        if(item) {
+            if(!item.children) handleItemClick(item);
+            else if (item.children) {
+                if (collapsed) {
+                    handleOpenPopover(event, item.children, item.id);
+                } 
+                else handleToggle(item.id);
+            }
         }
     }
     const handleClosePopover = () => {
