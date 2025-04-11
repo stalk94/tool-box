@@ -14,7 +14,6 @@ import { writeFile } from "../../app/plugins";
 
 
 
-
 // это редактор блоков сетки
 export default function ({ height }) {
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
@@ -23,7 +22,6 @@ export default function ({ height }) {
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     
-   
     
     const makePrewiew = async(elem: HTMLElement) => {
         const canvas = await html2canvas(elem, { useCORS: true, scrollY: -window.scrollY });
@@ -131,6 +129,7 @@ export default function ({ height }) {
     const desserealize =(component: ComponentSerrialize)=> {
         const type = component.props["data-type"];
         const Consolid = listAllComponents[type];
+        
 
         if(Consolid) return (
             <Consolid 

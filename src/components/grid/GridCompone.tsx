@@ -7,24 +7,12 @@ import "../../style/edit.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import Draggable, { DraggableData } from 'react-draggable';
-import { IconButton, Tooltip } from "@mui/material";
-import { Delete, Settings } from "@mui/icons-material";
+
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
-const Panel =({ useDel, useSettings })=> {
-    return(
-        <>
-            <IconButton onClick={useDel}>
-                <Delete />
-            </IconButton>
-            <IconButton>
-                <Settings onClick={useSettings}/>
-            </IconButton>
-        </>
-    );
-}
+
 
 
 export default function ({ render, setRender, height, desserealize }) {
@@ -38,7 +26,7 @@ export default function ({ render, setRender, height, desserealize }) {
 
 
     // добавить/изменить пропс (применится везде/сохранится)
-    const editRenderComponentProps = (component: ContentFromCell, data: Record<string, any>) => {
+    const editRenderComponentProps = (component: ContentFromCell, data: Record<string, any>, rerender?:boolean) => {
         const cellId = curCell.get()?.i;
         const curCache = cellsCache.get({ noproxy: true });
         const clone = React.cloneElement(component, data);
@@ -58,7 +46,7 @@ export default function ({ render, setRender, height, desserealize }) {
             }
         }
         // перерендер
-        setRender((layers) => {
+        if(rerender) setRender((layers) => {
             const newLayers = layers.map((layer) => {
                 if (Array.isArray(layer.content)) {
                     const findindex = layer.content.findIndex(c => c.props['data-id'] === id);
@@ -95,15 +83,21 @@ export default function ({ render, setRender, height, desserealize }) {
         );
     }
     const dragableOnStop = (item: ContentFromCell, cellId: string, data: DraggableData) => {
-        //const parentWidth = parentCellElement.offsetWidth;
-        //const parentHeight = parentCellElement.offsetHeight;
-        //const relativeX = parentWidth > 0 ? data.x / parentWidth : 0;
-        //const relativeY = parentHeight > 0 ? data.y / parentHeight : 0;
+        const element = document.querySelector(`[data-id="${cellId}"]`);
 
-        editRenderComponentProps(
-            item,
-            { 'data-offset': { x: data.x, y: data.y } }
-        );
+        if(element) {
+            const parentWidth = element.offsetWidth;
+            const parentHeight = element.offsetHeight;
+            const relativeX = parentWidth > 0 ? data.x / parentWidth : 0;
+            const relativeY = parentHeight > 0 ? data.y / parentHeight : 0;
+
+            editRenderComponentProps(
+                item,
+                { 'data-relative-offset': { x: relativeX, y: relativeY }, 
+                    'data-offset': {x: data.x, y: data.y}
+                },
+            );
+        }
     }
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         setRender((prev) => {
@@ -206,7 +200,7 @@ export default function ({ render, setRender, height, desserealize }) {
 
         return () => {
             document.removeEventListener('keydown', handleDeleteKeyPress);
-          }
+        }
     }, []);
 
     
