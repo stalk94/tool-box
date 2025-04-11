@@ -1,12 +1,19 @@
 import React from "react";
-import { Button, useTheme, Box, Paper, Typography, Tooltip } from "@mui/material";
-import { GridEditorProps, LayoutCustom } from './type';
+import { Button, useTheme, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup } from "@mui/material";
+import { ContentFromCell, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
+import { listAllComponents, listConfig } from './config/render';
 import { useHookstate } from "@hookstate/core";
 
-
-
+type Props = {
+    render: LayoutCustom []
+    useEditProps: (component: ContentFromCell, data: Record<string, any>)=> void
+}
+export type ContentData = {
+    id: number 
+    type: 'Button' | 'IconButton' | 'Typography'
+}
 
 /**
  * --------------------------------------------------------------------------
@@ -17,29 +24,37 @@ import { useHookstate } from "@hookstate/core";
  *      const deserializedFunction = eval('(' + serializedFunction + ')');
  * --------------------------------------------------------------------------
  */ 
-export const listAllComponents = {
-    Button: Button,
-}
 
 
 // верхняя полоска (инфо обшее)
-export const ToolBarInfo = ({ render, setRender }) => {
+export const ToolBarInfo = ({ render, useEditProps }: Props) => {
+    const [open, setOpen] = React.useState<undefined>();
+    const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
+    const allRefs = useHookstate(infoState.contentAllRefs);   // все ссылки компонентов
     const container = useHookstate(infoState.container);
-    const curCell = useHookstate(context.currentCell); 
-    const cellsCache = useHookstate(cellsContent);              // снимок данных ячеек
+
 
     React.useEffect(()=> {
         const value = select.cell.get({noproxy:true});
 
         if(value) {
             const bound = value.getBoundingClientRect();
-            //console.log(value.children)
             setBound(bound);
-            //console.log(curCell.get())
         }
     }, [select.cell]);
+    React.useEffect(()=> {
+        const content = select.content.get({ noproxy: true });
+
+        if(content) {
+            if(content.props['data-id']) setCurrent({
+                id: content.props['data-id'],
+                type: content.props['data-type']
+            });
+            else console.warn('🚨 У контента отсутствует data-id');
+        }
+    }, [select.content]);
 
 
     return (
@@ -56,18 +71,48 @@ export const ToolBarInfo = ({ render, setRender }) => {
                 ml: 0.5
             }}
         >
+            <Box>
+                <MenuPoup 
+                    anchorEl={open} 
+                    keepMounted 
+                    PaperProps={{
+                        style: {
+                            width: '40%'
+                        },
+                    }}
+                    open={Boolean(open)} 
+                    onClose={()=> setOpen()}
+                    sx={{mt: 1}}
+                >
+                    <Box sx={{p:2, display:'flex', justifyContent:'center'}}>
+                        { select.content.get({ noproxy: true }) }
+                    </Box>
+                </MenuPoup>
+                { currentContentData &&
+                    <Button 
+                        color='navigation'
+                        onClick={(e)=> setOpen(e.currentTarget)} 
+                        sx={{fontSize:'12px',textDecoration:'underline'}}
+                    >
+                        { currentContentData.type }
+                    </Button>
+                }
+            </Box>
             <Box
                 sx={{ml: 'auto', display: 'flex',}}
             >
+                <span style={{marginRight:'5px',opacity:0.8}}>⊞</span> 
                 <Tooltip title="ℹ размеры базового контейнера">
                     <Typography sx={{mr:1, color:'gold'}} variant='subtitle1'>
                         { container.width.get() } x { container.height.get() }
                     </Typography>
                 </Tooltip>
                 { bound && 
-                    <Typography  variant='caption'>
-                        ({ bound.width } x { bound.height })
-                    </Typography>
+                    <Tooltip title="ℹ размеры выбранной ячейки">
+                        <Typography variant='caption' sx={{textDecoration:'underline'}}>
+                            ⌗ { bound.width } x { bound.height }
+                        </Typography>
+                    </Tooltip>
                 }
             </Box>
         </Paper>

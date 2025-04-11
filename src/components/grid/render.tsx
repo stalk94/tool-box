@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import "../../style/grid.css"
+import "../../style/grid.css";
+import "../../style/edit.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import Draggable, { DraggableData } from 'react-draggable';
-import { listAllComponents, ToolBarInfo } from './RenderTools';
+import { ToolBarInfo } from './RenderTools';
+import { listAllComponents, listConfig } from './config/render';
 import Tools from './ToolBar';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -16,6 +18,7 @@ const margin: [number, number] = [5, 5];
 
 // это редактор блоков сетки
 export default function ({ height }) {
+    const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const [render, setRender] = React.useState<LayoutCustom []>([]);
     const containerRef = React.useRef(null);
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
@@ -32,7 +35,7 @@ export default function ({ height }) {
             width: info.container.width.get(),
             height: info.container.height.get()
         }
-
+        
         Object.keys(cache).map((idLayout)=> {
             //? рендер компоненты все свойства держат внутри props в data атрибутах 
             //? (но к ним нет доступа на запись после рендера)
@@ -43,7 +46,7 @@ export default function ({ height }) {
             console.log(cacheLayout);
         });
     }
-    // добавить/изменить пропс (применится везде)
+    // добавить/изменить пропс (применится везде/сохранится)
     const editRenderComponentProps =(component: ContentFromCell, data: Record<string, any>)=> {
         const cellId = curCell.get()?.i;
         const curCache = cellsCache.get({ noproxy: true });
@@ -63,6 +66,7 @@ export default function ({ height }) {
                 });
             }
         }
+        // перерендер
         setRender((layers)=> {
             const newLayers = layers.map((layer)=> {
                 if(Array.isArray(layer.content)) {
@@ -90,12 +94,15 @@ export default function ({ height }) {
     }
     const desserealize =(component: ComponentSerrialize)=> {
         const type = component.props["data-type"];
-        const Conolid = listAllComponents[type];
+        const Consolid = listAllComponents[type];
 
-        if(Conolid) return (
-            <Conolid 
+        if(Consolid) return (
+            <Consolid 
                 data-offset={component.offset}
-                data-id={component.id} 
+                data-id={component.id}
+                ref={(el) => {
+                    if (el) refs.current[component.id] = el;
+                }}
                 { ...component.props } 
             />
         );
@@ -111,9 +118,15 @@ export default function ({ height }) {
 
 
                 const rsrlz = serrialize(component, cellId);
-                const clone = React.cloneElement(component, { 'data-id': rsrlz.id });
+                const clone = React.cloneElement(component, 
+                    { 
+                        'data-id': rsrlz.id,
+                        ref: (el)=> {
+                            if(el) refs.current[rsrlz.id] = el;
+                        }
+                    }
+                );
                 cell.content.push(clone);
-
 
                 cellsCache.set((old)=> {
                     if(!old[cellId]) old[cellId] = [rsrlz];
@@ -146,6 +159,25 @@ export default function ({ height }) {
             }
             return updatedRender;
         });
+    }
+    const useSetClassRef =(id: number|string, className: string)=> {
+        setTimeout(()=> {
+            if(refs.current[id]) refs.current[id].classList.add('editor-'+className);
+        }, 300);
+    }
+    const useRemoveClassRef =(id: number|string|'all', className?: string)=> {
+        setTimeout(()=> 
+            Object.keys(refs.current).map((elId)=> {
+                if(elId === String(id) || id === 'all') {
+                    const el = refs.current[elId];
+
+                    if(className) el.classList.remove('editor-' + className);
+                    else el.classList.forEach((className: string) => {
+                        if(className.includes('editor-')) el.classList.remove(className);
+                    });
+                }
+            }), 200
+        );
     }
     const dragableOnStop =(item: ContentFromCell, cellId: string, data: DraggableData)=> {
         editRenderComponentProps(
@@ -214,8 +246,9 @@ export default function ({ height }) {
             const loadData = JSON.parse(cache);
             const curName = Object.keys(loadData).pop();
             const result = consolidation(loadData[curName]);
-            //console.log('DESSEREALIZE: ', result);
+
             setRender(result);
+            info.contentAllRefs.set(refs.current);
         }
     }, []);
     
@@ -232,7 +265,7 @@ export default function ({ height }) {
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                 <ToolBarInfo 
                     render={render}
-                    setRender={setRender}
+                    useEditProps={editRenderComponentProps}
                 />
                 {/* область редактора сетки */}
                 <div style={{width: '100%', height: height ? height+'%' : '100%'}} ref={containerRef}>
@@ -260,13 +293,17 @@ export default function ({ height }) {
                                 background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
                             }} 
                         >
-                            {Array.isArray(layer.content) && layer.content.map((component, index)=> (
+                            { Array.isArray(layer.content) && layer.content.map((component, index)=> (
                                 <Draggable 
                                     grid={[10, 10]}
                                     defaultPosition={component.props['data-offset']}
                                     key={index}
                                     bounds="parent"
-                                    onStart={(e, data)=> info.select.content.set(component)}
+                                    onStart={(e, data)=> {
+                                        info.select.content.set(component);
+                                        useRemoveClassRef('all');
+                                        useSetClassRef(component.props['data-id'], 'blink');
+                                    }}
                                     onStop={(e, data)=> dragableOnStop(component, layer.i, data)}
                                 >
                                     {/* ❗ новая фича style={{ width: 'fit-content' }} */}

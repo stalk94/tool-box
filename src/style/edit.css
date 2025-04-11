@@ -1,0 +1,9 @@
+
+.editor-blink {
+    animation: blinkAnim 0.3s ease infinite;
+}
+
+@keyframes blinkAnim {
+    0% { border: 1px dotted rgba(255, 255, 0, 0.29); }
+    100% { border: 1px dotted rgba(128, 128, 128, 0.452); }
+}

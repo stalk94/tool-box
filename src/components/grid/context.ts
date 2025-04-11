@@ -38,7 +38,8 @@ export const infoState = hookstate(new Proxy({
             cell: <HTMLDivElement> undefined,
             /** это выбранный (react рендер) элемент  */
             content: <React.ReactNode> undefined,
-        } 
+        },
+        contentAllRefs: <Record<string, Element>> undefined
     }, {
         set(target, property, value) {
             if(property === 'selectCell' && value) {

@@ -1,39 +1,93 @@
 import React from "react";
-import { Button, useTheme, Box, Paper, Typography, Tooltip } from "@mui/material";
+import { Button, useTheme, Box, Paper, Typography, Tooltip, SxProps, IconButton } from "@mui/material";
 import { Delete as DeleteIcon, MoreVert as MoreVertIcon,
-     RadioButtonChecked, Assignment, Input, Build 
+    RadioButtonChecked, Assignment, Input, Build 
 } from '@mui/icons-material';
-import { GridEditorProps, LayoutCustom } from './type';
+import { ContentFromCell, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../input/input.any';
 import LeftSideBarAndTool from '../nav-bars/tool-left'
+import { ContentData } from './RenderTools';
+import Forms from './config/forms';
 
+type Props = {
+    addComponentToLayout: (elem: React.ReactNode)=> void
+    useDump: ()=> void
+    useEditProps: (component: ContentFromCell, data: Record<string, any>)=> void
+}
 
 
 const useElements = (currentTool, setCurrentTool, addItem) => {
     const components = {
-        text: (<>Text component</>),
-        button: (
-            <Button
-                variant='outlined'
-                sx={{ width: '100%' }}
-                onClick={() => {
-                    addItem(
-                        <Button 
-                            variant='outlined' 
+        text: (
+            <Box sx={{display:'flex',flexDirection:'row',mb:1}}>
+                <IconButton>
+                    <Settings sx={{color:'gray',fontSize:18}} />
+                </IconButton>
+                <Button
+                    variant='outlined'
+                    color='info'
+                    sx={{ width: '100%' }}
+                    onClick={() => addItem(
+                        <Typography
+                            data-type='Typography'
+                        >
+                            Текстовая область
+                        </Typography>
+                    )}
+                >
+                    Типографика
+                </Button>
+            </Box>
+        ),
+        button: ([
+            <Box sx={{display:'flex',flexDirection:'row',mb:1}}>
+                <IconButton>
+                    <Settings sx={{color:'gray',fontSize:18}} />
+                </IconButton>
+                <Button
+                    variant='outlined'
+                    color='info'
+                    sx={{ width: '100%' }}
+                    onClick={() => addItem(
+                        <Button
+                            variant='outlined'
                             color='info'
+                            sx={{ width: '100%' }}
                             data-type='Button'
                         >
-                            Button content
+                            Кнопка
                         </Button>
-                    );
-                }}
-            >
-                Кнопка
-            </Button>
-        ),
+                    )}
+                >
+                    Кнопка
+                </Button>
+            </Box>,
+            <Box sx={{display:'flex',flexDirection:'row',mb:1}}>
+                <IconButton>
+                    <Settings sx={{color:'gray',fontSize:18}} />
+                </IconButton>
+                <Button
+                    variant='outlined'
+                    color={'info'}
+                    sx={{ width: '100%' }}
+                    onClick={() => {
+                        addItem(
+                            <IconButton 
+                                color="warning"
+                                data-type='IconButton'
+                            >
+                                <Settings />
+                            </IconButton>
+                        )
+                    }}
+                >
+                    <Menu />
+                </Button>
+            </Box>
+        ]),
         area: (<>Area component</>),
         input: (<>Input component</>),
         any: (<>Any component</>)
@@ -59,7 +113,7 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
         children: components[currentTool] || null
     };
 }
-const useComponent = () => {
+const useComponent = (type, data, onChange) => {
     return {
         start: (
             <div>
@@ -67,18 +121,20 @@ const useComponent = () => {
             </div>
         ),
         children: (
-            <></>
+            <Forms
+
+            />
         )
     };
 }
 
 
 // левая панель редактора
-export default function ({ addComponentToLayout, useDump, useEditProps }) {
+export default function ({ addComponentToLayout, useDump, useEditProps }: Props) {
     const select = useHookstate(infoState.select);
+    const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [currentToolPanel, setCurrentToolPanel] = React.useState('items');
     const [currentTool, setCurrentTool] = React.useState('button');
-
 
     const menuItems = [
         { id: "items", label: "Главная", icon: <Extension /> },
@@ -88,17 +144,19 @@ export default function ({ addComponentToLayout, useDump, useEditProps }) {
         { id: "save", label: "Настройки", icon: <Save /> },
         { id: "exit", label: "Выход", icon: <Logout /> }
     ];
-    
-    
-    React.useEffect(()=> {
+    React.useEffect(() => {
         const content = select.content.get({ noproxy: true });
 
-        if(content?.props) {
-            setCurrentToolPanel('component');
+        if (content) {
+            if (content.props['data-id']) setCurrent({
+                id: content.props['data-id'],
+                type: content.props['data-type']
+            });
+            else console.warn('🚨 У контента отсутствует data-id');
         }
     }, [select.content]);
-    
 
+    
     const changeNavigation = (item) => {
         if (item.id === 'items') setCurrentToolPanel('items');
         else if (item.id === 'component') setCurrentToolPanel('component');

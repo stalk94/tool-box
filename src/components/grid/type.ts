@@ -30,7 +30,6 @@ export type LayoutCustom = Layout & {
 }
 
 
-
 export type GridEditorProps = {
     setLayout: (old: Layout[])=> void
     layout: LayoutCustom[]
