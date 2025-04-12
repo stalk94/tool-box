@@ -7,7 +7,7 @@ import { throttle } from "lodash";
 import { utill } from "./config/utill";
 
 
-const DragableElement = ({ component, index, cellId, useStop }: DraggbleElementProps) => {
+const DragableElement = React.memo(({ component, index, cellId, useStop }: DraggbleElementProps) => {
     const refWrapperX = React.useRef<Draggable>(null);
     const refWrapperY = React.useRef<HTMLDivElement>(null);
     const info = useHookstate(infoState);           // данные по выделенным обьектам (!)
@@ -29,24 +29,26 @@ const DragableElement = ({ component, index, cellId, useStop }: DraggbleElementP
     
         useStop(component, targetPos);
     }
-    const handlerStop = throttle((data: DraggableData, component: Component, axis: 'x' | 'y')=> {
-        onStop(data, component, axis);
-
-        const refWrapper = refWrapperX.current;
-        const refCellContainer = document.querySelector(`[data-id="${cellId}"]`);
-
-        if(refCellContainer) {
-            const wrX = refCellContainer.querySelectorAll(`.Wrapper-x`);
-            const wrY = refCellContainer.querySelectorAll(`.Wrapper-y`);
-
-            [...wrX].map((el)=> {
-                if(el.id !== String(index)) {
-                    //const result = utill.getOverlap(refWrapperX.current, el);
-
-                }
-            });
-        }
-    }, 200)
+    const handlerStop = React.useMemo(() =>
+        throttle((data: DraggableData, component: Component, axis: 'x' | 'y') => {
+            onStop(data, component, axis);
+    
+            const refWrapper = refWrapperX.current;
+            const refCellContainer = document.querySelector(`[data-id="${cellId}"]`);
+    
+            if (refCellContainer) {
+                const wrX = refCellContainer.querySelectorAll(`.Wrapper-x`);
+                const wrY = refCellContainer.querySelectorAll(`.Wrapper-y`);
+    
+                [...wrX].forEach((el) => {
+                    if (el.id !== String(index)) {
+                        // const result = utill.getOverlap(refWrapperX.current, el);
+                    }
+                });
+            }
+        }, 200),
+        [component, cellId, index]
+    );
     const useSetClassRef = (id: number | string, className: string) => {
         const ref = document.querySelector(`[data-id="${id}"]`);
 
@@ -126,9 +128,11 @@ const DragableElement = ({ component, index, cellId, useStop }: DraggbleElementP
 
         </Draggable>
     );
-}
+});
 
 
+
+DragableElement.displayName = 'DraggableElement';
 export default DragableElement;
 
 

@@ -119,39 +119,44 @@ export default function ({ height, setHeight }) {
             return [...newLayers];
         });
     }
-    const serrialize =(component: React.ReactNode, cellId: string)=> {
-        if(component.props.children && typeof component.props.children === 'object') {
-            console.warn('children object included in component: ', component.props.children);
-        }
-
-        const serlz = JSON.stringify(component, null, 2);
-        const rslz = JSON.parse(serlz);
-        rslz.id = Date.now();
-        rslz.parent = cellId;
-
-        return rslz;
+    const serrialize = (component: React.ReactElement, cellId: string): ComponentSerrialize => {
+        const props = { ...component.props };
+    
+        const id = Date.now();
+        const type = props["data-type"];
+        const offset = props["data-offset"] ?? { x: 0, y: 0 };
+    
+        delete props.ref;
+    
+        return {
+            id,
+            parent: cellId,
+            offset,
+            props: {
+                ...props,
+                'data-id': id,
+                'data-type': type,
+                'data-offset': offset
+            }
+        };
     }
-    const desserealize =(component: ComponentSerrialize)=> {
-        const type = component.props["data-type"];
-        if(component.props.children && typeof component.props.children === 'object') {
-            component.props.children = '';
-        }
-
+    const desserealize = (component: ComponentSerrialize) => {
+        const { id, props } = component;
+        const type = props["data-type"];
         const Consolid = listAllComponents[type];
-        
-
-        if(Consolid) return (
-            <Consolid 
-                data-offset={component.offset}
-                data-id={component.id}
+    
+        if (!Consolid) return null;
+    
+        return (
+            <Consolid
+                {...props}
                 ref={(el) => {
-                    if (el) refs.current[component.id] = el;
+                    if (el) refs.current[id] = el;
                 }}
-                { ...component.props } 
             />
         );
     }
-    const addComponentToCell = (cellId: string, component: React.ReactNode) => {
+    const addComponentToCell = (cellId: string, component: React.ReactElement) => {
         setRender((prev) => {
             const updatedRender = [...prev];
             const cellIndex = updatedRender.findIndex(item => item.i === cellId);
@@ -159,22 +164,21 @@ export default function ({ height, setHeight }) {
             if (cellIndex !== -1) {
                 const cell = updatedRender[cellIndex];
                 if(!Array.isArray(cell.content)) cell.content = [];
+                const serialized = serrialize(component, cellId);
 
-
-                const rsrlz = serrialize(component, cellId);
                 const clone = React.cloneElement(component, 
                     { 
-                        'data-id': rsrlz.id,
+                        'data-id': serialized.id,
                         ref: (el)=> {
-                            if(el) refs.current[rsrlz.id] = el;
+                            if(el) refs.current[serialized.id] = el;
                         }
                     }
                 );
                 cell.content.push(clone);
 
                 cellsCache.set((old)=> {
-                    if(!old[cellId]) old[cellId] = [rsrlz];
-                    else old[cellId].push(rsrlz);
+                    if(!old[cellId]) old[cellId] = [serialized];
+                    else old[cellId].push(serialized);
         
                     return old;
                 });
@@ -213,3 +217,42 @@ export default function ({ height, setHeight }) {
         </div>
     );
 }
+
+
+
+/**
+ *  const desserealize =(component: ComponentSerrialize)=> {
+        const type = component.props["data-type"];
+        if(component.props.children && typeof component.props.children === 'object') {
+            component.props.children = '';
+        }
+
+        const Consolid = listAllComponents[type];
+        
+
+        if(Consolid) return (
+            <Consolid 
+                data-offset={component.offset}
+                data-id={component.id}
+                ref={(el) => {
+                    if (el) refs.current[component.id] = el;
+                }}
+                { ...component.props } 
+            />
+        );
+    }
+ */
+/**
+ * const serrialize =(component: React.ReactNode, cellId: string)=> {
+        if(component.props.children && typeof component.props.children === 'object') {
+            console.warn('children object included in component: ', component.props.children);
+        }
+
+        const serlz = JSON.stringify(component, null, 2);
+        const rslz = JSON.parse(serlz);
+        rslz.id = Date.now();
+        rslz.parent = cellId;
+
+        return rslz;
+    }
+ */

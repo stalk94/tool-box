@@ -4,7 +4,7 @@ import { Form, Schema } from '../../index';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
 import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './utill';
 import { motion } from 'framer-motion';
-
+import { debounce } from 'lodash';
 
 type PropsForm = {
     elemLink: any
@@ -121,24 +121,108 @@ export default function({ type, elemLink, onChange }: PropsForm) {
         }
     }
     const useMergeObject = (key: 'style'|'sx', newValue: any) => {
-        setCurrent((copy)=> {
-            if(copy[key]) copy[key] = {...copy[key], ...newValue};
-            else copy[key] = newValue;
-
-            useAddStory(copy);
-            onChange(copy);
-            return copy;
+        setCurrent((prev) => {
+            const next = {
+                ...prev,
+                [key]: { ...(prev[key] ?? {}), ...newValue }
+            };
+            useAddStory(next);
+            onChange(next);
+            return next;
         });
     }
-    const useEdit = (key: string, newValue: string) => {
+    const useEdit = React.useCallback(
+        debounce((key: string, newValue: string) => {
+            const type = copyDataContent?.current?.type;
+
+            if (type === 'props') {
+                setCurrent((prev) => {
+                    const next = { ...prev, [key]: newValue };
+                    useAddStory(next);
+                    onChange(next);
+                    return next;
+                });
+            } 
+            else {
+                setSchema((schema) => {
+                    const elem = elemLink.get({ noproxy: true });
+                    const find = schema.find((s) => s.id === key);
+                    const unit = find?.unit ?? '';
+                    useMergeObject('style', { [key]: newValue + unit });
+                    return schema;
+                });
+            }
+        }, 250),
+        [elemLink, onChange]
+    );
+    const createScheme = (typeComponent: 'string', props: Record<string, any>) => {
+        if(type === 'props') return useCreateSchemeProps(typeComponent, props, theme);
+        else return fabrickStyleScheme(type, props.style ?? {});
+    }
+    
+    React.useEffect(() => {
+        if (!elemLink) return;
+    
+        const elem = elemLink.get({ noproxy: true });
+        const props = elem?.props;
+    
+        if (!props || !props['data-id'] || !props['data-type']) return;
+    
+        const id = props['data-id'];
+        const internalType = props['data-type'];
+        const currentKey = `${id}-${type}`;
+    
+        if (copyDataContent.current?.key === currentKey) return;
+    
+        // Обновляем всё — новый элемент или режим
+        copyDataContent.current = {
+            key: currentKey,
+            id,
+            type,
+        };
+    
+        const copyProps = structuredClone(props);
+        setStory([copyProps]);
+        setCurrent(copyProps);
+        setFuture([]);
+    
+        const newSchema = createScheme(internalType, copyProps);
+        setSchema(newSchema);
+    }, [elemLink, type]);
+    React.useEffect(() => {
+        return () => useEdit.cancel();
+    }, []);
+
+
+    return(
+        <motion.div
+            style={{display:'flex', flexDirection: 'column'}}
+            initial={{ opacity: 0 }}     // Начальная непрозрачность 0
+            animate={{ opacity: 1 }}     // Конечная непрозрачность 1
+            transition={{ duration: 1 }} // Плавное изменение за 1 секунду
+        >
+            <Form
+                key={copyDataContent.current?.key}
+                scheme={schema}
+                labelPosition="column"
+                onSpecificChange={(old, news)=> {
+                    Object.entries(news).forEach(([key, value]) => useEdit(key, value))
+                }}
+            />
+        </motion.div>
+    );
+}
+
+
+/**
+ * const useEdit = (key: string, newValue: string) => {
         const type = copyDataContent?.current?.type;
         
-        if(type === 'props') setCurrent((copy)=> {
-            copy[key] = newValue;
-        
-            useAddStory(copy);
-            onChange(copy);
-            return copy;
+        if(type === 'props') setCurrent((prev) => {
+            const next = { ...prev, [key]: newValue };
+            useAddStory(next);
+            onChange(next);
+            return next;
         });
         // стили
         else {
@@ -153,12 +237,9 @@ export default function({ type, elemLink, onChange }: PropsForm) {
             });
         }
     }
-    const createScheme = (typeComponent: 'string', props: Record<string, any>) => {
-        if(type === 'props') return useCreateSchemeProps(typeComponent, props, theme);
-        else return fabrickStyleScheme(type, props.style ?? {});
-    }
-    
-    React.useEffect(() => {
+ */
+/**
+ * React.useEffect(() => {
         if(elemLink) {
             const elem = elemLink.get({ noproxy: true });
             
@@ -182,22 +263,4 @@ export default function({ type, elemLink, onChange }: PropsForm) {
             }
         }
     }, [elemLink, type]);
-
-
-    return(
-        <motion.div
-            style={{display:'flex', flexDirection: 'column'}}
-            initial={{ opacity: 0 }}     // Начальная непрозрачность 0
-            animate={{ opacity: 1 }}     // Конечная непрозрачность 1
-            transition={{ duration: 1 }} // Плавное изменение за 1 секунду
-        >
-            <Form
-                scheme={schema}
-                labelPosition="column"
-                onSpecificChange={(old, news)=> {
-                    Object.keys(news).map((key)=> useEdit(key, news[key]))
-                }}
-            />
-        </motion.div>
-    );
-}
+ */

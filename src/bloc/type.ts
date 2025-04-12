@@ -10,7 +10,7 @@ export type ProxyComponentName = 'Button'
 
 /** серриализованный вид */
 export type ComponentSerrialize = {
-    id: string
+    id: number | string
     /** id ячейки */
     parent: string
     functions?: {

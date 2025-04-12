@@ -6,6 +6,7 @@ import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './theme/index';
 import './style/index.css';
 import Editor from './bloc/App';
+import whyDidYouRender from '@welldone-software/why-did-you-render';
 
 
 const App = () => {
@@ -48,6 +49,8 @@ const App = () => {
 
 
 //------------------------------------------------------------------------
+
+
 createRoot(document.querySelector(".root")).render(<App/>);
 
 /**
