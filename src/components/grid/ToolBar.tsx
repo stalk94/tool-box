@@ -10,7 +10,7 @@ import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../input/input.any';
 import LeftSideBarAndTool from '../nav-bars/tool-left'
 import { ContentData } from './RenderTools';
-import Forms from './config/forms';
+import Forms from './config/Forms';
 
 type Props = {
     addComponentToLayout: (elem: React.ReactNode)=> void
@@ -28,8 +28,8 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
                 </IconButton>
                 <Button
                     variant='outlined'
-                    color='info'
-                    sx={{ width: '100%' }}
+                    color='inherit'
+                    sx={{ width: '100%', opacity: 0.6 }}
                     onClick={() => addItem(
                         <Typography
                             data-type='Typography'
@@ -49,8 +49,8 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
                 </IconButton>
                 <Button
                     variant='outlined'
-                    color='info'
-                    sx={{ width: '100%' }}
+                    color='inherit'
+                    sx={{ width: '100%', opacity: 0.6 }}
                     onClick={() => addItem(
                         <Button
                             variant='outlined'
@@ -71,8 +71,8 @@ const useElements = (currentTool, setCurrentTool, addItem) => {
                 </IconButton>
                 <Button
                     variant='outlined'
-                    color={'info'}
-                    sx={{ width: '100%' }}
+                    color='inherit'
+                    sx={{ width: '100%', opacity: 0.6 }}
                     onClick={() => {
                         addItem(
                             <IconButton 

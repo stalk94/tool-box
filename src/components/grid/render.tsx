@@ -119,6 +119,10 @@ export default function ({ height }) {
         });
     }
     const serrialize =(component: React.ReactNode, cellId: string)=> {
+        if(component.props.children && typeof component.props.children === 'object') {
+            console.warn('children object included in component: ', component.props.children);
+        }
+
         const serlz = JSON.stringify(component, null, 2);
         const rslz = JSON.parse(serlz);
         rslz.id = Date.now();
@@ -128,6 +132,10 @@ export default function ({ height }) {
     }
     const desserealize =(component: ComponentSerrialize)=> {
         const type = component.props["data-type"];
+        if(component.props.children && typeof component.props.children === 'object') {
+            component.props.children = '';
+        }
+
         const Consolid = listAllComponents[type];
         
 

@@ -58,7 +58,7 @@ export type IconsProps = {
     onChange?: (iconName: string)=> void
     test: string
 }
-const icons = {
+export const icons = {
     // Навигация и действия
     navigation: {
       Home: HomeIcon,
@@ -153,8 +153,8 @@ const Icons: FC<IconsProps> =({ onChange, color })=> {
     const [open, setOpen] = React.useState<string>();
 
     const handleClose = (event: React.SyntheticEvent | Event, reason) => {
-    if (reason === "clickaway") return;
-    setOpen(undefined);
+        if (reason === "clickaway") return;
+        setOpen(undefined);
     };
     
     

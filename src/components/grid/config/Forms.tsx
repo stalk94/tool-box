@@ -2,16 +2,22 @@ import React from "react";
 export { TextInput, NumberInput, SliderInput } from '../../input';
 import { Form, Schema } from '../../../index';
 import { listAllComponents, listConfig } from './render';
-import { TextType } from './type';
-import { Box, Theme, useTheme } from "@mui/material";
-import { useHookstate } from "@hookstate/core";
-import { infoState } from "../context";
+import { Box, Theme, Tooltip, useTheme } from "@mui/material";
+import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight,
+    Apps, ViewStream, LinearScale, ViewWeek, ViewColumn, ViewList, ViewQuilt,
+    ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets
+} from "@mui/icons-material";
+import Icons, { iconsList } from '../../tools/icons';
+
 
 type PropsForm = {
     elemLink: any
     type: 'props'|'base'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
 }
+type ListTypes = 'color'|'variant'|'children'|'size'|'startIcon'|'endIcon'
+    |'display'|'align'|'fullWidth'|'type'|'icon'
+
 
 
 const getColors =(theme: Theme)=> {
@@ -35,7 +41,7 @@ const getColors =(theme: Theme)=> {
         }
     });
 }
-// todo: доделать фабрику схем
+
 const fabrickStyle =(listTypes, tStyle)=> {
     const result: Schema[] = [];
 
@@ -77,6 +83,154 @@ const fabrickStyle =(listTypes, tStyle)=> {
 
     return result;
 }
+const getScheme =(type, defaultValue, typeProps: ListTypes)=> {
+    const alightsIcons = {
+        left: <FormatAlignLeft/>,  
+        center: <FormatAlignCenter/>,
+        right: <FormatAlignRight/>,
+        justify: <FormatAlignJustify/>
+    }
+    const displayIcons = {
+        initial: <span style={{fontSize:'11px',whiteSpace: 'nowrap'}}>init</span>,
+        block: <LinearScale/>,
+        inline: <ViewColumn/>,
+        'inline-block': <span style={{fontSize:'11px',whiteSpace: 'nowrap'}}>in-b</span>,
+        flex: <Widgets/>,
+        'inline-flex': <ViewList/>,
+        grid: <ViewQuilt/>,
+        'inline-grid': <ViewArray/>
+    }
+    Object.keys(displayIcons).map((key)=> {
+        displayIcons[key] = (
+            <Tooltip title={key} placement="top" arrow>
+                { displayIcons[key] }
+            </Tooltip>
+        )
+    });
+
+    if(typeProps === 'children' && typeof defaultValue === 'string') {
+        return {
+            type: 'text',
+            id: typeProps,
+            multiline: true,
+            value: defaultValue,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 14 }
+        }
+    }
+    else if(typeProps === 'color') {
+        return {
+            type: 'toggle',
+            id: typeProps,
+            items: '',
+            label: typeProps,
+            value: defaultValue,
+            labelSx: { fontSize: '14px' }
+        }
+    }
+    else if(typeProps === 'variant') {
+        return {
+            type: 'select',
+            id: typeProps,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            onlyId: true,
+            value: defaultValue,
+            items: listConfig[type].props[typeProps].map((key) => ({
+                id: key,
+                label: key
+            }))
+        }
+    }
+    else if(typeProps === 'size') {
+        return {
+            type: 'toggle',
+            id: typeProps,
+            items: [
+                { id: 'small', label: <var style={{fontStyle:'italic'}}>sm</var> },
+                { id: 'medium', label: <var style={{fontWeight:400}}>sm</var> },
+                { id: 'large', label: <var style={{fontWeight:'bold'}}>lg</var> }
+            ],
+            label: typeProps,
+            value: defaultValue,
+            labelSx: { fontSize: '14px' }
+        }
+    }
+    else if(typeProps === 'display') {
+        return {
+            type: 'toggle',
+            id: typeProps,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            value: defaultValue,
+            items: listConfig[type].props[typeProps].map((key) => ({
+                id: key,
+                label: displayIcons[key]
+            }))
+        }
+    }
+    else if(typeProps === 'align') {
+        return {
+            type: 'toggle',
+            id: typeProps,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            value: defaultValue,
+            items: listConfig[type].props[typeProps].map((key) => ({
+                id: key,
+                label: alightsIcons[key]
+            }))
+        }
+    }
+    else if(typeProps === 'fullWidth') {
+        return {
+            type: 'switch',
+            id: typeProps,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            value: defaultValue,
+        }
+    }
+    else if(typeProps === 'type') {
+        return {
+            type: 'toggle',
+            id: typeProps,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            value: defaultValue,
+            items: listConfig[type].props[typeProps].map((key) => ({
+                id: key,
+                label: <span style={{fontSize:'11px',whiteSpace: 'nowrap'}}>{key}</span>
+            }))
+        }
+    }
+    else if(typeProps === 'icon' || 'endIcon' || 'startIcon') {
+        const r = Object.keys(iconsList).map((key)=> {
+            const Render = iconsList[key];
+
+            return({
+                id: key,
+                label: <Render />
+            })
+        });
+        r.unshift({
+            id: 'none',
+            label: <span style={{fontSize:'10px',whiteSpace: 'nowrap',color:'gray'}}>✖️</span>
+        });
+
+        return {
+            type: 'toggle',
+            id: typeProps,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            value: defaultValue,
+            items: r
+            
+        }
+    } 
+}
+
 
 
 export default function({ type, elemLink, onChange }: PropsForm) {
@@ -140,52 +294,71 @@ export default function({ type, elemLink, onChange }: PropsForm) {
         const schema: Schema[] = [];
 
         if (typeContent === 'Typography') {
-            const props = listConfig.Typography.props;
-            
-            schema.push({
-                type: 'text', 
-                id: 'children', 
-                multiline: true, 
-                value: propsElem.children, 
-                label: 'children',
-                labelSx: {fontSize:'12px'},
-                sx: { fontSize: 14 }
-            }, {
-                type: 'toggle', 
-                id: 'color', 
-                items: getColors(theme), 
-                label: 'color', 
-                value: propsElem.color,
-                labelSx: {fontSize:'12px'}
-            }, {
-                type: 'select', 
-                id: 'variant', 
-                label: 'variant', 
-                labelSx: {fontSize:'12px'},
-                onlyId: true,
-                value: propsElem.variant, 
-                items: props.variant.map((key)=> ({
-                    id: key,
-                    label: key
-                }))
-            },
+            const children = getScheme(typeContent, propsElem.children, 'children');
+            const color = getScheme(typeContent, propsElem.color, 'color');
+            const variant = getScheme(typeContent, propsElem.variant, 'variant');
+            const display = getScheme(typeContent, propsElem.display, 'display');
+            const align = getScheme(typeContent, propsElem.align, 'align');
+            color.items = getColors(theme);
+
+            schema.push(
+                children as Schema<'text'>,
+                color as Schema<'toggle'>,
+                variant as Schema<'select'>,
+                display as Schema<'toggle'>,
+                align as Schema<'toggle'>
+            );
+        }
+        else if (typeContent === 'Button') {
+            const children = getScheme(typeContent, propsElem.children, 'children');
+            const color = getScheme(typeContent, propsElem.color, 'color');
+            const variant = getScheme(typeContent, propsElem.variant, 'variant');
+            const fullWidth = getScheme(typeContent, propsElem.fullWidth, 'fullWidth');
+            const type = getScheme(typeContent, propsElem.type, 'type');
+            const size = getScheme(typeContent, propsElem.size, 'size');
+            const startIcon = getScheme(typeContent, propsElem.startIcon, 'startIcon');
+            const endIcon = getScheme(typeContent, propsElem.endIcon, 'endIcon');
+            color.items = getColors(theme);
+
+            schema.push(
+                children as Schema<'text'>,
+                type as Schema<'toggle'>,
+                size as Schema<'toggle'>,
+                fullWidth as Schema<'switch'>,
+                color as Schema<'toggle'>,
+                variant as Schema<'select'>,
+                startIcon as Schema<'toggle'>,
+                endIcon as Schema<'toggle'>,
+            );
+        }
+        else if (typeContent === 'IconButton') {
+            const color = getScheme(typeContent, propsElem.color, 'color');
+            const size = getScheme(typeContent, propsElem.size, 'size');
+            const icon = getScheme(typeContent, propsElem.icon, 'icon');
+            color.items = getColors(theme);
+
+            schema.push(
+                color as Schema<'toggle'>,
+                size as Schema<'toggle'>,
+                icon as Schema<'toggle'>,
             );
         }
         
         return schema;
     }
 
-    
     React.useEffect(() => {
         if(elemLink) {
             const elem = elemLink.get({ noproxy: true });
-            console.log('OBJECT EDITOR: ', elem);
-    
-            if(elem?.props) {
+            
+            if(elem?.props 
+                && (elem?.props['data-id'] !== copyDataContent?.current?.id 
+                    || copyDataContent?.current?.type !== type
+                ) 
+            ) {
                 copyDataContent.current = ({
-                    type: elem.props['data-type'],
+                    type: type,
                     id: elem.props['data-id'],
-                    offset: elem.props['data-offset']
                 });
 
                 const copyProps = structuredClone(elem.props);
@@ -193,7 +366,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                 setCurrent(copyProps);
                 setFuture([]);
                 const schema = useCreateScheme(elem.props['data-type'], copyProps);
-                setSchema(schema);
+                setSchema([...schema]);
             }
         }
     }, [elemLink, type]);

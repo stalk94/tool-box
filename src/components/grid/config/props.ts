@@ -44,7 +44,7 @@ export const propsIconButton = {
 
 export const propsTypography = {
     variant: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'overline', 'button', 'srOnly'], // Типы текста
-    align: ['inherit', 'left', 'center', 'right', 'justify'], // Выравнивание текста
+    align: ['left', 'center', 'right', 'justify'], // Выравнивание текста 'inherit', 
     color: ['initial', 'textPrimary', 'textSecondary', 'error', 'primary', 'secondary', 'inherit'], // Цвет текста
     gutterBottom: [true, false], // Добавить нижний отступ
     noWrap: [true, false], // Отключить перенос строк

@@ -66,7 +66,7 @@ export default function ({ render, setRender, height, desserealize }) {
     const useSetClassRef =(id: number|string, className: string)=> {
         setTimeout(()=> {
             if(refs.current[id]) refs.current[id].classList.add('editor-'+className);
-        }, 300);
+        }, 500);
     }
     const useRemoveClassRef =(id: number|string|'all', className?: string)=> {
         setTimeout(()=> 
