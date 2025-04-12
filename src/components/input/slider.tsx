@@ -38,6 +38,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         delete props.markStep;
         delete props.mark;
         delete props.sx;
+        delete props.labelSx;
 
         return props;
     }

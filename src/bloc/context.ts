@@ -6,6 +6,7 @@ import { localstored } from '@hookstate/localstored';
 
 export default hookstate(
     {
+        mod: 'home',
         layout: <LayoutCustom[]> <unknown>[],
         tools: undefined,
         currentCell: <LayoutCustom> undefined,

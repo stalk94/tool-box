@@ -22,26 +22,26 @@ export const baseOptions = {
         "end",
         "center"
     ],
-    width: "string",
-    height: "string",
-    background: "string",
-    backgroundColor: "string",
-    color: "string",
-    padding: "string",
-    paddingLeft: "string?",
-    paddingRight: "string?",
-    paddingTop: "string?",
-    paddingBottom: "string?",
-    margin: "string?",
-    marginLeft: "string?",
-    marginRight: "string?",
-    marginTop: "string?",
-    marginBottom: "string?",
-    borderRadius: "string"
+    width: 'limit',
+    height: 'limit',
+    background: "color",
+    backgroundColor: "color",
+    color: "color",
+    padding: "number",
+    //paddingLeft: "string?",
+    //paddingRight: "string?",
+    //paddingTop: "string?",
+    //paddingBottom: "string?",
+    margin: "number",
+    //marginLeft: "string?",
+    //marginRight: "string?",
+    //marginTop: "string?",
+    //marginBottom: "string?",
+    borderRadius: "number"
 }
 export const flexOptions = {
-    flex: false,
-    flexDirection: ["column", "row", "row-reverse", "column-reverse"],
+    //flex: false,            //! тут надо покурить документацию (можно прикольно сделать)
+    flexDirection: ["column", "column-reverse", "row", "row-reverse"],
     flexWrap: ["nowrap", "wrap", "wrap-reverse"],
     justifyContent: [
         "flex-start",
@@ -62,12 +62,12 @@ export const flexOptions = {
     ],
     alignSelf: ["auto", "stretch", "flex-start", "flex-end", "center", "baseline"],
 }
-export const listTypesText = {
+export const textOptionsAll = {
     "fontFamily": undefined,
     "fontWeight": ['normal', 'bold', '600', '800'],
-    "fontSize": [],
-    "letterSpacing": undefined,
-    "wordSpacing": undefined,
+    "fontSize": [6, 32],
+    "letterSpacing": "number",
+    "wordSpacing": "number",
     "fontStyle": ["normal", "italic", "oblique"],
   
     "textAlign": ["left", "right", "center", "justify", "start", "end"],
@@ -87,17 +87,17 @@ export const listTypesText = {
     "direction": ["ltr", "rtl"],
     "text-shadow": undefined
 }
-export const listTypesTextBase = {
-    "fontFamily": undefined,
+export const textOptions = {
+    "fontFamily": 'string',
     "fontWeight": ['normal', 'bold', '600', '800'],
-    "fontSize": [],
-    "letterSpacing": undefined,
-    "wordSpacing": undefined,
+    "fontSize": [6, 32],
+    "letterSpacing": 'number',
+    "wordSpacing": 'number',
     "fontStyle": ["normal", "italic", "oblique"],
   
     "textAlign": ["left", "right", "center", "justify", "start", "end"],
     "textOverflow": ["clip", "ellipsis"],
-    "textTransform": ["lowercase", "capitalize", "none", "uppercase"],
+    "textTransform": ["none", "lowercase", "capitalize", "uppercase"],
     "textDecoration": ["line-through", "none", "overline", "underline"],
     "textDecorationStyle": ["solid", "double", "dotted", "dashed", "wavy"],
   

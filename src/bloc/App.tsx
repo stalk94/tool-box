@@ -9,12 +9,14 @@ import { listAllComponents, listConfig } from './config/render';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
+import GridEditor from '../components/tools/grid-editor';
 import "../style/grid.css";
 import "../style/edit.css";
 
 
 // это редактор блоков сетки
-export default function ({ height }) {
+export default function ({ height, setHeight }) {
+    const mod = useHookstate(context.mod);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const [render, setRender] = React.useState<LayoutCustom []>([]);
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
@@ -180,7 +182,7 @@ export default function ({ height }) {
             return updatedRender;
         });
     }
-    
+ 
     
     return(
         <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
@@ -196,13 +198,17 @@ export default function ({ height }) {
                     render={render}
                     useEditProps={editRenderComponentProps}
                 />
-                {/* область редактора сетки */}
-                <GridComponentEditor
-                    render={render}
-                    setRender={setRender}
-                    desserealize={desserealize}
-                    height={height}
-                />
+                { mod.get() === 'home' &&
+                    <GridComponentEditor
+                        render={render}
+                        setRender={setRender}
+                        desserealize={desserealize}
+                        height={height}
+                    />
+                }
+                { mod.get() === 'grid' &&
+                    <GridEditor components={[]} />
+                }
             </div>
         </div>
     );

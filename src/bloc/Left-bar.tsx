@@ -201,7 +201,7 @@ export default function ({ addComponentToLayout, useDump, useEditProps }: Props)
                 items: menuItems,
                 end: endItems
             }}
-            width={240}
+            width={260}
             onChangeNavigation={changeNavigation}
             start={ start }
         >

@@ -1,10 +1,12 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import { Button, useTheme, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup } from "@mui/material";
 import { ContentFromCell, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { listAllComponents, listConfig } from './config/render';
 import { useHookstate } from "@hookstate/core";
+import SelectButton from "../components/popup/select.button";
 
 type Props = {
     render: LayoutCustom []
@@ -97,6 +99,19 @@ export const ToolBarInfo = ({ render, useEditProps }: Props) => {
                         { currentContentData.type }
                     </Button>
                 }
+            </Box>
+            <Box sx={{ml:'auto'}}>
+                <SelectButton
+                    variant="outlined"
+                    color='inherit'
+                    sx={{color: '#bababa69', background:'#0000001a',fontSize:12}}
+                    value={{ id: 'home', label: 'Компоновшик', icon: <Extension /> }}
+                    items={[
+                        { id: 'home', label: 'Компоновшик', icon: <Extension /> },
+                        { id: 'grid', label: 'Сетка' }
+                    ]}
+                    onChange={(v)=> context.mod.set(v.id)}
+                />
             </Box>
             <Box
                 sx={{ml: 'auto', display: 'flex',}}

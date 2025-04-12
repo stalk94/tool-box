@@ -20,7 +20,7 @@ const Item = styled(Paper)(({ theme }) => ({
 export const Toolbar =({ useUndo, useAdd, useClick, current, tools })=> {
 
     return (
-        <Item sx={{ px: 2, backgroundColor: '#32313bab' }}>
+        <Item sx={{ px: 2, backgroundColor: '#32313bab', maxHeight:'50px' }}>
             <Button
                 startIcon={
                     <AddBox style={{ position: 'absolute', fontSize: '1rem', color: '#c1f755' }} />
