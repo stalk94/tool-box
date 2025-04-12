@@ -1,8 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { createEditor, Descendant } from 'slate';
 import { Slate, Editable, withReact } from 'slate-react';
-import context from './context';
+import context from '../../bloc/context';
 import { useHookstate } from "@hookstate/core";
+
 
 
 const MyEditor = ({ value, onChange, idLayout }) => {

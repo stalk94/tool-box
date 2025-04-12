@@ -8,7 +8,7 @@ import { Descendant } from 'slate';
 import "react-grid-layout/css/styles.css";
 import "../../style/grid.css"
 import { GridEditorProps, LayoutCustom } from './type';
-import context from './context';
+import context from '../../bloc/context';
 import { useHookstate } from "@hookstate/core";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);

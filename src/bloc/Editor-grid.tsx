@@ -2,8 +2,6 @@ import React from "react";
 import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import "../../style/grid.css";
-import "../../style/edit.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import Draggable, { DraggableData } from 'react-draggable';

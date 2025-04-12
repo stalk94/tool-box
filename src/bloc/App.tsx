@@ -2,16 +2,15 @@ import React from "react";
 import html2canvas from 'html2canvas';
 import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
 import "react-grid-layout/css/styles.css";
-import "../../style/grid.css";
-import "../../style/edit.css"
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
-import { ToolBarInfo } from './RenderTools';
+import { ToolBarInfo } from './Top-bar';
 import { listAllComponents, listConfig } from './config/render';
-import Tools from './ToolBar';
-import GridComponentEditor from './GridCompone';
-import { writeFile } from "../../app/plugins";
-
+import Tools from './Left-bar';
+import GridComponentEditor from './Editor-grid';
+import { writeFile } from "../app/plugins";
+import "../style/grid.css";
+import "../style/edit.css";
 
 
 // это редактор блоков сетки

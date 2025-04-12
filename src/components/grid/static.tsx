@@ -2,7 +2,7 @@ import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import "../../style/grid.css"
-import context from './context';
+import context from '../../bloc/context';
 import { useHookstate } from "@hookstate/core";
 import { GridEditorProps, LayoutCustom } from './type';
 

@@ -7,9 +7,9 @@ import { ContentFromCell, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
-import { TooglerInput } from '../input/input.any';
-import LeftSideBarAndTool from '../nav-bars/tool-left'
-import { ContentData } from './RenderTools';
+import { TooglerInput } from '../components/input/input.any';
+import LeftSideBarAndTool from '../components/nav-bars/tool-left'
+import { ContentData } from './Top-bar';
 import Forms from './config/Forms';
 
 type Props = {

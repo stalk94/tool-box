@@ -32,7 +32,7 @@ export const ToolBarInfo = ({ render, useEditProps }: Props) => {
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
-    const allRefs = useHookstate(infoState.contentAllRefs);   // все ссылки компонентов
+    //const allRefs = useHookstate(infoState.contentAllRefs);   // все ссылки компонентов
     const container = useHookstate(infoState.container);
 
 

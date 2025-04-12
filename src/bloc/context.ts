@@ -12,9 +12,6 @@ export default hookstate(
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })
 );
-
-
-// последнее сохранение
 // сохраняемое состояние в localStorage редактора сетки (! это не дамп финальный)
 export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     {
@@ -22,7 +19,6 @@ export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     }, 
     localstored({key: 'cellsContent', engine: localStorage}
 ));
-
 
 
 

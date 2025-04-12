@@ -2,7 +2,7 @@ import React from 'react'
 import { Button, IconButton, Typography } from "@mui/material"
 import { propsButton, propsIconButton, propsTypography } from './props';
 import { Settings } from '@mui/icons-material';
-import Icons, { iconsList } from '../../tools/icons';
+import { iconsList } from '../../components/tools/icons';
 
 
 const IButtonWrupper = React.forwardRef((props, ref) => {
@@ -38,6 +38,7 @@ const ButtonWrupper = React.forwardRef((props, ref) => {
         </Button>
     );
 });
+
 
 
 export const listAllComponents = {

@@ -1,10 +1,7 @@
 import React from 'react';
 import { Meta, StoryObj } from '@storybook/react';
-import Card from '../../components/carts/base';
-import EditorGrid from '../../components/grid/Render';
-import Form from '../../components/form';
-import { Button } from '@mui/material';
-import Icons, { Equalizer, Calculate, AccountBox, Height } from "@mui/icons-material";
+import EditorGrid from '../../bloc/App';
+
 
 
 const meta: Meta<typeof EditorGrid> = {

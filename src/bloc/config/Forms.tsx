@@ -1,13 +1,13 @@
 import React from "react";
-export { TextInput, NumberInput, SliderInput } from '../../input';
-import { Form, Schema } from '../../../index';
-import { listAllComponents, listConfig } from './render';
+export { TextInput, NumberInput, SliderInput } from '../../components/input';
+import { Form, Schema } from '../../index';
+import { listConfig } from './render';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
-import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight,
-    Apps, ViewStream, LinearScale, ViewWeek, ViewColumn, ViewList, ViewQuilt,
-    ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets
+import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight, LinearScale,  
+    ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets
 } from "@mui/icons-material";
-import Icons, { iconsList } from '../../tools/icons';
+import { iconsList } from '../../components/tools/icons';
+import { PropsTypes } from './type';
 
 
 type PropsForm = {
@@ -15,11 +15,8 @@ type PropsForm = {
     type: 'props'|'base'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
 }
-type ListTypes = 'color'|'variant'|'children'|'size'|'startIcon'|'endIcon'
-    |'display'|'align'|'fullWidth'|'type'|'icon'
 
-
-
+//-----------------------------------------------------------------------
 const getColors =(theme: Theme)=> {
     const palette = theme.palette;
 
@@ -41,7 +38,6 @@ const getColors =(theme: Theme)=> {
         }
     });
 }
-
 const fabrickStyle =(listTypes, tStyle)=> {
     const result: Schema[] = [];
 
@@ -83,7 +79,7 @@ const fabrickStyle =(listTypes, tStyle)=> {
 
     return result;
 }
-const getScheme =(type, defaultValue, typeProps: ListTypes)=> {
+const getScheme =(type, defaultValue, typeProps: PropsTypes)=> {
     const alightsIcons = {
         left: <FormatAlignLeft/>,  
         center: <FormatAlignCenter/>,
