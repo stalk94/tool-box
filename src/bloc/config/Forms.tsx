@@ -2,7 +2,7 @@ import React from "react";
 export { TextInput, NumberInput, SliderInput } from '../../components/input';
 import { Form, Schema } from '../../index';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
-import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './util';
+import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './utill';
 import { motion } from 'framer-motion';
 
 
@@ -177,7 +177,8 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                 setCurrent(copyProps);
                 setFuture([]);
                 const schema = createScheme(elem.props['data-type'], copyProps);
-                setSchema([...schema]);
+                setSchema([]);
+                setSchema(schema);
             }
         }
     }, [elemLink, type]);

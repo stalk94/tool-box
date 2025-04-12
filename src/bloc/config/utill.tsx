@@ -315,3 +315,43 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
         }
     }
 }
+
+// ---------------------------------------------------------------------------------
+export const utill = {
+    getSize(element: Element) {
+        const bound = element.getBoundingClientRect();
+        return {
+            height: bound.height,
+            width: bound.width
+        };
+    },
+    getPos(element: Element) {
+        const bound = element.getBoundingClientRect();
+        return {
+            x: bound.x,
+            y: bound.y
+        };
+    },
+    getOverlap(el1: HTMLElement, el2: HTMLElement) {
+        const rect1 = el1.getBoundingClientRect();
+        const rect2 = el2.getBoundingClientRect();
+    
+        const x_overlap = Math.max(
+            0,
+            Math.min(rect1.right, rect2.right) - Math.max(rect1.left, rect2.left)
+        );
+        const y_overlap = Math.max(
+            0,
+            Math.min(rect1.bottom, rect2.bottom) - Math.max(rect1.top, rect2.top)
+        );
+    
+        const area = x_overlap * y_overlap;
+    
+        return {
+            x_overlap,
+            y_overlap,
+            area,
+            hasCollision: area > 0
+        };
+    }
+}

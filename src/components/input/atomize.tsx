@@ -133,27 +133,28 @@ export function InputPaper({ children, elevation, ...props }) {
 /** Базовый инпут */
 export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputBaseCustom) {
     const theme = useTheme();
-
+    const [v, setV] = React.useState(value);
     
     const filtreProps =()=> {
         delete props.borderStyle;
         delete props.success;
         delete props.toolVisible;
-        delete props.labelSx
+        delete props.labelSx;
         return props;
     }
-    const handleChange = debounce((newValue) => {
+    const useChange = (newValue) => {
         onChange && onChange(newValue);
-    }, 500); 
-    
+    };
+    React.useEffect(()=> {
+        setV(value);
+    }, [value]);
     
     return (
         <InputBase
             { ...filtreProps() }
             placeholder={props.placeholder}
             type={type}
-            //value={value}
-            defaultValue={value}
+            value={v}
             disabled={props.disabled}
             sx={{
                 minWidth: '60px',
@@ -178,7 +179,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
                 ...props.sx
             }}
             inputProps={{ style: { textAlign: theme.mixins.input.alight, resize: 'both', } }}
-            onChange={(e) => handleChange(e.target.value)}
+            onChange={(e) => useChange(e.target.value)}
         />
     );
 }

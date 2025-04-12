@@ -5,7 +5,7 @@ import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import Draggable, { DraggableData } from 'react-draggable';
-
+import DraggableElement from './Element';
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -14,7 +14,6 @@ const margin: [number, number] = [5, 5];
 
 
 export default function ({ render, setRender, height, desserealize }) {
-    const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const containerRef = React.useRef(null);
     const [rowHeight, setRowHeight] = React.useState(30);
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
@@ -61,25 +60,6 @@ export default function ({ render, setRender, height, desserealize }) {
         curCell.set(cell);
         info.select.cell.set(target);
     }
-    const useSetClassRef =(id: number|string, className: string)=> {
-        setTimeout(()=> {
-            if(refs.current[id]) refs.current[id].classList.add('editor-'+className);
-        }, 500);
-    }
-    const useRemoveClassRef =(id: number|string|'all', className?: string)=> {
-        setTimeout(()=> 
-            Object.keys(refs.current).map((elId)=> {
-                if(elId === String(id) || id === 'all') {
-                    const el = refs.current[elId];
-
-                    if(className) el.classList.remove('editor-' + className);
-                    else el.classList.forEach((className: string) => {
-                        if(className.includes('editor-')) el.classList.remove(className);
-                    });
-                }
-            }), 200
-        );
-    }
     const dragableOnStop = (item: ContentFromCell, cellId: string, data: DraggableData) => {
         const element = document.querySelector(`[data-id="${cellId}"]`);
 
@@ -88,7 +68,7 @@ export default function ({ render, setRender, height, desserealize }) {
             const parentHeight = element.offsetHeight;
             const relativeX = parentWidth > 0 ? data.x / parentWidth : 0;
             const relativeY = parentHeight > 0 ? data.y / parentHeight : 0;
-
+            
             editRenderComponentProps(
                 item,
                 { 'data-relative-offset': { x: relativeX, y: relativeY }, 
@@ -108,8 +88,6 @@ export default function ({ render, setRender, height, desserealize }) {
                     updatedRender[cellIndex]?.content?.splice(componentIndex, 1);
 
                     cellsCache.set((old) => {
-                        const content = updatedRender[cellIndex].content;
-                        //old[cellId].findIndex(e => e.id === )
                         old[cellId].splice(componentIndex, 1);
 
                         return old;
@@ -193,7 +171,6 @@ export default function ({ render, setRender, height, desserealize }) {
             const result = consolidation(loadData[curName]);
 
             setRender(result);
-            info.contentAllRefs.set(refs.current);
         }
 
         return () => {
@@ -204,55 +181,44 @@ export default function ({ render, setRender, height, desserealize }) {
     
     return(
         <div style={{width: '100%', height: height ? height+'%' : '100%'}} ref={containerRef}>
-        <ResponsiveGridLayout
-            style={{background:'#222222'}}
-            className="GRID-EDITOR"
-            layouts={{ lg: render }}        // Схема сетки
-            breakpoints={{ lg: 0 }}         // Точки для респонсива
-            cols={{ lg: 12 }}
-            rowHeight={rowHeight}
-            compactType={null}              // Отключение автоматической компоновки
-            isDraggable={false}             // Отключить перетаскивание
-            isResizable={false}             // Отключить изменение размера
-            margin={margin}
-        >
-            { render.map((layer) => (
-                <div
-                    data-id={layer.i}
-                    onClick={(e) => onSelectCell(layer, e.currentTarget)}
-                    key={layer.i}
-                    style={{
-                        overflow: 'hidden',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        textAlign: "center",
-                        border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb50b5' : '#fb505055'}`,
-                        background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
-                    }}
-                >
-                    { Array.isArray(layer.content) && layer.content.map((component, index) => (
-                        <Draggable
-                            grid={[10, 10]}
-                            defaultPosition={component.props['data-offset']}
-                            key={index}
-                            bounds="parent"
-                            onStart={(e, data) => {
-                                component._store.index = index;
-                                info.select.content.set(component);
-                                useRemoveClassRef('all');
-                                useSetClassRef(component.props['data-id'], 'blink');
-                            }}
-                            onStop={(e, data) => dragableOnStop(component, layer.i, data)}
-                        >
-                            {/* ❗ новая фича style={{ width: 'fit-content' }} */}
-                           
-                            { component }
-                            
-                        </Draggable>
-                    ))}
-                </div>
-            ))}
-        </ResponsiveGridLayout>
+            <ResponsiveGridLayout
+                style={{background:'#222222'}}
+                className="GRID-EDITOR"
+                layouts={{ lg: render }}        // Схема сетки
+                breakpoints={{ lg: 0 }}         // Точки для респонсива
+                cols={{ lg: 12 }}
+                rowHeight={rowHeight}
+                compactType={null}              // Отключение автоматической компоновки
+                isDraggable={false}             // Отключить перетаскивание
+                isResizable={false}             // Отключить изменение размера
+                margin={margin}
+            >
+                { render.map((layer) => (
+                    <div
+                        data-id={layer.i}
+                        onClick={(e) => onSelectCell(layer, e.currentTarget)}
+                        key={layer.i}
+                        style={{
+                            overflow: 'hidden',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            textAlign: "center",
+                            border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb50b5' : '#fb505055'}`,
+                            background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
+                        }}
+                    >
+                        { Array.isArray(layer.content) && layer.content.map((component, index) => (
+                            <DraggableElement 
+                                key={index}
+                                cellId={layer.i}
+                                component={component}
+                                index={index}
+                                useStop={(component, data)=> dragableOnStop(component, layer.i, data)}
+                            />
+                        ))}
+                    </div>
+                ))}
+            </ResponsiveGridLayout>
         </div>
     );
 }
