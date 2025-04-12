@@ -1,6 +1,7 @@
 import React from 'react';
 import { Box, Grid2, Slider, SliderProps, useTheme } from '@mui/material';
 import Input from '@mui/material/Input';
+import { debounce } from 'lodash';
 
 
 export type CustomSliderProps = SliderProps & {
@@ -11,11 +12,8 @@ export type CustomSliderProps = SliderProps & {
 }
 
 
-
 export default function({ value, onChange, start, end, ...props }: CustomSliderProps) {
     const theme = useTheme();
-    const [curValue, setValue] = React.useState(10);
-
     const style = {
         color: '#00000000',
         '& .MuiSlider-thumb': {
@@ -56,13 +54,9 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         }
         else handlerChange(newValue);
     }
-    const handlerChange =(newValue: number|number[])=> {
-        setValue(newValue);
+    const handlerChange = debounce((newValue) => {
         onChange && onChange(newValue);
-    }
-    React.useEffect(()=> {
-        if(value!==undefined) setValue(value);
-    }, [value]);
+    }, 500);
 
 
     if(!start && !end) return (
@@ -74,10 +68,10 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
             }}
         >
              <Slider
-                value={curValue}
+                //value={curValue}
                 valueLabelDisplay="auto"
                 size='medium'
-                defaultValue={10}
+                defaultValue={value ?? 10}
                 sx={{
                     minWidth: 80,
                     maxWidth: '95%',

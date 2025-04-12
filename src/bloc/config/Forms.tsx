@@ -3,6 +3,7 @@ export { TextInput, NumberInput, SliderInput } from '../../components/input';
 import { Form, Schema } from '../../index';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
 import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './util';
+import { motion } from 'framer-motion';
 
 
 type PropsForm = {
@@ -183,7 +184,12 @@ export default function({ type, elemLink, onChange }: PropsForm) {
 
 
     return(
-        <Box sx={{display:'flex', flexDirection: 'column'}} >
+        <motion.div
+            style={{display:'flex', flexDirection: 'column'}}
+            initial={{ opacity: 0 }}     // Начальная непрозрачность 0
+            animate={{ opacity: 1 }}     // Конечная непрозрачность 1
+            transition={{ duration: 1 }} // Плавное изменение за 1 секунду
+        >
             <Form
                 scheme={schema}
                 labelPosition="column"
@@ -191,6 +197,6 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                     Object.keys(news).map((key)=> useEdit(key, news[key]))
                 }}
             />
-        </Box>
+        </motion.div>
     );
 }

@@ -18,7 +18,7 @@ export type PasswordInputProps = {
 } & VerifyHook
 
 
-
+// todo:  убрать лишние рендеры
 export default function PasswordInput({ value, helperText, useVerify, ...props }: PasswordInputProps) {
     const theme = useTheme();
     const [type, setType] = React.useState<'password'|'text'>('password');

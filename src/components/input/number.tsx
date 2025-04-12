@@ -34,6 +34,7 @@ export default function NumberInput({ value, min=0, max=100, step=1, onChange, .
             onChange && onChange(newValue);
         }
     }
+    //* уже дебаунс на нижнем уровне решает вопросы с рендерами
     const handleChange = (value) => {
         const newValue = parseInt(value, 10);
         

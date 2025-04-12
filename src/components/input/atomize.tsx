@@ -1,6 +1,7 @@
 import React from 'react';
 import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps, Box } from '@mui/material';
 import { alpha, lighten, darken, styled } from '@mui/system';
+import { debounce } from 'lodash';
 
 type PropsInputBaseCustom = InputBaseProps & {
     onChange: (value: string)=> void
@@ -133,6 +134,7 @@ export function InputPaper({ children, elevation, ...props }) {
 export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputBaseCustom) {
     const theme = useTheme();
 
+    
     const filtreProps =()=> {
         delete props.borderStyle;
         delete props.success;
@@ -140,14 +142,18 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
         delete props.labelSx
         return props;
     }
-
-
+    const handleChange = debounce((newValue) => {
+        onChange && onChange(newValue);
+    }, 500); 
+    
+    
     return (
         <InputBase
             { ...filtreProps() }
             placeholder={props.placeholder}
             type={type}
-            value={value}
+            //value={value}
+            defaultValue={value}
             disabled={props.disabled}
             sx={{
                 minWidth: '60px',
@@ -172,7 +178,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
                 ...props.sx
             }}
             inputProps={{ style: { textAlign: theme.mixins.input.alight, resize: 'both', } }}
-            onChange={(e) => onChange && onChange(e.target.value)}
+            onChange={(e) => handleChange(e.target.value)}
         />
     );
 }
