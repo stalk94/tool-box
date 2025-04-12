@@ -3,7 +3,7 @@ import { Button, useTheme, Box, Paper, Typography, Tooltip, SxProps, IconButton 
 import { Delete as DeleteIcon, MoreVert as MoreVertIcon,
     RadioButtonChecked, Assignment, Input, BorderStyle, ColorLens, FormatColorText, More
 } from '@mui/icons-material';
-import { ContentFromCell, LayoutCustom } from './type';
+import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
@@ -15,7 +15,7 @@ import Forms from './config/Forms';
 type Props = {
     addComponentToLayout: (elem: React.ReactNode)=> void
     useDump: ()=> void
-    useEditProps: (component: ContentFromCell, data: Record<string, any>)=> void
+    useEditProps: (component: Component, data: Record<string, any>)=> void
 }
 
 

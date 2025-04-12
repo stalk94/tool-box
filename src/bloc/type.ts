@@ -8,6 +8,24 @@ export type ProxyComponentName = 'Button'
     | 'Typography'
 
 
+/** 
+ * Компонент в редакторе (в ячейках)
+ * все дочерние компоненты установленные редактором 
+ */
+export type Component = React.ReactElement & {
+    _store: {
+        index: number
+    },
+    props: {
+        "data-id": number
+        "data-type": ProxyComponentName
+        "data-offset"?: { x: number; y: number }
+        "data-relative-offset": { x: number; y: number }
+        children?: string | any
+        style?: React.CSSProperties
+        [key: string]: any
+    }
+}
 /** серриализованный вид */
 export type ComponentSerrialize = {
     id: number | string
@@ -24,21 +42,6 @@ export type ComponentSerrialize = {
     
 }
 
-/** все дочерние компоненты установленные редактором */
-export type Component = React.ReactElement & {
-    _store: {
-        index: number
-    },
-    props: {
-        "data-id": number
-        "data-type": ProxyComponentName
-        "data-offset"?: { x: number; y: number }
-        "data-relative-offset": { x: number; y: number }
-        children?: string | any
-        style?: React.CSSProperties
-        [key: string]: any
-    }
-}
 
 
 export type DraggbleElementProps = {
@@ -57,4 +60,3 @@ export type GridEditorProps = {
     renderItems: React.ReactNode[]
     tools: React.ReactNode
 }
-export type ContentFromCell = Component;

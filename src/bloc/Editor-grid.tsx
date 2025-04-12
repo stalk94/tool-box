@@ -1,11 +1,12 @@
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
+import { LayoutCustom, Component } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import Draggable, { DraggableData } from 'react-draggable';
 import DraggableElement from './Element';
+import { updateComponentProps } from './utils/editor';
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -22,45 +23,12 @@ export default function ({ render, setRender, height, desserealize }) {
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
 
 
-    // добавить/изменить пропс (применится везде/сохранится)
-    const editRenderComponentProps = (component: ContentFromCell, data: Record<string, any>, rerender?:boolean) => {
-        const cellId = curCell.get()?.i;
-        const curCache = cellsCache.get({ noproxy: true });
-        const clone = React.cloneElement(component, data);
-        const id = clone.props['data-id'];
-
-        if (curCache[cellId]) {
-            const findIndex = curCache[cellId].findIndex(e => e.id === id);
-            if (findIndex !== -1) {
-                cellsCache.set((old) => {
-                    Object.keys(data).map((dataKey) => {
-                        const props = old[cellId][findIndex].props;
-                        if (props) props[dataKey] = data[dataKey];
-                    });
-
-                    return old;
-                });
-            }
-        }
-        // перерендер
-        if(rerender) setRender((layers) => {
-            const newLayers = layers.map((layer) => {
-                if (Array.isArray(layer.content)) {
-                    const findindex = layer.content.findIndex(c => c.props['data-id'] === id);
-                    if (findindex !== -1) layer.content[findindex] = clone;
-                }
-
-                return layer;
-            });
-
-            return [...newLayers];
-        });
-    }
+   
     const onSelectCell =(cell: LayoutCustom, target: HTMLDivElement)=> {
         curCell.set(cell);
         info.select.cell.set(target);
     }
-    const dragableOnStop = (item: ContentFromCell, cellId: string, data: DraggableData) => {
+    const dragableOnStop = (component: Component, cellId: string, data: DraggableData) => {
         const element = document.querySelector(`[data-id="${cellId}"]`);
 
         if(element) {
@@ -68,13 +36,19 @@ export default function ({ render, setRender, height, desserealize }) {
             const parentHeight = element.offsetHeight;
             const relativeX = parentWidth > 0 ? data.x / parentWidth : 0;
             const relativeY = parentHeight > 0 ? data.y / parentHeight : 0;
+            const propsData = {
+                'data-relative-offset': { x: relativeX, y: relativeY },
+                'data-offset': { x: data.x, y: data.y }
+            }
             
-            editRenderComponentProps(
-                item,
-                { 'data-relative-offset': { x: relativeX, y: relativeY }, 
-                    'data-offset': {x: data.x, y: data.y}
-                },
-            );
+            updateComponentProps({
+                component,
+                data: propsData,
+                cellId,
+                cellsCache,
+                setRender,
+                rerender: false
+            });
         }
     }
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
@@ -222,3 +196,41 @@ export default function ({ render, setRender, height, desserealize }) {
         </div>
     );
 }
+
+
+/**
+ *  // добавить/изменить пропс (применится везде/сохранится)
+    const editRenderComponentProps = (component: ContentFromCell, data: Record<string, any>, rerender?:boolean) => {
+        const cellId = curCell.get()?.i;
+        const curCache = cellsCache.get({ noproxy: true });
+        const clone = React.cloneElement(component, data);
+        const id = clone.props['data-id'];
+
+        if (curCache[cellId]) {
+            const findIndex = curCache[cellId].findIndex(e => e.id === id);
+            if (findIndex !== -1) {
+                cellsCache.set((old) => {
+                    Object.keys(data).map((dataKey) => {
+                        const props = old[cellId][findIndex].props;
+                        if (props) props[dataKey] = data[dataKey];
+                    });
+
+                    return old;
+                });
+            }
+        }
+        // перерендер
+        if(rerender) setRender((layers) => {
+            const newLayers = layers.map((layer) => {
+                if (Array.isArray(layer.content)) {
+                    const findindex = layer.content.findIndex(c => c.props['data-id'] === id);
+                    if (findindex !== -1) layer.content[findindex] = clone;
+                }
+
+                return layer;
+            });
+
+            return [...newLayers];
+        });
+    }
+ */

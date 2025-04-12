@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, useTheme, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup } from "@mui/material";
-import { ContentFromCell, LayoutCustom } from './type';
+import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { listAllComponents, listConfig } from './config/render';
@@ -10,7 +10,7 @@ import SelectButton from "../components/popup/select.button";
 
 type Props = {
     render: LayoutCustom []
-    useEditProps: (component: ContentFromCell, data: Record<string, any>)=> void
+    useEditProps: (component: Component, data: Record<string, any>)=> void
 }
 export type ContentData = {
     id: number 
@@ -34,7 +34,6 @@ export const ToolBarInfo = ({ render, useEditProps }: Props) => {
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
-    //const allRefs = useHookstate(infoState.contentAllRefs);   // все ссылки компонентов
     const container = useHookstate(infoState.container);
 
 

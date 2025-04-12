@@ -1,6 +1,6 @@
 import React from "react";
 import html2canvas from 'html2canvas';
-import { LayoutCustom, ComponentSerrialize, ContentFromCell } from './type';
+import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
@@ -10,6 +10,7 @@ import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
+import { updateComponentProps } from './utils/editor';
 import "../style/grid.css";
 import "../style/edit.css";
 
@@ -28,7 +29,7 @@ export default function ({ height, setHeight }) {
         const canvas = await html2canvas(elem, { useCORS: true, scrollY: -window.scrollY });
         return canvas.toDataURL();
     }
-    const dumpRender =(name: string)=> {
+    const dumpRender = (name: string) => {
         const gridContainer: HTMLDivElement = document.querySelector('.GRID-EDITOR');
         const children = Array.from(gridContainer.children);
         const cache = cellsCache.get({ noproxy: true });
@@ -85,41 +86,14 @@ export default function ({ height, setHeight }) {
             });
         });
     }
-    // добавить/изменить пропс (применится везде/сохранится)
-    const editRenderComponentProps =(component: ContentFromCell, data: Record<string, any>)=> {
-        const cellId = curCell.get()?.i;
-        const curCache = cellsCache.get({ noproxy: true });
-        const clone = React.cloneElement(component, data);
-        const id = clone.props['data-id'];
-
-        if (curCache[cellId]) {
-            const findIndex = curCache[cellId].findIndex(e => e.id === id);
-            if(findIndex !== -1) {
-                cellsCache.set((old)=> {
-                    Object.keys(data).map((dataKey)=> {
-                        const props = old[cellId][findIndex].props;
-                        if(props) props[dataKey] = data[dataKey];
-                    });
-                    
-                    return old;
-                });
-            }
-        }
-        // перерендер
-        setRender((layers)=> {
-            const newLayers = layers.map((layer)=> {
-                if(Array.isArray(layer.content)) {
-                    const findindex = layer.content.findIndex(c => c.props['data-id'] === id);
-                    if(findindex !== -1) layer.content[findindex] = clone;
-                }
-
-                return layer;
-            });
-
-            return [...newLayers];
-        });
-    }
-    const serrialize = (component: React.ReactElement, cellId: string): ComponentSerrialize => {
+    const editRenderComponentProps = (component: Component, data: Record<string, any>) => updateComponentProps({
+        component,
+        data,
+        cellId: curCell.get()?.i,
+        cellsCache,
+        setRender,
+    });
+    const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
         const props = { ...component.props };
     
         const id = Date.now();
@@ -156,7 +130,7 @@ export default function ({ height, setHeight }) {
             />
         );
     }
-    const addComponentToCell = (cellId: string, component: React.ReactElement) => {
+    const addComponentToCell = (cellId: string, component: Component) => {
         setRender((prev) => {
             const updatedRender = [...prev];
             const cellIndex = updatedRender.findIndex(item => item.i === cellId);
@@ -220,6 +194,42 @@ export default function ({ height, setHeight }) {
 
 
 
+/**
+ *  // добавить/изменить пропс (применится везде/сохранится)
+    const editRenderComponentProps =(component: ContentFromCell, data: Record<string, any>)=> {
+        const cellId = curCell.get()?.i;
+        const curCache = cellsCache.get({ noproxy: true });
+        const clone = React.cloneElement(component, data);
+        const id = clone.props['data-id'];
+
+        if (curCache[cellId]) {
+            const findIndex = curCache[cellId].findIndex(e => e.id === id);
+            if(findIndex !== -1) {
+                cellsCache.set((old)=> {
+                    Object.keys(data).map((dataKey)=> {
+                        const props = old[cellId][findIndex].props;
+                        if(props) props[dataKey] = data[dataKey];
+                    });
+                    
+                    return old;
+                });
+            }
+        }
+        // перерендер
+        setRender((layers)=> {
+            const newLayers = layers.map((layer)=> {
+                if(Array.isArray(layer.content)) {
+                    const findindex = layer.content.findIndex(c => c.props['data-id'] === id);
+                    if(findindex !== -1) layer.content[findindex] = clone;
+                }
+
+                return layer;
+            });
+
+            return [...newLayers];
+        });
+    }
+ */
 /**
  *  const desserealize =(component: ComponentSerrialize)=> {
         const type = component.props["data-type"];
