@@ -7,7 +7,7 @@ import { ExpandMore, ExpandLess } from '@mui/icons-material';
 
 type AccordionItem = {
     /** label аккордеона */
-    header: React.ReactNode
+    title: React.ReactNode
     /** тело аккордеона */
     content: React.ReactNode
 }
@@ -63,7 +63,19 @@ const AccordionHeader = ({ header, isExpanded }) => {
 }
 
 
-export default function CustomAccordion({ items, activeIndexs, tabStyle }: AccordionProps) {
+/**
+ * Простой многосекционный аккордеон       
+ * @example
+ * <Accordion 
+ *  activeIndexs={[0]}    <- развернутой по дефолту будет первая вкладка
+ *  tabStyle={{marginBottom: '5px'}}
+ *  items={[
+ *      { title: "FAQ", content: <div>Content 1</div> },
+ *      { title: <Box>кастомный title</Box>, content: "Свяжитесь с нами" }
+ *  ]} 
+ * />
+ */
+export default function CustomAccordion({ items, activeIndexs, tabStyle }: AccordionProps): React.JSX.Element {
     const [activeIndex, setActiveIndex] = React.useState(activeIndexs ?? [0, 1]);
     
     const useActive =(index: number)=> {
@@ -85,7 +97,7 @@ export default function CustomAccordion({ items, activeIndexs, tabStyle }: Accor
                         key={index}
                         header={
                             <AccordionHeader
-                                header={elem.header}
+                                header={elem.title ?? 'title-'+index}
                                 isExpanded={useActive(index)}
                             />
                         }

@@ -1,17 +1,12 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import PasswordInput from '../../components/input/password';
-import { colors } from "../../components/button";
 
 
 const meta: Meta<typeof PasswordInput> = {
     title: 'Inputs',
     component: PasswordInput,
     argTypes: {
-        color: {
-            control: "select",
-            options: colors
-        },
         position: {
             control: "select",
             options: ['end', 'start']

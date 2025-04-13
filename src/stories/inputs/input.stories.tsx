@@ -1,7 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Text from '../../components/input/text';
-import { colors } from "../../components/button";
 
 
 const types = [
@@ -16,10 +15,6 @@ const meta: Meta<typeof Text> = {
     title: 'Inputs',
     component: Text,
     argTypes: {
-        color: {
-            control: "select",
-            options: colors
-        },
         type: {
             control: "select",
             options: types

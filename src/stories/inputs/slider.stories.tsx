@@ -2,7 +2,6 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Slider from '../../components/input/slider';
 import VolumeUp from '@mui/icons-material/VolumeUp';
-import { colors } from "../../components/button";
 
 
 
@@ -10,10 +9,6 @@ const meta: Meta<typeof Slider> = {
     title: 'Inputs',
     component: Slider,
     argTypes: {
-        color: {
-            control: "select",
-            options: colors
-        }
     },
 }
 export default meta;

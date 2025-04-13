@@ -1,12 +1,12 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import ColorPicker, { ColorPickerCompact } from '../../components/input/color';
+import FileLoader from '../../components/input/file-loader';
 
 
 
-const meta: Meta<typeof ColorPicker> = {
+const meta: Meta<typeof FileLoader> = {
     title: 'Inputs',
-    component: ColorPicker,
+    component: FileLoader,
     argTypes: {
         position: {
             control: "select",
@@ -29,25 +29,18 @@ const Templates =(args)=> {
   
     return(
         <div style={{margin:'20%'}}>
-            <ColorPicker
-                { ...args }
-            />
-            <ColorPickerCompact
-                { ...args }
+            <FileLoader
+
             />
         </div>
     );
 }
 
 
-type Story = StoryObj<typeof ColorPicker>;
-export const ColorPick: Story = {
+type Story = StoryObj<typeof FileLoader>;
+export const FileLoad: Story = {
     args: {
-        placeholder: 'Color',
-        disabled: false,
-        error: false,
-        showCopy: true,
-        variant: 'popup'
+        
     },
     render: (props)=> <Templates {...props} />
 }

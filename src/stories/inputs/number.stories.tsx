@@ -1,7 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Input from '../../components/input/number';
-import { colors } from "../../components/button";
 
 
 
@@ -10,10 +9,6 @@ const meta: Meta<typeof Input> = {
     title: 'Inputs',
     component: Input,
     argTypes: {
-        color: {
-            control: "select",
-            options: colors
-        },
         borderStyle: {
             control: "select",
             options: ['dashed', 'solid', 'dotted']

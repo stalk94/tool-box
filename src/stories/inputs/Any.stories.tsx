@@ -1,10 +1,10 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, 
-    LabelSelect, LabelToogler, LabelDateOrTime } from '../../components/input/labels.inputs';
+    LabelSelect, LabelToogler, LabelDateOrTime, LabelFileLoader } from '../../components/input/labels.inputs';
 import { CheckBoxInput, SwitchInput } from '../../components/input/input.any';
 import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
-
+import FileLoader from '../../components/input/file-loader';
 
 
 const meta: Meta<typeof LabelLogin> = {
@@ -99,12 +99,6 @@ const Templates =(args)=> {
                 left={<Person />}
                 label={'Login:'}
             />
-             <LabelSelect
-                onChange={console.log}
-                {...args}
-                items={[{id:'1', label:'test'},{id:'2', label:'test2'},{id:'3', label:'test3'}]}
-                placeholder='Выбрать'
-            />
             <LabelPassword
                 onChange={console.log}
                 useVerify={validatePass}
@@ -122,6 +116,17 @@ const Templates =(args)=> {
                 useVerify={validatePhone}
                 onChange={console.log}
                 {...args}
+            />
+            
+            <LabelFileLoader
+                onUpload={console.log}
+                {...args}
+            />
+            <LabelSelect
+                onChange={console.log}
+                {...args}
+                items={[{id:'1', label:'test'},{id:'2', label:'test2'},{id:'3', label:'test3'}]}
+                placeholder='Выбрать'
             />
             <LabelColor
                 onChange={console.log}

@@ -2,7 +2,6 @@ import React from 'react';
 import { IconButton } from '@mui/material';
 import type { Meta, StoryObj } from '@storybook/react';
 import Selects from '../../components/input/select';
-import { colors } from "../../components/button";
 import { VisibilityOff, Visibility } from '@mui/icons-material';
 
 
@@ -12,10 +11,6 @@ const meta: Meta<typeof Selects> = {
     title: 'Inputs',
     component: Selects,
     argTypes: {
-        color: {
-            control: "select",
-            options: colors
-        },
         position: {
             control: "select",
             options: ['end', 'start']

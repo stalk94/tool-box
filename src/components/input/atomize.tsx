@@ -1,6 +1,6 @@
 import React from 'react';
 import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps, Box } from '@mui/material';
-import { alpha, lighten, darken, styled } from '@mui/system';
+import { alpha, lighten, darken, styled, fontStyle } from '@mui/system';
 import { debounce } from 'lodash';
 
 type PropsInputBaseCustom = InputBaseProps & {
@@ -106,7 +106,7 @@ export function InputPaper({ children, elevation, ...props }) {
             sx={{
                 //backgroundColor: '#00000000',
                 background: useBackgroundColor(),
-                minHeight: '40px',
+                minHeight: '42px',
                 minWidth: '160px',
                 borderRadius: 1,
                 ...props.sx,
@@ -134,6 +134,15 @@ export function InputPaper({ children, elevation, ...props }) {
 export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputBaseCustom) {
     const theme = useTheme();
     const [v, setV] = React.useState(value);
+
+    const placeholderStyle = {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontWeight: 400,
+        fontSize: '0.9rem',         // ≈ 14px
+        //fontStyle: 'italic',
+        lineHeight: 1.43,
+        letterSpacing: '0.01071em'
+    }
     
     const filtreProps =()=> {
         delete props.borderStyle;
@@ -149,6 +158,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
         setV(value);
     }, [value]);
     
+    
     return (
         <InputBase
             { ...filtreProps() }
@@ -157,19 +167,21 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
             value={v}
             disabled={props.disabled}
             sx={{
+                width: '100%',
                 minWidth: '60px',
-                minHeight: '42px',
+                minHeight: '40px',
+                background: 'transparent',
+                padding: 0,
                 flex: 1,
-                '& input::placeholder': {
-                    color: theme.palette.input.placeholder,
-                    opacity: 1,
-                    fontStyle: theme.mixins.input.fontStyle,
+                '& input': {
+                    position: 'relative',
+                    zIndex: 2,
+                    background: 'transparent',
+                    minHeight: 28,
+                    padding: 0,
+                    //border: '1px solid red',
                 },
-                '& textarea::placeholder': {
-                    color: theme.palette.input.placeholder,
-                    opacity: 1,
-                    fontStyle: theme.mixins.input.fontStyle,
-                },
+                '& input::placeholder, & textarea::placeholder': placeholderStyle,
                 "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
                     display: "none",
                 },

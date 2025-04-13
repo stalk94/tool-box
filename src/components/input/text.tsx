@@ -3,7 +3,7 @@ import { IconButton, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { InputBaseProps } from '@mui/material/InputBase';
 import { InputPaper, InputBaseCustom  } from './atomize';
-
+import { safeOmitInputProps } from '../utils/omit';
 
 
 export type BaseInputProps = {
@@ -23,7 +23,7 @@ export type BaseInputProps = {
 
 
 
-// ?
+
 export default function TextInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number | string>(value);
@@ -42,12 +42,22 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
         }
     }
     const filteredProps =()=> {
-        const clone = structuredClone(props);
+        const clone = safeOmitInputProps(props, [
+            'borderStyle',
+            'success',
+            'toolVisible',
+            'labelSx',
+            'position',
+            'diapasone',
+            'markStep',
+            'mark',
+        ]);
+
         if(clone.type !== 'password') delete clone.type;
         return clone;
     }
     React.useEffect(()=> {
-        if(value) setInputValue(value);
+        setInputValue(value ?? '');
     }, [value]);
 
    
@@ -62,7 +72,6 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
                 { left }
             </IconButton>
            
-
             <InputBaseCustom
                 value={inputValue}
                 placeholder={placeholder}

@@ -28,7 +28,7 @@ type CustomSelectProps = PropsSelect & SelectProps;
 
 
 
-function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) {
+export default function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) {
     const theme = useTheme();
     const [width, setWidth] = React.useState('200px');
     const [isOpen, setIsOpen] = React.useState(false);
@@ -83,6 +83,7 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
 
 
     return(
+        <InputPaper {...props}>
         <div tabIndex={0} style={base} ref={selectRef}>
             <div
                 onClick={handleToggleDropdown}
@@ -147,22 +148,6 @@ function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) 
                 )}
             </Menu>    
         </div>
-    );
-}
-
-
-
-export default function({ value, onChange, items, placeholder, variant, ...props }: BaseSelectProps) {
-    return(
-        <InputPaper {...props}>
-            <Custom 
-                value={value}
-                disabled={props.disabled}
-                label={placeholder} 
-                items={items ?? []}
-                onChange={onChange}
-                onlyId={props.onlyId}
-            />
         </InputPaper>
     );
 }

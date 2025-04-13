@@ -209,7 +209,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             sx: { fontSize: 14 }
         }
     }
-    else if (typeProps === 'src' || 'alt' || 'sizes') {
+    else if (['src', 'alt', 'sizes'].includes(typeProps)) {
         return {
             type: 'text',
             id: typeProps,
@@ -308,7 +308,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             }))
         }
     }
-    else if (typeProps === 'icon' || 'endIcon' || 'startIcon') {
+    else if (['icon', 'endIcon', 'startIcon'].includes(typeProps)) {
         const r = Object.keys(iconsList).map((key) => {
             const Render = iconsList[key];
 

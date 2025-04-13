@@ -2,20 +2,17 @@ import React from 'react';
 import { useTheme, IconButton, FormHelperText } from '@mui/material';
 import { InputPaper, InputBaseCustom  } from './atomize';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
+import { InputBaseProps } from '@mui/material/InputBase';
 
 
-export type VerifyHook = {
-    useVerify: (value: string)=> {
-        result: boolean,
-        helperText?: string 
-    }
+export type PasswordInputProps = InputBaseProps & {
+    value: string;
+    onChange: (value: string) => void;
+    useVerify?: (val: string) => { result: boolean; helperText?: string };
+    helperText?: string;
+    disabled?: boolean;
+    placeholder?: string;
 }
-export type PasswordInputProps = {
-    value: string
-    onVerify?: (value: string)=> void
-    helperText?: string
-    onChange: (value: string)=> void
-} & VerifyHook
 
 
 // todo:  убрать лишние рендеры
@@ -50,12 +47,20 @@ export default function PasswordInput({ value, helperText, useVerify, ...props }
     return(
         <React.Fragment>
             <InputPaper {...props}>
-
+                <IconButton
+                    disabled={props.disabled}
+                    style={{
+                        color: theme.palette.input.placeholder,
+                    }}
+                >
+                    { props.left }
+                </IconButton>
+                
                 <InputBaseCustom
                     sx={{
                         minWidth: '40px',
                         flex: 1, 
-                        ml: 3
+                        ml: 1
                     }}
                     disabled={props.disabled}
                     placeholder={props.placeholder}

@@ -1,10 +1,10 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import SelectButton from '../../components/popup/select.button';
-import {colors, variants} from '../../components/button';
 import { Home, Settings, Info } from "@mui/icons-material";
 
-
+const colors = ["secondary", "inherit", "primary", "success", "error", "info", "warning"];
+const variants = ["text" , "contained" , "outlined"];
 
 const meta: Meta<typeof SelectButton> = {
     title: 'Buttons',

@@ -1,17 +1,13 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { EmailInput } from '../../components/input/input.any';
-import { colors } from "../../components/button";
+
 
 
 const meta: Meta<typeof EmailInput> = {
     title: 'Inputs',
     component: EmailInput,
     argTypes: {
-        color: {
-            control: "select",
-            options: colors
-        },
         position: {
             control: "select",
             options: ['end', 'start']

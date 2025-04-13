@@ -4,21 +4,21 @@ import {
     PhoneInputProps as PhoneInputPropsBase, 
     TooglerInputProps as TooglerInputPropsBase,
     CheckBoxInputProps as CheckBoxInputPropsBase,
-    ColorPickerProps as ColorPickerPropsBase,
     SwitchInputProps as  SwitchInputPropBase
 } from './input.any';
-import { NumberinputProps as NumberinputPropsBase } from './number';
+import { NumberInputProps as NumberInputPropsBase } from './number';
 import { CustomSliderProps } from './slider';
 import { loginInputProps as loginInputPropsBase } from './login';
 import { PasswordInputProps as  PasswordInputPropsBase } from './password';
-import { DataPickerCustomProps } from './date';
+import { DateTimeInputProps } from './date';
 import { BaseSelectProps } from './select';
 import { LabelTextProps } from './labels.inputs';  //* labels type
-
+import { ColorPickerProps as ColorPickerPropsBase } from './color';
+import { FileLoaderProps as FileLoaderPropsDefault } from './file-loader';
 
 
 export type TextInputProps =  LabelTextProps & BaseInputProps;
-export type NumberInputProps = LabelTextProps & NumberinputPropsBase;
+export type NumberInputProps = LabelTextProps & NumberInputPropsBase;
 /** ползунок */
 export type SliderInputProps = LabelTextProps & CustomSliderProps;
 /** вкл/выкл */
@@ -33,8 +33,9 @@ export type ToogleeInputProps = LabelTextProps & TooglerInputPropsBase;
 /** ✔ ☐ */
 export type CheckBoxInputProps = LabelTextProps & CheckBoxInputPropsBase;
 /** дата или время */
-export type DataPickerInputProps = LabelTextProps & DataPickerCustomProps;
+export type DataPickerInputProps = LabelTextProps & DateTimeInputProps;
 export type ColorPickerProps = LabelTextProps & ColorPickerPropsBase;
+export type FileLoaderProps = LabelTextProps & FileLoaderPropsDefault;
 
 
 // особенные
@@ -61,4 +62,5 @@ export {
     LabelToogler as ToggleInput,
     /** Выпадающий список */
     LabelSelect as SelectInput,
+    LabelFileLoader as FileInput
 } from './labels.inputs';

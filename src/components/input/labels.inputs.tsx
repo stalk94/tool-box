@@ -1,21 +1,33 @@
 import React from 'react';
 import Text, { BaseInputProps } from './text';
-import Number, { NumberinputProps } from './number';
+import Number, { NumberInputProps } from './number';
 import Slider, { CustomSliderProps } from './slider';
 import Login, { loginInputProps } from './login';
 import Password, { PasswordInputProps } from './password';
 import { EmailInputProps, PhoneInputProps, TooglerInputProps } from './input.any';
-import { EmailInput, PhoneInput, TooglerInput, ColorPicker } from './input.any'
-import DatePickerCustom, { DataPickerCustomProps } from './date';
+import { EmailInput, PhoneInput, TooglerInput } from './input.any'
+import ColorPicker from './color';
+import DatePickerCustom, { DateTimeInputProps } from './date';
 import Select, { BaseSelectProps } from './select';
 import { Box } from '@mui/material';
 import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';
+import FileLoader, { FileLoaderProps } from './file-loader';
 import '../../style/fonts.css';
 
 
-type InputTupe = 'text' | 'password' | 'number' | 'color' | 'phone' | 'email' | 'date' 
-| 'time' | 'login' | 'select' | 'slider'
+type InputTupe = 'text' 
+    | 'password' 
+    | 'number' 
+    | 'color' 
+    | 'phone' 
+    | 'email' 
+    | 'date' 
+    | 'time' 
+    | 'login' 
+    | 'select' 
+    | 'slider'
+    | 'file';
     
 type InputCustomLabelProps = {
     label: React.ReactNode
@@ -33,7 +45,28 @@ export type LabelTextProps = {
 }
 
 
-
+function wrapWithLabel<P>(
+    typeInput: InputTupe,
+    label: React.ReactNode,
+    position: 'left' | 'right' | 'column' | undefined,
+    Component: React.ReactElement,
+    props: { id?: string | number; labelSx?: any }
+) {
+    if (label && typeof label === 'string' && label.length) {
+        return (
+            <LabelInput
+                label={label}
+                position={position}
+                id={props.id}
+                sx={props.labelSx}
+                typeInput={typeInput}
+            >
+                { Component }
+            </LabelInput>
+        );
+    }
+    return Component;
+}
 export function LabelInput({ label, position, typeInput, children, sx, id }: InputCustomLabelProps) {
     const idRef = React.useRef(`input-${typeInput}-${id ?? Date.now()}`).current;       // можно отслеживать
     
@@ -88,231 +121,51 @@ export function LabelInput({ label, position, typeInput, children, sx, id }: Inp
 }
 
 
-export function LabelText({ label, position, ...props }: LabelTextProps & BaseInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='text'
-        >
-            <Text
-                { ...props }
-                type='text'
-            />
-        </LabelInput>
-    );
-    else return (
-        <Text
-            { ...props }
-            type='text'
-        />
-    );
+export function LabelText(props: LabelTextProps & BaseInputProps) {
+    return wrapWithLabel('text', props.label, props.position, <Text {...props} type="text" />, props);
 }
-export function LabelNumber({ label, position, ...props }: LabelTextProps & NumberinputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='number'
-        >
-            <Number
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return(
-        <Number
-            { ...props }
-        />
-    );
-}
-export function LabelLogin({ label, position, ...props }: LabelTextProps & loginInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='login'
-        >
-            <Login
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return (
-        <Login
-            { ...props }
-        />
-    );
-}
-export function LabelPassword({ label, position, ...props }: LabelTextProps & PasswordInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='password'
-        >
-            <Password
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return (
-        <Password
-            { ...props }
-        />
-    );
-}
-export function LabelColor({ label, position, ...props }: LabelTextProps & BaseInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='color'
-        >
-            <ColorPicker
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return (
-        <ColorPicker
-            { ...props }
-        />
-    );
-}
-export function LabelEmail({ label, position, ...props }: LabelTextProps & EmailInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='email'
-        >
-            <EmailInput
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return(
-        <EmailInput
-            { ...props }
-        />
-    );
-}
-export function LabelPhone({ label, position, ...props }: LabelTextProps & PhoneInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='phone'
-        >
-            <PhoneInput
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return(
-        <PhoneInput
-            { ...props }
-        />
-    );
-}
-export function LabelDateOrTime({ label, position, ...props }: LabelTextProps & DataPickerCustomProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput={props.isTimePicker ? 'time' : 'date'}
-        >
-            <DatePickerCustom
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return (
-        <DatePickerCustom
-            { ...props }
-        />
-    );
-}
-// ! не показывает выбранный вложенный элемент
-export function LabelSelect({ label, position, ...props }: LabelTextProps & BaseSelectProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='select'
-        >
-            <Select
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return(
-        <Select
-            { ...props }
-        />
-    );
-}
-export function LabelSlider({ label, position, ...props }: LabelTextProps & CustomSliderProps) {
-    return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='slider'
-        >
-          
-            <Slider
-                valueLabelDisplay="auto" 
-                sx={{
-                    ml: position==='column' ? 1 : 0 
-                }}
 
-                { ...props }
-            />
-            
-        </LabelInput>
-    );
+export function LabelNumber(props: LabelTextProps & NumberInputProps) {
+    return wrapWithLabel('number', props.label, props.position, <Number {...props} />, props);
 }
-/** Это группа переключаемых кнопок */
-export function LabelToogler({ label, position, ...props }: LabelTextProps & TooglerInputProps) {
-    if(label && typeof label === 'string' && label.length) return(
-        <LabelInput
-            label={label}
-            position={position}
-            id={props.id}
-            sx={props.labelSx}
-            typeInput='toogle'
-        >
-            <TooglerInput
-                label={label}
-                { ...props }
-            />
-        </LabelInput>
-    );
-    else return(
-        <TooglerInput
-            label={label}
-            { ...props }
-        />
-    );
+
+export function LabelLogin(props: LabelTextProps & loginInputProps) {
+    return wrapWithLabel('login', props.label, props.position, <Login {...props} />, props);
+}
+
+export function LabelPassword(props: LabelTextProps & PasswordInputProps) {
+    return wrapWithLabel('password', props.label, props.position, <Password {...props} />, props);
+}
+
+export function LabelColor(props: LabelTextProps & BaseInputProps) {
+    return wrapWithLabel('color', props.label, props.position, <ColorPicker {...props} />, props);
+}
+
+export function LabelEmail(props: LabelTextProps & EmailInputProps) {
+    return wrapWithLabel('email', props.label, props.position, <EmailInput {...props} />, props);
+}
+
+export function LabelPhone(props: LabelTextProps & PhoneInputProps) {
+    return wrapWithLabel('phone', props.label, props.position, <PhoneInput {...props} />, props);
+}
+
+export function LabelDateOrTime(props: LabelTextProps & DateTimeInputProps) {
+    const type = props.type === 'time' ? 'time' : 'date';
+    return wrapWithLabel(type, props.label, props.position, <DatePickerCustom {...props} />, props);
+}
+
+export function LabelSelect(props: LabelTextProps & BaseSelectProps) {
+    return wrapWithLabel('select', props.label, props.position, <Select {...props} />, props);
+}
+
+export function LabelSlider(props: LabelTextProps & CustomSliderProps) {
+    return wrapWithLabel('slider', props.label, props.position, <Slider {...props} />, props);
+}
+
+export function LabelToogler(props: LabelTextProps & TooglerInputProps) {
+    return wrapWithLabel('toogle', props.label, props.position, <TooglerInput {...props} />, props);
+}
+
+export function LabelFileLoader(props: LabelTextProps & FileLoaderProps) {
+    return wrapWithLabel('file', props.label, props.position, <FileLoader {...props} />, props);
 }

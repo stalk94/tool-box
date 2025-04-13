@@ -1,148 +1,88 @@
 import React from 'react';
 import { InputBase, useTheme, IconButton, SxProps } from '@mui/material';
-import ButtonGroup from '@mui/material/ButtonGroup';
+import { InputBaseProps } from '@mui/material/InputBase';
 import { Add, Remove } from '@mui/icons-material';
-import { InputPaper, InputBaseCustom  } from './atomize';
+import { InputPaper, InputBaseCustom,  } from './atomize';
 
 
-export type NumberinputProps = {
+export type NumberInputProps = {
     value?: number
     min?: number
     max?: number
     step?: number
     onChange?: (value: number)=> void
-    sx: SxProps
-}
+} & InputBaseProps
 
 
-export default function NumberInput({ value, min=0, max=100, step=1, onChange, ...props }: NumberinputProps) {
+
+export default function NumberInput({ value, min=-10, max=100, step=1, onChange, ...props }: NumberInputProps) {
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number>(value ?? 0);
+  
+    const updateValue = (val: number) => {
+        const clamped = Math.max(min, Math.min(val, max));
+        setInputValue(clamped);
+        onChange?.(clamped);
+    }
+    const handleInputChange = (raw: string) => {
+        if (raw.trim() === '') {
+            setInputValue(0); // можно отобразить пустое поле
+            return;
+        }
 
+        // Только цифры, поддержка минуса
+        const cleaned = raw.replace(/[^\d-]/g, '');
+        const parsed = parseInt(cleaned, 10);
 
-    const handleIncrease =()=> {
-        if (inputValue < max) {
-            const newValue = inputValue + step;
-            setInputValue(newValue);
-            onChange && onChange(newValue);
+        if (!isNaN(parsed)) {
+            updateValue(parsed);
         }
     }
-    const handleDecrease =()=> {
-        if (inputValue > min) {
-            const newValue = inputValue - step;
-            setInputValue(newValue);
-            onChange && onChange(newValue);
-        }
-    }
-    //* уже дебаунс на нижнем уровне решает вопросы с рендерами
-    const handleChange = (value) => {
-        const newValue = parseInt(value, 10);
-        
-        if (!isNaN(newValue)) {
-            if(newValue < max && newValue > min) {
-                setInputValue(newValue);
-                onChange && onChange(newValue);
-            }
-        }
-        else {
-            setInputValue(0);
-            onChange && onChange(0);
-        }
-    }
-    const renderleft =()=> {
-        return(
-            <ButtonGroup
-                orientation="horizontal"
-                sx={{
-                    p: 0,
-                    display: {
-                        xs: 'block',
-                        md: 'none'
-                    }
-                }}
-            >
-                <IconButton
-                    onClick={handleDecrease}
-                    disabled={inputValue <= min}
-                >
-                    <Remove
-                        sx={{
-                            color: theme.palette.text.secondary,
-                            opacity: inputValue <= min ? '0.2' : '0.6',
-                        }}
-                    />
-                </IconButton>
-            </ButtonGroup>
-        );
-    }
-    const renderRight =()=> {
-        return(
-            <ButtonGroup
-                orientation="horizontal"
-            >
-                <IconButton
-                    onClick={handleDecrease}
-                    disabled={inputValue <= min}
+    const decrease = () => updateValue(inputValue - step);
+    const increase = () => updateValue(inputValue + step);
+
+    React.useEffect(() => {
+        setInputValue(value);
+    }, [value]);
+
+    const isMin = inputValue <= min;
+    const isMax = inputValue >= max;
+  
+
+    return (
+        <InputPaper {...props} disabled={props.disabled}>
+            <IconButton onClick={decrease} disabled={isMin || props.disabled}>
+                <Remove
                     sx={{
-                        p: 0,
-                        display: {
-                            xs: 'none',
-                            md: 'block'
-                        }
+                        color: theme.palette.text.secondary,
+                        opacity: isMin ? 0.2 : 0.6,
                     }}
-                >
-                    <Remove
-                        sx={{
-                            color: theme.palette.text.secondary,
-                            opacity: inputValue <= min ? '0.2' : '0.6',
-                            p: 0,
-                            mt: 1, 
-                            //fontSize: '20px'
-                        }}
-                    />
-                </IconButton>
-                <IconButton
-                    onClick={handleIncrease}
-                    disabled={inputValue >= max}
-                >
-                    <Add
-                        style={{
-                            color: theme.palette.text.secondary,
-                            opacity: inputValue >= max ? '0.2' : '0.6',
-                        }}
-                    />
-                </IconButton>
-            </ButtonGroup>
-        );
-    }
-
-
-    return(
-        <InputPaper {...props}>
-
-            { renderleft() }
+                />
+            </IconButton>
 
             <InputBaseCustom
                 value={inputValue}
-                type="text" 
-                onChange={handleChange}
-                sx={{ 
-                    flex: 1, 
+                type="text"
+                onChange={handleInputChange}
+                disabled={props.disabled}
+                sx={{
+                    flex: 1,
                     '& input': {
-                        justifyItems: {
-                            xs: 'center',
-                            md: 'left'
-                        },
-                        pl: {
-                            xs: 0,
-                            md: 3
-                        }
-                    },                
+                        textAlign: 'center',
+                        paddingLeft: 0,
+                        paddingRight: 0,
+                    },
                 }}
             />
 
-            { renderRight() }
-
+            <IconButton onClick={increase} disabled={isMax || props.disabled}>
+                <Add
+                    sx={{
+                        color: theme.palette.text.secondary,
+                        opacity: isMax ? 0.2 : 0.6,
+                    }}
+                />
+            </IconButton>
         </InputPaper>
     );
-}
+  }

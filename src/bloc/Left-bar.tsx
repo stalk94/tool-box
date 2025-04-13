@@ -153,7 +153,7 @@ export default function ({ addComponentToLayout, useDump, useEditProps, external
         : useComponent(select.content, changeEditor, curSubpanel, setSubPanel);
 
 
-        
+    
     return (
         <LeftSideBarAndTool
             sx={{ height: '100%' }}

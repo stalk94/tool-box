@@ -1,20 +1,18 @@
 import React from 'react';
 import { useTheme, IconButton, FormHelperText } from '@mui/material';
 import { InputPaper, InputBaseCustom  } from './atomize';
+import { InputBaseProps } from '@mui/material/InputBase';
 
 
-export type VerifyHook = {
+export type loginInputProps = InputBaseProps & {
+    value: string
     useVerify: (value: string)=> {
         result: boolean,
         helperText?: string 
     }
-}
-export type loginInputProps = {
-    value: string
-    onVerify?: (value: string)=> void
     helperText?: string
     onChange: (value: string)=> void
-} & VerifyHook
+}
 
 
 

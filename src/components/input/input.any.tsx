@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { IconButton, Divider, FormHelperText, Dialog, InputBaseProps, Box, FormControlLabel, styled, alpha } from '@mui/material';
+import { IconButton, Divider, FormHelperText, InputBaseProps, Box, FormControlLabel, styled, alpha } from '@mui/material';
 import { Phone, FileCopy, AlternateEmail } from '@mui/icons-material';
 import ToggleButton, { ToggleButtonProps, ToggleButtonOwnProps } from '@mui/material/ToggleButton';
 import ToggleButtonGroup, { ToggleButtonGroupProps } from '@mui/material/ToggleButtonGroup';
 import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
-import { ChromePicker } from 'react-color';
 import { useTheme } from '@mui/material/styles';
 import Switch, { SwitchProps } from '@mui/material/Switch';
 import { InputPaper, InputBaseCustom, Label } from './atomize';
-
+import { safeOmitInputProps } from '../utils/omit';
+export { default as ColorPicker } from './color';
 
 
 
@@ -50,12 +50,6 @@ export type TooglerInputProps = ToggleButtonGroupProps & {
 export type CheckBoxInputProps = CheckboxProps & {
     value?: boolean
     onChange?: (value: boolean)=> void
-}
-export type ColorPickerProps = InputBaseProps & {
-    value?: boolean
-    onChange?: (value: string)=> void
-    /** включить ли кнопку копирования данных ввода */
-    toolVisible?: boolean 
 }
 export type SwitchInputProps = SwitchProps & { 
     value?: boolean, 
@@ -102,6 +96,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
                     disabled={disabled}
                     style={{
                         color: theme.palette.input.placeholder,
+                        minHeight: 40,
                     }}
                 >
                     <AlternateEmail />
@@ -183,7 +178,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
                     fullWidth
                     placeholder={placeholder ?? "+79991234567"}
                     disabled={disabled}
-                    sx={{ pl: 1 }}
+                    sx={{ pl: 1, minHeight: 40,}}
                     type='text'
                 />
             </InputPaper>
@@ -197,190 +192,15 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
         </React.Fragment>
     );
 }
-// todo: чучуть доработать (modal)
-export function ColorPicker({ value, onChange, ...props }:  ColorPickerProps) {
-    const [open, setopen] = React.useState<boolean>(false);
-    const [inputValue, setInputValue] = React.useState<string>('rgba(255, 0, 0, 1)');
-    const theme = useTheme();
 
 
-    const useCopy =()=> {
-        navigator.clipboard.writeText(inputValue);
-    }
-    const useTransform =(val)=> {
-        return `rgba(${val.rgb.r}, ${val.rgb.g}, ${val.rgb.b}, ${val.rgb.a})`;
-    }
-    const useFiltre =(newValue)=> {
-        const strRgb = useTransform(newValue);
 
-        setInputValue(strRgb);
-        if(onChange) onChange(strRgb);
-    }
-    const useChange =(newValue)=> {
-        setInputValue(newValue);
-        if(onChange) onChange(newValue);
-    }
-    React.useEffect(()=> {
-        if(value) setInputValue(value);
-    }, [value]);
-
-
-    return(
-        <InputPaper {...props} >
-             <React.Fragment>
-                <div style={{
-                        marginTop: '2px',
-                        width: '30px',
-                        height: '30px',
-                        border: 'none',
-                        cursor: 'pointer',
-                        background: inputValue,
-                        borderRadius: '5px',
-                        marginLeft: '7px',
-                        marginRight: '11px'
-                    }}
-                    onClick={()=> setopen(true)}
-                />
-                {/* модалка с выбором цвета */}
-                <Dialog 
-                    open={open} 
-                    onClose={()=> {
-                        setopen(false);
-                        props.onClose && props.onClose()
-                    }} 
-                >
-                    <ChromePicker
-                        color={inputValue}
-                        onChange={(value)=> {
-                            useFiltre(value);
-                        }}
-                        disableAlpha={false}
-                    />
-                </Dialog>
-            </React.Fragment>
-
-            <InputBaseCustom 
-                { ...props }
-                placeholder={props.placeholder}
-                type='text'
-                value={inputValue}
-                onChange={useChange}
-            />
-
-            { props.toolVisible &&
-                <React.Fragment>
-                    <IconButton onClick={useCopy} disabled={props.disabled}>
-                        <FileCopy style={{
-                                color: theme.palette.text.secondary, 
-                                opacity: '0.6'
-                            }} 
-                        />
-                    </IconButton>
-                </React.Fragment>
-            }
-        </InputPaper>
-    )
-}
-export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
-    const theme = useTheme();
-    const [curvalue, setCur] = React.useState(value);
-    const Android12Switch = styled(Switch)(({ theme }) => ({
-        padding: 8,
-        '& .MuiSwitch-track': {
-          borderRadius: 22 / 2,
-          '&::before, &::after': {
-            content: '""',
-            position: 'absolute',
-            top: '50%',
-            transform: 'translateY(-50%)',
-            width: 16,
-            height: 16,
-          },
-          '&::before': {
-            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-                useColor('icon'),
-            )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
-            left: 12,
-          },
-          '&::after': {
-            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
-                
-            )}" d="M19,13H5V11H19V13Z" /></svg>')`,
-            right: 12,
-          },
-          backgroundColor: curvalue ? useColor('trackOn') : useColor('trackOff'),
-          border: `1px solid ${useColor('border')}`
-        },
-        '& .MuiSwitch-thumb': {
-            boxShadow: 'none',
-            width: 16,
-            height: 16,
-            margin: 2,
-            backgroundColor: useColor('thumb')
-        }
-    }));
-    
-    const useColor =(type: 'trackOn'|'trackOff'|'thumb'|'icon'|'border')=> {
-        const color = theme.palette.switch[type];
-
-        if((type!=='trackOff' && type!=='trackOn' && type!=='border') && props.disabled){
-            return alpha(color, 0.1);
-        } 
-        else return color;
-    }
-
-    return(
-        <Box>
-            <FormControlLabel
-                disabled={props.disabled}
-                control={
-                    <Android12Switch 
-                        id={props.id}
-                        checked={curvalue}
-                        color='default'
-                        onChange={(e, v)=> {
-                            onChange && onChange(v);
-                            setCur(v);
-                        }}
-                    />
-                }
-                label={props.label}
-                labelPlacement="end"
-                sx={{ 
-                    gap: 2, 
-                    margin: 0, 
-                    mt: 1,
-                    "& .MuiFormControlLabel-label": {
-                        color: alpha(theme.palette.text.secondary, 0.6),  // label color
-                        fontFamily: '"Roboto Condensed", Arial, sans-serif',
-                        fontSize: 16
-                    }
-                }}
-            />
-        </Box>
-    );
-}
 //! доработать темизацию (groop button)
 export function TooglerInput({ items, value, label, onChange, ...props }: TooglerInputProps) {
     const theme = useTheme();
     const [curentValue, setCurent] = React.useState<string[]>([]);
 
 
-    const filtre =()=> {
-        delete props.borderStyle;
-        delete props.success;
-        delete props.error;
-        delete props.labelSx;
-        return props;
-    }
-    const useColorBackground =()=> {
-        const colors = theme.palette.input;
-
-        if(props.disabled) return 
-    }
-    const useColorText =()=> {
-
-    }
     const handlerChange =(newValue)=> {
         if(Array.isArray(value) || props.multi) {
             setCurent(newValue);
@@ -405,12 +225,12 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
             value={curentValue}
             onChange={(e, v)=> handlerChange(v)}
             aria-label={label}
-            { ...filtre() }
+            { ...safeOmitInputProps(props, ['borderStyle', 'success', 'error', 'labelSx']) }
             sx={{
                 display: 'flex',
                 flexWrap: 'wrap',
                 width: '100%',
-                ...props.sx
+                ...props.sx,
             }}
         >
             { items.map((elem, index)=> 
@@ -419,6 +239,7 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
                     sx={{ 
                         flex: 1,
                         border: `1px solid ${theme.palette.input.border}`,
+                        height: 40,
                         "&.Mui-selected": {
                             //backgroundColor: "red", // Цвет фона выделенной кнопки
                             //color: "white", // Цвет текста выделенной кнопки
@@ -459,9 +280,9 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
             value="end"
             control={
                 <Checkbox 
-                    checked={curentValue}
+                    checked={value}     //!
                     onChange={(e, v)=> {
-                        setCurent(v);
+                        //setCurent(v);
                         onChange && onChange(v);
                     }}
                     inputProps={{ 'aria-label': props.name ?? 'checkbox' }}
@@ -490,4 +311,82 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
         />
     );
 }
+export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
+    const theme = useTheme();
+    //const [curvalue, setCur] = React.useState(value);
+    const Android12Switch = styled(Switch)(({ theme }) => ({
+        padding: 8,
+        '& .MuiSwitch-track': {
+          borderRadius: 22 / 2,
+          '&::before, &::after': {
+            content: '""',
+            position: 'absolute',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: 16,
+            height: 16,
+          },
+          '&::before': {
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+                useColor('icon'),
+            )}" d="M21,7L9,19L3.5,13.5L4.91,12.09L9,16.17L19.59,5.59L21,7Z"/></svg>')`,
+            left: 12,
+          },
+          '&::after': {
+            backgroundImage: `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 24 24"><path fill="${encodeURIComponent(
+                
+            )}" d="M19,13H5V11H19V13Z" /></svg>')`,
+            right: 12,
+          },
+          backgroundColor: value ? useColor('trackOn') : useColor('trackOff'),
+          border: `1px solid ${useColor('border')}`
+        },
+        '& .MuiSwitch-thumb': {
+            boxShadow: 'none',
+            width: 16,
+            height: 16,
+            margin: 2,
+            backgroundColor: useColor('thumb')
+        }
+    }));
+    
+    const useColor =(type: 'trackOn'|'trackOff'|'thumb'|'icon'|'border')=> {
+        const color = theme.palette.switch[type];
 
+        if((type!=='trackOff' && type!=='trackOn' && type!=='border') && props.disabled){
+            return alpha(color, 0.1);
+        } 
+        else return color;
+    }
+
+    return(
+        <Box>
+            <FormControlLabel
+                disabled={props.disabled}
+                control={
+                    <Android12Switch 
+                        id={props.id}
+                        checked={value}   //!
+                        color='default'
+                        onChange={(e, v)=> {
+                            onChange && onChange(v);
+                            //setCur(v);
+                        }}
+                    />
+                }
+                label={props.label}
+                labelPlacement="end"
+                sx={{ 
+                    gap: 2, 
+                    margin: 0, 
+                    mt: 1,
+                    "& .MuiFormControlLabel-label": {
+                        color: alpha(theme.palette.text.secondary, 0.6),  // label color
+                        fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                        fontSize: 16
+                    }
+                }}
+            />
+        </Box>
+    );
+}

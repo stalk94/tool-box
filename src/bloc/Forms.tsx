@@ -4,6 +4,7 @@ import { Form, Schema } from '../index';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
 import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './config/utill';
 import { motion } from 'framer-motion';
+import { sanitizeProps } from './utils/sanitize';
 import { debounce } from 'lodash';
 
 type PropsForm = {
@@ -71,14 +72,13 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
         const src = fabrickPropsScheme(typeContent, propsElem.src, 'src');
         const alt = fabrickPropsScheme(typeContent, propsElem.alt, 'alt');
         const sizes = fabrickPropsScheme(typeContent, propsElem.sizes ?? '100vw', 'sizes');
-
-        const schema: Schema[] = [
+    
+        schema.push(
             src as Schema<'text'>,
             alt as Schema<'text'>,
-            sizes as Schema<'text'>,
-        ];
-
-        // Для imgixParams можно сделать отдельную строку — пока просто json
+            sizes as Schema<'text'>
+        );
+    
         const imgixParams = {
             id: 'imgixParams',
             type: 'text',
@@ -88,10 +88,8 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
             labelSx: { fontSize: '14px' },
             sx: { fontSize: 12 },
         };
-
+    
         schema.push(imgixParams as Schema<'text'>);
-
-        return schema;
     }
     
     return schema;
@@ -140,10 +138,9 @@ export default function({ type, elemLink, onChange }: PropsForm) {
         setFuture(newFuture);
     }
     const useAddStory = (current) => {
-        // Only add to story if we have a current state and it's different from the last entry
         if (current && (story.length === 0 || JSON.stringify(current) !== JSON.stringify(story[story.length - 1]))) {
-            setStory(prev => [...prev, structuredClone(current)]);
-            setFuture([]);
+            setFuture(prev => [sanitizeProps(current), ...prev]);
+            setStory(prev => [...prev, sanitizeProps(current)]);
         }
     }
     const useMergeObject = (key: 'style'|'sx', newValue: any) => {
@@ -207,7 +204,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
             type,
         };
     
-        const copyProps = structuredClone(props);
+        const copyProps = sanitizeProps(props);
         setStory([copyProps]);
         setCurrent(copyProps);
         setFuture([]);

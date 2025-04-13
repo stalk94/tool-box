@@ -3,7 +3,6 @@ import { Box, Grid2, Slider, SliderProps, useTheme } from '@mui/material';
 import Input from '@mui/material/Input';
 
 
-
 export type CustomSliderProps = SliderProps & {
     value?: number|number[]
     onChange: (value: number|number[])=> void,
