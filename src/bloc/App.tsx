@@ -170,6 +170,10 @@ export default function ({ height, setHeight }) {
                 }}
                 useEditProps={editRenderComponentProps}
                 useDump={dumpRender}
+                externalPanelTrigger={(cb) => {
+                    // 💡 новый трюк
+                    window.triggerLeftPanel = cb;
+                }}
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                 <ToolBarInfo 

@@ -72,6 +72,9 @@ export type PropsTypes = 'color'
     | 'fullWidth'
     | 'type'
     | 'icon'
+    | 'src'
+    | 'alt'
+    | 'sizes'
     
 export type BoxSide = 'top' | 'right' | 'bottom' | 'left';
 

@@ -4,10 +4,10 @@ import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import { Component, DraggbleElementProps } from './type';
 import { throttle } from "lodash";
-import { utill } from "./config/utill";
 
 
-const DragableElement = React.memo(({ component, index, cellId, useStop }: DraggbleElementProps) => {
+// ! убираем пока второй draggable
+const DragableElement = React.memo(({ component, index, cellId, useStop, useDelete }: DraggbleElementProps) => {
     const refWrapperX = React.useRef<Draggable>(null);
     const refWrapperY = React.useRef<HTMLDivElement>(null);
     const info = useHookstate(infoState);           // данные по выделенным обьектам (!)
@@ -50,33 +50,42 @@ const DragableElement = React.memo(({ component, index, cellId, useStop }: Dragg
         [component, cellId, index]
     );
     const useSetClassRef = (id: number | string, className: string) => {
-        const ref = document.querySelector(`[data-id="${id}"]`);
-
-        setTimeout(() => {
-            if (ref) ref.classList.add('editor-' + className);
-        }, 500);
+        const el = document.querySelector(`[data-editor-id="${id}"]`);
+        if (el) el.classList.add(`editor-${className}`);
     }
-    const useRemoveClassRef = (id: number | string | 'all', className?: string) => {
-        if(id === 'all') Object.keys(cellsCache.get()).forEach((idCell)=> {
-            cellsCache.get()[idCell].forEach((content)=> {
-                const ref = document.querySelector(`[data-id="${content.id}"]`);
-
-                if (ref) ref.classList.forEach((className: string) => {
-                    if (className.includes('editor-')) ref.classList.remove(className);
+    const useRemoveClassRef = (id: number | string | 'all') => {
+        const removeClasses = (ref: Element) => {
+            ref.classList.forEach((className: string) => {
+                if (className.startsWith('editor-')) {
+                    ref.classList.remove(className);
+                }
+            });
+        };
+    
+        if (id === 'all') {
+            Object.keys(cellsCache.get()).forEach((idCell) => {
+                cellsCache.get()[idCell].forEach((content) => {
+                    const ref = document.querySelector(`[data-editor-id="${content.id}"]`);
+                    if (ref) removeClasses(ref);
                 });
             });
-        });
-        else {
-            const ref = document.querySelector(`[data-id="${id}"]`);
-            if (ref) ref.classList.forEach((className: string) => {
-                if (className.includes('editor-')) ref.classList.remove(className);
-            });
+        } else {
+            const ref = document.querySelector(`[data-editor-id="${id}"]`);
+            if (ref) removeClasses(ref);
         }
     }
-    React.useEffect(()=> {
-        console.log('rerender')
-        
-    }, []);
+    const handleHoverIn = () => {
+        const el = document.querySelector(`[data-editor-id="${component.props['data-id']}"]`);
+        if (el) el.classList.add('editor-hover');
+    }
+    const handleHoverOut = () => {
+        const el = document.querySelector(`[data-editor-id="${component.props['data-id']}"]`);
+        if (el) el.classList.remove('editor-hover');
+    }
+    const handleDoubleClick = () => {
+        info.select.content.set(component);
+        window.triggerLeftPanel('component');        
+    }
     
     
 
@@ -91,12 +100,12 @@ const DragableElement = React.memo(({ component, index, cellId, useStop }: Dragg
                 component._store.index = index;
                 info.select.content.set(component);
                 useRemoveClassRef('all');
-                useSetClassRef(component.props['data-id'], 'blink');
+                useSetClassRef(component.props['data-id'], 'selected');
             }}
             onStop={(e, data) => handlerStop(data, component, 'y')}
         >
             <div 
-                id={index}
+                id={String(index)}
                 className="Wrapper-y" 
                 ref={refWrapperY} 
                 style={{border: '1px dotted #bababa33'}}
@@ -107,20 +116,38 @@ const DragableElement = React.memo(({ component, index, cellId, useStop }: Dragg
                     defaultPosition={{x: offset?.x ?? 0, y: 0}}
                     key={index}
                     bounds="parent"
+                    cancel=".hover-delete"          // блокировка срабатывания на бейдже удаления
                     onStart={(e, data) => {
                         component._store.index = index;
                         info.select.content.set(component);
                         useRemoveClassRef('all');
-                        useSetClassRef(component.props['data-id'], 'blink');
+                        useSetClassRef(component.props['data-id'], 'selected');
                     }}
                     onStop={(e, data) => handlerStop(data, component, 'x')}
                 >
                 <div 
-                    id={index}
+                    id={String(index)}
                     className="Wrapper-x" 
-                    //ref={refWrapperX} 
+                    data-editor-id={component.props['data-id']}
                     style={{width: 'fit-content'}}
+                    onMouseEnter={handleHoverIn}
+                    onMouseLeave={handleHoverOut}
+                    onDoubleClick={handleDoubleClick}
                 >
+                    <div className="hover-tools">
+                        <button
+                            className="hover-delete"
+                            onClick={(e) => {
+                                console.log('click')
+                                e.stopPropagation();
+                                e.preventDefault(); 
+                                useDelete(cellId, index)
+                            }}
+                        >
+                            ❌
+                        </button>
+                    </div>
+                    
                     { component }
                 </div>
                 </Draggable>

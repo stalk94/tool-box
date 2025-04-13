@@ -50,7 +50,10 @@ import PhotoIcon from '@mui/icons-material/Photo';
 import VideoLibraryIcon from '@mui/icons-material/VideoLibrary';
 import SlideshowIcon from '@mui/icons-material/Slideshow';
 import { Alert, Snackbar } from "@mui/material";
-import { Delete } from "@mui/icons-material";
+import {
+    Add, Delete, Edit, Save, Visibility, VisibilityOff, Check, Clear,
+    UploadFile, Download, AddBox, Remove, Done, Cancel, Settings
+} from '@mui/icons-material';
 
 
 export type IconsProps = {
@@ -59,7 +62,6 @@ export type IconsProps = {
     test: string
 }
 export const icons = {
-    // Навигация и действия
     navigation: {
       Home: HomeIcon,
       Search: SearchIcon,
@@ -71,13 +73,7 @@ export const icons = {
       ExpandLess: ExpandLessIcon,
       ChevronLeft: ChevronLeftIcon,
       ChevronRight: ChevronRightIcon,
-      Settings: SettingsIcon,
-      MoreVert: MoreVertIcon,
-      MoreHoriz: MoreHorizIcon,
-      Logout: LogoutIcon,
-      Login: LoginIcon,
     },
-    // Социальные и интерактивные
     social: {
       Favorite: FavoriteIcon,
       FavoriteBorder: FavoriteBorderIcon,
@@ -92,19 +88,6 @@ export const icons = {
       Chat: ChatIcon,
       Forum: ForumIcon,
     },
-    // Действия с файлами и документами
-    files: {
-      FileUpload: FileUploadIcon,
-      FileDownload: FileDownloadIcon,
-      AttachFile: AttachFileIcon,
-      InsertDriveFile: InsertDriveFileIcon,
-      CloudUpload: CloudUploadIcon,
-      CloudDownload: CloudDownloadIcon,
-      Folder: FolderIcon,
-      FolderOpen: FolderOpenIcon,
-      Delete: Delete,
-    },
-    // Электронная коммерция
     ecommerce: {
       ShoppingCart: ShoppingCartIcon,
       AddShoppingCart: AddShoppingCartIcon,
@@ -112,7 +95,6 @@ export const icons = {
       CreditCard: CreditCardIcon,
       LocalOffer: LocalOfferIcon,
     },
-    // Медиа и просмотр
     media: {
       PlayArrow: PlayArrowIcon,
       Pause: PauseIcon,
@@ -125,8 +107,36 @@ export const icons = {
       VideoLibrary: VideoLibraryIcon,
       Slideshow: SlideshowIcon,
     },
+    storage: {
+      UploadFile,
+      Download,
+      AttachFile: AttachFileIcon,
+      InsertDriveFile: InsertDriveFileIcon,
+      CloudUpload: CloudUploadIcon,
+      CloudDownload: CloudDownloadIcon,
+      Folder: FolderIcon,
+      FolderOpen: FolderOpenIcon,
+    },
     action: {
-        
+      Add,
+      Delete,
+      Edit,
+      Save,
+      Cancel,
+      Done,
+      Remove,
+      Check,
+      Clear,
+    },
+    visibility: {
+      Visibility,
+      VisibilityOff,
+    },
+    ui: {
+      Settings: SettingsIcon,
+      AddBox,
+      MoreVert: MoreVertIcon,
+      MoreHoriz: MoreHorizIcon,
     }
 }
 /**

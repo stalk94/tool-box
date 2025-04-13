@@ -1,4 +1,3 @@
-
 .editor-blink {
     animation: blinkAnim 0.3s ease infinite;
 }
@@ -21,4 +20,49 @@
     100% {
         opacity: 1;
     }
+}
+
+
+.editor-hover {
+    outline: 1px dashed #4caf50;
+    outline-offset: 2px;
+    box-shadow: 0 0 4px 1px #4caf5066;
+    transition: all 0.15s ease-in-out;
+}
+
+.hover-tools {
+    position: absolute;
+    top: -8px;        /* ⬅️ выше */
+    right: -8px;      /* ⬅️ за пределы компонента */
+    display: none;
+    z-index: 10;
+}
+
+.editor-hover .hover-tools {
+    display: block;
+}
+
+.hover-delete {
+    cursor: pointer;
+    background: #111;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 13px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 3px #0008;
+}
+.hover-delete:hover {
+    background: #efdd85;
+}
+
+.editor-selected {
+    outline: 1px dotted #2195f376;
+    box-shadow: 0 0 5px 1px #2196f399;
+    z-index: 9;
+    transition: all 0.2s ease;
 }

@@ -52,6 +52,7 @@ export default function ({ render, setRender, height, desserealize }) {
         }
     }
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
+        console.log(cellId, componentIndex)
         setRender((prev) => {
             const updatedRender = [...prev];
             const cellIndex = updatedRender.findIndex(item => item.i === cellId);
@@ -188,6 +189,7 @@ export default function ({ render, setRender, height, desserealize }) {
                                 component={component}
                                 index={index}
                                 useStop={(component, data)=> dragableOnStop(component, layer.i, data)}
+                                useDelete={removeComponentFromCell}
                             />
                         ))}
                     </div>

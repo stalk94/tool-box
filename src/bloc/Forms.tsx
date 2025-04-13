@@ -1,8 +1,8 @@
 import React from "react";
-export { TextInput, NumberInput, SliderInput } from '../../components/input';
-import { Form, Schema } from '../../index';
+export { TextInput, NumberInput, SliderInput } from '../components/input';
+import { Form, Schema } from '../index';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
-import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './utill';
+import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './config/utill';
 import { motion } from 'framer-motion';
 import { debounce } from 'lodash';
 
@@ -66,6 +66,32 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
             size as Schema<'toggle'>,
             icon as Schema<'toggle'>,
         );
+    }
+    else if (typeContent === 'Image') {
+        const src = fabrickPropsScheme(typeContent, propsElem.src, 'src');
+        const alt = fabrickPropsScheme(typeContent, propsElem.alt, 'alt');
+        const sizes = fabrickPropsScheme(typeContent, propsElem.sizes ?? '100vw', 'sizes');
+
+        const schema: Schema[] = [
+            src as Schema<'text'>,
+            alt as Schema<'text'>,
+            sizes as Schema<'text'>,
+        ];
+
+        // Для imgixParams можно сделать отдельную строку — пока просто json
+        const imgixParams = {
+            id: 'imgixParams',
+            type: 'text',
+            multiline: true,
+            label: 'imgixParams',
+            value: JSON.stringify(propsElem.imgixParams ?? {}, null, 2),
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 12 },
+        };
+
+        schema.push(imgixParams as Schema<'text'>);
+
+        return schema;
     }
     
     return schema;

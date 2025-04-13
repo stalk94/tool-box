@@ -49,6 +49,7 @@ export type DraggbleElementProps = {
     index: number
     cellId: number
     useStop: (component: any, data: {x: number, y: number})=> void
+    useDelete: (cellId: string | number, componentIndex: number)=> void
 }
 export type LayoutCustom = Layout & {
     /** id рендер элемента */

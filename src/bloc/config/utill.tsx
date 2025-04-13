@@ -165,6 +165,13 @@ export const fabrickStyleScheme = (listType: 'base' | 'flex' | 'text', sourceSty
 
     return result;
 }
+/**
+ * ФАБРИКА КОНСТРУИРУЕТ ФОРМЫ ДЛЯ ПРОПСОВ
+ * @param type 
+ * @param defaultValue 
+ * @param typeProps 
+ * @returns 
+ */
 export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) => {
     const alightsIcons = {
         left: <FormatAlignLeft />,
@@ -192,6 +199,17 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
     });
 
     if (typeProps === 'children' && typeof defaultValue === 'string') {
+        return {
+            type: 'text',
+            id: typeProps,
+            multiline: true,
+            value: defaultValue,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 14 }
+        }
+    }
+    else if (typeProps === 'src' || 'alt' || 'sizes') {
         return {
             type: 'text',
             id: typeProps,

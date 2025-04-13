@@ -73,3 +73,11 @@ export const propsTypography = {
     style: 'CSSStyleDeclaration', // Инлайн стили
     id: 'string', // id элемента
 }
+
+
+export const propsImage = {
+    src: 'string',
+    alt: 'string',
+    sizes: 'string',
+    imgixParams: 'object', // можно редактировать позже через JSON-форму
+}

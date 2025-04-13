@@ -10,108 +10,67 @@ import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { ContentData } from './Top-bar';
-import Forms from './config/Forms';
+import Forms from './Forms';
+import { componentRegistry, componentGroups } from './config/registry-component';
+import { createComponentFromRegistry } from './utils/createComponentRegistry';
+
 
 type Props = {
     addComponentToLayout: (elem: React.ReactNode)=> void
     useDump: ()=> void
     useEditProps: (component: Component, data: Record<string, any>)=> void
+    externalPanelTrigger?: (fn: (panel: 'items' | 'component') => void) => void;
 }
 
 
-const useElements = (currentTool, setCurrentTool, addItem) => {
-    const components = {
-        text: (
-            <Box sx={{display:'flex',flexDirection:'row',mb:1}}>
-                <IconButton>
-                    <Settings sx={{color:'gray',fontSize:18}} />
-                </IconButton>
-                <Button
-                    variant='outlined'
-                    color='inherit'
-                    sx={{ width: '100%', opacity: 0.6 }}
-                    onClick={() => addItem(
-                        <Typography
-                            data-type='Typography'
-                        >
-                            Текстовая область
-                        </Typography>
-                    )}
-                >
-                    Типографика
-                </Button>
-            </Box>
-        ),
-        button: ([
-            <Box key='Button' sx={{display:'flex',flexDirection:'row',mb:1}}>
-                <IconButton>
-                    <Settings sx={{color:'gray',fontSize:18}} />
-                </IconButton>
-                <Button
-                    variant='outlined'
-                    color='inherit'
-                    sx={{ width: '100%', opacity: 0.6 }}
-                    onClick={() => addItem(
-                        <Button
-                            variant='outlined'
-                            color='info'
-                            sx={{ width: '100%' }}
-                            data-type='Button'
-                        >
-                            Кнопка
-                        </Button>
-                    )}
-                >
-                    Кнопка
-                </Button>
-            </Box>,
-            <Box key='IconButton' sx={{display:'flex',flexDirection:'row',mb:1}}>
-                <IconButton>
-                    <Settings sx={{color:'gray',fontSize:18}} />
-                </IconButton>
-                <Button
-                    variant='outlined'
-                    color='inherit'
-                    sx={{ width: '100%', opacity: 0.6 }}
-                    onClick={() => {
-                        addItem(
-                            <IconButton 
-                                color="warning"
-                                data-type='IconButton'
-                            >
-                                <Settings />
-                            </IconButton>
-                        )
-                    }}
-                >
-                    <Menu />
-                </Button>
-            </Box>
-        ]),
-        area: (<>Area component</>),
-        input: (<>Input component</>),
-        any: (<>Any component</>)
-    }
-
+const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
+    const categories = Object.entries(componentGroups);
+    const itemsInCurrentCategory = Object.entries(componentRegistry).filter(
+        ([, config]) =>
+            config.category === currentTool ||
+            (!config.category && currentTool === 'misc')
+    );
 
     return {
         start: (
             <TooglerInput
                 value={currentTool}
-                onChange={(v) => {
-                    setCurrentTool(v);
-                }}
-                sx={{px:0.2}}
-                items={[
-                    { label: <Assignment sx={{fontSize:18}}/>, id: 'text' },
-                    { label: <RadioButtonChecked sx={{fontSize:18}} />, id: 'button' },
-                    { label: '⃣', id: 'area' },
-                    { label: <Input sx={{fontSize:20}} />, id: 'input' },
-                    { label: '🛠️', id: 'any' }
-                ]}
+                onChange={setCurrentTool}
+                sx={{ px: 0.2 }}
+                items={categories.map(([id, group]) => {
+                    const Icon = group.icon ?? Settings;
+                    return {
+                        id,
+                        label: <Icon sx={{ fontSize: 18 }} />
+                    };
+                })}
             />
         ),
-        children: components[currentTool] || null
+        children: (
+            <>
+                {itemsInCurrentCategory.map(([type, config]) => {
+                    const Icon = config.icon ?? Settings;
+
+                    return (
+                        <Box key={type} sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
+                            <IconButton>
+                                <Icon sx={{ color: 'gray', fontSize: 18 }} />
+                            </IconButton>
+                            <Button
+                                variant="outlined"
+                                color="inherit"
+                                sx={{ width: '100%', opacity: 0.6 }}
+                                onClick={() =>
+                                    addComponentToLayout(createComponentFromRegistry(type))
+                                }
+                            >
+                                {type}
+                            </Button>
+                        </Box>
+                    );
+                })}
+            </>
+        )
     };
 }
 const useComponent = (elem, onChange, curSub, setSub) => {
@@ -144,69 +103,67 @@ const useComponent = (elem, onChange, curSub, setSub) => {
 
 
 // левая панель редактора
-export default function ({ addComponentToLayout, useDump, useEditProps }: Props) {
+export default function ({ addComponentToLayout, useDump, useEditProps, externalPanelTrigger }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState('component');
-    const [currentTool, setCurrentTool] = React.useState('button');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'>('items');
+    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
 
     const menuItems = [
-        { id: "items", label: "Главная", icon: <Extension /> },
-        { id: "component", label: "Главная", icon: <Settings /> },
+        { id: 'items', label: 'Библиотека', icon: <Extension /> },
+        { id: 'component', label: 'Настройки', icon: <Settings /> },
     ];
     const endItems = [
-        { id: "save", label: "Настройки", icon: <Save /> },
-        { id: "exit", label: "Выход", icon: <Logout /> }
+        { id: 'save', label: 'Сохранить', icon: <Save /> },
+        { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
+
+    // Обновление текущего выделенного компонента
     React.useEffect(() => {
         const content = select.content.get({ noproxy: true });
-
-        if (content) {
-            if (content.props['data-id']) setCurrent({
+        if (content?.props?.['data-id']) {
+            setCurrent({
                 id: content.props['data-id'],
                 type: content.props['data-type']
             });
-            else console.warn('🚨 У контента отсутствует data-id');
+        } else {
+            console.warn('🚨 У контента отсутствует data-id');
         }
     }, [select.content]);
 
+    // Проброс управляющей функции
+    React.useEffect(() => {
+        if (externalPanelTrigger) {
+            externalPanelTrigger(setCurrentToolPanel);
+        }
+    }, [externalPanelTrigger]);
 
+    // Обработка навигации по разделам
     const changeNavigation = (item) => {
         if (item.id === 'items') setCurrentToolPanel('items');
         else if (item.id === 'component') setCurrentToolPanel('component');
-        else if(item.id === 'save') useDump();
+        else if (item.id === 'save') useDump();
     }
-    const changeEditor =(newDataProps)=> {
-        console.log('change props: ', newDataProps);
-        useEditProps(select.content.get({ noproxy: true }), newDataProps)
+    const changeEditor = (newDataProps) => {
+        useEditProps(select.content.get({ noproxy: true }), newDataProps);
     }
-    const renderProps = () => {
-        if (currentToolPanel === 'items') {
-            return useElements(currentTool, setCurrentTool, addComponentToLayout);
-        }
-        else if(currentToolPanel === 'component') {
-            return useComponent(select.content, changeEditor, curSubpanel, setSubPanel);
-        }
-
-        return { start: null, children: null }
-    }
-    const { start, children } = renderProps();
+    const { start, children } = currentToolPanel === 'items'
+        ? useElements(currentTool, setCurrentTool, addComponentToLayout)
+        : useComponent(select.content, changeEditor, curSubpanel, setSubPanel);
 
 
+        
     return (
         <LeftSideBarAndTool
             sx={{ height: '100%' }}
-            schemaNavBar={{
-                items: menuItems,
-                end: endItems
-            }}
+            schemaNavBar={{ items: menuItems, end: endItems }}
             width={260}
             onChangeNavigation={changeNavigation}
-            start={ start }
+            start={start}
         >
             <Box sx={{ mt: 1, mx: 1 }}>
-                { children }
+                {children}
             </Box>
         </LeftSideBarAndTool>
     );
