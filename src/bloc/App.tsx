@@ -11,7 +11,7 @@ import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
 import { updateComponentProps } from './utils/editor';
-import "../style/grid.css";
+//import "../style/grid.css";
 import "../style/edit.css";
 
 

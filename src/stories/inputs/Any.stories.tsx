@@ -1,10 +1,10 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { LabelLogin, LabelPassword, LabelColor, LabelEmail, LabelPhone, 
-    LabelSelect, LabelToogler, LabelDateOrTime, LabelFileLoader } from '../../components/input/labels.inputs';
+    LabelSelect, LabelToogler, LabelDateOrTime, LabelFileLoader, LabelAutocomplete } from '../../components/input/labels.inputs';
 import { CheckBoxInput, SwitchInput } from '../../components/input/input.any';
 import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
-import FileLoader from '../../components/input/file-loader';
+
 
 
 const meta: Meta<typeof LabelLogin> = {
@@ -120,6 +120,10 @@ const Templates =(args)=> {
             
             <LabelFileLoader
                 onUpload={console.log}
+                {...args}
+            />
+            <LabelAutocomplete
+                onChange={console.log}
                 {...args}
             />
             <LabelSelect

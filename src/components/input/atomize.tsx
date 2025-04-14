@@ -157,7 +157,7 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
     React.useEffect(()=> {
         setV(value);
     }, [value]);
-    
+   
     
     return (
         <InputBase

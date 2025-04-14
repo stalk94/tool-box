@@ -65,6 +65,7 @@ export const components: ThemeOptions = {
             styleOverrides: {
                 // todo: ! опа новый трюк, запомнить
                 paper: ({ theme }) => ({
+                    marginTop: 4,
                     maxHeight: '70vh',
                     minWidth: '200px',
                     backgroundColor: theme.palette?.menu?.main,
@@ -75,5 +76,17 @@ export const components: ThemeOptions = {
                 elevation: 0,
             },
         },
+        // autocomplete popup
+        MuiAutocomplete: {
+            styleOverrides: {
+                paper: ({ theme }) => ({
+                    marginTop: 3,
+                    marginLeft: -20,
+                    //marginRight: -10,
+                    backgroundColor: theme.palette?.menu?.main,
+                    backdropFilter: 'blur(14px)',
+                }),
+            }
+        }
     }
 }

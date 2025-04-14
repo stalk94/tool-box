@@ -58,7 +58,7 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
     React.useEffect(()=> {
         setInputValue(value ?? '');
     }, [value]);
-
+    
    
     return(
         <InputPaper {...props} >

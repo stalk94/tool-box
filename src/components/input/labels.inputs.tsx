@@ -9,6 +9,7 @@ import { EmailInput, PhoneInput, TooglerInput } from './input.any'
 import ColorPicker, { ColorPickerProps } from './color';
 import DatePickerCustom, { DateTimeInputProps } from './date';
 import Select, { BaseSelectProps } from './select';
+import Autocomplete, { AutoCompleteProps } from './autocomplete';
 import { Box } from '@mui/material';
 import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';
@@ -27,6 +28,7 @@ type InputTupe = 'text'
     | 'login' 
     | 'select' 
     | 'slider'
+    | 'autocomplete'
     | 'file';
     
 type InputCustomLabelProps = {
@@ -157,6 +159,10 @@ export function LabelDateOrTime(props: LabelTextProps & DateTimeInputProps) {
 
 export function LabelSelect(props: LabelTextProps & BaseSelectProps) {
     return wrapWithLabel('select', props.label, props.position, <Select {...props} />, props);
+}
+
+export function LabelAutocomplete(props: LabelTextProps & AutoCompleteProps) {
+    return wrapWithLabel('autocomplete', props.label, props.position, <Autocomplete {...props} />, props);
 }
 
 export function LabelSlider(props: LabelTextProps & CustomSliderProps) {

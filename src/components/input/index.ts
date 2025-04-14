@@ -15,6 +15,7 @@ import { BaseSelectProps } from './select';
 import { LabelTextProps } from './labels.inputs';  //* labels type
 import { ColorPickerProps as ColorPickerPropsBase } from './color';
 import { FileLoaderProps as FileLoaderPropsDefault } from './file-loader';
+import { AutoCompleteProps as  AutoCompletePropsDefault } from './autocomplete';
 
 
 export type TextInputProps =  LabelTextProps & BaseInputProps;
@@ -36,6 +37,7 @@ export type CheckBoxInputProps = LabelTextProps & CheckBoxInputPropsBase;
 export type DataPickerInputProps = LabelTextProps & DateTimeInputProps;
 export type ColorPickerProps = LabelTextProps & ColorPickerPropsBase;
 export type FileLoaderProps = LabelTextProps & FileLoaderPropsDefault;
+export type AutoCompleteProps = LabelTextProps & AutoCompletePropsDefault;
 
 
 // особенные
@@ -62,5 +64,6 @@ export {
     LabelToogler as ToggleInput,
     /** Выпадающий список */
     LabelSelect as SelectInput,
-    LabelFileLoader as FileInput
+    LabelFileLoader as FileInput,
+    LabelAutocomplete as AutoCompleteInput
 } from './labels.inputs';

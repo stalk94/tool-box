@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import AutoText from '../../components/input/autocomplete';
+import { Person } from '@mui/icons-material';
 
 
 const types = [
@@ -32,11 +33,18 @@ const meta: Meta<typeof AutoText> = {
 export default meta;
 
 const Templates =(args)=> {
+    const options = [
+        { label: 'Apple', id: 'apple' },
+        { label: 'Banana', id: 'banana' },
+        { label: 'Orange', id: 'orange' },
+    ]
     
     return(
         <div style={{margin:'20%'}}>
             <AutoText
                 onChange={console.log}
+                options={options}
+                left={<Person />}
                 {...args}
             >
                 
@@ -51,7 +59,6 @@ export const Autocomplete: Story = {
     args: {
         disabled: false,
         error: false,
-        multiline: false,
         rows: 4,
         borderStyle: 'solid',
         type: 'number',

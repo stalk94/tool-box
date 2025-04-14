@@ -1,5 +1,4 @@
 ## INPUTS
-    # AutoComplete
     # Chips
     # InputMask
     # MultiStateCheckbox - не срочно
@@ -15,9 +14,11 @@
 
 # Carousel
     # Promo - доработать срочно!
-    # Vertical
 
 
 # GRID EDITOR
     - доработать работу с данными
     - размер рабочей области
+
+
+! сломался undo/redo редактора темы
