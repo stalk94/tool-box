@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import FileLoader from '../../components/input/file-loader';
+import FileLoader, { SimpleFileLoader } from '../../components/input/file-loader';
+import { Box } from '@mui/material';
 
 
 
@@ -32,6 +33,29 @@ const Templates =(args)=> {
             <FileLoader
 
             />
+            <SimpleFileLoader
+                style={{marginTop: '15px'}}
+                dragActiveClassName="drag-over"
+                onUpload={(files) => console.log(files)}
+            >
+                <Box sx={{
+                    width: 200,
+                    height: 100,
+                    border: '1px dashed grey',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: 2,
+                }}>
+                    📂 Зона загрузки
+                </Box>
+            </SimpleFileLoader>
+            <style>
+                {`.drag-over {
+                    border-color: blue !important;
+                    background: rgba(0, 0, 255, 0.05);
+                }`}
+        </style>
         </div>
     );
 }

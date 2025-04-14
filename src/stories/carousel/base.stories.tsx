@@ -1,9 +1,9 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Base from '../../components/carousel/base';
+import Base from '../../components/carousel/Horizontal';
 import { Box, Typography } from '@mui/material';
 import Card from '../../components/carts/base';
-import Form from '../../components/form';
+import Form from '../../components/form/Form';
 
 
 const meta: Meta<typeof Base> = {
@@ -61,14 +61,14 @@ const Templates =(args)=> {
 
 
     return(
-        <div style={{ height:'100%', overflow:'hidden', display:'flex', flexDirection:'column'}}>
+        <div style={{ height:'100%', display:'flex', flexDirection:'column'}}>
             <div style={{width: '100%'}}>
                 подпорка верх
             </div>
             
-            <div style={{ margin: '5%'}}>
+            <div style={{ margin: '5%', height: 400}}>
                 <Base
-                    slideSize={args.slideSize}
+                    slideHeight={args.slideHeight}
                     settings={{ ...args }}
                     items={testData}
                 />
@@ -97,10 +97,10 @@ const Templates =(args)=> {
 
 type Story = StoryObj<typeof Base>;
 export default meta;
-export const Carousel: Story = {
+export const Horizontal: Story = {
     args: {
         vertical: true,
-        slideSize: 100,
+        slideHeight: 200,
         slidesToShow: 4
     },
     render: (props)=> <Templates {...props} />

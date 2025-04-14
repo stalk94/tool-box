@@ -1,5 +1,5 @@
 import React from 'react';
-import { listAllComponents } from '../config/render';       //обёртки компонентов
+import { listAllComponents } from '../modules/render';       //обёртки компонентов
 import { componentRegistry } from '../config/registry-component';  // регистр
 
 

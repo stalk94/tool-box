@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, IconButton, Typography } from '@mui/material';
 import { Picture, Source } from 'react-imgix';
-import { propsButton, propsIconButton, propsTypography, propsImage } from './props';
+import { propsButton, propsIconButton, propsTypography, propsImage } from '../config/props';
 import { Settings } from '@mui/icons-material';
 import { iconsList } from '../../components/tools/icons';
 

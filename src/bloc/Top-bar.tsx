@@ -4,7 +4,7 @@ import { Button, useTheme, Box, Dialog, Paper, Typography, Tooltip, IconButton, 
 import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
-import { listAllComponents, listConfig } from './config/render';
+import { listAllComponents, listConfig } from './modules/render';
 import { useHookstate } from "@hookstate/core";
 import SelectButton from "../components/popup/select.button";
 

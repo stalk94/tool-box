@@ -12,11 +12,9 @@ type CustomMenuProps = MenuProps & {
  * Базовый Menu (выпадаюшее меню)   
  * применяется во всех внутренних компонентах системы
  * оборачивает atomize доп свойством `width`
- * ! надо его упразднить, он добавляет сложности
+ * !? надо его упразднить, он добавляет сложности
  */
 export default function ({ anchorEl, open, onClose, width, children, ...props }: CustomMenuProps) {
-    
-
     return(
         <Menu 
             elevation={0}

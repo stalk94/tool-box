@@ -21,3 +21,15 @@ export interface NavLinkItem {
     /** вложенные элементы */
     children?: NavLinkItem[]
 }
+
+export interface NavLinkItemSlider {
+    id: string
+    label?: string
+    icon?: React.ReactNode
+    /** 🔥 кастомный параметр подсветит элемент как выбранный */
+    select?: any
+    comand?: (item: any) => void
+    divider?: React.ReactNode | boolean
+    /** вложенные элементы */
+    items?: NavLinkItemSlider[]
+}

@@ -4,12 +4,12 @@ import { Typography, IconButton, Button, Box, Grid2 } from '@mui/material';
 import { ArrowForwardIos, ArrowBackIos } from '@mui/icons-material';
 import "slick-carousel/slick/slick.css";
 
-
+type ResponsiveSize = number | Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>;
 type CarouselProps = {
     items: React.ReactNode[]
     settings: Settings
-    /** высота и ширина для каждого слайда (нужна точная размерность это важно для высоты), можно задать как  */
-    slideSize: string | number;
+    /** высота и ширина для каждого слайда (нужна точная размерность это важно для высоты), можно задать как список breackpoints */
+    slideSize: ResponsiveSize;
 }
 
 const CustomPrevArrow: React.FC<any> = ({ onClick }) => (
@@ -62,13 +62,6 @@ const CustomNextArrowBottom: React.FC<any> = ({ onClick }) => (
 );
 
 
-/**
- * Сейчас карусель располагает контент по центру slide контейнера 
- * slide контейнер имеет фиксированные размеры (?надо фиксировать по обоим осям)
- * ! по высоте (вертикальный режим) на данный момент рабоботает не правильно
- * ? надо попробовать жестко ограничть контейнер
- * 
- */
 export default function({ items, settings, slideSize }: CarouselProps) {
     const [currentSlide, setCurrentSlide] = React.useState(0);
     const [touchStart, setTouchStart] = React.useState({ x: 0, y: 0 });
@@ -192,7 +185,6 @@ export default function({ items, settings, slideSize }: CarouselProps) {
                 display: 'flex',
                 flexDirection: isVertical ? 'column' : 'row',
                 width: '100%',
-                height: '100%',
                 alignItems: 'center',
             }}
         >
@@ -221,9 +213,11 @@ export default function({ items, settings, slideSize }: CarouselProps) {
                                 display: 'flex !important', // Переопределяем инлайн-стили Slick
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                height: slideSize ?? 100, // Используем фиксированную высоту
-                                width: slideSize ?? 100,
-                                border: '1px solid red',
+                                height: isVertical ? slideSize : 'auto',
+                                width: !isVertical ? slideSize : '100%',
+                                //height: slideSize ?? 100, // Используем фиксированную высоту
+                                //width: slideSize ?? 100,
+                                //border: '1px solid red',
                                 overflow: 'hidden',
                                 boxSizing: 'border-box', // Включаем бордер в расчет размеров
                             }}

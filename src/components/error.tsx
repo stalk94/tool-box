@@ -1,9 +1,21 @@
 import React from "react";
-import { send } from "../lib/engine";
 
 
-class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean }> {
-    constructor(props: { children: React.ReactNode }) {
+type ErrorBoundaryProps = {
+    children: React.ReactNode
+    sendToserver: (data: {
+        name: string
+        message: string
+        stack: any
+        time: string
+        type: 'react'
+    })=> void
+}
+
+
+// еще сыроват
+class ErrorBoundary extends React.Component<ErrorBoundaryProps, { hasError: boolean }> {
+    constructor(props: { children: React.ReactNode, sendToserver }) {
         super(props);
         this.state = { hasError: false };
     }
@@ -18,7 +30,11 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
             stack: errorInfo.componentStack
         }
         
-        send('error', { time: new Date().toUTCString(), type: 'react', ...data }, 'POST');
+        this.props.sendToserver?.({
+            time: new Date().toUTCString(),
+            type: 'react',
+            ...data,
+        });
     }
 
     render() {

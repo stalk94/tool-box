@@ -1,33 +1,29 @@
-import { APIEndpoints } from "../types/global.js";
-import EventEmiter from "./emiter";
-
-
-window.gurl = import.meta.env.DEV ? 'http://localhost:3000/' : document.baseURI;
-window.languages = ['GB', 'RU', 'CN', 'DE'];
-export const EVENT = new EventEmiter();
-
+import EventEmitterNode from "./emiter";
+import { APIEndpoints } from "./global.js";
 
 
 export async function send<T extends keyof APIEndpoints>(
-    url: T, 
+    path: T, 
     data: APIEndpoints[T]['request'],
-    metod: APIEndpoints[T]['method']
+    metod: APIEndpoints[T]['method'],
+    token?: string                          // !додумать
 ): Promise<APIEndpoints[T]['response']> {
     const dataServer = {
         method: metod ?? 'POST',
-        credentials: 'same-origin',
+        //credentials: 'same-origin',
         headers: {
-            'Authorization': `Bearer ${window.token}`,
+            'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
         }
     }
-    if(metod!=='GET') dataServer.body = JSON.stringify(data);
+    if(metod !== 'GET') dataServer.body = JSON.stringify(data);
 
-    const request = await fetch(window.gurl + url, dataServer);
+    const request = await fetch(`/${path}`, dataServer);
     return request.json();
 }
 
 
+// ошибки глобального обьекта
 window.onerror =(message, source, lineno, colno, error)=> {
     source = source.replace(/^https?:\/\/[^/]+/, "").replace(/\?.*$/, "");
     let position = `${lineno}:${colno}`;
@@ -48,3 +44,6 @@ window.addEventListener("unhandledrejection", (event)=> {
     
     event.preventDefault();
 });
+// глобальный эмиттер как в node js
+window.EventEmitter = new EventEmitterNode();
+

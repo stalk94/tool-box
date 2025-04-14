@@ -1,5 +1,5 @@
 import React from "react";
-import { listConfig } from './render';
+import { listConfig } from '../modules/render';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
 import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight, LinearScale,  
     ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets

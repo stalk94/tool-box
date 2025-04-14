@@ -1,10 +1,3 @@
-/**
- *  Валидаторы форм
- *  
-*/
-
-
-
 // валидатор логина
 export const validateLogin = (value: string) => {
     let helper;

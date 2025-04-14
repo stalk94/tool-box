@@ -3,7 +3,7 @@ import { Popover, IconButton, useTheme, Dialog, InputBaseProps, Box } from '@mui
 import { InputPaper, InputBaseCustom, Label } from './atomize';
 import { RgbaColorPicker, RgbaColor } from 'react-colorful';
 import { FileCopy } from '@mui/icons-material';
-import { useDebounced } from '../utils/debounce';
+import { useDebounced } from '../hooks/debounce';
 
 
 export type ColorPickerProps = InputBaseProps & {
@@ -214,7 +214,7 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
             setColor(parseRgba(value));
         }
     }, [value]);
-
+  
 
     return (
         <InputPaper {...props}>
@@ -222,6 +222,7 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
 
             <InputBaseCustom
                 {...props}
+                type='text'
                 value={inputValue}
                 onChange={handleManualChange}
                 placeholder={props.placeholder}

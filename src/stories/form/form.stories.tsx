@@ -1,8 +1,6 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Form from '../../components/form';
-import { Schema, TypeSchema } from '../../components/form/types';
-import { Button, ButtonProps, Divider, Typography } from '@mui/material';
+import Form from '../../components/form/Form';
 import Icons, { Equalizer, Calculate, AccountBox } from "@mui/icons-material";
 
 
@@ -46,7 +44,7 @@ const Templates =(args)=> {
                         items: [
                             { id:'1', label:'test' },
                             { id:'2', label:'test2' },
-                            { id:'3', label:'test3', children: [
+                            { id:'3', label:'test3', items: [
                                 {id:'3:1', label:'tester'},
                                 {id:'3:2', label:'testr2'}
                             ]},

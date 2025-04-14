@@ -5,14 +5,14 @@ import { CheckBoxInput, SwitchInput } from '../../components/input/input.any';
 import Slider from '../../components/input/slider';
 import AppBar from '../../components/app-bar/Preview';
 import { Person, Key, VerifiedUser, Home, Settings, CloudCircle, Menu, Logout } from '@mui/icons-material';
-import Editor from '../../app/editor';
+import Editor from '../../app/StyleEditor';
 import CardPreview from '../../components/carts/Preview';
 import MenuBase from '../../components/popup/base';
 import SideBarAndToolPanel from '../../components/nav-bars/tool-left';
 import { Button } from '@mui/material';
 import DataTable from '../../components/data-table';
 import { Column } from 'primereact/column';
-import Flag from '../../components/flag';
+import Flag from '../../components/tools/flag';
 import { Avatar } from 'primereact/avatar';
 import { Rating } from 'primereact/rating';
 

@@ -16,11 +16,11 @@ export type loginInputProps = InputBaseProps & {
 
 
 
-export default function LoginInput({ value, helperText, useVerify, ...props }: loginInputProps) {
+export default function LoginInput({ value, helperText, useVerify, onChange, ...props }: loginInputProps) {
     const theme = useTheme();
     const [customHelper, setCustomHelper] = React.useState<string>();
     const [isValid, setValid] = React.useState<boolean>(true);
-
+   
 
     const useHookVerify = (newValue: string) => {
         let valid = true;
@@ -35,7 +35,7 @@ export default function LoginInput({ value, helperText, useVerify, ...props }: l
     }
     const useVerifyChange = (newValue: string) => {
         setValid(useHookVerify(newValue));
-        if (props.onChange) props.onChange(newValue);
+        if (onChange) onChange(newValue);
     }
     React.useEffect(() => {
         if (value) setValid(useHookVerify(value));

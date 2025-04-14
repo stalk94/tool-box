@@ -3,7 +3,7 @@ import { IconButton, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { InputBaseProps } from '@mui/material/InputBase';
 import { InputPaper, InputBaseCustom  } from './atomize';
-import { safeOmitInputProps } from '../utils/omit';
+import { safeOmitInputProps } from '../hooks/omit';
 
 
 export type BaseInputProps = {
@@ -15,7 +15,6 @@ export type BaseInputProps = {
     placeholder?: string
     label?: string
     children?: React.ReactNode
-    variant: "fullWidth" | "inset" | "middle"
     onChange?: (value: string | number)=> void
     success?: boolean
     borderStyle?: 'dashed' | 'solid' | 'dotted'

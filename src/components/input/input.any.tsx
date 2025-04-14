@@ -7,7 +7,7 @@ import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
 import { useTheme } from '@mui/material/styles';
 import Switch, { SwitchProps } from '@mui/material/Switch';
 import { InputPaper, InputBaseCustom, Label } from './atomize';
-import { safeOmitInputProps } from '../utils/omit';
+import { safeOmitInputProps } from '../hooks/omit';
 export { default as ColorPicker } from './color';
 
 

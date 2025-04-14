@@ -2,16 +2,21 @@ import React from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, DialogContentText, Button, IconButton } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
+export type ModalProps = {
+    open: boolean
+    setOpen: (open: boolean)=> void
+    children: React.ReactNode
+}
 
-export default function SimpleDialog({ open, setOpen, children }) {
 
+export default function SimpleDialog({ open, setOpen, children }: ModalProps) {
     const handleClose = () => {
         setOpen(false);
     }
 
 
     return (
-        <Dialog 
+        <Dialog
             open={open} 
             onClose={handleClose}
             sx={{

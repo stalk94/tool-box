@@ -37,8 +37,7 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
     />
 );
 /**
- * Произвольны контент для карточки с flex позиционированием
- * 
+ * Произвольный контент для карточки с flex позиционированием
  */
 export const FlexContent = ({ children, flexDirection }: { children:React.ReactNode, flexDirection?: 'row'|'column' }) => {
     return(

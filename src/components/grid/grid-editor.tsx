@@ -5,11 +5,10 @@ import { Toolbar, Components } from './tools-bar';
 import StaticGrid from './static';
 import ContentEdit from './editor-text';
 import { Descendant } from 'slate';
-import "react-grid-layout/css/styles.css";
-import "../../style/grid.css"
 import { GridEditorProps, LayoutCustom } from './type';
 import context from '../../bloc/context';
 import { useHookstate } from "@hookstate/core";
+import "react-grid-layout/css/styles.css";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 

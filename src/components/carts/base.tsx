@@ -6,7 +6,7 @@ import { iconsList } from '../tools/icons';
 import { MediaImage, FlexContent, Header } from './atomize';
 
 
-export type Props = CardProps & {
+export type BaseCardProps = CardProps & {
     children?: React.ReactNode | [typeof MediaImage | typeof FlexContent| typeof Header ],
     /** делает карточку кликабельной как кнопка */
     actionAreaEnabled?: boolean
@@ -15,7 +15,7 @@ export type Props = CardProps & {
 
 
 
-export default function SimpleCard({ children, footer, ...props }: Props) {
+export default function SimpleCard({ children, footer, ...props }: BaseCardProps) {
     const getIcon =(name: string, color?: string)=> {
         const IconComponent = iconsList[name];
 

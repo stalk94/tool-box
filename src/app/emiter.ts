@@ -1,10 +1,4 @@
-interface Events {
-    error: (text: string)=> void
-    success: (text: string)=> void
-    warn: (text: string)=> void
-    exit: (data?: any)=> void
-}
-
+import { Events } from "./global.js";
 
 
 export default class EventEmitter {

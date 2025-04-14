@@ -5,7 +5,7 @@ import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import { ToolBarInfo } from './Top-bar';
-import { listAllComponents, listConfig } from './config/render';
+import { listAllComponents, listConfig } from './modules/render';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";

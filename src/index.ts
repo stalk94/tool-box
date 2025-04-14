@@ -1,5 +1,16 @@
 // все инпуты
 export * from './components/input';
+// все формы
+export * from './components/form';
+// модалка
+export * from './components/modal';
+// формы
+export * from './components/form';
+// карточка
+export * from './components/carts';
+// карусели (пока только горизонтальная)
+export * from './components/carousel';
+
 
 // таблица данных primereact модернизированная
 export { default as DataTable } from './components/data-table';
@@ -13,14 +24,15 @@ export { Start, Center, MobailBurger } from './components/app-bar';
 export { default as LeftSideBar } from './components/nav-bars/left-nav';
 export { default as LeftSideBarAndTool } from './components/nav-bars/tool-left';
 
-export type { AccordionProps } from './components/accordion';
+// Акордеон нормальный
 export { default as Accordion } from './components/accordion';
+export type { AccordionProps } from './components/accordion';
 
 // всплываюшие информационные окна
 export { AlertProvider, useAlert } from './components/alert';
 export type { AlertManagerProps } from './components/alert';
 
-// базовая форма работаюшая со схемой
-export { default as Form } from './components/form';
-// интерфейс базовой схемы
-export type { Schema } from './components/form/types';
+// иконки флажки
+export { default as Flag } from './components/tools/flag';
+// кнопка с поведением выпадаюшего списка
+export { default as SelectButton } from './components/popup/select.button';

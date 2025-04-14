@@ -6,29 +6,22 @@ import { ArrowDropDown } from '@mui/icons-material';
 import { InputPaper } from './atomize';
 import Menu from '../menu/index';
 import ItemsList from '../menu/list';
-import { NavLinkItem } from '../menu/type';
+import { NavLinkItemSlider } from '../menu/type';
 
 
-type PropsSelect = {
-    value: any
-    onChange?: (newValue: string)=> void
-    items: NavLinkItem[]
-    label?: string
-}
 export type BaseSelectProps = {
     value: any
     onChange?: (newValue: string)=> void
-    items: NavLinkItem[]
+    items: NavLinkItemSlider[]
     placeholder?: string
     position?: 'start' | 'end'
     variant: "fullWidth" | "inset" | "middle"
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 }
-type CustomSelectProps = PropsSelect & SelectProps; 
 
 
 
-export default function Custom({ value, onChange, items, label, ...props }: CustomSelectProps) {
+export default function Custom({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
     const theme = useTheme();
     const [width, setWidth] = React.useState('200px');
     const [isOpen, setIsOpen] = React.useState(false);
@@ -47,7 +40,7 @@ export default function Custom({ value, onChange, items, label, ...props }: Cust
         else if(item.id === selected.id) return item.label;
     }
     const chekLabel =()=> {
-        if(label && label.length > 0) return label;
+        if(placeholder && placeholder.length > 0) return placeholder;
         else return 'Выбрать';
     }
     const handleToggleDropdown =()=> {

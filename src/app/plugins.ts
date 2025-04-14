@@ -1,5 +1,3 @@
-
-
 /**
  * вызов vite plugin записи файлов 
  * @param folder путь к дерриктории относительно корня проекта
@@ -15,3 +13,6 @@ export async function writeFile(folder: string, filename: string, content: strin
 
     return response.text();
 }
+
+
+//todo:  добавить метод такой же но next.js и создать 'Стратегию'

@@ -5,7 +5,10 @@
       "jsx": "react",
       "outDir": "./dist",
       "esModuleInterop": true,
-      //"strict": true
+      "baseUrl": "./",
+      "paths": {
+        "@lib/*": ["src/"]
+      }
     },
-    "include": ["src/**/*", "load.js"]
+    "include": ["src/**/*"]
 }

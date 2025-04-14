@@ -6,7 +6,7 @@ import Login, { loginInputProps } from './login';
 import Password, { PasswordInputProps } from './password';
 import { EmailInputProps, PhoneInputProps, TooglerInputProps } from './input.any';
 import { EmailInput, PhoneInput, TooglerInput } from './input.any'
-import ColorPicker from './color';
+import ColorPicker, { ColorPickerProps } from './color';
 import DatePickerCustom, { DateTimeInputProps } from './date';
 import Select, { BaseSelectProps } from './select';
 import { Box } from '@mui/material';
@@ -52,6 +52,7 @@ function wrapWithLabel<P>(
     Component: React.ReactElement,
     props: { id?: string | number; labelSx?: any }
 ) {
+    
     if (label && typeof label === 'string' && label.length) {
         return (
             <LabelInput
@@ -137,7 +138,7 @@ export function LabelPassword(props: LabelTextProps & PasswordInputProps) {
     return wrapWithLabel('password', props.label, props.position, <Password {...props} />, props);
 }
 
-export function LabelColor(props: LabelTextProps & BaseInputProps) {
+export function LabelColor(props: LabelTextProps & ColorPickerProps) {
     return wrapWithLabel('color', props.label, props.position, <ColorPicker {...props} />, props);
 }
 

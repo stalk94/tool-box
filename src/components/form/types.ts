@@ -1,12 +1,11 @@
 import { SxProps } from '@mui/material';
 import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
     DataPickerInputProps, CheckBoxInputProps, ToogleeInputProps, ColorPickerProps, 
-    SelectInputProps
-
+    SelectInputProps, FileLoaderProps
 } from '../input/index';
 
 
-export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' 
+export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' | 'file'
 | 'switch' | 'toggle' | 'select' | 'checkbox';
 
 
@@ -39,7 +38,6 @@ type BaseSchema = {
 }
 type TypeToSchema = {
     text: Text
-    multiText: TextMultiline
     number: Number
     date: DataPickerInputProps          // ! тут отличие от основного есть
     color: ColorPickerProps
@@ -49,6 +47,7 @@ type TypeToSchema = {
     switch: SwitchInputProps
     toggle: Toogler
     checkbox: CheckBoxInputProps
+    file: FileLoaderProps
 }
 
 
@@ -77,6 +76,7 @@ const numberInputTest: Schema<'number'> = {
     position: 'column',
     id: "test",
     value: 1,
+    type: 'number',
     onChange: (val)=> console.log(val),
     validator: (val)=> val > 0
 }

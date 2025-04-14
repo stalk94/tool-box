@@ -2,7 +2,7 @@ import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import DataTable from '../components/data-table';
 import { Column } from 'primereact/column';
-import Flag from '../components/flag';
+import Flag from '../components/tools/flag';
 import { Avatar } from 'primereact/avatar';
 import { Rating } from 'primereact/rating';
 //import { ThemeProvider } from '../theme.new';

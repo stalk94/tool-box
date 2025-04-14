@@ -5,11 +5,11 @@ import { ArrowForwardIos, ArrowBackIos } from '@mui/icons-material';
 import "slick-carousel/slick/slick.css";
 
 
-type CarouselProps = {
+export type HorizontalCarouselProps = {
     items: React.ReactNode[]
     settings: Settings
-    /** высота и ширина для каждого слайда (нужна точная размерность это важно для высоты), можно задать как  */
-    slideSize: string | number;
+    /** высота для каждого слайда */
+    slideHeight: string | number;
 }
 
 const CustomPrevArrow: React.FC<any> = ({ onClick }) => (
@@ -36,40 +36,19 @@ const CustomNextArrow: React.FC<any> = ({ onClick }) => (
         </IconButton>
     </Box>
 );
-const CustomPrevArrowTop: React.FC<any> = ({ onClick }) => (
-    <IconButton
-        onClick={() => onClick('prew')}
-        sx={{
-            display: 'flex',
-            mx: 'auto',
-            zIndex: 1,
-        }}
-    >
-        <ArrowBackIos sx={{ transform: 'rotate(90deg)'}} />
-    </IconButton>
-);
-const CustomNextArrowBottom: React.FC<any> = ({ onClick }) => (
-    <IconButton
-        onClick={() => onClick('next')}
-        sx={{
-            display: 'flex',
-            mx: 'auto',
-            zIndex: 1,
-        }}
-    >
-        <ArrowForwardIos sx={{ transform: 'rotate(90deg)'}} />
-    </IconButton>
-);
 
 
 /**
- * Сейчас карусель располагает контент по центру slide контейнера 
- * slide контейнер имеет фиксированные размеры (?надо фиксировать по обоим осям)
- * ! по высоте (вертикальный режим) на данный момент рабоботает не правильно
- * ? надо попробовать жестко ограничть контейнер
- * 
+ * поместить можно любой контент он сам там растянет как надо
+ * ! высоту выставлять осторожно (может выйти за пределы контейнера родителя и все переломать)
+ * @example
+ * settings: {
+ *      autoplay: true,      // автопрокрутку включить
+ *      slidesToShow: 3,     // сколько слайдов в области видимости (чанк)
+ *      slidesToScroll: 1    // по сколько слайдов пролистываем за раз
+ * }
  */
-export default function({ items, settings, slideSize }: CarouselProps) {
+export default function({ items, settings, slideHeight }: HorizontalCarouselProps) {
     const [currentSlide, setCurrentSlide] = React.useState(0);
     const [touchStart, setTouchStart] = React.useState({ x: 0, y: 0 });
     const [touchEnd, setTouchEnd] = React.useState({ x: 0, y: 0 });
@@ -82,15 +61,11 @@ export default function({ items, settings, slideSize }: CarouselProps) {
         ref: sliderRef,
         infinite: true,
         speed: 500,
-        autoplay: true,
-        slidesToShow: 3,
+        autoplay: false,
+        slidesToShow: 3,                // сколько слайдов по умолчанию в поле видимости
         slidesToScroll: 1,
-        arrows: false,
-        swipe: false, // Отключаем стандартное свайп-движение
-        draggable: false,
-        variableWidth: false, // Отключаем переменную ширину
-        vertical: false, // По умолчанию горизонтальный слайдер
-        //adaptiveHeight: false, // Отключаем адаптивную высоту
+        variableWidth: false,           // Отключаем переменную ширину
+        //adaptiveHeight: false,        // Отключаем адаптивную высоту
         beforeChange: (current, next) => {
            //console.log('beforeChange', current, next);
         },
@@ -99,6 +74,10 @@ export default function({ items, settings, slideSize }: CarouselProps) {
             setCurrentSlide(current); // Обновляем текущий слайд
         },
         ...settings,
+        swipe: false,       // ! Отключаем стандартное свайп-движение
+        arrows: false,      // ! выпелено
+        draggable: false,   // ! стандартное багованное поведение выпилено к чертовой матери
+        vertical: false,    // ! только горизонтальный режим
     };
 
     // Определяем направление слайдера: вертикальное или горизонтальное
@@ -190,20 +169,19 @@ export default function({ items, settings, slideSize }: CarouselProps) {
         <Box
             sx={{
                 display: 'flex',
-                flexDirection: isVertical ? 'column' : 'row',
+                flexDirection: 'row',
                 width: '100%',
-                height: '100%',
+                height: slideHeight,
                 alignItems: 'center',
             }}
         >
-            { isVertical
-                ? <CustomPrevArrowTop onClick={handleClick}/>
-                : <CustomPrevArrow onClick={handleClick}/>
-            }
+
+            <CustomPrevArrow onClick={handleClick}/>
+
             <Box
                 sx={{
                     display: 'block',
-                    width: isVertical ? '100%' : 'calc(100% - 80px)', // Оставляем место для кнопок
+                    width: 'calc(100% - 80px)', // Оставляем место для кнопок
                 }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
@@ -221,9 +199,8 @@ export default function({ items, settings, slideSize }: CarouselProps) {
                                 display: 'flex !important', // Переопределяем инлайн-стили Slick
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                height: slideSize ?? 100, // Используем фиксированную высоту
-                                width: slideSize ?? 100,
-                                border: '1px solid red',
+                                height: slideHeight ?? 100, // Используем фиксированную высоту
+                                //border: '1px solid red',
                                 overflow: 'hidden',
                                 boxSizing: 'border-box', // Включаем бордер в расчет размеров
                             }}
@@ -241,10 +218,9 @@ export default function({ items, settings, slideSize }: CarouselProps) {
                     ))}
                 </Slider>
             </Box>
-            { isVertical
-                ? <CustomNextArrowBottom onClick={handleClick} />
-                : <CustomNextArrow onClick={handleClick} />
-            }
+
+            <CustomNextArrow onClick={handleClick} />
+
         </Box>
     );
 }

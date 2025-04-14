@@ -66,20 +66,6 @@ const Templates =(args)=> {
         >
             <Card {...args} 
                 children={[
-                    <Header key='header'
-                        avatar={
-                            <Avatar sx={{ bgcolor: '#f05c5c' }} aria-label="action">
-                                R
-                            </Avatar>
-                        }
-                        title='Shrimp and Chorizo Paella'
-                        subheader='September 14, 2016'
-                        action={
-                            <Button>
-                                x
-                            </Button>
-                        }
-                    />,
                     <MediaImage key='img'
                         height={args.imageHeight}
                         src={args.imageSrc}
