@@ -3,39 +3,16 @@ import Slider, { Settings } from 'react-slick';
 import { Typography, IconButton, Button, Box, Grid2 } from '@mui/material';
 import { ArrowForwardIos, ArrowBackIos } from '@mui/icons-material';
 import "slick-carousel/slick/slick.css";
+import FixedSlide from './flex-slide';
 
-type ResponsiveSize = number | Record<'xs' | 'sm' | 'md' | 'lg' | 'xl', number>;
-type CarouselProps = {
+
+export type CarouselProps = {
     items: React.ReactNode[]
     settings: Settings
-    /** высота и ширина для каждого слайда (нужна точная размерность это важно для высоты), можно задать как список breackpoints */
-    slideSize: ResponsiveSize;
+    /** высота для каждого слайда */
+    height: string | number;
 }
 
-const CustomPrevArrow: React.FC<any> = ({ onClick }) => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton
-            onClick={() => onClick('prew')}
-            sx={{
-                zIndex: 1,
-            }}
-        >
-            <ArrowBackIos />
-        </IconButton>
-    </Box>
-);
-const CustomNextArrow: React.FC<any> = ({ onClick }) => (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-        <IconButton
-            onClick={() => onClick('next')}
-            sx={{
-                zIndex: 1,
-            }}
-        >
-            <ArrowForwardIos />
-        </IconButton>
-    </Box>
-);
 const CustomPrevArrowTop: React.FC<any> = ({ onClick }) => (
     <IconButton
         onClick={() => onClick('prew')}
@@ -62,7 +39,18 @@ const CustomNextArrowBottom: React.FC<any> = ({ onClick }) => (
 );
 
 
-export default function({ items, settings, slideSize }: CarouselProps) {
+/**
+ * ? остальное будем на верху допиливать, а то это просто пиздец уже
+ * ! где то уже рядом
+ * ! более 3х слайдов не ставить а то усрется эта говно либа
+ * @example
+ * settings: {
+ *      autoplay: true,      // автопрокрутку включить
+ *      slidesToShow: 3,     // сколько слайдов в области видимости (чанк)
+ *      slidesToScroll: 1    // по сколько слайдов пролистываем за раз
+ * }
+ */
+export default function({ items, settings, height }: CarouselProps) {
     const [currentSlide, setCurrentSlide] = React.useState(0);
     const [touchStart, setTouchStart] = React.useState({ x: 0, y: 0 });
     const [touchEnd, setTouchEnd] = React.useState({ x: 0, y: 0 });
@@ -75,15 +63,11 @@ export default function({ items, settings, slideSize }: CarouselProps) {
         ref: sliderRef,
         infinite: true,
         speed: 500,
-        autoplay: true,
-        slidesToShow: 3,
+        autoplay: false,
+        slidesToShow: 3,                // сколько слайдов по умолчанию в поле видимости
         slidesToScroll: 1,
-        arrows: false,
-        swipe: false, // Отключаем стандартное свайп-движение
-        draggable: false,
-        variableWidth: false, // Отключаем переменную ширину
-        vertical: false, // По умолчанию горизонтальный слайдер
-        //adaptiveHeight: false, // Отключаем адаптивную высоту
+        variableWidth: false,           // Отключаем переменную ширину
+        adaptiveHeight: false,        // Отключаем адаптивную высоту
         beforeChange: (current, next) => {
            //console.log('beforeChange', current, next);
         },
@@ -92,10 +76,19 @@ export default function({ items, settings, slideSize }: CarouselProps) {
             setCurrentSlide(current); // Обновляем текущий слайд
         },
         ...settings,
+        swipe: false,       // ! Отключаем стандартное свайп-движение
+        arrows: false,      // ! выпелено
+        draggable: false,   // ! стандартное багованное поведение выпилено к чертовой матери
+        vertical: true,
     };
 
-    // Определяем направление слайдера: вертикальное или горизонтальное
+    const arrowHeight = 60;
     const isVertical = settingsDefault.vertical === true;
+    const slidesToShow = settingsDefault.slidesToShow ?? 3;
+    const containerHeight = typeof height === 'number' ? `${height}px` : height;
+    const slideHeightExact = `calc(${containerHeight} / ${slidesToShow})`;
+    console.log(slideHeightExact)
+
 
     const handleClick = (type: 'prew'|'next') => {
         if(type === 'next') sliderRef.current.slickNext();
@@ -177,26 +170,26 @@ export default function({ items, settings, slideSize }: CarouselProps) {
             sliderRef.current.slickGoTo(currentSlide);
         }
     }, [currentSlide]);
+    
  
 
     return (
-        <Box
+        <Box 
             sx={{
-                display: 'flex',
-                flexDirection: isVertical ? 'column' : 'row',
-                width: '100%',
-                alignItems: 'center',
+                width: '100%', 
+                height: (containerHeight - arrowHeight), 
+                overflow: 'hidden' 
             }}
         >
-            { isVertical
-                ? <CustomPrevArrowTop onClick={handleClick}/>
-                : <CustomPrevArrow onClick={handleClick}/>
-            }
-            <Box
-                sx={{
-                    display: 'block',
-                    width: isVertical ? '100%' : 'calc(100% - 80px)', // Оставляем место для кнопок
-                }}
+
+            {/* Стрелка вверх */}
+            <Box sx={{ height: `${arrowHeight}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CustomPrevArrowTop onClick={handleClick} />
+            </Box>
+
+            {/* Слайдер */}
+            <Box 
+                sx={{ height: '100%', overflow: 'hidden' }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onMouseDown={handleMouseDown}
@@ -204,41 +197,22 @@ export default function({ items, settings, slideSize }: CarouselProps) {
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
             >
-                <Slider {...settingsDefault}>
-                    { items.map((slide, index) => (
-                        <Box
-                            key={index}
-                            className="slide-item"
-                            sx={{
-                                display: 'flex !important', // Переопределяем инлайн-стили Slick
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                height: isVertical ? slideSize : 'auto',
-                                width: !isVertical ? slideSize : '100%',
-                                //height: slideSize ?? 100, // Используем фиксированную высоту
-                                //width: slideSize ?? 100,
-                                //border: '1px solid red',
-                                overflow: 'hidden',
-                                boxSizing: 'border-box', // Включаем бордер в расчет размеров
-                            }}
+                <Slider key={settings.slidesToShow} {...settingsDefault}>
+                    { items.map((item, i) => (
+                        <FixedSlide 
+                            key={i} 
+                            height={slideHeightExact}
                         >
-                            <Box
-                                sx={{
-                                    display: 'flex',
-                                    justifyContent: 'center',
-                                    alignItems: 'center',
-                                }}
-                            >
-                                { slide }
-                            </Box>
-                        </Box>
+                            { item }
+                        </FixedSlide>
                     ))}
                 </Slider>
             </Box>
-            { isVertical
-                ? <CustomNextArrowBottom onClick={handleClick} />
-                : <CustomNextArrow onClick={handleClick} />
-            }
+
+            {/* Стрелка вниз */}
+            <Box sx={{ height: `${arrowHeight}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <CustomNextArrowBottom onClick={handleClick} />
+            </Box>
         </Box>
     );
 }

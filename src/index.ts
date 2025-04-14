@@ -8,7 +8,7 @@ export * from './components/modal';
 export * from './components/form';
 // карточка
 export * from './components/carts';
-// карусели (пока только горизонтальная)
+// карусели
 export * from './components/carousel';
 
 

@@ -3,14 +3,8 @@ import Slider, { Settings } from 'react-slick';
 import { Typography, IconButton, Button, Box, Grid2 } from '@mui/material';
 import { ArrowForwardIos, ArrowBackIos } from '@mui/icons-material';
 import "slick-carousel/slick/slick.css";
+import { CarouselProps } from './Vertical';
 
-
-export type HorizontalCarouselProps = {
-    items: React.ReactNode[]
-    settings: Settings
-    /** высота для каждого слайда */
-    slideHeight: string | number;
-}
 
 const CustomPrevArrow: React.FC<any> = ({ onClick }) => (
     <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -48,7 +42,7 @@ const CustomNextArrow: React.FC<any> = ({ onClick }) => (
  *      slidesToScroll: 1    // по сколько слайдов пролистываем за раз
  * }
  */
-export default function({ items, settings, slideHeight }: HorizontalCarouselProps) {
+export default function({ items, settings, height }: CarouselProps) {
     const [currentSlide, setCurrentSlide] = React.useState(0);
     const [touchStart, setTouchStart] = React.useState({ x: 0, y: 0 });
     const [touchEnd, setTouchEnd] = React.useState({ x: 0, y: 0 });
@@ -65,7 +59,7 @@ export default function({ items, settings, slideHeight }: HorizontalCarouselProp
         slidesToShow: 3,                // сколько слайдов по умолчанию в поле видимости
         slidesToScroll: 1,
         variableWidth: false,           // Отключаем переменную ширину
-        //adaptiveHeight: false,        // Отключаем адаптивную высоту
+        adaptiveHeight: false,        // Отключаем адаптивную высоту
         beforeChange: (current, next) => {
            //console.log('beforeChange', current, next);
         },
@@ -79,9 +73,8 @@ export default function({ items, settings, slideHeight }: HorizontalCarouselProp
         draggable: false,   // ! стандартное багованное поведение выпилено к чертовой матери
         vertical: false,    // ! только горизонтальный режим
     };
-
-    // Определяем направление слайдера: вертикальное или горизонтальное
     const isVertical = settingsDefault.vertical === true;
+
 
     const handleClick = (type: 'prew'|'next') => {
         if(type === 'next') sliderRef.current.slickNext();
@@ -171,7 +164,7 @@ export default function({ items, settings, slideHeight }: HorizontalCarouselProp
                 display: 'flex',
                 flexDirection: 'row',
                 width: '100%',
-                height: slideHeight,
+                height: height,
                 alignItems: 'center',
             }}
         >
@@ -180,8 +173,8 @@ export default function({ items, settings, slideHeight }: HorizontalCarouselProp
 
             <Box
                 sx={{
-                    display: 'block',
-                    width: 'calc(100% - 80px)', // Оставляем место для кнопок
+                    width: 'calc(100% - 82px)', // Оставляем место для кнопок
+                    height: '100%',
                 }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
@@ -199,10 +192,9 @@ export default function({ items, settings, slideHeight }: HorizontalCarouselProp
                                 display: 'flex !important', // Переопределяем инлайн-стили Slick
                                 justifyContent: 'center',
                                 alignItems: 'center',
-                                height: slideHeight ?? 100, // Используем фиксированную высоту
+                                height: height ?? 100, // Используем фиксированную высоту
                                 //border: '1px solid red',
                                 overflow: 'hidden',
-                                boxSizing: 'border-box', // Включаем бордер в расчет размеров
                             }}
                         >
                             <Box

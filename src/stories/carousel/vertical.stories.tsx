@@ -1,14 +1,14 @@
 import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import Base from '../../components/carousel/Horizontal';
+import BaseV from '../../components/carousel/Vertical';
 import { Box, Typography } from '@mui/material';
 import Card from '../../components/carts/base';
 import Form from '../../components/form/Form';
 
 
-const meta: Meta<typeof Base> = {
+const meta: Meta<typeof BaseV> = {
     title: 'Carousel',
-    component: Base,
+    component: BaseV,
     // tags: ["autodocs"],
     argTypes: {
        
@@ -18,7 +18,7 @@ const meta: Meta<typeof Base> = {
 
 const Templates =(args)=> {
     const testData = [
-        <Box sx={{ zoom: 0.5 }}>
+        <Box sx={{ zoom: 1 }}>
             <Form
                 loading={false}
                 onChange={console.log}
@@ -54,8 +54,8 @@ const Templates =(args)=> {
             />
         </Box>
         ,
-        <img src='https://picsum.photos/600/600' alt="Slide 1" /> ,
-        <img src='https://picsum.photos/300/300' alt="Slide 1" /> ,
+        <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/600/600' alt="Slide 1" /> ,
+        <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/300/300' alt="Slide 1" /> ,
         <div><Typography variant="h4">Slide 2</Typography></div>,
     ];
 
@@ -66,13 +66,13 @@ const Templates =(args)=> {
                 подпорка верх
             </div>
             
-            <div style={{ margin: '5%'}}>
-                <Base
+            <Box sx={{ mx: '10%' }}>
+                <BaseV
                     height={args.height}
                     settings={{ ...args }}
                     items={testData}
                 />
-            </div>
+            </Box>
 
             <div style={{width: '100%'}}>
                 подпорка низ
@@ -95,13 +95,12 @@ const Templates =(args)=> {
 
 
 
-type Story = StoryObj<typeof Base>;
+type Story = StoryObj<typeof BaseV>;
 export default meta;
-export const Horizontal: Story = {
+export const Vertical: Story = {
     args: {
-        vertical: true,
-        height: 200,
-        slidesToShow: 4
+        slidesToShow: 4,
+        height: 500
     },
     render: (props)=> <Templates {...props} />
 }
