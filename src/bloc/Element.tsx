@@ -7,6 +7,7 @@ import { throttle } from "lodash";
 
 
 // ! убираем пока второй draggable
+// ! перед правками сперва копию в dump
 const DragableElement = React.memo(({ component, index, cellId, useStop, useDelete }: DraggbleElementProps) => {
     const refWrapperX = React.useRef<Draggable>(null);
     const refWrapperY = React.useRef<HTMLDivElement>(null);

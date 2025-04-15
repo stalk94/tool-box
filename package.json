@@ -68,7 +68,8 @@
     "styled-components": "^6.1.15",
     "vite": "6.2.2",
     "vite-tsconfig-paths": "^5.1.4",
-    "vitest": "^3.0.9"
+    "vitest": "^3.0.9",
+    "notistack": "^3.0.2"
   },
   "peerDependencies": {
     "@mui/material": "^6.4.7",

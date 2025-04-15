@@ -1,7 +1,10 @@
 // все инпуты
 export * from './components/input';
+
 // все формы
 export * from './components/form';
+export type { Schema } from './components/form/types';
+
 // модалка
 export * from './components/modal';
 // формы
@@ -11,6 +14,13 @@ export * from './components/carts';
 // карусели
 export * from './components/carousel';
 
+// снек бар
+export { SnackbarProvider, useSnackbar } from 'notistack';
+
+// навигация
+export { default as Breadcrumbs } from './components/breadcrumbs';
+export { useBreadcrumbs } from './components/breadcrumbs';
+export type { BreadcrumbsNavProps as BreadcrumbsProps } from './components/breadcrumbs';
 
 // таблица данных primereact модернизированная
 export { default as DataTable } from './components/data-table';

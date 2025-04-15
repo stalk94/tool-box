@@ -1,14 +1,13 @@
 ## INPUTS
     # Chips
     # InputMask
-    # MultiStateCheckbox - не срочно
+    # MultiStateCheckbox
 
 ## MENU
     # PanelMenu
     # SlideMenu
 
 ## ANY
-    # BreadCrumb
     # ProgressBar
 
 

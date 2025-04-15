@@ -79,6 +79,7 @@ export const componentRegistry = {
 }
 
 
+// * final
 export const componentGroups = {
     block: {
         label: 'Базовые блоки',

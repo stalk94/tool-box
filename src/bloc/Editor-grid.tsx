@@ -4,7 +4,7 @@ import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
-import Draggable, { DraggableData } from 'react-draggable';
+import { DraggableData } from 'react-draggable';
 import DraggableElement from './Element';
 import { updateComponentProps } from './utils/editor';
 

@@ -11,6 +11,7 @@ import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { ContentData } from './Top-bar';
 import Forms from './Forms';
+
 import { componentRegistry, componentGroups } from './config/registry-component';
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 
@@ -48,7 +49,7 @@ const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
         ),
         children: (
             <>
-                {itemsInCurrentCategory.map(([type, config]) => {
+                { itemsInCurrentCategory.map(([type, config]) => {
                     const Icon = config.icon ?? Settings;
 
                     return (
@@ -163,7 +164,7 @@ export default function ({ addComponentToLayout, useDump, useEditProps, external
             start={start}
         >
             <Box sx={{ mt: 1, mx: 1 }}>
-                {children}
+                { children }
             </Box>
         </LeftSideBarAndTool>
     );

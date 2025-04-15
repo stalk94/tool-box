@@ -43,7 +43,7 @@ export const typography: ThemeOptions = {
     },
 }
 
-/** предустановки компонентов */
+/** предустановки компонентов (!никаких явно заданных цветов) */
 export const components: ThemeOptions = {
     components: {
         MuiTooltip: {
@@ -59,6 +59,14 @@ export const components: ThemeOptions = {
                     transition: Zoom,
                 },
                 arrow: true,
+            },
+        },
+        // подсказки слева внизу экрана
+        MuiSnackbarContent: {
+            styleOverrides: {
+                root: {
+                   
+                },
             },
         },
         MuiMenu: {

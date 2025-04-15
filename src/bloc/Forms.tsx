@@ -1,7 +1,7 @@
 import React from "react";
 export { TextInput, NumberInput, SliderInput } from '../components/input';
 import { Form, Schema } from '../index';
-import { Box, Theme, Tooltip, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './config/utill';
 import { motion } from 'framer-motion';
 import { sanitizeProps } from './utils/sanitize';
