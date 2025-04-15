@@ -9,7 +9,7 @@ export const propsButton = {
     size: ['small', 'medium', 'large'], // Размеры
     disabled: [true, false], // Отключение кнопки
     fullWidth: [true, false], // Растянуть на 100%
-    type: ['button', 'submit', 'reset'], // Тип HTML-кнопки
+    //type: ['button', 'submit', 'reset'], // Тип HTML-кнопки
     startIcon: 'ReactNode', // Иконка до текста (например, <SaveIcon />)
     endIcon: 'ReactNode', // Иконка после текста
     onClick: 'function', // Обработчик клика

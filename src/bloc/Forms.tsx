@@ -39,7 +39,7 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
         const color = fabrickPropsScheme(typeContent, propsElem.color, 'color');
         const variant = fabrickPropsScheme(typeContent, propsElem.variant, 'variant');
         const fullWidth = fabrickPropsScheme(typeContent, propsElem.fullWidth, 'fullWidth');
-        const type = fabrickPropsScheme(typeContent, propsElem.type, 'type');
+        //const type = fabrickPropsScheme(typeContent, propsElem.type, 'type');
         const size = fabrickPropsScheme(typeContent, propsElem.size, 'size');
         const startIcon = fabrickPropsScheme(typeContent, propsElem.startIcon, 'startIcon');
         const endIcon = fabrickPropsScheme(typeContent, propsElem.endIcon, 'endIcon');
@@ -47,9 +47,9 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
 
         schema.push(
             children as Schema<'text'>,
-            type as Schema<'toggle'>,
-            size as Schema<'toggle'>,
+            //type as Schema<'toggle'>,
             fullWidth as Schema<'switch'>,
+            size as Schema<'toggle'>,
             color as Schema<'toggle'>,
             variant as Schema<'select'>,
             startIcon as Schema<'toggle'>,

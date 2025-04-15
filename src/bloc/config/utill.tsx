@@ -1,5 +1,5 @@
 import React from "react";
-import { listConfig } from '../modules/render';
+import { listConfig } from '../modules/RENDER';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
 import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight, LinearScale,  
     ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets
@@ -252,7 +252,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
                 {
                     id: 'small', label: <var style={{ fontStyle: 'italic' }} > sm </var>
                 },
-                { id: 'medium', label: <var style={{ fontWeight: 400 }}> sm </var> },
+                { id: 'medium', label: <var style={{ fontWeight: 400 }}> md </var> },
                 { id: 'large', label: <var style={{ fontWeight: 'bold' }}> lg </var> }
             ],
             label: typeProps,

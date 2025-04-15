@@ -5,7 +5,7 @@ import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState, renderState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy, } from '@dnd-kit/sortable';
+import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -27,26 +27,7 @@ export default function ({ height, desserealize }) {
     );
 
 
-    const handleDragStart = (event, layer) => {
-        const { active } = event;
-        const render = renderState.get({ noproxy: true });
-
-        const layerContent = render.find(r => r.i === layer.i)?.content ?? [];
-        const currentComponent = layerContent.find(
-            (c) => c.props['data-id'] === active.id
-        );
-
-        if (currentComponent) {
-            setSelectComponent(currentComponent);             // для DragOverlay
-            info.select.content.set(currentComponent);        // ✅ ReactNode
-
-            document.querySelectorAll('[data-id]').forEach(el => {
-                el.classList.remove('editor-selected');
-            });
-            const el = document.querySelector(`[data-id="${active.id}"]`);
-            if (el) el.classList.add('editor-selected');
-        }
-    }
+    // ANCHOR - изменение cellsCache (меняет позиции в массиве)
     const handleDragEnd = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
 
@@ -66,7 +47,7 @@ export default function ({ height, desserealize }) {
                 target.content = arrayMove(target.content, oldIndex, newIndex);
             }
 
-            // ⚠️ Обновляем и cellsContent
+            // ⚠️ Обновляем и cellsContent 
             cellsContent.set((old) => {
                 old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
                 return old;
@@ -74,6 +55,26 @@ export default function ({ height, desserealize }) {
 
             return updated;
         });
+    }
+    const handleDragStart = (event, layer) => {
+        const { active } = event;
+        const render = renderState.get({ noproxy: true });
+
+        const layerContent = render.find(r => r.i === layer.i)?.content ?? [];
+        const currentComponent = layerContent.find(
+            (c) => c.props['data-id'] === active.id
+        );
+
+        if (currentComponent) {
+            setSelectComponent(currentComponent);             // для DragOverlay
+            info.select.content.set(currentComponent);        // ✅ ReactNode
+
+            document.querySelectorAll('[data-id]').forEach(el => {
+                el.classList.remove('editor-selected');
+            });
+            const el = document.querySelector(`[data-id="${active.id}"]`);
+            if (el) el.classList.add('editor-selected');
+        }
     }
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         //console.log(cellId, componentIndex);
@@ -140,6 +141,7 @@ export default function ({ height, desserealize }) {
         });
     }
 
+    
     React.useEffect(() => {
         const cur = render.get();
 
@@ -221,11 +223,7 @@ export default function ({ height, desserealize }) {
                             key={layer.i}
                             style={{
                                 overflow: 'hidden',
-                                display: 'flex',
-                                flexDirection: 'column',
-                                textAlign: "center",
-                                gap: 4,             //!
-                                border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb50b5' : '#fb505055'}`,
+                                border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
                                 background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
                             }}
                         >
@@ -238,7 +236,7 @@ export default function ({ height, desserealize }) {
                                 { Array.isArray(layer.content) &&
                                     <SortableContext
                                         items={layer.content.map((cnt) => cnt.props['data-id'])}
-                                        strategy={verticalListSortingStrategy}
+                                        strategy={rectSortingStrategy}
                                     >
                                         { Array.isArray(layer.content) && layer.content.map((component) => (
                                             <SortableItem 

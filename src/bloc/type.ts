@@ -19,8 +19,6 @@ export type Component = React.ReactElement & {
     props: {
         "data-id": number
         "data-type": ProxyComponentName
-        "data-offset"?: { x: number; y: number }
-        "data-relative-offset": { x: number; y: number }
         children?: string | any
         style?: React.CSSProperties
         [key: string]: any

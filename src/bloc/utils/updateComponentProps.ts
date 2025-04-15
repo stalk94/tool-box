@@ -9,7 +9,7 @@ type Params = {
 }
 
 
-//! иногда бывает фатальный вылет либо не применяются на дампе изменения редактора (надо выловить)
+/** Запись свойств в  */
 export function updateComponentProps({ component, data, rerender = true }: Params) {
     const id = component?.props?.['data-id'];
     const cellId = context.currentCell.get()?.i;
@@ -30,10 +30,8 @@ export function updateComponentProps({ component, data, rerender = true }: Param
         return old;
     });
 
-    if (!rerender) return;
-
     // 🔁 Обновляем визуальный рендер через context.render
-    renderState.set((layers) => {
+    if (rerender) renderState.set((layers) => {
         const updated = layers.map((layer) => {
             if (!Array.isArray(layer.content)) return layer;
 

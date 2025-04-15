@@ -2,23 +2,79 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import context, { infoState, renderState } from './context'; 
+import { useHookstate } from '@hookstate/core';
+import { Component } from './type';
 
-type Props = {
-    id: string;
-    children: React.ReactNode;
+
+//! особые условия стилей для компонентов (!это костыли, вся логика в обертки идет)
+class Styler {
+    ref: Element
+    styleWrapper: React.CSSProperties
+    children: Component
+
+    constructor(children, styleWrapper) {
+        this.ref = document.querySelector(`[data-id="${children.props['data-id']}"]`);
+        this.styleWrapper = styleWrapper;
+        this.children = children;
+        this.type = this.children.props['data-type'];
+        this.init();
+    }
+    Typography() {
+        this.ref.style.width = '100%'
+    }
+    init() {
+        const childProps = this.children.props;
+
+        if(childProps.style) {
+            const style = childProps.style;
+            
+            if(style.display === 'block') {
+                this.styleWrapper.display = 'flex';
+                this.styleWrapper.width = '100%';
+
+                if(this.ref) {
+                    if(this[this.type]) this[this.type]();
+                    this.ref.style.display = 'flex';
+                }
+            }
+        }
+    }
 }
 
 
-export function SortableItem({ id, children }: Props) {
-    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+export function SortableItem({ id, children }: { id: string, children: Component }) {
+    const itemRef = React.useRef<HTMLDivElement>(null);
+    const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
+    const dragEnabled = useHookstate(context.dragEnabled);
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
+        id ,
+        disabled: !dragEnabled.get()        // ✅ глобальный флаг
+    });
 
-    const style = {
+    
+    const styleWrapper: React.CSSProperties = {
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-        width: '100%',
-        cursor: 'grab',
+        width: 'fit-content',
+        display: 'inline-block',
+        verticalAlign: 'top',
+        cursor: dragEnabled.get() ? 'grab' : 'default',
+        // для отладки
+        paddingTop: 3,
+        paddingBottom: 3,
+        //border: '1px dotted #8580806b',
     }
+    //ANCHOR - отслеживает ключевые свойства(маркеры) на компоненте и устанавливает на обертку спец стили
+    const useSetStyleFromPropsComponent = () => {
+        if(children?.props) {
+            const childProps = children.props;
+
+            const styler = new Styler(children, styleWrapper);
+        }
+        
+        return styleWrapper;
+    } 
     const handleClick = () => {
         // Ищем компонент в render по id
         const all = renderState.get({ noproxy: true });
@@ -37,15 +93,45 @@ export function SortableItem({ id, children }: Props) {
             if (el) el.classList.add('editor-selected');
         }
     }
+    React.useEffect(() => {
+        if (!itemRef.current) return;
+
+        const update = () => {
+            const parent = itemRef.current?.parentElement;
+            if (!parent) return;
+
+            const items = Array.from(parent.children) as HTMLElement[];
+
+            // Найдём себя и проверим — последняя ли строка
+            const self = itemRef.current;
+            const selfTop = self.getBoundingClientRect().top;
+
+            const lastInSameRow = items
+                .filter((el) => el.getBoundingClientRect().top === selfTop)
+                .pop();
+            
+            setIsLastInRow(lastInSameRow === self);
+        };
+
+        update();
+        const resizeObserver = new ResizeObserver(update);
+        resizeObserver.observe(itemRef.current);
+
+        return () => resizeObserver.disconnect();
+    }, []);
 
 
     return (
         <div
-            ref={setNodeRef}
-            style={style}
+            ref={(node) => {
+                setNodeRef(node);
+                itemRef.current = node;
+            }}
+            style={useSetStyleFromPropsComponent()}
             {...attributes}
-            {...listeners}
+            {...(dragEnabled.get() ? listeners : {})}
             onClick={handleClick} 
+            onDoubleClick={()=> window?.triggerLeftPanel?.()}
         >
             { children }
         </div>

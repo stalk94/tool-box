@@ -5,12 +5,11 @@ import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState, renderState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import { ToolBarInfo } from './Top-bar';
-import { listAllComponents, listConfig } from './modules/render';
+import { listAllComponents, listConfig } from './modules/RENDER';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
-import { updateComponentProps } from './utils/editor';
 //import "../style/grid.css";
 import "../style/edit.css";
 
@@ -23,7 +22,7 @@ export default function ({ height, setHeight }) {
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
-    
+    //context.dragEnabled.set(true)
    
     const makePrewiew = async(elem: HTMLElement) => {
         const canvas = await html2canvas(elem, { useCORS: true, scrollY: -window.scrollY });
@@ -86,27 +85,6 @@ export default function ({ height, setHeight }) {
             });
         });
     }
-    const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
-        const props = { ...component.props };
-    
-        const id = Date.now();
-        const type = props["data-type"];
-        //const offset = props["data-offset"] ?? { x: 0, y: 0 };
-    
-        delete props.ref;
-    
-        return {
-            id,
-            parent: cellId,
-            //offset,
-            props: {
-                ...props,
-                'data-id': id,
-                'data-type': type,
-                //'data-offset': offset
-            }
-        };
-    }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props } = component;
         const type = props["data-type"];
@@ -122,6 +100,26 @@ export default function ({ height, setHeight }) {
                 }}
             />
         );
+    }
+    // вызывается только при добавлении нового сонтента 
+    const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
+        const props = { ...component.props };
+    
+        const id = Date.now();
+        const type = props["data-type"];
+        delete props.ref;
+    
+        return {
+            id,
+            parent: cellId,
+            //offset,
+            props: {
+                ...props,
+                'data-id': id,
+                'data-type': type,
+                //'data-offset': offset
+            }
+        };
     }
     const addComponentToCell = (cellId: string, component: Component) => {
         render.set((prev) => {

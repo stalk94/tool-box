@@ -8,7 +8,7 @@ import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { ContentData } from './Top-bar';
-import { updateComponentProps } from './utils/editor';
+import { updateComponentProps } from './utils/updateComponentProps';
 import Forms from './Forms';
 
 
@@ -146,6 +146,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
         else if (item.id === 'component') setCurrentToolPanel('component');
         else if (item.id === 'save') useDump();
     }
+    // ANCHOR - updateComponentProps
     const changeEditor = (newDataProps) => {
         const component = select.content.get({ noproxy: true });
         if (component) updateComponentProps({ component, data: newDataProps });

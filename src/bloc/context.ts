@@ -6,15 +6,18 @@ import { localstored } from '@hookstate/localstored';
 // копия на рендер App state
 export const renderState = hookstate<LayoutCustom[]>([]);
 
+
 export default hookstate(
     {
         mod: 'home',
+        dragEnabled: true,                  // временное решение включение/отключение режима редактора
         layout: <LayoutCustom[]> <unknown>[],
         tools: undefined,
         currentCell: <LayoutCustom> undefined,
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })
 );
+
 
 // сохраняемое состояние в localStorage редактора сетки (! это не дамп финальный)
 export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(

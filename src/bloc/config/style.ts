@@ -6,13 +6,11 @@
 export const baseOptions = {
     display: [
         "block",
+        "flex",
         "inline",
         "inline-block",
-        "flex",
         "grid",
-        "none",
         "contents",
-        "hidden"
     ],
     textAlign: [
         "left",
@@ -25,7 +23,7 @@ export const baseOptions = {
     width: 'limit',
     height: 'limit',
     background: "color",
-    backgroundColor: "color",
+    //backgroundColor: "color",
     color: "color",
     padding: "number",
     //paddingLeft: "string?",
