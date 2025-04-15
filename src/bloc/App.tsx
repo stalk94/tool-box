@@ -86,13 +86,6 @@ export default function ({ height, setHeight }) {
             });
         });
     }
-    const editRenderComponentProps = (component: Component, data: Record<string, any>) => updateComponentProps({
-        component,
-        data,
-        cellId: curCell.get()?.i,
-        cellsCache,
-        setRender: render.set,
-    });
     const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
         const props = { ...component.props };
     
@@ -168,7 +161,6 @@ export default function ({ height, setHeight }) {
                 addComponentToLayout={(elem)=> {
                     if(curCell.get()?.i) addComponentToCell(curCell.get().i, elem);
                 }}
-                useEditProps={editRenderComponentProps}
                 useDump={dumpRender}
                 externalPanelTrigger={(cb) => {
                     // 💡 новый трюк
@@ -176,9 +168,9 @@ export default function ({ height, setHeight }) {
                 }}
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-                <ToolBarInfo 
-                    useEditProps={editRenderComponentProps}
-                />
+
+                <ToolBarInfo />
+
                 { mod.get() === 'home' &&
                     <GridComponentEditor
                         desserealize={desserealize}

@@ -67,3 +67,49 @@ export const useCellContext = ( componentId: string, includeSelf: boolean = true
         cellRef
     };
 }
+
+
+export const useComponentSize = (componentId: string) => {
+    const { cellRef, components, componentIndex } = useCellContext(componentId, true);
+    const [size, setSize] = React.useState({ width: 0, height: 0 });
+
+    React.useEffect(() => {
+        if (!cellRef || componentIndex === null) return;
+
+        const calcSize = () => {
+            const siblingsBefore = components.slice(0, componentIndex);
+
+            const usedHeight = siblingsBefore.reduce((acc, comp) => {
+                const id = comp.props['data-id'];
+                const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
+                return acc + (el?.offsetHeight || 0);
+            }, 0);
+
+            const cellRect = cellRef.getBoundingClientRect();
+            const availableHeight = cellRect.height - usedHeight;
+            //const width = cellRect.width;
+
+            const usedWidth = siblingsBefore.reduce((acc, comp) => {
+                const id = comp?.props?.['data-id'];
+                const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
+                return acc + (el?.offsetWidth || 0);
+            }, 0);
+        
+            const availableWidth = cellRect.width - usedWidth;
+            console.log(availableWidth)
+
+            setSize({
+                width: Math.max(0, availableWidth),
+                height: Math.max(0, availableHeight),
+            });
+        };
+
+        calcSize();
+        const resizeObserver = new ResizeObserver(calcSize);
+        resizeObserver.observe(cellRef);
+
+        return () => resizeObserver.disconnect();
+    }, [cellRef, componentIndex, components]);
+
+    return size; // { width, height }
+}

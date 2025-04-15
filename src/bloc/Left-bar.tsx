@@ -1,8 +1,6 @@
 import React from "react";
-import { Button, useTheme, Box, Paper, Typography, Tooltip, SxProps, IconButton } from "@mui/material";
-import { Delete as DeleteIcon, MoreVert as MoreVertIcon,
-    RadioButtonChecked, Assignment, Input, BorderStyle, ColorLens, FormatColorText, More
-} from '@mui/icons-material';
+import { Button, useTheme, Box, IconButton } from "@mui/material";
+import { BorderStyle, ColorLens, FormatColorText, More } from '@mui/icons-material';
 import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
@@ -10,7 +8,9 @@ import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { ContentData } from './Top-bar';
+import { updateComponentProps } from './utils/editor';
 import Forms from './Forms';
+
 
 import { componentRegistry, componentGroups } from './config/registry-component';
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
@@ -104,7 +104,7 @@ const useComponent = (elem, onChange, curSub, setSub) => {
 
 
 // левая панель редактора
-export default function ({ addComponentToLayout, useDump, useEditProps, externalPanelTrigger }: Props) {
+export default function ({ addComponentToLayout, useDump, externalPanelTrigger }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
@@ -147,8 +147,10 @@ export default function ({ addComponentToLayout, useDump, useEditProps, external
         else if (item.id === 'save') useDump();
     }
     const changeEditor = (newDataProps) => {
-        useEditProps(select.content.get({ noproxy: true }), newDataProps);
+        const component = select.content.get({ noproxy: true });
+        if (component) updateComponentProps({ component, data: newDataProps });
     }
+    
     const { start, children } = currentToolPanel === 'items'
         ? useElements(currentTool, setCurrentTool, addComponentToLayout)
         : useComponent(select.content, changeEditor, curSubpanel, setSubPanel);

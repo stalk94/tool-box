@@ -85,7 +85,7 @@ export default function ({ height, desserealize }) {
                 if (Array.isArray(updatedRender[cellIndex]?.content)) {
                     // Удаляем компонент из ячейки
                     updatedRender[cellIndex]?.content?.splice(componentIndex, 1);
-
+                    // обновим наш dump
                     cellsCache.set((old) => {
                         old[cellId].splice(componentIndex, 1);
 
@@ -93,6 +93,7 @@ export default function ({ height, desserealize }) {
                     });
                 }
             }
+
             return updatedRender;
         });
     }

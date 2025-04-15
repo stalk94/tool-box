@@ -8,9 +8,7 @@ import { listAllComponents, listConfig } from './modules/render';
 import { useHookstate } from "@hookstate/core";
 import SelectButton from "../components/popup/select.button";
 
-type Props = {
-    useEditProps: (component: Component, data: Record<string, any>)=> void
-}
+
 export type ContentData = {
     id: number 
     type: 'Button' | 'IconButton' | 'Typography'
@@ -28,7 +26,7 @@ export type ContentData = {
 
 
 // верхняя полоска (инфо обшее)
-export const ToolBarInfo = ({ useEditProps }: Props) => {
+export const ToolBarInfo = () => {
     const [open, setOpen] = React.useState<undefined>();
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();

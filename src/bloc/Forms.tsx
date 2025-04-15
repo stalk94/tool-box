@@ -96,7 +96,8 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
 }
 
 
-// ! есть баг если удалить компонент при открытом редакторе
+// ! баг при изменении из одной вкладки настроек, переход в другую, то данные не сохраняются предыдушей вкладки
+// ! есть баг если удалить компонент при открытом редакторе (вроде)
 export default function({ type, elemLink, onChange }: PropsForm) {
     const theme = useTheme();
     const copyDataContent = React.useRef({});           // кэш во избежание перерендеров

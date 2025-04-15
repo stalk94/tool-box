@@ -1,28 +1,27 @@
 import React from 'react';
-import { ContentFromCell, ComponentSerrialize } from '../type';
+import { Component, ComponentSerrialize } from '../type';
+import context, { cellsContent, infoState, renderState } from '../context';
 
 type Params = {
-    component: ContentFromCell,
-    data: Record<string, any>,
-    cellId: string,
-    cellsCache: any,
-    setRender: React.Dispatch<React.SetStateAction<any>>,
-    rerender?: boolean
+    component: Component;
+    data: Record<string, any>;
+    rerender?: boolean;
 }
 
+
 //! иногда бывает фатальный вылет либо не применяются на дампе изменения редактора (надо выловить)
-export function updateComponentProps({component, data, cellId, cellsCache, setRender, rerender = true}: Params) {
-    const id = component.props['data-id'];
+export function updateComponentProps({ component, data, rerender = true }: Params) {
+    const id = component?.props?.['data-id'];
+    const cellId = context.currentCell.get()?.i;
     
-    if (!id) {
-        console.warn('updateComponentProps: компонент без data-id');
+    if (!id || !cellId) {
+        console.warn('updateComponentProps: отсутствует data-id или data-cell');
         return;
     }
 
-    // Обновляем в hookstate (данные)
-    cellsCache.set((old) => {
+    // 🧠 Обновляем данные в hookstate-кэше
+    cellsContent.set((old) => {
         const index = old[cellId]?.findIndex((c) => c.id === id);
-
         if (index !== -1) {
             Object.entries(data).forEach(([key, value]) => {
                 old[cellId][index].props[key] = value;
@@ -33,8 +32,8 @@ export function updateComponentProps({component, data, cellId, cellsCache, setRe
 
     if (!rerender) return;
 
-    // Обновляем в render (визуально)
-    setRender((layers) => {
+    // 🔁 Обновляем визуальный рендер через context.render
+    renderState.set((layers) => {
         const updated = layers.map((layer) => {
             if (!Array.isArray(layer.content)) return layer;
 
@@ -50,8 +49,9 @@ export function updateComponentProps({component, data, cellId, cellsCache, setRe
             try {
                 const updatedComponent = React.cloneElement(current, {
                     ...current.props,
-                    ...data
+                    ...data,
                 });
+
                 layer.content[i] = updatedComponent;
             } catch (e) {
                 console.error('❌ Ошибка при клонировании компонента:', e, current);
