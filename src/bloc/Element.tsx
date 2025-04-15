@@ -6,7 +6,7 @@ import { Component, DraggbleElementProps } from './type';
 import { throttle } from "lodash";
 
 
-// ! убираем пока второй draggable
+// !? убираем пока второй draggable
 // ! перед правками сперва копию в dump
 const DragableElement = React.memo(({ component, index, cellId, useStop, useDelete }: DraggbleElementProps) => {
     const refWrapperX = React.useRef<Draggable>(null);
@@ -33,20 +33,6 @@ const DragableElement = React.memo(({ component, index, cellId, useStop, useDele
     const handlerStop = React.useMemo(() =>
         throttle((data: DraggableData, component: Component, axis: 'x' | 'y') => {
             onStop(data, component, axis);
-    
-            const refWrapper = refWrapperX.current;
-            const refCellContainer = document.querySelector(`[data-id="${cellId}"]`);
-    
-            if (refCellContainer) {
-                const wrX = refCellContainer.querySelectorAll(`.Wrapper-x`);
-                const wrY = refCellContainer.querySelectorAll(`.Wrapper-y`);
-    
-                [...wrX].forEach((el) => {
-                    if (el.id !== String(index)) {
-                        // const result = utill.getOverlap(refWrapperX.current, el);
-                    }
-                });
-            }
         }, 200),
         [component, cellId, index]
     );
@@ -111,7 +97,8 @@ const DragableElement = React.memo(({ component, index, cellId, useStop, useDele
                 ref={refWrapperY} 
                 style={{border: '1px dotted #bababa33'}}
             >
-                <Draggable ref={refWrapperX}
+                <Draggable 
+                    ref={refWrapperX}
                     axis="x"
                     grid={[50, 10]}
                     defaultPosition={{x: offset?.x ?? 0, y: 0}}

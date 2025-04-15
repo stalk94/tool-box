@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, IconButton, Typography } from '@mui/material';
+import { Button, IconButton } from '@mui/material';
 import { iconsList } from '../../components/tools/icons';
 import { Settings } from '@mui/icons-material';
 
