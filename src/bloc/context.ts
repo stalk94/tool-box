@@ -3,6 +3,8 @@ import { ComponentSerrialize, LayoutCustom } from './type';
 import { localstored } from '@hookstate/localstored';
 
 
+// копия на рендер App state
+export const renderState = hookstate<LayoutCustom[]>([]);
 
 export default hookstate(
     {
@@ -13,6 +15,7 @@ export default hookstate(
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })
 );
+
 // сохраняемое состояние в localStorage редактора сетки (! это не дамп финальный)
 export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     {
@@ -20,8 +23,6 @@ export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     }, 
     localstored({key: 'cellsContent', engine: localStorage}
 ));
-
-
 
 export const infoState = hookstate(new Proxy({
         container: {

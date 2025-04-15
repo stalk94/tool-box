@@ -2,7 +2,7 @@ import React from "react";
 import html2canvas from 'html2canvas';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
-import context, { cellsContent, infoState } from './context';
+import context, { cellsContent, infoState, renderState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import { ToolBarInfo } from './Top-bar';
 import { listAllComponents, listConfig } from './modules/render';
@@ -19,12 +19,12 @@ import "../style/edit.css";
 export default function ({ height, setHeight }) {
     const mod = useHookstate(context.mod);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
-    const [render, setRender] = React.useState<LayoutCustom []>([]);
+    const render = useHookstate(renderState);
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     
-    
+   
     const makePrewiew = async(elem: HTMLElement) => {
         const canvas = await html2canvas(elem, { useCORS: true, scrollY: -window.scrollY });
         return canvas.toDataURL();
@@ -53,7 +53,7 @@ export default function ({ height, setHeight }) {
                 const cacheLayout = cache[idLayout];
                 const bound = found.getBoundingClientRect();
                 const findLayout = context.layout.get().find((l)=> l.i === idLayout);
-                const findRenderLayot = render.find(l => l.i === idLayout);
+                const findRenderLayot = render.get({ noproxy: true }).find(l => l.i === idLayout);
                 
                 meta.layers.push({
                     ...findRenderLayot,
@@ -91,26 +91,26 @@ export default function ({ height, setHeight }) {
         data,
         cellId: curCell.get()?.i,
         cellsCache,
-        setRender,
+        setRender: render.set,
     });
     const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
         const props = { ...component.props };
     
         const id = Date.now();
         const type = props["data-type"];
-        const offset = props["data-offset"] ?? { x: 0, y: 0 };
+        //const offset = props["data-offset"] ?? { x: 0, y: 0 };
     
         delete props.ref;
     
         return {
             id,
             parent: cellId,
-            offset,
+            //offset,
             props: {
                 ...props,
                 'data-id': id,
                 'data-type': type,
-                'data-offset': offset
+                //'data-offset': offset
             }
         };
     }
@@ -131,7 +131,7 @@ export default function ({ height, setHeight }) {
         );
     }
     const addComponentToCell = (cellId: string, component: Component) => {
-        setRender((prev) => {
+        render.set((prev) => {
             const updatedRender = [...prev];
             const cellIndex = updatedRender.findIndex(item => item.i === cellId);
 
@@ -177,13 +177,10 @@ export default function ({ height, setHeight }) {
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                 <ToolBarInfo 
-                    render={render}
                     useEditProps={editRenderComponentProps}
                 />
                 { mod.get() === 'home' &&
                     <GridComponentEditor
-                        render={render}
-                        setRender={setRender}
                         desserealize={desserealize}
                         height={height}
                     />

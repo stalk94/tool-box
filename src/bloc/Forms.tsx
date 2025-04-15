@@ -96,6 +96,7 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
 }
 
 
+// ! есть баг если удалить компонент при открытом редакторе
 export default function({ type, elemLink, onChange }: PropsForm) {
     const theme = useTheme();
     const copyDataContent = React.useRef({});           // кэш во избежание перерендеров
@@ -190,6 +191,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
         const props = elem?.props;
     
         if (!props || !props['data-id'] || !props['data-type']) return;
+        if (!elem || !elem.props || !elem.props['data-id']) return null;
     
         const id = props['data-id'];
         const internalType = props['data-type'];

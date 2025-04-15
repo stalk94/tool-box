@@ -25,7 +25,7 @@ export type BaseInputProps = {
 
 export default function TextInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
-    const [inputValue, setInputValue] = React.useState<number | string>(value);
+    const [inputValue, setInputValue] = React.useState<number | string>('');
 
     
     const useFiltre =(value: string|number)=> {
@@ -56,7 +56,7 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
         return clone;
     }
     React.useEffect(()=> {
-        setInputValue(value ?? '');
+        if(value) setInputValue(value);
     }, [value]);
     
    

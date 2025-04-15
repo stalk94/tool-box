@@ -2,7 +2,7 @@ import React from 'react';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import { ArrowDropDown } from '@mui/icons-material';
 import { alpha, darken, lighten, Avatar, Button, Grid2, Stack } from '@mui/material';
-//import GridEditor from '../grid/grid-editor';
+import GridEditor from '../grid/grid-editor';
 import Text from '../input/text';
 import BasePopUp from '../popup/base';
 

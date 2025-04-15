@@ -17,7 +17,7 @@ export type NumberInputProps = {
 
 export default function NumberInput({ value, min=-10, max=100, step=1, onChange, ...props }: NumberInputProps) {
     const theme = useTheme();
-    const [inputValue, setInputValue] = React.useState<number>(value ?? 0);
+    const [inputValue, setInputValue] = React.useState<number>(0);
   
     const updateValue = (val: number) => {
         const clamped = Math.max(min, Math.min(val, max));
@@ -42,7 +42,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
     const increase = () => updateValue(inputValue + step);
 
     React.useEffect(() => {
-        setInputValue(value);
+        if(value !==undefined ) setInputValue(value);
     }, [value]);
 
     const isMin = inputValue <= min;

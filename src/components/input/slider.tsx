@@ -13,7 +13,7 @@ export type CustomSliderProps = SliderProps & {
 
 export default function({ value, onChange, start, end, ...props }: CustomSliderProps) {
     const theme = useTheme();
-    const [curValue, setCurValue] = React.useState(value);
+    const [curValue, setCurValue] = React.useState(0);
     const style = {
         color: '#00000000',
         '& .MuiSlider-thumb': {
@@ -59,7 +59,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         onChange && onChange(newValue);
     }
     React.useEffect(()=> {
-        setCurValue(value)
+        if(value !== undefined) setCurValue(value)
     }, [value]);
 
 

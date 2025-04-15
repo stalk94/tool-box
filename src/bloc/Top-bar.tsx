@@ -9,7 +9,6 @@ import { useHookstate } from "@hookstate/core";
 import SelectButton from "../components/popup/select.button";
 
 type Props = {
-    render: LayoutCustom []
     useEditProps: (component: Component, data: Record<string, any>)=> void
 }
 export type ContentData = {
@@ -29,14 +28,18 @@ export type ContentData = {
 
 
 // верхняя полоска (инфо обшее)
-export const ToolBarInfo = ({ render, useEditProps }: Props) => {
+export const ToolBarInfo = ({ useEditProps }: Props) => {
     const [open, setOpen] = React.useState<undefined>();
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
     const container = useHookstate(infoState.container);
 
+    //?
+    const renderJson =()=> {
+        const content = select.content.get({ noproxy: true });
 
+    }
     React.useEffect(()=> {
         const value = select.cell.get({noproxy:true});
 

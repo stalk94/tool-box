@@ -10,13 +10,19 @@ type Params = {
     rerender?: boolean
 }
 
-
+//! иногда бывает фатальный вылет либо не применяются на дампе изменения редактора (надо выловить)
 export function updateComponentProps({component, data, cellId, cellsCache, setRender, rerender = true}: Params) {
     const id = component.props['data-id'];
+    
+    if (!id) {
+        console.warn('updateComponentProps: компонент без data-id');
+        return;
+    }
 
-    // обновляем данные в store
+    // Обновляем в hookstate (данные)
     cellsCache.set((old) => {
         const index = old[cellId]?.findIndex((c) => c.id === id);
+
         if (index !== -1) {
             Object.entries(data).forEach(([key, value]) => {
                 old[cellId][index].props[key] = value;
@@ -27,19 +33,30 @@ export function updateComponentProps({component, data, cellId, cellsCache, setRe
 
     if (!rerender) return;
 
-    // обновляем рендер
+    // Обновляем в render (визуально)
     setRender((layers) => {
         const updated = layers.map((layer) => {
-            if (Array.isArray(layer.content)) {
-                const i = layer.content.findIndex((c) => c.props['data-id'] === id);
-                if (i !== -1) {
-                    const updatedComponent = React.cloneElement(component, {
-                        ...component.props,
-                        ...data
-                    });
-                    layer.content[i] = updatedComponent;
-                }
+            if (!Array.isArray(layer.content)) return layer;
+
+            const i = layer.content.findIndex((c) => c?.props?.['data-id'] === id);
+            if (i === -1) return layer;
+
+            const current = layer.content[i];
+            if (!current) {
+                console.warn('updateComponentProps: компонент не найден в render');
+                return layer;
             }
+
+            try {
+                const updatedComponent = React.cloneElement(current, {
+                    ...current.props,
+                    ...data
+                });
+                layer.content[i] = updatedComponent;
+            } catch (e) {
+                console.error('❌ Ошибка при клонировании компонента:', e, current);
+            }
+
             return layer;
         });
 
