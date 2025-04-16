@@ -2,8 +2,14 @@ import { registerComponent } from './utils/registry';
 import { ButtonWrapper, IconButtonWrapper } from './buttons';
 import { TypographyWrapper } from './text';
 import { ImageWrapper } from './media';
-import { Settings } from '@mui/icons-material';
-import { TextInputWrapper, NumberInputWrapper } from './inputs';
+import { 
+    Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
+    RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create
+ } from '@mui/icons-material';
+import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
+    ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
+    AutoCompleteInputWrapper, FileInputWrapper
+ } from './inputs';
 import { sharedContext, sharedEmmiter } from './utils/function';
 
 
@@ -39,7 +45,7 @@ registerComponent({
             display: 'flex',  
         }
     },
-    icon: Settings,
+    icon: TextFields,
     category: 'interactive',
 });
 
@@ -81,11 +87,11 @@ registerComponent({
             fontSize: 14,
         }
     },
-    icon: Settings,
+    icon: Create,
     category: 'interactive',
 });
 registerComponent({
-    type: 'NumberInput',
+    type: 'Number',
     component: NumberInputWrapper,
     defaultProps: {
         label: 'label',
@@ -97,6 +103,155 @@ registerComponent({
             fontSize: 14,
         }
     },
-    icon: Settings,
+    icon: Exposure,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Time',
+    component: DateInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        type: 'time',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: Schedule,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Date',
+    component: DateInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        type: 'date',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: EventAvailable,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Slider',
+    component: SliderInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: LinearScale,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'ToggleButtons',
+    component: ToggleInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        items: [
+            { id: '1', label: 'test-1' },
+            { id: '2', label: 'test-2' },
+        ],
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: RadioButtonChecked,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Switch',
+    component: SwitchInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: EditAttributes,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'CheckBox',
+    component: CheckBoxInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: Check,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Select',
+    component: SelectInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        items: [
+            { id: '1', label: 'test-1' },
+            { id: '2', label: 'test-2' },
+        ],
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: ViewList,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'AutoComplete',
+    component: AutoCompleteInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        options: [
+            { id: '1', label: 'яблоко' },
+            { id: '2', label: 'задница' },
+        ],
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: FlashAuto,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'File',
+    component: FileInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: Description,
     category: 'interactive',
 });

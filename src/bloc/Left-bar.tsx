@@ -52,16 +52,14 @@ const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
         children: (
             <>
                 { itemsInCurrentCategory.map(([type, config]) => {
-                    const Icon = config.icon ?? Settings;
+                    const Icon = componentRegistry[type].icon ?? Settings;
 
                     return (
                         <Box key={type} sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
-                            <IconButton>
-                                <Icon sx={{ color: 'gray', fontSize: 18 }} />
-                            </IconButton>
-                            <Button
+                            <Button 
                                 variant="outlined"
-                                color="inherit"
+                                style={{color:'#fcfcfc', borderColor:'#fcfcfc61',boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.4)'}}
+                                startIcon={<Icon sx={{ color: 'gray', fontSize: 18 }} />}
                                 sx={{ width: '100%', opacity: 0.6 }}
                                 onClick={() =>
                                     addComponentToLayout(createComponentFromRegistry(type))

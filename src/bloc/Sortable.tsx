@@ -65,7 +65,7 @@ export function SortableItem({ id, children }: { id: string, children: Component
         // для отладки
         paddingTop: 3,
         paddingBottom: 3,
-        border: '1px dotted #8580806b',
+        borderRight: '1px dotted #8580806b',
     }
     //ANCHOR - отслеживает ключевые свойства(маркеры) на компоненте и устанавливает на обертку спец стили
     const useSetStyleFromPropsComponent = () => {

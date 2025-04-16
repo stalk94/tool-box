@@ -132,7 +132,6 @@ export default function ({ height, desserealize }) {
 
                 Object.values(curCacheLayout).map((content) => {
                     const result = desserealize(content);
-                    console.log(result._store)
                     if (result) resultsLayer.push(result);
                 });
                 layer.content = resultsLayer;
