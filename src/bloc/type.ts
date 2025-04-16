@@ -59,3 +59,9 @@ export type GridEditorProps = {
     renderItems: React.ReactNode[]
     tools: React.ReactNode
 }
+
+export type PropsForm = {
+    elemLink: any
+    type: 'props'|'base'|'flex'|'text'
+    onChange: (data: Record<string, any>)=> void
+}

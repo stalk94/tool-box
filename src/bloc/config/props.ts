@@ -3,7 +3,7 @@
  * пропсы компонентов
  * ---------------------------------------------
  */
-export const propsButton = {
+const propsButton = {
     variant: ['text', 'outlined', 'contained'], // Стиль кнопки
     color: ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], // Цвета
     size: ['small', 'medium', 'large'], // Размеры
@@ -25,7 +25,7 @@ export const propsButton = {
     disableFocusRipple: [true, false], // Убрать ripple при фокусе
 }
 
-export const propsIconButton = {
+const propsIconButton = {
     color: ['default', 'inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], // Цвет
     size: ['small', 'medium', 'large'], // Размер
     edge: [false, 'start', 'end'], // Смещение к краю контейнера
@@ -42,7 +42,7 @@ export const propsIconButton = {
     disableRipple: [true, false], // Отключить ripple-эффект
 }
 
-export const propsTypography = {
+const propsTypography = {
     variant: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'overline', 'button', 'srOnly'], // Типы текста
     align: ['left', 'center', 'right', 'justify'], // Выравнивание текста 'inherit', 
     color: ['initial', 'textPrimary', 'textSecondary', 'error', 'primary', 'secondary', 'inherit'], // Цвет текста
@@ -74,10 +74,18 @@ export const propsTypography = {
     id: 'string', // id элемента
 }
 
-
-export const propsImage = {
+const propsImage = {
     src: 'string',
     alt: 'string',
     sizes: 'string',
     imgixParams: 'object', // можно редактировать позже через JSON-форму
+}
+
+
+
+export default {
+    Button: propsButton,
+    IconButton: propsIconButton,
+    Typography: propsTypography,
+    Image: propsImage
 }

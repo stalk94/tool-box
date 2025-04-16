@@ -6,6 +6,9 @@ import writeFilePlugin from './server/vite-write';
 
 
 export default defineConfig({
+    root: 'src',
     plugins: [react(), writeFilePlugin(), tsconfigPaths()],
-
+    server: {
+        port: 3001,
+    }
 });

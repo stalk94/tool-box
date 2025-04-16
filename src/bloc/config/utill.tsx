@@ -1,5 +1,4 @@
 import React from "react";
-import { listConfig } from '../modules/RENDER';
 import { Box, Theme, Tooltip, useTheme } from "@mui/material";
 import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight, LinearScale,  
     ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets
@@ -9,6 +8,8 @@ import { PropsTypes } from './type';
 import { Schema } from '../../index';
 import { baseOptions, flexOptions, textOptions } from './style';
 import { iconListStyle } from './style-icons';
+import { componentDefaults } from '../modules/utils/registry';
+import metaProps from './props';                 // списки возможных пропсов каждого компонента
 
 
 // отделяет значения числовые от постфиксов
@@ -180,8 +181,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
         justify: <FormatAlignJustify />
     }
     const displayIcons = {
-        initial: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }
-        }> init </span>,
+        initial: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}> init </span>,
         block: <LinearScale />,
         inline: <ViewColumn />,
         'inline-block': <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>in -b </span>,
@@ -193,7 +193,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
     Object.keys(displayIcons).map((key) => {
         displayIcons[key] = (
             <Tooltip title={key} placement="top" arrow >
-                {displayIcons[key]}
+                { displayIcons[key] }
             </Tooltip>
         )
     });
@@ -231,6 +231,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
         }
     }
     else if (typeProps === 'variant') {
+ 
         return {
             type: 'select',
             id: typeProps,
@@ -238,7 +239,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             labelSx: { fontSize: '14px' },
             onlyId: true,
             value: defaultValue,
-            items: listConfig[type].props[typeProps].map((key) => ({
+            items: metaProps[type]?.[typeProps]?.map((key) => ({
                 id: key,
                 label: key
             }))
@@ -267,7 +268,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             label: typeProps,
             labelSx: { fontSize: '14px' },
             value: defaultValue,
-            items: listConfig[type].props[typeProps].map((key) => ({
+            items: metaProps[type]?.[typeProps]?.map((key) => ({
                 id: key,
                 label: displayIcons[key]
             }))
@@ -280,7 +281,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             label: typeProps,
             labelSx: { fontSize: '14px' },
             value: defaultValue,
-            items: listConfig[type].props[typeProps].map((key) => ({
+            items: metaProps[type]?.[typeProps]?.map((key) => ({
                 id: key,
                 label: alightsIcons[key]
             }))
@@ -302,7 +303,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             label: typeProps,
             labelSx: { fontSize: '14px' },
             value: defaultValue,
-            items: listConfig[type].props[typeProps].map((key) => ({
+            items: metaProps[type]?.[typeProps]?.map((key) => ({
                 id: key,
                 label: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }} > {key} </span>
             }))

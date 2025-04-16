@@ -5,13 +5,14 @@ import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState, renderState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
 import { ToolBarInfo } from './Top-bar';
-import { listAllComponents, listConfig } from './modules/RENDER';
+import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
 //import "../style/grid.css";
 import "../style/edit.css";
+import './modules/index';
 
 
 // это редактор блоков сетки
@@ -24,10 +25,6 @@ export default function ({ height, setHeight }) {
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     //context.dragEnabled.set(true)
    
-    const makePrewiew = async(elem: HTMLElement) => {
-        const canvas = await html2canvas(elem, { useCORS: true, scrollY: -window.scrollY });
-        return canvas.toDataURL();
-    }
     const dumpRender = (name: string) => {
         const gridContainer: HTMLDivElement = document.querySelector('.GRID-EDITOR');
         const children = Array.from(gridContainer.children);
@@ -66,34 +63,41 @@ export default function ({ height, setHeight }) {
             }
         });
 
-        makePrewiew(gridContainer).then((v)=> {
-            const filename = `screenshot_${meta.name}.png`;
-            meta.screen = '/db/editor/screen/'+filename;
-            const content = v;
+        html2canvas(gridContainer, { scrollY: -window.scrollY })
+            .then((canvas)=> {
+                return canvas.toDataURL();
+            })
+            .then((v) => {
+                const filename = `screenshot_${meta.name}.png`;
+                meta.screen = '/db/editor/screen/' + filename;
+                const content = v;
 
-            writeFile(
-                '/db/editor/screen', 
-                filename,
-                content,
-                { image: true }
-            ).then(()=> {
                 writeFile(
-                    '/db/editor', 
-                    `${meta.name+'.json'}`, 
-                    JSON.stringify(meta, null, 2)
-                ).then(console.log)
+                    '/db/editor/screen',
+                    filename,
+                    content,
+                    { image: true }
+                ).then(() => {
+                    writeFile(
+                        '/db/editor',
+                        `${meta.name + '.json'}`,
+                        JSON.stringify(meta, null, 2)
+                    ).then(console.log)
+                });
             });
-        });
     }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props } = component;
         const type = props["data-type"];
-        const Consolid = listAllComponents[type];
+        const Component = componentMap[type];
     
-        if (!Consolid) return null;
+        if (!Component) {
+            console.warn(`Компонент типа "${type}" не найден в реестре`);
+            return null;
+        }
     
         return (
-            <Consolid
+            <Component
                 {...props}
                 ref={(el) => {
                     if (el) refs.current[id] = el;

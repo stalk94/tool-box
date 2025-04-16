@@ -11,9 +11,9 @@ import { ContentData } from './Top-bar';
 import { updateComponentProps } from './utils/updateComponentProps';
 import Forms from './Forms';
 
-
-import { componentRegistry, componentGroups } from './config/registry-component';
+import { componentGroups } from './config/category';
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
+import { componentMap, componentRegistry } from "./modules/utils/registry";
 
 
 type Props = {
@@ -26,12 +26,13 @@ type Props = {
 
 const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
     const categories = Object.entries(componentGroups);
-    const itemsInCurrentCategory = Object.entries(componentRegistry).filter(
-        ([, config]) =>
-            config.category === currentTool ||
-            (!config.category && currentTool === 'misc')
-    );
-
+    const itemsInCurrentCategory = Object.entries(componentMap).filter(([type]) => {
+        const meta = componentRegistry[type] as any; // или прокинуть icon/category отдельно
+  
+        const category = meta?.category ?? 'misc';
+        return category === currentTool;
+    });
+    
     return {
         start: (
             <TooglerInput
@@ -80,9 +81,7 @@ const useComponent = (elem, onChange, curSub, setSub) => {
             <TooglerInput
                 value={curSub}
                 disabled={!elem.get()}
-                onChange={(v) => {
-                    setSub(v);
-                }}
+                onChange={setSub}
                 sx={{px:0.2}}
                 items={[
                     { label: <More sx={{fontSize:18}}/>, id: 'props' },
@@ -109,7 +108,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'>('items');
-    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
+    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
 
     const menuItems = [
         { id: 'items', label: 'Библиотека', icon: <Extension /> },

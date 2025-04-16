@@ -1,7 +1,8 @@
 import { iconsList } from '../../components/tools/icons';
 import { ViewModule, TouchApp, Photo, Layers, Widgets } from '@mui/icons-material';
 
-
+// ! мусор
+/** 
 export const componentRegistry = {
     Typography: {
         type: 'Typography',
@@ -12,6 +13,10 @@ export const componentRegistry = {
             variant: 'body1',
             color: 'textPrimary',
             'data-type': 'Typography',
+            fullWidth: true,
+            style: {
+                display: 'flex',  
+            }
         },
     },
     Button: {
@@ -23,6 +28,8 @@ export const componentRegistry = {
             variant: 'outlined',
             color: 'primary',
             'data-type': 'Button',
+            fullWidth: true,
+            style: {display: 'block'}
         },
     },
     IconButton: {
@@ -77,6 +84,7 @@ export const componentRegistry = {
         },
     },
 }
+*/
 
 
 // * final

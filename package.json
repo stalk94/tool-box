@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
-    "dev": "vite src --port=3001",
+    "dev": "vite",
     "build": "vite build src --outDir=../dist --watch --sourcemap",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
@@ -93,10 +93,8 @@
     "primereact": "^10.9.3",
     "react-beautiful-dnd": "^13.1.1",
     "react-colorful": "^5.6.1",
-    "react-draggable": "^4.4.6",
     "react-grid-layout": "^1.5.1",
     "react-imgix": "^9.10.0",
-    "react-resizable": "^3.0.5",
     "react-slick": "^0.30.3",
     "slate": "^0.112.0",
     "slate-react": "^0.112.1",

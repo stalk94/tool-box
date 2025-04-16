@@ -28,12 +28,14 @@ class Styler {
         if(childProps.style) {
             const style = childProps.style;
             
-            if(style.display === 'block') {
+            if(childProps.fullWidth) {
+                this.styleWrapper.display === 'block'
                 this.styleWrapper.display = 'flex';
                 this.styleWrapper.width = '100%';
 
                 if(this.ref) {
                     if(this[this.type]) this[this.type]();
+                    // что бы кнопка с иконками не ратекелась
                     this.ref.style.display = 'flex';
                 }
             }
@@ -57,13 +59,13 @@ export function SortableItem({ id, children }: { id: string, children: Component
         transition,
         opacity: isDragging ? 0.5 : 1,
         width: 'fit-content',
-        display: 'inline-block',
+        display: 'inline-flex',
         verticalAlign: 'top',
         cursor: dragEnabled.get() ? 'grab' : 'default',
         // для отладки
         paddingTop: 3,
         paddingBottom: 3,
-        //border: '1px dotted #8580806b',
+        border: '1px dotted #8580806b',
     }
     //ANCHOR - отслеживает ключевые свойства(маркеры) на компоненте и устанавливает на обертку спец стили
     const useSetStyleFromPropsComponent = () => {
@@ -119,8 +121,8 @@ export function SortableItem({ id, children }: { id: string, children: Component
 
         return () => resizeObserver.disconnect();
     }, []);
-
-
+    
+    
     return (
         <div
             ref={(node) => {

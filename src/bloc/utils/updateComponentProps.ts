@@ -32,6 +32,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
 
     // 🔁 Обновляем визуальный рендер через context.render
     if (rerender) renderState.set((layers) => {
+        console.log('update props: ', component, data)
         const updated = layers.map((layer) => {
             if (!Array.isArray(layer.content)) return layer;
 
@@ -50,6 +51,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
                     ...data,
                 });
 
+                infoState.select.content.set(updatedComponent);         // fix
                 layer.content[i] = updatedComponent;
             } catch (e) {
                 console.error('❌ Ошибка при клонировании компонента:', e, current);

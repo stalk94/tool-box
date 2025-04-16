@@ -6,12 +6,7 @@ import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './config/util
 import { motion } from 'framer-motion';
 import { sanitizeProps } from './utils/sanitize';
 import { debounce } from 'lodash';
-
-type PropsForm = {
-    elemLink: any
-    type: 'props'|'base'|'flex'|'text'
-    onChange: (data: Record<string, any>)=> void
-}
+import { PropsForm } from './type';
 
 
 // составляет индивидуальную схему пропсов
@@ -96,7 +91,7 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
 }
 
 
-// ! баг при изменении из одной вкладки настроек, переход в другую, то данные не сохраняются предыдушей вкладки
+
 // ! есть баг если удалить компонент при открытом редакторе (вроде)
 export default function({ type, elemLink, onChange }: PropsForm) {
     const theme = useTheme();
@@ -222,6 +217,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
 
     return(
         <motion.div
+            className="FORM"
             style={{display:'flex', flexDirection: 'column'}}
             initial={{ opacity: 0 }}     // Начальная непрозрачность 0
             animate={{ opacity: 1 }}     // Конечная непрозрачность 1
@@ -240,6 +236,22 @@ export default function({ type, elemLink, onChange }: PropsForm) {
 }
 
 
+/**
+ *     React.useEffect(() => {
+        const handleForceSave = () => {
+            flushPendingEdit();
+            const fresh = copyDataContent.current.current;
+            if (fresh) {
+                console.log('force: ', fresh)
+                onChange(fresh);
+                useAddStory(fresh);
+            }
+        };
+        const root = document.querySelector('.LEFT-FORM');
+        root?.addEventListener('force-save', handleForceSave);
+        return () => root?.removeEventListener('force-save', handleForceSave);
+    }, []);
+ */
 /**
  * const useEdit = (key: string, newValue: string) => {
         const type = copyDataContent?.current?.type;

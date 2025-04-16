@@ -15,7 +15,7 @@ type CellContext = {
  * @param componentId ID компонента (`data-id`)
  * @param includeSelf включать ли сам компонент в список окружения
  */
-export const useCellContext = ( componentId: string, includeSelf: boolean = true ): CellContext => {
+const useCellContext = ( componentId: string, includeSelf: boolean = true ): CellContext => {
     const [cellId, setCellId] = React.useState<string | null>(null);
     const [componentIndex, setComponentIndex] = React.useState<number | null>(null);
     const [cellRef, setCellRef] = React.useState<HTMLElement | null>(null);
@@ -68,7 +68,11 @@ export const useCellContext = ( componentId: string, includeSelf: boolean = true
     };
 }
 
-
+/**
+ * информация по размерам которые занимает компонент
+ * @param componentId D компонента (`data-id`)
+ * @returns 
+ */
 export const useComponentSize = (componentId: string) => {
     const { cellRef, components, componentIndex } = useCellContext(componentId, true);
     const [size, setSize] = React.useState({ width: 0, height: 0 });
@@ -96,7 +100,7 @@ export const useComponentSize = (componentId: string) => {
             }, 0);
         
             const availableWidth = cellRect.width - usedWidth;
-            console.log(availableWidth)
+            //console.log(availableWidth)
 
             setSize({
                 width: Math.max(0, availableWidth),
