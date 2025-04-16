@@ -38,6 +38,10 @@ export const infoState = hookstate(new Proxy({
             /** это выбранный (react рендер) элемент  */
             content: <React.ReactElement> undefined,
         },
+        inspector: {
+            lastData: {},
+            task: []
+        },
         contentAllRefs: <Record<string, Element>> undefined
     }, {
         set(target, property, value) {

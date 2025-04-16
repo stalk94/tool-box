@@ -36,9 +36,8 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             sizes={sizes}
             imgixParams={imgixParams}
             htmlAttributes={{
-                alt,
-                style: combinedStyle,
-                ...otherProps
+                width : width, 
+                height : height 
             }}
         />
     );

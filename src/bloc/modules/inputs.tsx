@@ -5,7 +5,7 @@ import { TextInput, NumberInput, PasswordInput, LoginInput,
 } from '../../index';
 import { TextInputProps, NumberInputProps } from '../../index';
 import { SxProps } from '@mui/material';
-import { useEvent, useCtxBufer } from './utils/function';
+import { useEvent, useCtxBufer } from './utils/shared';
 import { triggerFlyFromComponent } from './utils/anim';
 import { iconsList } from '../../components/tools/icons';
 
@@ -23,7 +23,7 @@ type TextWrapperProps = TextInputProps & {
 }
 
 
-export const TextInputWrapper = (props: TextWrapperProps) => {
+export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -44,6 +44,7 @@ export const TextInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='TextInput'
             style={{...style, width: '100%', display:'block'}}
@@ -60,9 +61,9 @@ export const TextInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const NumberInputWrapper = (props: TextWrapperProps) => {
+export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -81,6 +82,7 @@ export const NumberInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='Number'
             style={{...style, width: '100%', display:'block'}}
@@ -96,9 +98,9 @@ export const NumberInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const DateInputWrapper = (props: TextWrapperProps) => {
+export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -113,12 +115,13 @@ export const DateInputWrapper = (props: TextWrapperProps) => {
     
     const emiter = useEvent(dataId);
     const storage = useCtxBufer(dataId, otherProps.value);
-    console.log(props);
+    
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
-            //data-type={props}
+            data-type={props['data-type']}
             style={{...style, width: '100%', display:'block'}}
         >
             <DateInput
@@ -132,9 +135,9 @@ export const DateInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const SliderInputWrapper = (props: TextWrapperProps) => {
+export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -153,6 +156,7 @@ export const SliderInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='Slider'
             style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
@@ -168,9 +172,9 @@ export const SliderInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const CheckBoxInputWrapper = (props: TextWrapperProps) => {
+export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -189,6 +193,7 @@ export const CheckBoxInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='CheckBox'
             style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
@@ -204,9 +209,9 @@ export const CheckBoxInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const SwitchInputWrapper = (props: TextWrapperProps) => {
+export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -225,6 +230,7 @@ export const SwitchInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='Switch'
             style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
@@ -240,9 +246,9 @@ export const SwitchInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const ToggleInputWrapper = (props: TextWrapperProps) => {
+export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -261,6 +267,7 @@ export const ToggleInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='ToggleButtons'
             style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
@@ -276,9 +283,9 @@ export const ToggleInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const SelectInputWrapper = (props: TextWrapperProps) => {
+export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -297,6 +304,7 @@ export const SelectInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='Select'
             style={{...style, width: '100%', display:'block'}}
@@ -312,9 +320,9 @@ export const SelectInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const AutoCompleteInputWrapper = (props: TextWrapperProps) => {
+export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -333,12 +341,14 @@ export const AutoCompleteInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='AutoComplete'
             style={{...style, width: '100%', display:'block'}}
         >
             <AutoCompleteInput
                 labelSx={labelStyle}
+                placeholder='выбери из двух стульев'
                 onChange={(v)=> {
                     emiter('onChange', v);
                     storage(v);
@@ -348,9 +358,9 @@ export const AutoCompleteInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});
 
-export const FileInputWrapper = (props: TextWrapperProps) => {
+export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
@@ -369,6 +379,7 @@ export const FileInputWrapper = (props: TextWrapperProps) => {
 
     return (
         <div 
+            ref={ref}
             data-id={dataId}
             data-type='File'
             style={{...style, width: '100%', display:'block'}}
@@ -384,4 +395,4 @@ export const FileInputWrapper = (props: TextWrapperProps) => {
             />
         </div>
     );
-}
+});

@@ -4,10 +4,9 @@ import { Button, useTheme, Box, Dialog, Paper, Typography, Tooltip, IconButton, 
 import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
-import { listAllComponents, listConfig } from './modules/RENDER';
 import { useHookstate } from "@hookstate/core";
 import SelectButton from "../components/popup/select.button";
-
+import Inspector from './Inspector';
 
 export type ContentData = {
     id: number 
@@ -27,17 +26,14 @@ export type ContentData = {
 
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = () => {
+    const [data, setSData] = React.useState();
     const [open, setOpen] = React.useState<undefined>();
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
     const container = useHookstate(infoState.container);
 
-    //?
-    const renderJson =()=> {
-        const content = select.content.get({ noproxy: true });
 
-    }
     React.useEffect(()=> {
         const value = select.cell.get({noproxy:true});
 

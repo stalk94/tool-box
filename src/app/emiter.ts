@@ -1,7 +1,7 @@
 import { Events } from "./global.js";
 
 
-export default class EventEmitter {
+class EventEmitter {
     events: Record<keyof Events, Events[keyof Events][]> = {} as Record<keyof Events, Events[keyof Events][]>;
 
     on<K extends keyof Events>(eventName: K, fn: Events[K]) {
@@ -31,5 +31,34 @@ export default class EventEmitter {
         else {
             delete this.events[eventName];
         }
+    }
+}
+
+
+export default class ExtendedEmitter extends EventEmitter {
+    private _globalListeners: ((eventName: keyof Events, payload: any) => void)[] = [];
+
+    onAny(fn: (eventName: keyof Events, payload: any) => void): () => void {
+        this._globalListeners.push(fn);
+        return () => {
+            this._globalListeners = this._globalListeners.filter(listener => listener !== fn);
+        };
+    }
+    override emit<K extends keyof Events>(eventName: K, data: Parameters<Events[K]>[0]): void {
+        // Вызов оригинального emit
+        super.emit(eventName, data);
+
+        // Добавочный вызов глобальных слушателей
+        for (const listener of this._globalListeners) {
+            try {
+                listener(eventName, data);
+            } 
+            catch (e) {
+                console.warn(`[ExtendedEmitter] Ошибка в глобальном слушателе:`, e);
+            }
+        }
+    }
+    clearGlobals() {
+        this._globalListeners = [];
     }
 }

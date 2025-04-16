@@ -4,13 +4,13 @@ import { TypographyWrapper } from './text';
 import { ImageWrapper } from './media';
 import { 
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
-    RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create
+    RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper
  } from './inputs';
-import { sharedContext, sharedEmmiter } from './utils/function';
+import { sharedContext, sharedEmmiter } from './utils/shared';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -55,10 +55,8 @@ registerComponent({
     defaultProps: {
         src: 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg',
         alt: 'Картинка',
-        width: '50%',
-        height: 'auto',
     },
-    icon: Settings,
+    icon: Image,
     category: 'media',
 });
 
@@ -230,8 +228,8 @@ registerComponent({
         fullWidth: true,
         width: '100%',
         options: [
-            { id: '1', label: 'яблоко' },
-            { id: '2', label: 'задница' },
+            { id: '1', label: 'пики' },
+            { id: '2', label: 'стволы' },
         ],
         labelStyle: {
             fontSize: 14,

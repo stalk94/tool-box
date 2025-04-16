@@ -2,7 +2,7 @@ import React from "react";
 import { Button, useTheme, Box, IconButton } from "@mui/material";
 import { BorderStyle, ColorLens, FormatColorText, More } from '@mui/icons-material';
 import { Component, LayoutCustom } from './type';
-import { Settings, Menu, Logout, VerifiedUser, Extension, Save, Functions } from "@mui/icons-material";
+import { Settings, Menu, Logout, Palette, Extension, Save, Functions } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
@@ -10,6 +10,7 @@ import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { ContentData } from './Top-bar';
 import { updateComponentProps } from './utils/updateComponentProps';
 import Forms from './Forms';
+import Inspector from './Inspector';
 
 import { componentGroups } from './config/category';
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
@@ -122,7 +123,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
     const menuItems = [
         { id: 'items', label: 'Библиотека', icon: <Extension />},
         { divider: true },
-        { id: 'component', label: 'Настройки', icon: <Settings /> },
+        { id: 'component', label: 'Настройки', icon: <Palette /> },
         { divider: true },
         { id: 'func', label: 'Функции', icon: <Functions /> },
     ];
@@ -184,6 +185,14 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
             width={260}
             onChangeNavigation={changeNavigation}
             start={start}
+            end={
+                <Inspector
+                    data={
+                        globalThis.sharedContext.get()
+                    }
+                    onClose={console.log}
+                />
+            }
         >
             <Box sx={{ mt: 1, mx: 1 }}>
                 { children }
