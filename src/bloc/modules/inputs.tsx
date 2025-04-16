@@ -175,6 +175,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 });
 
 export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
+    const [state, setState] = React.useState(false);
     const { 
         children, 
         ['data-id']: dataId, 
@@ -189,7 +190,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
     
     const emiter = useEvent(dataId);
     const storage = useCtxBufer(dataId, otherProps.value);
-    //console.log(style);
+    
 
     return (
         <div 
@@ -199,6 +200,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
             style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
         >
             <CheckBoxInput
+                value={state}
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);

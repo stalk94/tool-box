@@ -18,6 +18,10 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
     const componentId = props['data-id'];
     const { width, height } = useComponentSize(componentId);
 
+    const f = () => {
+        if (!src || src.length === 0) return 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg';
+        else return src;
+    }
     const combinedStyle = {
         width,
         //height: height-8,
@@ -32,7 +36,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             //ref={ref}
             data-id={componentId}
             data-type="Image"
-            src={src}
+            src={f()}
             sizes={sizes}
             imgixParams={imgixParams}
             htmlAttributes={{
