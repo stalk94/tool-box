@@ -2,7 +2,7 @@ import React from "react";
 import { Button, useTheme, Box, IconButton } from "@mui/material";
 import { BorderStyle, ColorLens, FormatColorText, More } from '@mui/icons-material';
 import { Component, LayoutCustom } from './type';
-import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
+import { Settings, Menu, Logout, VerifiedUser, Extension, Save, Functions } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
@@ -14,6 +14,7 @@ import Forms from './Forms';
 import { componentGroups } from './config/category';
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
+import { Divider } from "primereact/divider";
 
 
 type Props = {
@@ -100,6 +101,16 @@ const useComponent = (elem, onChange, curSub, setSub) => {
         )
     };
 }
+const useFunctions =(elem, onChange, curSub)=> {
+    return {
+        start: (null),
+        children: (
+            <>
+                functions
+            </>
+        )
+    };
+}
 
 
 // левая панель редактора
@@ -107,12 +118,15 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'>('items');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'|'func'>('items');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
 
     const menuItems = [
-        { id: 'items', label: 'Библиотека', icon: <Extension /> },
+        { id: 'items', label: 'Библиотека', icon: <Extension />},
+        { divider: true },
         { id: 'component', label: 'Настройки', icon: <Settings /> },
+        { divider: true },
+        { id: 'func', label: 'Функции', icon: <Functions /> },
     ];
     const endItems = [
         { id: 'save', label: 'Сохранить', icon: <Save /> },
@@ -143,6 +157,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
     const changeNavigation = (item) => {
         if (item.id === 'items') setCurrentToolPanel('items');
         else if (item.id === 'component') setCurrentToolPanel('component');
+        else if (item.id === 'func') setCurrentToolPanel('func');
         else if (item.id === 'save') useDump();
     }
     // ANCHOR - updateComponentProps
@@ -150,11 +165,18 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
         const component = select.content.get({ noproxy: true });
         if (component) updateComponentProps({ component, data: newDataProps });
     }
-    
-    const { start, children } = currentToolPanel === 'items'
-        ? useElements(currentTool, setCurrentTool, addComponentToLayout)
-        : useComponent(select.content, changeEditor, curSubpanel, setSubPanel);
+    const changeFunc =()=> {
 
+    }
+    
+    const panelRenderers = {
+        items: () => useElements(currentTool, setCurrentTool, addComponentToLayout),
+        component: () => useComponent(select.content, changeEditor, curSubpanel, setSubPanel),
+        func: () => useFunctions(select.content, changeFunc, curSubpanel),
+    }
+    const { start, children } = panelRenderers[currentToolPanel] 
+        ? panelRenderers[currentToolPanel]() 
+        : { start: null, children: null };
 
     
     return (

@@ -3,7 +3,15 @@ import { ButtonWrapper, IconButtonWrapper } from './buttons';
 import { TypographyWrapper } from './text';
 import { ImageWrapper } from './media';
 import { Settings } from '@mui/icons-material';
+import { TextInputWrapper, NumberInputWrapper } from './inputs';
+import { sharedContext, sharedEmmiter } from './utils/function';
 
+
+//////////////////////////////////////////////////////////////////////
+globalThis.EDITOR = true;       // мы в контексте редактора
+globalThis.sharedContext = sharedContext;
+globalThis.sharedEmmiter = sharedEmmiter;
+///////////////////////////////////////////////////////////////////////
 
 
 registerComponent({
@@ -59,5 +67,36 @@ registerComponent({
     category: 'interactive',
 });
 
-
-console.log('✅ component registry')
+// инпуты
+registerComponent({
+    type: 'TextInput',
+    component: TextInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        placeholder: 'ввод',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: Settings,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'NumberInput',
+    component: NumberInputWrapper,
+    defaultProps: {
+        label: 'label',
+        position: 'column',
+        placeholder: 'ввод number',
+        fullWidth: true,
+        width: '100%',
+        labelStyle: {
+            fontSize: 14,
+        }
+    },
+    icon: Settings,
+    category: 'interactive',
+});

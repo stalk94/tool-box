@@ -22,7 +22,6 @@ export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
 
 export const ButtonWrapper = React.forwardRef((props: any, ref) => {
     const { startIcon, endIcon, children, ...otherProps } = props;
-
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
 

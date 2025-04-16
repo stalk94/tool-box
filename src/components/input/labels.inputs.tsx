@@ -44,6 +44,7 @@ export type LabelTextProps = {
     label?:  React.ReactNode
     /** не передав `position` label не отрисуется но будет лишняя обертка, по этому лучше не передать `label` */
     position?: 'left' | 'right' | 'column'
+    labelSx?: SxProps
 }
 
 

@@ -8,6 +8,8 @@ export type ProxyComponentName = 'Button'
     | 'Typography'
 
 
+
+export type DataEmiters = 'onChange' | 'onClick';
 /** 
  * Компонент в редакторе (в ячейках)
  * все дочерние компоненты установленные редактором 
@@ -17,8 +19,12 @@ export type Component = React.ReactElement & {
         index: number
     },
     props: {
-        "data-id": number
-        "data-type": ProxyComponentName
+        'data-id': number
+        'data-type': ProxyComponentName
+        /** если генерит события, то будет список labels emiters */
+        'data-pubs'?: DataEmiters[]
+        /** на кого подписан */
+        'data-subs'?: string | number[]
         children?: string | any
         style?: React.CSSProperties
         [key: string]: any

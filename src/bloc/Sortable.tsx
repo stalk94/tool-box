@@ -58,7 +58,7 @@ export function SortableItem({ id, children }: { id: string, children: Component
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-        width: 'fit-content',
+        width: children.props.fullWidth ? (children.props.width ?? '100%') : 'fit-content',
         display: 'inline-flex',
         verticalAlign: 'top',
         cursor: dragEnabled.get() ? 'grab' : 'default',

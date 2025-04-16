@@ -87,9 +87,10 @@ export default function ({ height, setHeight }) {
             });
     }
     const desserealize = (component: ComponentSerrialize) => {
-        const { id, props } = component;
+        const { id, props, parent } = component;
         const type = props["data-type"];
         const Component = componentMap[type];
+        
     
         if (!Component) {
             console.warn(`Компонент типа "${type}" не найден в реестре`);

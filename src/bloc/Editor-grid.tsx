@@ -132,6 +132,7 @@ export default function ({ height, desserealize }) {
 
                 Object.values(curCacheLayout).map((content) => {
                     const result = desserealize(content);
+                    console.log(result._store)
                     if (result) resultsLayer.push(result);
                 });
                 layer.content = resultsLayer;
@@ -144,6 +145,7 @@ export default function ({ height, desserealize }) {
     
     React.useEffect(() => {
         const cur = render.get();
+        console.log('layoutCellEditor: ', render.get({noproxy:true})[2]?.content);
 
         // Обновляем максимальное количество колонок
         const resizeObserver = new ResizeObserver(() => {
@@ -174,7 +176,6 @@ export default function ({ height, desserealize }) {
     }, [render]);
     React.useEffect(() => {
         const cur = layoutCellEditor.get({ noproxy: true });
-        console.log('layoutCellEditor: ', cur);
 
         if (cur[0]) render.set((prev)=> {
             return cur.map((l) => l.name = l.content)
