@@ -1,15 +1,18 @@
+import React from 'react';
 import { registerComponent } from './utils/registry';
 import { ButtonWrapper, IconButtonWrapper } from './buttons';
 import { TypographyWrapper } from './text';
 import { ImageWrapper } from './media';
 import { 
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
-    RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image
+    RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
+    ViewCarousel
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper
- } from './inputs';
+} from './inputs';
+import { VerticalCarouselWrapper, HorizontalCarouselWrapper, PromoBannerWrapper } from './media';
 import { sharedContext, sharedEmmiter } from './utils/shared';
 
 
@@ -252,4 +255,53 @@ registerComponent({
     },
     icon: Description,
     category: 'interactive',
+});
+
+// карусели (донастроить)
+registerComponent({
+    type: 'VerticalCarousel',
+    component: VerticalCarouselWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+        items: [
+            <img
+                src='https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'
+
+            />,
+            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/600/600' alt="Slide 1" /> ,
+            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/300/300' alt="Slide 1" /> 
+        ]
+    },
+    icon: ViewCarousel,
+    category: 'media',
+});
+registerComponent({
+    type: 'HorizontCarousel',
+    component: HorizontalCarouselWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+        style: {a:1},
+        items: [
+            <img
+                src='https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'
+
+            />,
+            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/600/600' alt="Slide 1" /> ,
+            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/300/300' alt="Slide 1" /> 
+        ]
+    },
+    icon: ViewCarousel,
+    category: 'media',
+});
+registerComponent({
+    type: 'PromoBanner',
+    component: PromoBannerWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+    },
+    icon: ViewCarousel,
+    category: 'media',
 });

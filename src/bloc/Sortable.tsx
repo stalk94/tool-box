@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import context, { infoState, renderState } from './context'; 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
-
+import { DragOverlay } from '@dnd-kit/core';
 
 //! особые условия стилей для компонентов (!это костыли, вся логика в обертки идет)
 class Styler {
@@ -48,6 +48,7 @@ export function SortableItem({ id, children }: { id: string, children: Component
     const itemRef = React.useRef<HTMLDivElement>(null);
     const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
     const dragEnabled = useHookstate(context.dragEnabled);
+    const [canJoinInline, setCanJoinInline] = React.useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
         id ,
         disabled: !dragEnabled.get()        // ✅ глобальный флаг
@@ -55,6 +56,7 @@ export function SortableItem({ id, children }: { id: string, children: Component
 
     
     const styleWrapper: React.CSSProperties = {
+        position: 'relative',
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
@@ -66,6 +68,8 @@ export function SortableItem({ id, children }: { id: string, children: Component
         paddingTop: 3,
         paddingBottom: 3,
         borderRight: '1px dotted #8580806b',
+        transformOrigin: 'center',
+        scale: isDragging ? '0.95' : '1',
     }
     //ANCHOR - отслеживает ключевые свойства(маркеры) на компоненте и устанавливает на обертку спец стили
     const useSetStyleFromPropsComponent = () => {

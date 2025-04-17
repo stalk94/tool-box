@@ -67,7 +67,7 @@ export default function({ items, settings, height }: CarouselProps) {
         slidesToShow: 3,                // сколько слайдов по умолчанию в поле видимости
         slidesToScroll: 1,
         variableWidth: false,           // Отключаем переменную ширину
-        adaptiveHeight: false,        // Отключаем адаптивную высоту
+        //adaptiveHeight: false,        // Отключаем адаптивную высоту
         beforeChange: (current, next) => {
            //console.log('beforeChange', current, next);
         },
@@ -177,16 +177,10 @@ export default function({ items, settings, height }: CarouselProps) {
         <Box 
             sx={{
                 width: '100%', 
-                height: (containerHeight - arrowHeight), 
+                height: (containerHeight), 
                 overflow: 'hidden' 
             }}
         >
-
-            {/* Стрелка вверх */}
-            <Box sx={{ height: `${arrowHeight}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <CustomPrevArrowTop onClick={handleClick} />
-            </Box>
-
             {/* Слайдер */}
             <Box 
                 sx={{ height: '100%', overflow: 'hidden' }}
@@ -208,11 +202,21 @@ export default function({ items, settings, height }: CarouselProps) {
                     ))}
                 </Slider>
             </Box>
-
-            {/* Стрелка вниз */}
-            <Box sx={{ height: `${arrowHeight}px`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <CustomNextArrowBottom onClick={handleClick} />
-            </Box>
         </Box>
     );
 }
+
+
+
+/**
+            <Box sx={{
+                    height: `${arrowHeight-20}px`, 
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    justifyContent: 'center' 
+                }}
+            >
+                <CustomPrevArrowTop onClick={handleClick} />
+            </Box>
+ */
+// <CustomNextArrowBottom onClick={handleClick} />

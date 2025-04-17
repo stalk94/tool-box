@@ -1,6 +1,6 @@
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
-import { DraggableData } from 'react-draggable';
 import React from 'react'
+
 
 // все компоненты исходные используемые в редакторе и вне
 export type ProxyComponentName = 'Button' 
@@ -17,7 +17,7 @@ export type DataEmiters = 'onChange' | 'onClick';
 export type Component = React.ReactElement & {
     _store: {
         index: number
-    },
+    }
     props: {
         'data-id': number
         'data-type': ProxyComponentName
@@ -28,6 +28,10 @@ export type Component = React.ReactElement & {
         children?: string | any
         style?: React.CSSProperties
         [key: string]: any
+    }
+    type: {
+        functions?: {}
+        parent?: string
     }
 }
 /** серриализованный вид */
@@ -57,7 +61,7 @@ export type DraggbleElementProps = {
 }
 export type LayoutCustom = Layout & {
     /** id рендер элемента */
-    content?: string | ContentFromCell[]
+    content?: string | Component[]
 }
 export type GridEditorProps = {
     setLayout: (old: Layout[])=> void

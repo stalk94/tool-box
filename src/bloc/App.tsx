@@ -10,6 +10,7 @@ import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
+import { serializeJSX } from './utils/sanitize';
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
@@ -87,9 +88,13 @@ export default function ({ height, setHeight }) {
             });
     }
     const desserealize = (component: ComponentSerrialize) => {
-        const { id, props, parent } = component;
+        const { id, props, functions, parent } = component;
         const type = props["data-type"];
+
         const Component = componentMap[type];
+        Component.displayName = type;
+        Component.parent = parent;
+        Component.functions = functions;
         
     
         if (!Component) {
@@ -99,7 +104,7 @@ export default function ({ height, setHeight }) {
     
         return (
             <Component
-                {...props}
+                { ...props }
                 ref={(el) => {
                     if (el) refs.current[id] = el;
                 }}
@@ -108,21 +113,20 @@ export default function ({ height, setHeight }) {
     }
     // вызывается только при добавлении нового сонтента 
     const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
-        const props = { ...component.props };
-    
+        const rawProps = { ...component.props };
+        const type = rawProps['data-type'];
         const id = Date.now();
-        const type = props["data-type"];
-        delete props.ref;
-    
+
+        delete rawProps.ref;
+        const cleanedProps = serializeJSX(rawProps);
+
         return {
             id,
             parent: cellId,
-            //offset,
             props: {
-                ...props,
+                ...cleanedProps,
                 'data-id': id,
                 'data-type': type,
-                //'data-offset': offset
             }
         };
     }

@@ -82,6 +82,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@faker-js/faker": "^9.7.0",
     "@hookstate/core": "^4.0.2",
     "@hookstate/localstored": "^4.0.2",
     "@mui/material": "^6.4.7",

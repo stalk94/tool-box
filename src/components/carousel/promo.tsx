@@ -1,62 +1,59 @@
 import React from 'react';
-import { Button, Box, ButtonGroup, Typography, IconButton } from '@mui/material';
+import { Button, Box, ButtonGroup, Typography, IconButton, SxProps } from '@mui/material';
 import { MediaImage } from '../carts/atomize';
 import Card from '../carts/base';
 import { FiberManualRecord, AdjustOutlined } from '@mui/icons-material';
+import { Faker, ru, en } from '@faker-js/faker';
+import { MarqueeText, MarqueeAdaptive } from '../text/marque';
+import { useContainerWidth } from '../hooks/useContainerWidth';
+const faker = new Faker({ locale: [ru, en] });
 
 
-type Props = {
+function generateTestData(count = 5) {
+    return Array.from({ length: count }, () => ({
+        title: faker.commerce.productName().toUpperCase(),
+        buttonText: "ПОДРОБНЕЕ",
+        description: faker.commerce.productDescription(),
+        images: Array.from({ length: faker.number.int({ min: 4, max: 8 }) }, () =>
+            `https://placehold.co/600x400/353636/gray?text=Promo image&font=roboto` 
+        ),
+    }));
+}
+
+export type PromoSliderProps = {
     items: {
         title: string
         buttonText: string
         description: string
         images: string[]
     }[]
+    style?: SxProps
+    styleDot?: {
+        activeColor?: string 
+        disableColor?: string 
+    }
+    styleText?: {
+        title?: SxProps
+        description?: SxProps
+        button?: SxProps
+    }
 }
-const testData = [
-    {
-        title: 'ЧЕРДАЧНАЯ ЛЕСТНИЦА ECON',
-        buttonText: "ПОДРОБНЕЕ",
-        description: 'Лучшее решение для вашего дома!',
-        images: [
-            "https://i.pinimg.com/736x/c7/28/d8/c728d805149bad291e3cbc307d544e38.jpg",
-            "https://lesenka-market.ru/upload/iblock/ca2/5rmqmnanoek18isp3oyi1u5ixkkgmrze.jpeg",
-            'https://titanremont.ru/assets/img/fornews/konsolnaya-lestnica.jpg',
-            'https://lestnicy-minsk.by/upload/medialibrary/0e8/0e8bcb456f274f4457870a058929f340.jpg',
-            "https://lesenka-market.ru/upload/iblock/ca2/5rmqmnanoek18isp3oyi1u5ixkkgmrze.jpeg",
-            'https://titanremont.ru/assets/img/fornews/konsolnaya-lestnica.jpg',
-            'https://titanremont.ru/assets/img/fornews/konsolnaya-lestnica.jpg',
-            'https://lestnicy-minsk.by/upload/medialibrary/0e8/0e8bcb456f274f4457870a058929f340.jpg',
-            "https://lesenka-market.ru/upload/iblock/ca2/5rmqmnanoek18isp3oyi1u5ixkkgmrze.jpeg",
-        ]
-    },
-    {
-        title: 'СТИЛЬНЫЙ ДИЗАЙН',
-        buttonText: "ПОДРОБНЕЕ",
-        description: 'Идеально впишется в интерьер!',
-        images: [
-            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
-            "https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885_1280.jpg",
-        ]
-    },
-    {},{}
-];
 
-// todo: доделать
-const IconGroop = ({ active, setActive, count }) => {
+
+const IconGroop = ({ active, setActive, count, style }) => {
     const fill = (active: number) => {
         const result = [];
-        if(count > 4) count = 4;
+        if (count > 4) count = 4;
 
         for (let i = 0; i < count; i++) {
             result.push(
                 <IconButton
-                    key={i} 
-                    onClick={()=> setActive(i)}
+                    key={i}
+                    onClick={() => setActive(i)}
                 >
-                    { i === active 
-                        ? <AdjustOutlined sx={{fontSize:'14px',color:'#c11619'}} />
-                        : <FiberManualRecord sx={{fontSize:'12px'}} />
+                    {i === active
+                        ? <AdjustOutlined sx={{ fontSize: '14px', color: style?.activeColor ?? '#c11619' }} />
+                        : <FiberManualRecord sx={{ fontSize: '12px', color: style?.disableColor }} />
                     }
                 </IconButton>
             );
@@ -65,7 +62,7 @@ const IconGroop = ({ active, setActive, count }) => {
         return result;
     }
 
-    return(
+    return (
         <ButtonGroup>
             { fill(active) }
         </ButtonGroup>
@@ -76,20 +73,19 @@ const PhotoColage = ({ images }) => {
         <Box
             sx={{
                 width: "100%",
-                height:  {
+                height: {
                     xs: '20%',
                     sm: "100%",
                 },
                 display: "flex",
-                flexDirection: { 
+                flexDirection: {
                     xs: "row",
                     sm: "row",
-                    md: "column" 
+                    md: "column"
                 }, // В ряд на мобильных, в колонку на больших
-                flexWrap: "wrap", // Картинки переносятся, если их много
-                justifyContent: { 
-                    xs: "center", 
-                    md: "flex-start" 
+                justifyContent: {
+                    xs: "center",
+                    md: "flex-start"
                 },
                 alignItems: "center",
                 gap: {
@@ -100,12 +96,17 @@ const PhotoColage = ({ images }) => {
                     xs: 0,
                     md: 6
                 },
-                maxHeight: "100%", // Ограничение высоты
-                overflow: "hidden", // Не вылазить за пределы
+                maxHeight: {
+                    xs: '100px',
+                    sm: '160px',
+                    md: 'calc(100vh - 200px)' // не больше, чем экран
+                },
                 maxWidth: "100%", // Ограничение по ширине для контейнера
+                overflow: "hidden", // Не вылазить за пределы
+                flexWrap: "wrap", 
             }}
         >
-            {images.map((src, index) => index !== 0 &&(
+            {images.map((src, index) => index !== 0 && (
                 <Box
                     key={index}
                     component="img"
@@ -137,17 +138,18 @@ const PhotoColage = ({ images }) => {
         </Box>
     );
 }
-const Description = ({ data, navigationSlot }) => {
-    return(
+const Description = ({ data, navigationSlot, style }) => {
+    const [ref, width] = useContainerWidth<HTMLDivElement>();
+    
+    return (
         <Box
+            ref={ref}
             sx={{
-                width: "100%",
+                position: "relative",
                 height: "100%",
+                width: "100%",
                 display: "flex",
-                flexDirection: {
-                    xs: "column",
-                    md: 'row'
-                },
+                flexDirection: 'row',
                 justifyContent: "center",
                 alignItems: "center",
                 textAlign: "center",
@@ -159,31 +161,44 @@ const Description = ({ data, navigationSlot }) => {
                     height: "100%",
                     display: "flex",
                     flexDirection: 'column',
-                    justifyContent: "center",
+                    justifyContent: width < 600 ? 'start' : "center",
                     alignItems: "start",
                     textAlign: "center",
-                    p: 2
+                    p: 2,
+                    flexGrow: 1,
                 }}
             >
-                <Typography
+                <MarqueeAdaptive
+                    speed={60}
                     color="text.primary"
                     sx={{
                         textAlign: "left",
-                        fontSize: {
-                            xs: "1.5rem", // Для мобильных устройств
-                            sm: "2rem",   // Для маленьких экранов
-                            md: "2.5rem", // Для средних и больших экранов
-                        }
+                         fontSize:  width < 600 ? "1.2rem" : {
+                            xs: "1.2rem",
+                            sm: "1.6rem",
+                            md: "2.5rem",
+                        },
+                        fontWeight: 600,
+                        wordBreak: "break-word",
+                        lineHeight: 1.2,
+                        maxWidth: "100%",
+                        ...style?.title
                     }}
                     variant='h4'
                 >
                     { data.title }
-                </Typography>
+                </MarqueeAdaptive>
                 <Typography
                     color="text.secondary"
                     sx={{
                         textAlign: "left",
-                        mt: 1
+                        mt: 2,
+                        fontSize: width < 600 ? "0.8rem" : {
+                            xs: "0.8rem",
+                            sm: "1.4rem",
+                            md: "2rem",
+                            ...style?.description
+                        }
                     }}
                 >
                     { data.description }
@@ -191,7 +206,8 @@ const Description = ({ data, navigationSlot }) => {
                 <Button
                     variant='outlined'
                     sx={{
-                        mt: 3
+                        mt: 4,
+                        ...style?.button
                     }}
                 >
                     { data.buttonText }
@@ -199,40 +215,47 @@ const Description = ({ data, navigationSlot }) => {
 
                 <Box
                     sx={{
-                        mt: 6
+                        position: "absolute",
+                        bottom: width < 600 ? 0 :{
+                            xs: 0,
+                            md: 24,
+                        },
+                        left: "50%",
+                        transform: "translateX(-50%)"
                     }}
                 >
                     { navigationSlot }
                 </Box>
             </Box>
 
-            <PhotoColage
-                images={data.images}
-            />
+            {/* <PhotoColage images={data.images} /> */}
         </Box>
     );
 }
 
 
-export default function PromoSlider ({ items }: Props) {
+export default function PromoSlider({ items, styleDot, styleText, style }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
-
+    const testData = generateTestData();            // моковые данные активны если не передать items
 
     return (
-        <Card actionAreaEnabled>
+        <Card 
+            actionAreaEnabled
+            sx={{ minHeight: 260, ...style }}
+        >
             <React.Fragment>
-                <MediaImage 
-                    src={(items ?? testData)[active].images[0]} 
+                <MediaImage
+                    sx={{minHeight: 260}}
+                    src={(items ?? testData)[active].images[0]}
                 />
-                <Box 
+                <Box
                     sx={{
                         position: "absolute",
                         top: 0,
                         left: 0,
                         width: "100%",
-                        height: {
-                            sm: "100%"
-                        },
+                        height: "100%",
+                        minHeight: 260,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
@@ -242,9 +265,11 @@ export default function PromoSlider ({ items }: Props) {
                     }}
                 >
                     <Description
+                        style={styleText}
                         data={(items ?? testData)[active]}
                         navigationSlot={
                             <IconGroop
+                                style={styleDot}
                                 active={active}
                                 setActive={setActive}
                                 count={(items ?? testData).length}

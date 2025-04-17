@@ -14,11 +14,11 @@ export const baseOptions = {
     ],
     textAlign: [
         "left",
+        "center",
         "right",
         "justify",
         "start",
         "end",
-        "center"
     ],
     width: 'limit',
     height: 'limit',
@@ -68,7 +68,7 @@ export const textOptionsAll = {
     "wordSpacing": "number",
     "fontStyle": ["normal", "italic", "oblique"],
   
-    "textAlign": ["left", "right", "center", "justify", "start", "end"],
+    "textAlign": ["left", "center" ,"right", "justify", "start", "end"],
     "textOverflow": ["clip", "ellipsis"],
     "textTransform": ["lowercase", "capitalize", "none", "uppercase"],
   

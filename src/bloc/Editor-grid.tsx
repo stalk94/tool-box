@@ -107,9 +107,9 @@ export default function ({ height, desserealize }) {
       
         const id = selected.props?.['data-id'];
         if (!id) return;
-
+        
         const cellId = render.find((layer) =>
-            layer.content?.some((c) => c.props?.['data-id'] === id)
+            layer.content?.some?.((c) => c.props?.['data-id'] === id)
         )?.i;
         
         if (!cellId) return;
@@ -144,7 +144,7 @@ export default function ({ height, desserealize }) {
     
     React.useEffect(() => {
         const cur = render.get();
-        console.log('layoutCellEditor: ', render.get({noproxy:true})[2]?.content);
+        console.log('layouts: ', render.get({noproxy: true}));
 
         // Обновляем максимальное количество колонок
         const resizeObserver = new ResizeObserver(() => {

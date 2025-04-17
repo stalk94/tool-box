@@ -26,16 +26,28 @@ type MediaImageProps = CardMediaProps & {
  * Элемент картинки для карточки
  * 
  */
-export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) => (
-    <CardMedia
-        { ...props }
-        component="img"
-        height={height}
-        width={width}
-        image={src ?? "https://material-ui.com/static/images/cards/paella.jpg"}
-        alt={(src && src.match(/\/([^\/]+\.[a-zA-Z0-9]+)$/)[1]) ?? "image"}
-    />
-);
+export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) => {
+    const useAlt =(src?: string)=> {
+        try {
+            const match = src?.match(/\/([^\/]+\.[a-zA-Z0-9]+)$/);
+            return match?.[1] ?? "image";
+        }
+        catch {
+            return "image";
+        }
+    }
+
+    return(
+        <CardMedia
+            { ...props }
+            component="img"
+            height={height??'100%'}
+            width={width??'100%'}
+            image={src ?? "https://material-ui.com/static/images/cards/paella.jpg"}
+            alt={useAlt()}
+        />
+    )
+}
 /**
  * Произвольный контент для карточки с flex позиционированием
  */

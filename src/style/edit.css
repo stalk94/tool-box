@@ -61,8 +61,23 @@
 }
 
 .editor-selected {
-    outline: 1px dotted #2195f376;
-    box-shadow: 0 0 5px 1px #2196f399;
-    z-index: 9;
-    transition: all 0.2s ease;
+  outline: 1px dotted #2196f377;
+  box-shadow: 0 0 5px 2px #2196f355;
+  z-index: 9;
+  transition: all 0.2s ease;
+  animation: glowPulse 1.6s infinite ease-in-out;
+}
+@keyframes glowPulse {
+  0% {
+    box-shadow: 0 0 5px 2px #2196f355;
+    outline-color: #2196f377;
+  }
+  50% {
+    box-shadow: 0 0 8px 3px #2196f3a8;
+    outline-color: #2196f3aa;
+  }
+  100% {
+    box-shadow: 0 0 5px 2px #2196f355;
+    outline-color: #2196f377;
+  }
 }

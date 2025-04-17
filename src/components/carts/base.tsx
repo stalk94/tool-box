@@ -76,6 +76,7 @@ export default function SimpleCard({ children, footer, ...props }: BaseCardProps
                 //boxShadow: '0 3px 4px rgba(0, 0, 0, 0.2)',
                 ...props.sx
             }}
+            style={{...props.style}}
         >
 
             { !children && getHeaderData() }

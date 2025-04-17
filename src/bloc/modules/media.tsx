@@ -1,9 +1,10 @@
-import React, {useState, useEffect} from 'react';
+import React from 'react';
 import Imgix from 'react-imgix';
 import { useComponentSize } from './utils/hooks';
+import { VerticalCarousel, HorizontalCarousel, PromoBanner } from '../../index';
 
 
-// ! надо еше разбиратся
+
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
     const {
         src,
@@ -29,7 +30,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         display: 'block',
         ...style,
     };
-
+    
 
     return (
         <Imgix
@@ -44,5 +45,170 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
                 height : height 
             }}
         />
+    );
+});
+
+
+export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
+    const {
+        items,
+        style = {}, 
+        autoplay = true,
+        slidesToShow = 3,
+        ...otherProps
+    } = props;
+
+    const componentId = props['data-id'];
+    const { width, height } = useComponentSize(componentId);
+   
+    const createImgx = (src: string) => {
+        return(
+            <Imgix
+                data-type="Image"
+                src={src ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
+                sizes={'100vw'}
+                imgixParams={{}}
+                htmlAttributes={{
+                    width: width,
+                    height: (height / slidesToShow)
+                }}
+            />
+        );
+    }
+    // дегидратор
+    const parseItems = () => {
+        const result = [];
+
+        items.map((elem, index)=> {
+            if(elem.type === 'img') {
+                if(elem.props.src) result.push(
+                    createImgx(elem.props.src)
+                );
+            }
+        });
+
+        return result;
+    }
+
+    return (
+        <div
+            ref={ref}
+            data-type="VerticalCarousel"
+            data-id={componentId}
+            style={{
+                width,
+                display: 'block',
+                height: '100%',
+                overflow: 'hidden',
+            }}
+            {...otherProps}
+        >
+            <VerticalCarousel
+                items={parseItems() ?? []}
+                height={height}
+                settings={{
+                    autoplay,
+                    slidesToShow
+                }}
+            />
+        </div>
+    );
+});
+// todo: сделать умный расчет по умолчанию сколько слайдов выводить
+export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
+    const {
+        items,
+        autoplay = true,
+        slidesToShow = 3,
+        style = {}, 
+        ...otherProps
+    } = props;
+
+    const componentId = props['data-id'];
+    const { width, height } = useComponentSize(componentId);
+
+    const createImgx = (src: string) => {
+        return(
+            <Imgix
+                data-type="Image"
+                src={src ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
+                sizes={'100vw'}
+                imgixParams={{}}
+                htmlAttributes={{
+                    width: width,
+                    height: height
+                }}
+            />
+        );
+    }
+    // дегидратор
+    const parseItems = () => {
+        const result = [];
+
+        items.map((elem, index)=> {
+            if(elem.type === 'img') {
+                if(elem.props.src) result.push(
+                    createImgx(elem.props.src)
+                );
+            }
+        });
+
+        return result;
+    }
+
+
+    return (
+        <div
+            ref={ref}
+            data-type="HorizontCarousel"
+            data-id={componentId}
+            style={{
+                width,
+                display: 'block',
+                height: '100%',
+                overflow: 'hidden',
+            }}
+            {...otherProps}
+        >
+            <HorizontalCarousel
+                items={parseItems() ?? []}
+                height={height}
+                settings={{
+                    autoplay,
+                    slidesToShow
+                }}
+            />
+        </div>
+    );
+});
+
+export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
+    const {
+        items,
+        style = {}, 
+        ...otherProps
+    } = props;
+
+    const componentId = props['data-id'];
+    //const { width, height } = useComponentSize(componentId);
+
+
+    return (
+        <div
+            ref={ref}
+            data-type="PromoBanner"
+            data-id={componentId}
+            style={{
+                display: 'block',
+                height: '100%',
+                overflow: 'hidden',
+            }}
+            { ...otherProps }
+        >
+            <PromoBanner
+                items={items}
+                style={style}
+            />
+        </div>
     );
 });
