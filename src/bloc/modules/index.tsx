@@ -13,7 +13,10 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     AutoCompleteInputWrapper, FileInputWrapper
 } from './inputs';
 import { VerticalCarouselWrapper, HorizontalCarouselWrapper, PromoBannerWrapper } from './media';
+import { AccordionWrapper, DividerWrapper } from './any';
 import { sharedContext, sharedEmmiter } from './utils/shared';
+import { Box } from '@mui/material';
+import { serializeJSX } from '../utils/sanitize';
 
 
 //////////////////////////////////////////////////////////////////////
@@ -304,4 +307,37 @@ registerComponent({
     },
     icon: ViewCarousel,
     category: 'media',
+});
+
+// any
+registerComponent({
+    type: 'Accordion',
+    component: AccordionWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+        activeIndexs: [],
+        items: [
+            {
+                title: serializeJSX(<Box sx={{ml: 1.5}}>・test-1</Box>),
+                content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
+            },
+            {
+                title: serializeJSX(<Box sx={{ml: 1.5}}>・test-2</Box>),
+                content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
+            },
+        ]
+    },
+    icon: ViewCarousel,
+    category: 'misc',
+});
+registerComponent({
+    type: 'Divider',
+    component: DividerWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+    },
+    icon: ViewCarousel,
+    category: 'misc',
 });

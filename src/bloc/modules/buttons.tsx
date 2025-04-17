@@ -34,7 +34,7 @@ export const ButtonWrapper = React.forwardRef((props: any, ref) => {
             endIcon={EndIcon ? <EndIcon /> : undefined}
             {...otherProps}
         >
-            {children}
+            { children }
         </Button>
     );
 });

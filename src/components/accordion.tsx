@@ -76,7 +76,7 @@ const AccordionHeader = ({ header, isExpanded }) => {
  * />
  */
 export default function CustomAccordion({ items, activeIndexs, tabStyle }: AccordionProps): React.JSX.Element {
-    const [activeIndex, setActiveIndex] = React.useState(activeIndexs ?? [0, 1]);
+    const [activeIndex, setActiveIndex] = React.useState(activeIndexs ?? []);
     
     const useActive =(index: number)=> {
         if(activeIndex.find(i => (i === index)) !== undefined) return true;
@@ -91,21 +91,20 @@ export default function CustomAccordion({ items, activeIndexs, tabStyle }: Accor
                 activeIndex={activeIndex} 
                 onTabChange={(e)=> setActiveIndex(e.index)}
             >
-                { items.map((elem, index)=> 
-                    <AccordionTab 
-                        style={!useActive(index) && {...tabStyle, marginBottom: 2}}
+                {items.map((elem, index) => (
+                    <AccordionTab
+                        style={!useActive(index) && { ...tabStyle, marginBottom: 2 }}
                         key={index}
                         header={
                             <AccordionHeader
-                                header={elem.title ?? 'title-'+index}
+                                header={elem.title ?? 'title-' + index}
                                 isExpanded={useActive(index)}
                             />
                         }
-                  >
-                      { elem.content }
-                  </AccordionTab>
-              
-                )}
+                    >
+                        { elem.content }
+                    </AccordionTab>
+                ))}
             </Accordion>
             <style>
                 {`

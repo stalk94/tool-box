@@ -10,7 +10,7 @@ import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
-import { serializeJSX } from './utils/sanitize';
+import { serializeJSX, deserializeJSX } from './utils/sanitize';
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
@@ -119,6 +119,7 @@ export default function ({ height, setHeight }) {
 
         delete rawProps.ref;
         const cleanedProps = serializeJSX(rawProps);
+        console.log(cleanedProps)
 
         return {
             id,

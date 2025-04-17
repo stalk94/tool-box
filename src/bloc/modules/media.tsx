@@ -114,6 +114,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
+
 // todo: сделать умный расчет по умолчанию сколько слайдов выводить
 export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     const {
@@ -185,6 +186,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
 export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     const {
         items,
+        fullWidth,
         style = {}, 
         ...otherProps
     } = props;

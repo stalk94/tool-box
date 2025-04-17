@@ -13,6 +13,8 @@ export * from './components/form';
 export * from './components/carts';
 // карусели
 export * from './components/carousel';
+// для текста
+export * from './components/text';
 
 // снек бар
 export { SnackbarProvider, useSnackbar } from 'notistack';

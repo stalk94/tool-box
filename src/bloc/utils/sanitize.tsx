@@ -1,3 +1,4 @@
+import { Box } from '@mui/material';
 import React from 'react';
 
 
@@ -26,37 +27,47 @@ export function serializeJSX(node: any): any {
         return (dataType ?? ((displayName ?? (typeName ?? renederName))) ?? 'Anonymous');
     }
     
+    
+    const deepSerialize = (value: any): any => {
+        if (React.isValidElement(value)) {
+            return serializeJSX(value);
+        }
+        if (Array.isArray(value)) {
+            return value.map(deepSerialize);
+        }
+        if (typeof value === 'object' && value !== null) {
+            const result: Record<string, any> = {};
+
+            for (const [k, v] of Object.entries(value)) {
+                result[k] = deepSerialize(v);
+            }
+            return result;
+        }
+        return value;
+    }
 
     if (React.isValidElement(node)) {
-        const type = typeof node.type === 'string'
-            ? node.type
-            : getName();
-        
-        const props = { ...node.props };
-
-        // рекурсивная обработка children
-        if (props.children) {
-            if (Array.isArray(props.children)) {
-                props.children = props.children.map((child) => serializeJSX(child));
-            } 
-            else {
-                props.children = serializeJSX(props.children);
-            }
-        }
+        const type = typeof node.type === 'string' ? node.type : getName();
+        const rawProps = { ...node.props };
+        const props = deepSerialize(rawProps); // 👈 сериализуем все поля
 
         return {
             $$jsx: true,
             type,
             props
-        }
+        };
     } 
-    else if (typeof node === 'string' || typeof node === 'number' || node === null) {
+    else if (
+        typeof node === 'string' ||
+        typeof node === 'number' ||
+        node === null
+    ) {
         return node;
     }
 
     return node;
 }
-export function deserializeJSX(node: any): any {
+export function deserializeJSX(node: any, maps?: Record<string, any>): any {
     if (node === null || typeof node === 'string' || typeof node === 'number') {
         return node;
     }
@@ -64,17 +75,26 @@ export function deserializeJSX(node: any): any {
     if (typeof node === 'object' && node.$$jsx) {
         const { type, props } = node;
         const resolvedProps = { ...props };
-
-        if (props.children) {
-            if (Array.isArray(props.children)) {
-                resolvedProps.children = props.children.map(deserializeJSX);
-            } 
+       
+        const getType =()=> {
+            if(maps && maps[type]) return maps[type];
+            else if(!maps) return type;
             else {
-                resolvedProps.children = deserializeJSX(props.children);
+                console.warn('🚨 type компонента не найден в переданной карте!!');
+                return type;
             }
         }
 
-        return React.createElement(type, resolvedProps);
+        if (props.children) {
+            if (Array.isArray(props.children)) {
+                resolvedProps.children = props.children.map(child => deserializeJSX(child, maps));
+            } 
+            else {
+                resolvedProps.children = deserializeJSX(props.children, maps);
+            }
+        }
+        
+        return React.createElement(getType(), resolvedProps);
     }
 
     return node;

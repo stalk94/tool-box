@@ -10,6 +10,17 @@ export type ProxyComponentName = 'Button'
 
 
 export type DataEmiters = 'onChange' | 'onClick';
+export type ComponentProps = {
+    'data-id': number
+    'data-type': ProxyComponentName
+    /** если генерит события, то будет список labels emiters */
+    'data-pubs' ?: DataEmiters[]
+    /** на кого подписан */
+    'data-subs' ?: string | number[]
+    children ?: string | any
+    style ?: React.CSSProperties
+    [key: string]: any
+}
 /** 
  * Компонент в редакторе (в ячейках)
  * все дочерние компоненты установленные редактором 
@@ -18,17 +29,7 @@ export type Component = React.ReactElement & {
     _store: {
         index: number
     }
-    props: {
-        'data-id': number
-        'data-type': ProxyComponentName
-        /** если генерит события, то будет список labels emiters */
-        'data-pubs'?: DataEmiters[]
-        /** на кого подписан */
-        'data-subs'?: string | number[]
-        children?: string | any
-        style?: React.CSSProperties
-        [key: string]: any
-    }
+    props: ComponentProps
     type: {
         functions?: {}
         parent?: string
