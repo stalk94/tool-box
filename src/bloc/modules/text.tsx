@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react';
-import { Typography } from '@mui/material';
+import { Typography, Select, MenuItem, Divider } from '@mui/material';
 import { createEditor, Descendant, Editor, Transforms, Element as SlateElement, Range } from 'slate';
 import { Slate, Editable, withReact, useSlate } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -8,9 +8,12 @@ import { updateComponentProps } from '../utils/updateComponentProps';
 import context, { infoState } from '../context'
 import { Popover, IconButton, Stack, Tooltip, Box } from '@mui/material';
 import { FormatBold, FormatItalic, FormatUnderlined, Title, FormatListBulleted, FormatListNumbered, 
-    FormatQuote, FormatColorText, FormatColorFill, FiberSmartRecord
+    FormatQuote, FormatColorText, FormatColorFill, InsertLink, FormatAlignLeft, FormatAlignCenter, 
+    FormatAlignRight, FormatAlignJustify
 } from '@mui/icons-material';
 import { RgbaColorPicker } from 'react-colorful';
+import { useDebounced } from 'src/components/hooks/debounce';
+import { withResetOnRightClick } from './utils/hooks';
 
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
@@ -21,14 +24,93 @@ const fallbackValue: Descendant[] = [
   },
 ];
 
+function renderInline(inlines: any[]): React.ReactNode {
+    return inlines.map((leaf, i) => {
+        let el: React.ReactNode = leaf.text;
+
+        if (leaf.bold) el = <strong key={i}>{el}</strong>;
+        if (leaf.italic) el = <em key={i}>{el}</em>;
+        if (leaf.underline) el = <u key={i}>{el}</u>;
+        if (leaf.color) el = <span key={i} style={{ color: leaf.color }}>{el}</span>;
+        if (leaf.bgcolor) el = <span key={i} style={{ backgroundColor: leaf.bgcolor }}>{el}</span>;
+        if (leaf.link?.href) {
+            el = <a key={i} href={leaf.link.href} target="_blank" rel="noopener noreferrer">{el}</a>;
+        }
+        if (leaf.fontFamily) {
+            el = <span key={i} style={{ fontFamily: leaf.fontFamily }}>{el}</span>;
+        }
+        if (leaf.textAlign) {
+            el = <span key={i} style={{ display: 'block', textAlign: leaf.textAlign }}>{el}</span>;
+        }
+
+        return <React.Fragment key={i}>{el}</React.Fragment>;
+    });
+}
+function renderSlateContent(blocks: Descendant[]): React.ReactNode {
+    return blocks.map((block, i) => {
+        if (!block) return null;
+
+        const key = `block-${i}`;
+        const children = renderInline(block.children ?? []);
+
+        switch (block.type) {
+            case 'heading-one':
+                return <h2 key={key}>{children}</h2>;
+            case 'bulleted-list':
+                return <ul key={key}>{block.children.map((li, j) => <li key={j}>{renderInline(li.children)}</li>)}</ul>;
+            case 'numbered-list':
+                return <ol key={key}>{block.children.map((li, j) => <li key={j}>{renderInline(li.children)}</li>)}</ol>;
+            case 'blockquote':
+                return <blockquote key={key}>{children}</blockquote>;
+            default:
+                return <p key={key}>{children}</p>;
+        }
+    });
+}
+const AlignToggleButton = () => {
+    const editor = useSlate();
+    const ALIGN_MODES = ['left', 'center', 'right', 'justify'] as const;
+    const ALIGN_ICONS = {
+        left: FormatAlignLeft,
+        center: FormatAlignCenter,
+        right: FormatAlignRight,
+        justify: FormatAlignJustify
+    }
+
+    const getCurrentAlign = (): typeof ALIGN_MODES[number] => {
+        const marks = Editor.marks(editor);
+        return marks?.textAlign ?? 'left';
+    }
+    const handleToggleAlign = () => {
+        const current = getCurrentAlign();
+        const index = ALIGN_MODES.indexOf(current);
+        const next = ALIGN_MODES[(index + 1) % ALIGN_MODES.length];
+        Editor.addMark(editor, 'textAlign', next);
+    }
+
+    const CurrentIcon = ALIGN_ICONS[getCurrentAlign()];
+
+
+    return (
+        <Tooltip title="Выравнивание текста">
+            <IconButton size="small" onClick={handleToggleAlign}>
+                <CurrentIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+        </Tooltip>
+    );
+}
 
 const Toolbar = () => {
     const editor = useSlate();
     const [anchorText, setAnchorText] = React.useState<HTMLElement | null>(null);
     const [anchorBg, setAnchorBg] = React.useState<HTMLElement | null>(null);
-    const [anchorMarker, setAnchorMarker] = React.useState<HTMLElement | null>(null);
+    const [colorText, setColorText] = React.useState<string>(null);
+    const [colorBg, setColorBg] = React.useState<string>(null);
 
 
+    const handleFontChange = (font: string) => {
+        Editor.addMark(editor, 'fontFamily', font);
+    }
     const toggleMark = (format: string) => {
         const isActive = isMarkActive(editor, format);
         if (isActive) {
@@ -79,16 +161,19 @@ const Toolbar = () => {
     }
     const handleColorChange = (color: { r: number, g: number, b: number, a: number }) => {
         const rgba = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        setColorText(rgba);
         Editor.addMark(editor, 'color', rgba);
     }
     const handleBgChange = (color: { r: number, g: number, b: number, a: number }) => {
         const rgba = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        setColorBg(rgba);
         Editor.addMark(editor, 'bgcolor', rgba);
     }
 
 
     return (
-        <Box sx={{ 
+        <Box 
+            sx={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
                 gap: 0.5, 
@@ -97,6 +182,8 @@ const Toolbar = () => {
                 borderRadius: 1,
                 background: '#0d0c0c40'
             }}
+            onPointerEnter={() => context.dragEnabled.set(false)}
+            onPointerLeave={() => context.dragEnabled.set(true)}
         >
             {/* Первая строка: базовые стили */}
             <Stack
@@ -110,6 +197,11 @@ const Toolbar = () => {
                     whiteSpace: 'nowrap',
                 }}
             >
+                <Tooltip title="Заголовок H4">
+                    <IconButton size="small" onClick={() => toggleBlock('heading-one')}>
+                        <Title sx={{ fontSize: 16 }} />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Жирный">
                     <IconButton size="small" onClick={() => toggleMark('bold')}>
                         <FormatBold sx={{ fontSize: 16 }} />
@@ -121,17 +213,53 @@ const Toolbar = () => {
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Подчёркнутый">
-                    <IconButton size="small" onClick={() => toggleMark('underline')}>
+                    <IconButton 
+                        size="small" 
+                        onClick={() => toggleMark('underline')}
+                    >
                         <FormatUnderlined sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Цвет текста">
-                    <IconButton size="small" onClick={(e) => setAnchorText(e.currentTarget)}>
+                <Tooltip title="Ссылка">
+                    <IconButton style={{marginRight:'5px'}} size="small" 
+                        onClick={() => {
+                            const href = prompt('Вставьте ссылку:');
+                            if (!href) return;
+
+                            const { selection } = editor;
+                            if (!selection || Range.isCollapsed(selection)) {
+                                alert('Сначала выдели текст!');
+                                return;
+                            }
+
+                            Editor.addMark(editor, 'link', { href });
+                        }}
+                        {...withResetOnRightClick((e) => setAnchorBg(e.currentTarget), editor, 'link')}
+                    >
+                        <InsertLink sx={{ fontSize: 16 }} />
+                    </IconButton>
+                </Tooltip>
+
+                <Divider orientation="vertical" flexItem/>
+                <AlignToggleButton />
+
+                <Tooltip style={{marginLeft:'auto'}} title="Цвет текста">
+                    <IconButton 
+                        size="small" 
+                        onClick={(e) => setAnchorText(e.currentTarget)}
+                        {...withResetOnRightClick((e) => setAnchorText(e.currentTarget), editor, 'color')}
+                        sx={{ color: colorText || 'inherit' }}
+                    >
                         <FormatColorText sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Фон текста">
-                    <IconButton size="small" onClick={(e) => setAnchorBg(e.currentTarget)}>
+                    <IconButton 
+                        size="small" 
+                        onClick={(e) => setAnchorBg(e.currentTarget)}
+                        {...withResetOnRightClick((e) => setAnchorBg(e.currentTarget), editor, 'bgcolor')}
+                        sx={{ color: colorBg || 'inherit' }}
+                    >
                         <FormatColorFill sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
@@ -142,7 +270,7 @@ const Toolbar = () => {
                 direction="row"
                 spacing={0.5}
                 sx={{
-                    pt: 0.5,
+                    pt: 0.6,
                     borderTop: '1px dotted #d0cdcd29',
                     overflowX: 'auto',
                     overflowY: 'hidden',
@@ -150,11 +278,6 @@ const Toolbar = () => {
                     whiteSpace: 'nowrap',
                 }}
             >
-                <Tooltip title="Заголовок H1">
-                    <IconButton size="small" onClick={() => toggleBlock('heading-one')}>
-                        <Title sx={{ fontSize: 16 }} />
-                    </IconButton>
-                </Tooltip>
                 <Tooltip title="Маркированный список">
                     <IconButton size="small" onClick={() => toggleBlock('bulleted-list')}>
                         <FormatListBulleted sx={{ fontSize: 16 }} />
@@ -170,7 +293,20 @@ const Toolbar = () => {
                         <FormatQuote sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
-                {/* сюда можно добавить H2, H3, выравнивание, undo/redo */}
+                <Select style={{marginLeft:'auto', marginRight:'5px'}}
+                    size="small"
+                    value=""
+                    onChange={(e) => handleFontChange(e.target.value)}
+                    displayEmpty
+                    sx={{ fontSize: 10, height: 30, color: '#ccc', background: '#2a2a2a'}}
+                >
+                    <MenuItem value="" disabled>𝓣</MenuItem>
+                    { globalThis.FONT_OPTIONS.map((font) => (
+                        <MenuItem key={font} value={font} style={{ fontFamily: font }}>
+                            {font}
+                        </MenuItem>
+                    ))}
+                </Select>
             </Stack>
 
             <Popover
@@ -199,13 +335,13 @@ const Toolbar = () => {
 }
 
 
+// ! не сохраняются изменения через панель
 export const TextWrapper = React.forwardRef((props: any, ref) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
     const [isEditing, setIsEditing] = React.useState(false);
     const { children, ['data-id']: dataId, ...otherProps } = props;
     const selected = useHookstate(infoState.select);
-    
-    
+
     const [value, setValue] = React.useState<Descendant[]>(() => {
         if (Array.isArray(props.childrenSlate)) return props.childrenSlate;
         if (typeof props.children === 'string') {
@@ -224,21 +360,20 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             return '';
         }).join('\n');
     }
-    const onChange = (val: Descendant[]) => {
-        setValue(val);
-        const text = extractPlainText(val); // для простого children
-
+    const debouncedUpdate = useDebounced((val: Descendant[]) => {
+        const text = extractPlainText(val);
         const component = selected.content.get({ noproxy: true });
+
         if (component) {
             updateComponentProps({
                 component,
                 data: {
                     children: text,
-                    childrenSlate: val // 👈 сохраняем полностью
+                    childrenSlate: val
                 },
             });
         }
-    }
+    }, 400, [selected.content]);
     const renderLeaf = useCallback(({ attributes, children, leaf }) => {
         const style: React.CSSProperties = {};
         if (leaf.color) style.color = leaf.color;
@@ -247,6 +382,14 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         if (leaf.bold) children = <strong>{children}</strong>;
         if (leaf.italic) children = <em>{children}</em>;
         if (leaf.underline) children = <u>{children}</u>;
+        if (leaf.link?.href) {
+            children = <a href={leaf.link.href} target="_blank" rel="noopener noreferrer">{children}</a>;
+        }
+        if (leaf.fontFamily) style.fontFamily = leaf.fontFamily;
+        if (leaf.textAlign) {
+            style.display = 'block';
+            style.textAlign = leaf.textAlign;
+        }
 
         return <span {...attributes} style={style}>{children}</span>;
     }, []);
@@ -274,75 +417,90 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             data-type="Text" 
             style={{ width: '100%' }}
         >
-            <Slate 
-                editor={editor} 
-                initialValue={value} 
-                onChange={onChange}
-            >
-                {selected.content.get({noproxy:true})?.props?.['data-id'] === dataId && (
-                    <Toolbar />
-                )}
-                <Editable
-                    renderLeaf={renderLeaf}
-                    renderElement={renderElement}
-                    placeholder="Введите текст..."
-                    spellCheck
-                    autoFocus
-                    onFocus={() => {
-                        setIsEditing(true);
-                        context.dragEnabled.set(false); // отключаем drag при редактировании
+            { globalThis.EDITOR ? (
+                <Slate 
+                    editor={editor} 
+                    initialValue={value} 
+                    onChange={(val) => {
+                        setValue(val);
+                        debouncedUpdate(val);
                     }}
-                    onBlur={() => {
-                        setIsEditing(false);
-                        context.dragEnabled.set(true); // возвращаем drag после редактирования
-                    }}
-                    onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                            const { selection } = editor;
-                            if (!selection || !Range.isCollapsed(selection)) return;
+                >
+                    {selected.content.get({noproxy:true})?.props?.['data-id'] === dataId && (
+                        <Toolbar />
+                    )}
+                    <Editable
+                        readOnly={!globalThis.EDITOR}
+                        renderLeaf={renderLeaf}
+                        renderElement={renderElement}
+                        placeholder="Введите текст..."
+                        onPointerEnter={() => context.dragEnabled.set(false)}
+                        onPointerLeave={() => context.dragEnabled.set(true)}
+                        spellCheck
+                        autoFocus
+                        onFocus={() => {
+                            setIsEditing(true);
+                            context.dragEnabled.set(false); // отключаем drag при редактировании
+                        }}
+                        onBlur={() => {
+                            setIsEditing(false);
+                            context.dragEnabled.set(true); // возвращаем drag после редактирования
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                const { selection } = editor;
+                                if (!selection || !Range.isCollapsed(selection)) return;
 
-                            const [match] = Editor.nodes(editor, {
-                                match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'list-item',
-                            });
+                                const [match] = Editor.nodes(editor, {
+                                    match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'list-item',
+                                });
 
-                            if (match) {
-                                event.preventDefault();
-                                const [node] = match;
+                                if (match) {
+                                    event.preventDefault();
+                                    const [node] = match;
 
-                                const isEmpty = Editor.isEmpty(editor, node);
+                                    const isEmpty = Editor.isEmpty(editor, node);
 
-                                if (isEmpty) {
-                                    // ВЫХОД ИЗ СПИСКА
-                                    Transforms.setNodes(editor, { type: 'paragraph' });
+                                    if (isEmpty) {
+                                        // ВЫХОД ИЗ СПИСКА
+                                        Transforms.setNodes(editor, { type: 'paragraph' });
 
-                                    Transforms.unwrapNodes(editor, {
-                                        match: n =>
-                                            !Editor.isEditor(n) &&
-                                            SlateElement.isElement(n) &&
-                                            ['bulleted-list', 'numbered-list'].includes(n.type),
-                                        split: true,
-                                    });
-                                } else {
-                                    // НОВЫЙ <li>
-                                    Transforms.insertNodes(editor, {
-                                        type: 'list-item',
-                                        children: [{ text: '' }],
-                                    });
+                                        Transforms.unwrapNodes(editor, {
+                                            match: n =>
+                                                !Editor.isEditor(n) &&
+                                                SlateElement.isElement(n) &&
+                                                ['bulleted-list', 'numbered-list'].includes(n.type),
+                                            split: true,
+                                        });
+                                    } else {
+                                        // НОВЫЙ <li>
+                                        Transforms.insertNodes(editor, {
+                                            type: 'list-item',
+                                            children: [{ text: '' }],
+                                        });
+                                    }
                                 }
                             }
-                        }
-                    }}
-                    style={{
-                        outline: 'none',
-                        padding: '4px 8px',
-                        borderRadius: 4,
-                        transition: 'box-shadow 0.2s ease',
-                        boxShadow: isEditing ? '0 0 0 1px #1976d2' : 'none',
-                        backgroundColor: 'transparent',
-                        minHeight: 30,
-                    }}
-                />
-            </Slate>
+                        }}
+                        style={{
+                            outline: 'none',
+                            padding: '4px 8px',
+                            borderRadius: 4,
+                            transition: 'box-shadow 0.2s ease',
+                            boxShadow: isEditing ? '0 0 0 1px #1976d2' : 'none',
+                            backgroundColor: 'transparent',
+                            minHeight: 30,
+                        }}
+                    />
+                </Slate>
+            ) : (
+                <>
+                    { props.childrenSlate
+                        ? renderSlateContent(props.childrenSlate)
+                        : <p>{props.children}</p>
+                    }
+                </>
+        )   }
         </div>
     );
 });

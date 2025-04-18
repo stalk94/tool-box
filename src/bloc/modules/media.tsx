@@ -119,6 +119,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
 export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     const {
         items,
+        fullWidth,
         autoplay = true,
         slidesToShow = 3,
         style = {}, 

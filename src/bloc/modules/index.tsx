@@ -25,6 +25,16 @@ import { serializeJSX } from '../utils/sanitize';
 globalThis.EDITOR = true;       // мы в контексте редактора
 globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
+// глобальный список шрифтов
+globalThis.FONT_OPTIONS = [
+    'inherit',
+    'Roboto',
+    'Arial',
+    'Georgia',
+    'Times New Roman',
+    'Inter',
+    'Montserrat',
+];
 ///////////////////////////////////////////////////////////////////////
 
 

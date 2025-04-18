@@ -6,7 +6,7 @@ import { Settings } from '@mui/icons-material';
 
 
 export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
-    const { icon, children, ...otherProps } = props;
+    const { icon, children, fullWidth, ...otherProps } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : Settings;
 
     return (

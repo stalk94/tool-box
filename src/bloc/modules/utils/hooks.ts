@@ -1,5 +1,6 @@
 import React from 'react';
 import { cellsContent } from '../../context';
+import { Editor} from 'slate';
 
 type CellContext = {
     cellId: string | null;
@@ -148,3 +149,28 @@ export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
 
     return size;
 }
+
+
+/**
+ * Позволяет навесить сброс marks по ПКМ на любую кнопку
+ * @param onClick обычный обработчик ЛКМ
+ * @param editor slate editor instance
+ * @param marks mark или список marks, которые будут сброшены по ПКМ
+ */
+export const withResetOnRightClick = (
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
+    editor: Editor,
+    marks: string | string[]
+) => {
+    const marksToClear = Array.isArray(marks) ? marks : [marks];
+
+    return {
+        onClick,
+        onContextMenu: (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
+            for (const mark of marksToClear) {
+                Editor.removeMark(editor, mark);
+            }
+        },
+    };
+};
