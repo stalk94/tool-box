@@ -42,7 +42,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             imgixParams={imgixParams}
             htmlAttributes={{
                 width : width, 
-                height : height 
+                height : height - 5
             }}
         />
     );
@@ -202,7 +202,6 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
             data-id={componentId}
             style={{
                 display: 'block',
-                height: '100%',
                 overflow: 'hidden',
             }}
             { ...otherProps }

@@ -233,15 +233,14 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
     else if (typeProps === 'variant') {
  
         return {
-            type: 'select',
+            type: 'toggle',
             id: typeProps,
             label: typeProps,
             labelSx: { fontSize: '14px' },
-            onlyId: true,
             value: defaultValue,
             items: metaProps[type]?.[typeProps]?.map((key) => ({
                 id: key,
-                label: key
+                label: <span style={{ fontSize: '10px', whiteSpace: 'nowrap' }} >{key}</span>
             }))
         }
     }

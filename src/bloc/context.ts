@@ -10,7 +10,7 @@ export const renderState = hookstate<LayoutCustom[]>([]);
 export default hookstate(
     {
         mod: 'home',
-        dragEnabled: true,                  // временное решение включение/отключение режима редактора
+        dragEnabled: true,                  // отключить перетаскивание
         layout: <LayoutCustom[]> <unknown>[],
         tools: undefined,
         currentCell: <LayoutCustom> undefined,
@@ -37,6 +37,10 @@ export const infoState = hookstate(new Proxy({
             cell: <HTMLDivElement> undefined,
             /** это выбранный (react рендер) элемент  */
             content: <React.ReactElement> undefined,
+            /** выделено в панели */
+            panel: <{lastAddedType: string}> {
+                lastAddedType: ''
+            },
         },
         inspector: {
             lastData: {},

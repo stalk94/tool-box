@@ -11,6 +11,7 @@ import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
 import { serializeJSX, deserializeJSX } from './utils/sanitize';
+
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
@@ -24,7 +25,7 @@ export default function ({ height, setHeight }) {
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
-    //context.dragEnabled.set(true)
+    
    
     const dumpRender = (name: string) => {
         const gridContainer: HTMLDivElement = document.querySelector('.GRID-EDITOR');
@@ -41,7 +42,7 @@ export default function ({ height, setHeight }) {
             },
             layers: []
         }
-        
+        exportAsHTML('test')
         
         Object.keys(cache).map((idLayout)=> {
             const found = children.find(el => el.getAttribute('data-id') === idLayout);
@@ -161,19 +162,84 @@ export default function ({ height, setHeight }) {
             return updatedRender;
         });
     }
- 
+    const addComponentToLayout = (elem) => {
+        const selected = info.select.content.get({ noproxy: true });
+        const cell = curCell.get();
+        const type = elem.props['data-type'];
+        const id = Date.now() + Math.floor(Math.random() * 10000);
+
+        const newComponent = React.cloneElement(elem, {
+            'data-id': id,
+            'data-type': type,
+            ref: (el) => el && (refs.current[id] = el),
+        });
+
+        const serialized = serializeJSX(newComponent);
+
+        if (selected?.props?.['data-type'] === 'Block') {
+            const blockId = selected.props['data-id'];
+
+            render.set((prev) => {
+                const updated = [...prev];
+                const layer = updated.find((l) => l.i === cell?.i);
+                if (!layer) return prev;
+
+                const blockIndex = layer.content.findIndex(
+                    (comp) => comp?.props?.['data-id'] === blockId
+                );
+                if (blockIndex === -1) return prev;
+
+                const block = layer.content[blockIndex];
+
+                // ❗️Вставляем только ОДИН раз в render
+                const updatedBlock = React.cloneElement(block, {
+                    ...block.props,
+                    content: [...(block.props.content ?? []), newComponent],
+                });
+
+                layer.content[blockIndex] = updatedBlock;
+
+                return updated;
+            });
+
+            // 🧊 Добавляем только сериализованный JSX в dump
+            cellsCache.set((old) => {
+                const layer = old[cell.i];
+                if (!layer) return old;
+
+                const block = layer.find((c) => c.props['data-id'] === blockId);
+                if (!block) return old;
+
+                if (!Array.isArray(block.props.content)) block.props.content = [];
+
+                // ❗️Проверка на дубли
+                if (!block.props.content.find((c) => c.props?.['data-id'] === id)) {
+                    block.props.content.push(serialized);
+                }
+
+                return old;
+            });
+
+            return;
+        }
+
+        // ⬇️ По умолчанию — вставка в ячейку
+        if (cell?.i) {
+            addComponentToCell(cell.i, newComponent);
+        }
+    
+    }
+
     
     return(
         <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
             <Tools
-                addComponentToLayout={(elem)=> {
-                    if(curCell.get()?.i) addComponentToCell(curCell.get().i, elem);
-                }}
-                useDump={dumpRender}
+                useDump={()=> dumpRender('page')}
                 externalPanelTrigger={(cb) => {
                     // 💡 новый трюк
                     window.triggerLeftPanel = cb;
                 }}
+                addComponentToLayout={addComponentToLayout}
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
 
@@ -192,3 +258,10 @@ export default function ({ height, setHeight }) {
         </div>
     );
 }
+
+
+/**
+ *   addComponentToLayout={(elem)=> {
+                    if(curCell.get()?.i) addComponentToCell(curCell.get().i, elem);
+                }}
+ */

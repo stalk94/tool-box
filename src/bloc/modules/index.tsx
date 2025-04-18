@@ -1,19 +1,21 @@
 import React from 'react';
 import { registerComponent } from './utils/registry';
 import { ButtonWrapper, IconButtonWrapper } from './buttons';
-import { TypographyWrapper } from './text';
+import { TypographyWrapper, TextWrapper } from './text';
 import { ImageWrapper } from './media';
 import { 
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
-    ViewCarousel
+    ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper
 } from './inputs';
 import { VerticalCarouselWrapper, HorizontalCarouselWrapper, PromoBannerWrapper } from './media';
-import { AccordionWrapper, DividerWrapper } from './any';
+import { DividerWrapper } from './any';
+import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper } from './complex';
+import { DataSourceTableProps } from './sources/table';
 import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
@@ -50,6 +52,16 @@ registerComponent({
         style: {
             display: 'flex',  
         }
+    },
+    icon: TextFields,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Text',
+    component: TextWrapper,
+    defaultProps: {
+        children: '',
+        fullWidth: true,
     },
     icon: TextFields,
     category: 'interactive',
@@ -309,7 +321,21 @@ registerComponent({
     category: 'media',
 });
 
+
 // any
+registerComponent({
+    type: 'Divider',
+    component: DividerWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+    },
+    icon: LinearScale,
+    category: 'misc',
+});
+
+
+// complex
 registerComponent({
     type: 'Accordion',
     component: AccordionWrapper,
@@ -328,16 +354,51 @@ registerComponent({
             },
         ]
     },
-    icon: ViewCarousel,
-    category: 'misc',
+    icon: ListAlt,
+    category: 'complex',
 });
 registerComponent({
-    type: 'Divider',
-    component: DividerWrapper,
+    type: 'Tabs',
+    component: TabsWrapper,
     defaultProps: {
         fullWidth: true,
         width: '100%',
+        items: [
+            'one',
+            'two',
+            'three',
+            'any position'
+        ]
     },
-    icon: ViewCarousel,
-    category: 'misc',
+    icon: Repartition,
+    category: 'complex',
+});
+registerComponent({
+    type: 'BottomNav',
+    component: BottomNavWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+        items: [
+            {icon: 'Home'},
+            {icon: 'Add'},
+            {icon: 'Settings'},
+            {icon: 'Close'},
+            {icon: 'Menu'}
+        ]
+    },
+    icon: Repartition,
+    category: 'complex',
+});
+// data table
+registerComponent({
+    type: 'DataTable',
+    component: DataTableWrapper,
+    defaultProps: {
+        sourceType: 'google',
+        source: '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE',
+        refreshInterval: 25000
+    } satisfies DataSourceTableProps,
+    icon: BackupTable,
+    category: 'complex',
 });

@@ -37,8 +37,8 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     } = props;
     
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     //console.log(style);
 
@@ -76,8 +76,8 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     //console.log(style);
 
     return (
@@ -113,8 +113,8 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     
 
     return (
@@ -150,8 +150,8 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     //console.log(style);
 
     return (
@@ -188,8 +188,8 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     
 
     return (
@@ -226,9 +226,8 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
-    //console.log(style);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
 
     return (
         <div 
@@ -263,9 +262,8 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
-    //console.log(style);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
 
     return (
         <div 
@@ -300,9 +298,8 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
-    //console.log(style);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
 
     return (
         <div 
@@ -337,9 +334,8 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
-    //console.log(style);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
 
     return (
         <div 
@@ -375,9 +371,8 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         ...otherProps
     } = props;
     
-    const emiter = useEvent(dataId);
-    const storage = useCtxBufer(dataId, otherProps.value);
-    //console.log(style);
+    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
 
     return (
         <div 

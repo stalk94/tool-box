@@ -62,11 +62,12 @@ const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
                                 style={{color:'#fcfcfc', borderColor:'#fcfcfc61',boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.4)'}}
                                 startIcon={<Icon sx={{ color: 'gray', fontSize: 18 }} />}
                                 sx={{ width: '100%', opacity: 0.6 }}
-                                onClick={() =>
+                                onClick={() => {
+                                    //infoState.select.panel.lastAddedType.set(type);
                                     addComponentToLayout(createComponentFromRegistry(type))
-                                }
+                                }}
                             >
-                                {type}
+                                { type }
                             </Button>
                         </Box>
                     );

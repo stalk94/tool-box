@@ -26,6 +26,7 @@ export type { BreadcrumbsNavProps as BreadcrumbsProps } from './components/bread
 
 // таблица данных primereact модернизированная
 export { default as DataTable } from './components/data-table';
+export type{ DataTablePropsWrapper as DataTableProps } from './components/data-table';
 
 // appBar
 export { default as AppBar } from './components/app-bar';

@@ -98,7 +98,7 @@ export const useComponentSize = (componentId: string) => {
                 const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
                 return acc + (el?.offsetWidth || 0);
             }, 0);
-        
+            
             const availableWidth = cellRect.width - usedWidth;
             //console.log(availableWidth)
 
@@ -116,4 +116,35 @@ export const useComponentSize = (componentId: string) => {
     }, [cellRef, componentIndex, components]);
 
     return size; // { width, height }
+}
+
+
+export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
+    const [size, setSize] = React.useState({ width: 0, height: 0 });
+
+    React.useEffect(() => {
+        const node = ref.current;
+        if (!node) return;
+
+        let parentCell = node.closest('[data-id]');
+
+        while (parentCell && parentCell.getAttribute('data-type') === 'Block') {
+            parentCell = parentCell.parentElement?.closest('[data-id]');
+        }
+
+        if (!parentCell) return;
+
+        const update = () => {
+            const rect = parentCell!.getBoundingClientRect();
+            setSize({ width: rect.width, height: rect.height });
+        };
+
+        update();
+        const observer = new ResizeObserver(update);
+        observer.observe(parentCell);
+
+        return () => observer.disconnect();
+    }, [ref]);
+
+    return size;
 }

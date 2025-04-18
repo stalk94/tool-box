@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { useTheme } from '@mui/material';
 
 
-type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
+export type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
 // todo: стилизировать через тему
 const StyledTableWrapper = styled.div<{ theme: Theme }>`
     height: 100%;
@@ -39,6 +39,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         border: 1px solid;
         border-color: ${({ theme })=> theme.palette.card.border };
+        width: 100%;
     }
     .p-datatable-header {
         background: ${({ theme })=> alpha(theme.palette.table.header, 0.1)};
@@ -66,6 +67,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         box-shadow: 0 4px 3px rgba(0, 0, 0, 0.08) inset, 0 3px 4px rgba(0, 0, 0, 0.06);
         backdrop-filter: blur(10px);
         font-size:  14px;
+        white-space: nowrap;
     }
     // нечетные row 
     .p-datatable-tbody > tr:nth-child(even) {
@@ -165,7 +167,7 @@ export default function({ value, children, header, footer, ...props }: DataTable
             resizeObserver.disconnect();
         }
     }, [header, footer, value]);
-
+    
     
     return (
         <StyledTableWrapper theme={theme}>

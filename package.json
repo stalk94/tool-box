@@ -100,6 +100,7 @@
     "react-imgix": "^9.10.0",
     "react-slick": "^0.30.3",
     "slate": "^0.112.0",
+    "slate-history": "^0.113.1",
     "slate-react": "^0.112.1",
     "slick-carousel": "^1.8.1",
     "vite-plugin-dts": "^4.5.3"

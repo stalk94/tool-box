@@ -8,6 +8,7 @@ import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEn
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 
+
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
@@ -197,7 +198,7 @@ export default function ({ height, desserealize }) {
         }
     }, []);
 
-
+    
     return (
         <div style={{ width: '100%', height: height ? height + '%' : '100%' }} ref={containerRef}>
             <ResponsiveGridLayout
@@ -223,32 +224,42 @@ export default function ({ height, desserealize }) {
                             key={layer.i}
                             style={{
                                 overflow: 'hidden',
+                                overflowY: 'auto',
                                 border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
                                 background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
                             }}
                         >
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={closestCenter}
-                                onDragEnd={(event) => handleDragEnd(event, layer.i)}
-                                onDragStart={(event) => handleDragStart(event, layer)}
-                            >
-                                { Array.isArray(layer.content) &&
-                                    <SortableContext
-                                        items={layer.content.map((cnt) => cnt.props['data-id'])}
-                                        strategy={rectSortingStrategy}
-                                    >
-                                        { Array.isArray(layer.content) && layer.content.map((component) => (
-                                            <SortableItem 
-                                                key={component.props['data-id']} 
-                                                id={component.props['data-id']}
-                                            >
-                                                { component }
-                                            </SortableItem>
-                                        ))}
-                                    </SortableContext>
-                                }
-                            </DndContext>
+                            { EDITOR &&  
+                                <DndContext
+                                    sensors={sensors}
+                                    collisionDetection={closestCenter}
+                                    onDragEnd={(event) => handleDragEnd(event, layer.i)}
+                                    onDragStart={(event) => handleDragStart(event, layer)}
+                                >
+                                    { Array.isArray(layer.content) &&
+                                        <SortableContext
+                                            items={layer.content.map((cnt) => cnt.props['data-id'])}
+                                            strategy={rectSortingStrategy}
+                                        >
+                                            { Array.isArray(layer.content) && layer.content.map((component) => (
+                                                <SortableItem 
+                                                    key={component.props['data-id']} 
+                                                    id={component.props['data-id']}
+                                                >
+                                                    { component }
+                                                </SortableItem>
+                                            ))}
+                                        </SortableContext>
+                                    }
+                                </DndContext>
+                            }
+                            { (!EDITOR && Array.isArray(layer.content)) && 
+                                layer.content.map((component, index) => 
+                                    <React.Fragment key={index}>
+                                        { component }
+                                    </React.Fragment>
+                                )
+                            }
                         </div>
                     );
                 })}
@@ -256,3 +267,4 @@ export default function ({ height, desserealize }) {
         </div>
     );
 }
+

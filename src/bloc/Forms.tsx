@@ -44,9 +44,9 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
             children as Schema<'text'>,
             //type as Schema<'toggle'>,
             fullWidth as Schema<'switch'>,
+            variant as Schema<'select'>,
             size as Schema<'toggle'>,
             color as Schema<'toggle'>,
-            variant as Schema<'select'>,
             startIcon as Schema<'toggle'>,
             endIcon as Schema<'toggle'>,
         );

@@ -44,11 +44,10 @@ class Styler {
 }
 
 
-export function SortableItem({ id, children }: { id: string, children: Component }) {
+export function SortableItem({ id, children, ...props }: { id: string, children: Component }) {
     const itemRef = React.useRef<HTMLDivElement>(null);
     const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
     const dragEnabled = useHookstate(context.dragEnabled);
-    const [canJoinInline, setCanJoinInline] = React.useState(false);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
         id ,
         disabled: !dragEnabled.get()        // ✅ глобальный флаг
@@ -126,7 +125,7 @@ export function SortableItem({ id, children }: { id: string, children: Component
         return () => resizeObserver.disconnect();
     }, []);
     
-    
+
     return (
         <div
             ref={(node) => {
@@ -138,6 +137,7 @@ export function SortableItem({ id, children }: { id: string, children: Component
             {...(dragEnabled.get() ? listeners : {})}
             onClick={handleClick} 
             onDoubleClick={()=> window?.triggerLeftPanel?.()}
+            { ...props }
         >
             { children }
         </div>

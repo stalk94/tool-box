@@ -9,7 +9,7 @@ export type ProxyComponentName = 'Button'
 
 
 
-export type DataEmiters = 'onChange' | 'onClick';
+export type DataEmiters = 'onChange' | 'onClick' | 'onSelect';
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName

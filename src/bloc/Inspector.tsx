@@ -21,8 +21,6 @@ export default function InspectorPanel ({ data, onClose }) {
                 return prew;
             });
         });
-
-        
     }, []);
 
 
