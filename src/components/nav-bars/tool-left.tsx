@@ -52,7 +52,6 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
             return darken(bcgColor, 0.1);
         }
     }
-    
 
     return(
         <Box component='div'
@@ -73,6 +72,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                 items={schemaNavBar.items}
                 isFocusSelected={true}
                 end={schemaNavBar.end}
+                selected={props.selected}
             />
 
             {/* ANCHOR - рабочая область */}

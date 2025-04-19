@@ -10,9 +10,10 @@ export const renderState = hookstate<LayoutCustom[]>([]);
 export default hookstate(
     {
         mod: 'home',
-        dragEnabled: true,                  // отключить перетаскивание
+        dragEnabled: true,                                          // отключить перетаскивание
+        linkMode: <number|undefined> undefined,                     // режим связи
         layout: <LayoutCustom[]> <unknown>[],
-        tools: undefined,
+        //tools: undefined,                                         // ?
         currentCell: <LayoutCustom> undefined,
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })
@@ -26,6 +27,7 @@ export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     }, 
     localstored({key: 'cellsContent', engine: localStorage}
 ));
+
 
 export const infoState = hookstate(new Proxy({
         container: {

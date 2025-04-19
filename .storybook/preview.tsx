@@ -41,7 +41,7 @@ const preview: Preview = {
   decorators: [
     withCustomConsole,
     (Story, context) => {
-      const theme = context.globals.theme === "dark" ? darkTheme : lightTheme;
+      const theme = darkTheme;
       return (
         <div style={{ width: '100vw', height: '100vh', overflow: 'hidden' }}>
           <ThemeProvider theme={theme}>

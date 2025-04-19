@@ -4,7 +4,7 @@ import { CSS } from '@dnd-kit/utilities';
 import context, { infoState, renderState } from './context'; 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
-import { DragOverlay } from '@dnd-kit/core';
+import { getComponentById } from './utils/editor';
 
 //! особые условия стилей для компонентов (!это костыли, вся логика в обертки идет)
 class Styler {
@@ -44,7 +44,7 @@ class Styler {
 }
 
 
-export function SortableItem({ id, children, ...props }: { id: string, children: Component }) {
+export function SortableItem({ id, children, ...props }: { id: number, children: Component }) {
     const itemRef = React.useRef<HTMLDivElement>(null);
     const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
     const dragEnabled = useHookstate(context.dragEnabled);
@@ -136,7 +136,14 @@ export function SortableItem({ id, children, ...props }: { id: string, children:
             {...attributes}
             {...(dragEnabled.get() ? listeners : {})}
             onClick={handleClick} 
-            onDoubleClick={()=> window?.triggerLeftPanel?.()}
+            onDoubleClick={()=> {
+                const comp = getComponentById(id);
+                EVENT.emit('leftBarChange', {
+                    currentToolPanel: 'component',
+                    curSubpanel: 'props',
+                    curentComponent: comp
+                });
+            }}
             { ...props }
         >
             { children }

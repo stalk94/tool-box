@@ -114,7 +114,7 @@ const useFunctions =(elem, onChange, curSub)=> {
 
 
 // левая панель редактора
-export default function ({ addComponentToLayout, useDump, externalPanelTrigger }: Props) {
+export default function ({ addComponentToLayout, useDump }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
@@ -133,25 +133,17 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
-    // Обновление текущего выделенного компонента
+    // слушаем эмитер
     React.useEffect(() => {
-        const content = select.content.get({ noproxy: true });
-        if (content?.props?.['data-id']) {
-            setCurrent({
-                id: content.props['data-id'],
-                type: content.props['data-type']
-            });
-        } else {
-            console.warn('🚨 У контента отсутствует data-id');
+        const handler = (data) => {
+            if(data.curentComponent) setCurrent(data.curentComponent);
+            if(data.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);
+            if(data.curSubpanel) setSubPanel(data.curSubpanel);
         }
-    }, [select.content]);
 
-    // Проброс управляющей функции
-    React.useEffect(() => {
-        if (externalPanelTrigger) {
-            externalPanelTrigger(setCurrentToolPanel);
-        }
-    }, [externalPanelTrigger]);
+        EVENT.on('leftBarChange', handler);
+        return ()=> EVENT.off('leftBarChange', handler);
+    }, []);
 
     // Обработка навигации по разделам
     const changeNavigation = (item) => {
@@ -181,6 +173,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
     
     return (
         <LeftSideBarAndTool
+            selected={currentToolPanel}
             sx={{ height: '100%' }}
             schemaNavBar={{ items: menuItems, end: endItems }}
             width={260}
@@ -188,9 +181,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
             start={start}
             end={
                 <Inspector
-                    data={
-                        globalThis.sharedContext.get()
-                    }
+                    data={ globalThis.sharedContext.get() }
                     onClose={console.log}
                 />
             }

@@ -36,7 +36,7 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
             return "image";
         }
     }
-
+    
     return(
         <CardMedia
             { ...props }

@@ -214,6 +214,7 @@ export default function ({ height, desserealize }) {
                 margin={margin}
             >
                 { render.get({ noproxy: true }).map((layer) => {
+                    
                     return(
                         <div 
                             onClick={(e) => {

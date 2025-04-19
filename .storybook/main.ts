@@ -7,16 +7,10 @@ const config: StorybookConfig = {
 		'../src/**/*.mdx', 
 	],
 	addons: [
-		'@storybook/addon-viewport',
 		"@storybook/addon-essentials",
-		"@storybook/addon-onboarding",
-		"@chromatic-com/storybook",
-		"@storybook/experimental-addon-test",
 		'@storybook/addon-styling',
 		'@storybook/addon-measure',
 		'@storybook/addon-console',
-		'@storybook/addon-docs',
-		"@storybook/addon-controls"
 	],
 	framework: {
 		"name": "@storybook/react-vite",

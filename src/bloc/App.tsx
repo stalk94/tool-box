@@ -11,10 +11,13 @@ import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
 import { serializeJSX, deserializeJSX } from './utils/sanitize';
+import EventEmitter from "../app/emiter";
 
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
+// системный эммитер
+globalThis.EVENT = new EventEmitter();
 
 
 // это редактор блоков сетки

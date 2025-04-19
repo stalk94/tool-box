@@ -21,6 +21,13 @@ import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
 
 
+/**
+ * Приоритет: 
+ * * пропс настройки компонентов 
+ * * панель проектов 
+ * * доработать редактор сетки
+ * * 
+ */
 //////////////////////////////////////////////////////////////////////
 globalThis.EDITOR = true;       // мы в контексте редактора
 globalThis.sharedContext = sharedContext;

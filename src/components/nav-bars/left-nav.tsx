@@ -13,6 +13,7 @@ type SidebarMenuProps = {
     items: NavLinkItem[]
     sx?: {}
     isFocusSelected?: boolean 
+    selected: any
 }
 type LeftNavigationProps = SidebarMenuProps & BoxProps & {
     type: 'box' | 'drawer'
@@ -29,7 +30,7 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
  * Можно передавать onChange которая для каждого выполнится выбранного.  
  * * так же у каждого item может быть свой comand()
  */
-export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected }: SidebarMenuProps) {
+export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, selected }: SidebarMenuProps) {
     const theme = useTheme();
     const [openMenus, setOpenMenus] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
@@ -87,6 +88,9 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected }:
             />
         );
     }
+    React.useEffect(()=> {
+        if(selected) setSelectedItem(selected);
+    }, [selected]);
     
 
     return (
@@ -263,6 +267,7 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx, .
             }}
         >
             <SidebarMenu
+                selected={props.selected}
                 collapsed={collapsed}
                 items={items}
                 onChange={onChange}

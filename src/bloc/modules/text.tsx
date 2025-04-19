@@ -34,7 +34,7 @@ function renderInline(inlines: any[]): React.ReactNode {
         if (leaf.color) el = <span key={i} style={{ color: leaf.color }}>{el}</span>;
         if (leaf.bgcolor) el = <span key={i} style={{ backgroundColor: leaf.bgcolor }}>{el}</span>;
         if (leaf.link?.href) {
-            el = <a key={i} href={leaf.link.href} target="_blank" rel="noopener noreferrer">{el}</a>;
+            el = <a key={i} style={{ color: leaf.color }} href={leaf.link.href} target="_blank" rel="noopener noreferrer">{el}</a>;
         }
         if (leaf.fontFamily) {
             el = <span key={i} style={{ fontFamily: leaf.fontFamily }}>{el}</span>;
@@ -115,7 +115,8 @@ const Toolbar = () => {
         const isActive = isMarkActive(editor, format);
         if (isActive) {
             Editor.removeMark(editor, format);
-        } else {
+        } 
+        else {
             Editor.addMark(editor, format, true);
         }
     }
@@ -335,7 +336,8 @@ const Toolbar = () => {
 }
 
 
-// ! не сохраняются изменения через панель
+
+// ! не сохраняются изменения стилей
 export const TextWrapper = React.forwardRef((props: any, ref) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
     const [isEditing, setIsEditing] = React.useState(false);
@@ -383,7 +385,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         if (leaf.italic) children = <em>{children}</em>;
         if (leaf.underline) children = <u>{children}</u>;
         if (leaf.link?.href) {
-            children = <a href={leaf.link.href} target="_blank" rel="noopener noreferrer">{children}</a>;
+            children = <a style={style} href={leaf.link.href} target="_blank" rel="noopener noreferrer">{children}</a>;
         }
         if (leaf.fontFamily) style.fontFamily = leaf.fontFamily;
         if (leaf.textAlign) {
@@ -395,18 +397,18 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
     }, []);
     const renderElement = useCallback(({ attributes, children, element }) => {
         switch (element.type) {
-        case 'heading-one':
-            return <h4 {...attributes}>{children}</h4>;
-        case 'bulleted-list':
-            return <ul {...attributes}>{children}</ul>;
-        case 'numbered-list':
-            return <ol {...attributes}>{children}</ol>;
-        case 'list-item':
-            return <li {...attributes}>{children}</li>;
-        case 'blockquote':
-            return <blockquote {...attributes}>{children}</blockquote>;
-        default:
-            return <p {...attributes}>{children}</p>;
+            case 'heading-one':
+                return <h4 {...attributes}>{children}</h4>;
+            case 'bulleted-list':
+                return <ul {...attributes}>{children}</ul>;
+            case 'numbered-list':
+                return <ol {...attributes}>{children}</ol>;
+            case 'list-item':
+                return <li {...attributes}>{children}</li>;
+            case 'blockquote':
+                return <blockquote {...attributes}>{children}</blockquote>;
+            default:
+                return <p {...attributes}>{children}</p>;
         }
     }, []);
 
@@ -426,7 +428,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
                         debouncedUpdate(val);
                     }}
                 >
-                    {selected.content.get({noproxy:true})?.props?.['data-id'] === dataId && (
+                    { selected.content.get({noproxy:true})?.props?.['data-id'] === dataId && (
                         <Toolbar />
                     )}
                     <Editable

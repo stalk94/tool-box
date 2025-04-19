@@ -2,7 +2,8 @@ import React from 'react';
 import Imgix from 'react-imgix';
 import { useComponentSize } from './utils/hooks';
 import { VerticalCarousel, HorizontalCarousel, PromoBanner } from '../../index';
-
+import Tollbar, { useToolbar } from './utils/Toolbar';
+import { Settings } from '@mui/icons-material';
 
 
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
@@ -42,7 +43,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             imgixParams={imgixParams}
             htmlAttributes={{
                 width : width, 
-                height : height - 5
+                height : height - 8
             }}
         />
     );
@@ -127,6 +128,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
+    const { visible, context } = useToolbar(componentId);
     const { width, height } = useComponentSize(componentId);
 
     const createImgx = (src: string) => {
@@ -157,7 +159,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
 
         return result;
     }
-
+    
 
     return (
         <div
@@ -167,14 +169,21 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
             style={{
                 width,
                 display: 'block',
-                height: '100%',
                 overflow: 'hidden',
+                position: 'relative',
             }}
             {...otherProps}
         >
+            <Tollbar 
+                visible={visible}
+                offsetY={0}
+                options={[
+                    { icon: <Settings/>,  },
+                ]}
+            />
             <HorizontalCarousel
                 items={parseItems() ?? []}
-                height={height}
+                height={height-8}
                 settings={{
                     autoplay,
                     slidesToShow
@@ -193,8 +202,9 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
-    //const { width, height } = useComponentSize(componentId);
-
+    const { visible, context } = useToolbar(componentId);
+    const { width, height } = useComponentSize(componentId);
+    
 
     return (
         <div
@@ -204,9 +214,17 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
             style={{
                 display: 'block',
                 overflow: 'hidden',
+                position: 'relative'
             }}
             { ...otherProps }
         >
+            <Tollbar 
+                visible={visible}
+                offsetY={0}
+                options={[
+                    { icon: <Settings/>,  },
+                ]}
+            />
             <PromoBanner
                 items={items}
                 style={style}

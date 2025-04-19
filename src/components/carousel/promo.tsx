@@ -241,11 +241,11 @@ export default function PromoSlider({ items, styleDot, styleText, style }: Promo
     return (
         <Card 
             actionAreaEnabled
-            sx={{ minHeight: 260, ...style }}
+            sx={{ minHeight: 240, ...style }}
         >
             <React.Fragment>
                 <MediaImage
-                    sx={{minHeight: 260}}
+                    sx={{minHeight: 240}}
                     src={(items ?? testData)[active].images[0]}
                 />
                 <Box
@@ -255,7 +255,7 @@ export default function PromoSlider({ items, styleDot, styleText, style }: Promo
                         left: 0,
                         width: "100%",
                         height: "100%",
-                        minHeight: 260,
+                        minHeight: 240,
                         display: "flex",
                         flexDirection: "column",
                         justifyContent: "center",
