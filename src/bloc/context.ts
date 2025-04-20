@@ -29,33 +29,24 @@ export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
 ));
 
 
-export const infoState = hookstate(new Proxy({
-        container: {
-            width: 0,
-            height: 0
+export const infoState = hookstate({
+    container: {
+        width: 0,
+        height: 0
+    },
+    select: {
+        /** это выбранный HTML layoout   */
+        cell: <HTMLDivElement>undefined,
+        /** это выбранный (react рендер) элемент  */
+        content: <React.ReactElement>undefined,
+        /** выделено в панели */
+        panel: <{ lastAddedType: string }>{
+            lastAddedType: ''
         },
-        select: {
-            /** это выбранный HTML layoout   */
-            cell: <HTMLDivElement> undefined,
-            /** это выбранный (react рендер) элемент  */
-            content: <React.ReactElement> undefined,
-            /** выделено в панели */
-            panel: <{lastAddedType: string}> {
-                lastAddedType: ''
-            },
-        },
-        inspector: {
-            lastData: {},
-            task: []
-        },
-        contentAllRefs: <Record<string, Element>> undefined
-    }, {
-        set(target, property, value) {
-            if(property === 'selectCell' && value) {
-                // пример перехватчика
-            }
-            target[property] = value;
-            return true;
-        }
-    }
-))
+    },
+    inspector: {
+        lastData: {},
+        task: []
+    },
+    contentAllRefs: <Record<string, Element>>undefined
+})

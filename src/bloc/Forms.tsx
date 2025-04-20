@@ -15,7 +15,9 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
     const numberKeys = ['min', 'max', 'step'];
     const switchKeys = ['fullWidth', ];
+    //const fileKeys = [''];
 
+    
     if(switchKeys.includes(propName)) {
         return {
             type: 'switch',
@@ -25,10 +27,10 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             value: propValue
         }
     }
-    else if (propName === 'src' && typeContent === 'Image') {
+    else if (propName === 'data-source') {
         return {
             type: 'file',
-            id: propName,
+            id: 'file',
             label: 'upload',
             labelSx: { fontSize: '14px' },
             value: propValue,
@@ -257,7 +259,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
             }
             { acSchema[0] &&
                 <AccordionForm
-                    activeIndex={'all'}
+                    activeIndex={[0]}
                     key={`accordion-${copyDataContent.current?.key}`}
                     scheme={acSchema}
                     labelPosition="column"

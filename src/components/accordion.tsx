@@ -93,7 +93,8 @@ export default function CustomAccordion({ items, activeIndexs, tabStyle }: Accor
             >
                 {items.map((elem, index) => (
                     <AccordionTab
-                        style={!useActive(index) && { ...tabStyle, marginBottom: 2 }}
+                        headerStyle={{}}
+                        style={!useActive(index) ? { marginBottom: 2 } : {} }
                         key={index}
                         header={
                             <AccordionHeader
@@ -102,7 +103,9 @@ export default function CustomAccordion({ items, activeIndexs, tabStyle }: Accor
                             />
                         }
                     >
-                        { elem.content }
+                        <Box sx={tabStyle}>
+                            { elem.content }
+                        </Box>
                     </AccordionTab>
                 ))}
             </Accordion>

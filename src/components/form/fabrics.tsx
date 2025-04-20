@@ -1,6 +1,6 @@
 import React from 'react';
 import { LabelText, LabelNumber, LabelColor, LabelSlider, LabelSelect, LabelToogler, 
-    LabelDateOrTime, LabelFileLoader, LabelAutocomplete
+    LabelDateOrTime, LabelFileLoader, LabelAutocomplete, LabelComboFileLoader
 } from '../input/labels.inputs';
 import { SwitchInput, CheckBoxInput } from '../input/input.any';
 import { Schema, TypeSchema } from './types';
@@ -19,5 +19,6 @@ export const fabricsInput: Record<TypeSchema, (schema: any) =>  React.JSX.Elemen
     select: (schema) => <LabelSelect {...schema} />,
     checkbox: (schema) => <CheckBoxInput {...schema} />,
     file: (schema) => <LabelFileLoader {...schema} />,
+    'file-combo': (schema)=> <LabelComboFileLoader {...schema} />,
     autocomplete: (schema) => <LabelAutocomplete {...schema} />,
 }

@@ -2,6 +2,7 @@ import React from 'react';
 import { cellsContent } from '../../context';
 import { Editor} from 'slate';
 
+
 type CellContext = {
     cellId: string | null;
     componentIndex: number | null;
@@ -105,7 +106,7 @@ export const useComponentSize = (componentId: string) => {
 
             setSize({
                 width: Math.max(0, availableWidth),
-                height: Math.max(0, availableHeight),
+                height: Math.max(0, availableHeight-8),         //!
             });
         };
 

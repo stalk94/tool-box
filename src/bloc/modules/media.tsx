@@ -4,16 +4,20 @@ import { useComponentSize } from './utils/hooks';
 import { VerticalCarousel, HorizontalCarousel, PromoBanner } from '../../index';
 import Tollbar, { useToolbar } from './utils/Toolbar';
 import { Settings } from '@mui/icons-material';
-import { saveImage, getImage, getAllImages } from '../utils/image.storage';
 import { updateComponentProps } from '../utils/updateComponentProps';
+import { uploadFile } from 'src/app/plugins';
 
 
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
     const [imgSrc, setImgSrc] = React.useState<string>();
+    const [sourceType, setSource] = React.useState<string>();
+    const lastFileRef = React.useRef<number | null>(null);
     const {
         src,
+        file,
         alt = '',
         imgixParams = {},
+        'data-source': source,
         sizes = '100vw',
         objectFit = 'cover',
         style = {},
@@ -23,51 +27,134 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
     const componentId = props['data-id'];
     const { width, height } = useComponentSize(componentId);
 
-    const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const file = e.target.files?.[0];
-        if (!file) return;
+    const handleUpload = async (file) => {
+        setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
+        const filename = `img-${componentId}.${file.name.split('.').pop()}`;
+        const url = await uploadFile(file, filename);
 
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            const base64 = e.target.result as string;
-            const imageId = `img-${Date.now()}`;
-
-            await saveImage(imageId, base64); // 💾 записали под одним ключом
-
-            updateComponentProps({
-                component: { props },
-                data: { src: imageId }
-            });
-        };
-        reader.readAsDataURL(file);
+       
+        setImgSrc(`${url}?v=${Date.now()}`);
+        updateComponentProps({ 
+            component: { props }, 
+            data: { src: `${url}?${Date.now()}` } 
+        });
     }
     React.useEffect(() => {
-        if (src?.startsWith('img-')) getImage(props.src).then(setImgSrc);
-        else {
-            if (!src || src.length === 0){
-                setImgSrc('https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg');
+        if (file instanceof File) {
+            const id = file.lastModified;
+            
+            if (id !== lastFileRef.current) {
+                lastFileRef.current = id;
+                handleUpload(file);
             }
-            else setImgSrc(src);
         }
+    }, [file]);
+    React.useEffect(() => {
+        if (!src || src.length === 0){
+            setImgSrc('https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg');
+        }
+        else setImgSrc(src);
+        setSource('src');
     }, [src]);
     
-
+    
     return (
-        <Imgix
-            //ref={ref}
+        <img
+            ref={ref}
             data-id={componentId}
             data-type="Image"
+            data-source={sourceType}
             src={imgSrc ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
-            sizes={sizes}
-            imgixParams={imgixParams}
-            htmlAttributes={{
+            style={{
                 width : width, 
                 height : height - 8
             }}
         />
     );
 });
+export const VideoWrapper = React.forwardRef((props: any, ref) => {
+    const [sourceType, setSource] = React.useState<string>();
+    const [videoSrc, setVideoSrc] = React.useState<string>();
+    const lastFileRef = React.useRef<number | null>(null);
+    const { 
+        src, 
+        file,
+        autoplay = false,
+        controls = true,
+        loop = false,
+        fullWidth,
+        poster,
+        style = {}, 
+        'data-id': dataId,
+        ...otherProps 
+    } = props;
 
+    const { width, height } = useComponentSize(dataId);
+   
+    const handleUpload = async (file: File) => {
+        setVideoSrc('https://i.gifer.com/YCZH.gif'); // временная заглушка
+
+        try {
+            const filename = `video-${dataId}.${file.name.split('.').pop()}`;
+            const url = await uploadFile(file, filename);
+
+            const finalUrl = `${url}?v=${Date.now()}`;
+            setVideoSrc(finalUrl);
+
+            // Сохраняем src в пропсы компонента через редактор
+            updateComponentProps({
+                component: { props },
+                data: { src: finalUrl }
+            });
+        } 
+        catch (err) {
+            console.error('📛 Ошибка загрузки видео:', err);
+        }
+    }
+    React.useEffect(() => {
+        if (file instanceof File) {
+            const id = file.lastModified;
+            
+            if (id !== lastFileRef.current) {
+                lastFileRef.current = id;
+                handleUpload(file);
+            }
+        }
+    }, [file]);
+    React.useEffect(() => {
+        if (!src || src.length === 0){
+            setVideoSrc('');
+        }
+        else setVideoSrc(src);
+        setSource('src');
+    }, [src]);
+
+
+    return (
+        <video
+            ref={ref}
+            data-id={dataId}
+            data-type="Video"
+            data-source={sourceType}
+            width={width}
+            height={height-8}
+            src={videoSrc}
+            controls={controls}
+            autoPlay={autoplay}
+            loop={loop}
+            poster={poster}
+            style={{
+                display: 'block',
+                width: '100%',
+                height: 'auto',
+                maxHeight: height - 8,
+                objectFit: 'contain',
+                ...style
+            }}
+            {...otherProps}
+        />
+    );
+});
 
 export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
     const {
@@ -233,7 +320,8 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
             style={{
                 display: 'block',
                 overflow: 'hidden',
-                position: 'relative'
+                position: 'relative',
+                height: height - 8
             }}
             { ...otherProps }
         >
@@ -246,7 +334,7 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
             />
             <PromoBanner
                 items={items}
-                style={style}
+                style={{...style, height, width}}
             />
         </div>
     );

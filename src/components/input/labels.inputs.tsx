@@ -13,7 +13,7 @@ import Autocomplete, { AutoCompleteProps } from './autocomplete';
 import { Box } from '@mui/material';
 import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';
-import FileLoader, { FileLoaderProps } from './file-loader';
+import FileLoader, { FileLoaderProps, FileLoaderCombo, ComboLoader } from './file-loader';
 import '../../style/fonts.css';
 
 
@@ -28,7 +28,9 @@ type InputTupe = 'text'
     | 'login' 
     | 'select' 
     | 'slider'
+    | 'toggle'
     | 'autocomplete'
+    | 'file-combo'
     | 'file';
     
 type InputCustomLabelProps = {
@@ -174,9 +176,13 @@ export function LabelSlider(props: LabelTextProps & CustomSliderProps) {
 }
 
 export function LabelToogler(props: LabelTextProps & TooglerInputProps) {
-    return wrapWithLabel('toogle', props.label, props.position, <TooglerInput {...props} />, props);
+    return wrapWithLabel('toggle', props.label, props.position, <TooglerInput {...props} />, props);
 }
 
 export function LabelFileLoader(props: LabelTextProps & FileLoaderProps) {
     return wrapWithLabel('file', props.label, props.position, <FileLoader {...props} />, props);
+}
+
+export function LabelComboFileLoader(props: LabelTextProps & ComboLoader) {
+    return wrapWithLabel('file-combo', props.label, props.position, <FileLoaderCombo {...props} />, props);
 }

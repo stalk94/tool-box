@@ -22,6 +22,21 @@ export async function send<T extends keyof APIEndpoints>(
     return request.json();
 }
 
+export function base64toBlob(base64: string): Blob {
+    const [meta, content] = base64.split(',');
+    const mimeMatch = meta.match(/:(.*?);/);
+    const mime = mimeMatch ? mimeMatch[1] : 'application/octet-stream';
+
+    const binary = atob(content);
+    const array = new Uint8Array(binary.length);
+
+    for (let i = 0; i < binary.length; i++) {
+        array[i] = binary.charCodeAt(i);
+    }
+
+    return new Blob([array], { type: mime });
+}
+
 
 // ошибки глобального обьекта
 window.onerror =(message, source, lineno, colno, error)=> {

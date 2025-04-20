@@ -26,6 +26,10 @@ export type SimpleFileLoaderProps = {
     className?: string;
     dragActiveClassName?: string;
 }
+export type ComboLoader = {
+    value?: File
+    onChange: (path: string)=> void
+}
 
 
 export function SimpleFileLoader({
@@ -127,8 +131,17 @@ export function SimpleFileLoader({
         </div>
     );
 }
-export function ImageUploaderCombo({ value, onChange }) {
+export function FileLoaderCombo({ value, onChange, ...props }: ComboLoader) {
     const [url, setUrl] = React.useState(value ?? '');
+    const placeholderStyle = {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontWeight: 400,
+        fontSize: '0.9rem',         // ≈ 14px
+        //fontStyle: 'italic',
+        lineHeight: 1.43,
+        letterSpacing: '0.01071em',
+        ...props?.styles?.placeholder
+    }
 
     const handleFile = async (file: File) => {
         const reader = new FileReader();
@@ -147,7 +160,7 @@ export function ImageUploaderCombo({ value, onChange }) {
 
 
     return (
-        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+        <InputPaper {...props}>
             <TextField
                 label="URL изображения"
                 size="small"
@@ -157,13 +170,34 @@ export function ImageUploaderCombo({ value, onChange }) {
                     setUrl(val);
                     onChange(val);
                 }}
+                sx={{
+                    width: '100%',
+                    minWidth: '60px',
+                    minHeight: '38px',
+                    background: 'transparent',
+                    padding: 0,
+                    pl: props.left ? 1 : 2,
+                    pr: 2,
+                    pt: 0.1,
+                    flex: 1,
+                    '& input': {
+                        position: 'relative',
+                        zIndex: 2,
+                        background: 'transparent',
+                        minHeight: 30,
+                        //border: '1px solid red',
+                    },
+                    '& input::placeholder, & textarea::placeholder': placeholderStyle,
+                    ...props.sx
+                }}
             />
-            <Button
+            <IconButton
                 component="label"
                 variant="outlined"
                 size="small"
+                sx={{fontSize:10}}
             >
-                Загрузить файл
+                
                 <input
                     type="file"
                     hidden
@@ -172,14 +206,15 @@ export function ImageUploaderCombo({ value, onChange }) {
                         if (e.target.files?.[0]) handleFile(e.target.files[0]);
                     }}
                 />
-            </Button>
-        </Box>
+            </IconButton>
+        </InputPaper>
     );
 }
 
 
 export default function FileLoader({
     value,
+    onChange,
     onUpload,
     accept = '',
     multiple = false,
@@ -207,6 +242,7 @@ export default function FileLoader({
             : list;
 
         setFileList(filtered);
+        onChange?.(multiple ? filtered : filtered[0]);
         onUpload?.(multiple ? filtered : filtered[0]);
 
         // очистим value чтобы повторно выбирать тот же файл

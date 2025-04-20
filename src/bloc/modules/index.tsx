@@ -6,13 +6,14 @@ import { ImageWrapper } from './media';
 import { 
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
-    ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt
+    ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt,
+    VideoCameraFront
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
-    AutoCompleteInputWrapper, FileInputWrapper
+    AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
-import { VerticalCarouselWrapper, HorizontalCarouselWrapper, PromoBannerWrapper } from './media';
+import { VerticalCarouselWrapper, HorizontalCarouselWrapper, PromoBannerWrapper, VideoWrapper } from './media';
 import { DividerWrapper } from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper } from './complex';
 import { DataSourceTableProps } from './sources/table';
@@ -20,7 +21,7 @@ import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
 import { InputStyles } from '../type';
-
+import { MediaCarouselCustom } from './sources/media-carousel'
 
 /**
  * Приоритет: 
@@ -82,9 +83,28 @@ registerComponent({
     component: ImageWrapper,
     defaultProps: {
         src: 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg',
+        file: '',
+        'data-source': 'src',
         alt: 'Картинка',
     },
     icon: Image,
+    category: 'media',
+});
+registerComponent({
+    type: 'Video',
+    component: VideoWrapper,
+    defaultProps: {
+        src: '',
+        file: '',
+        'data-source': 'src',
+        autoplay: false,
+        controls: true,
+        loop: false,
+        poster: '',
+        fullWidth: true,
+        width: '100%',
+    },
+    icon: VideoCameraFront,
     category: 'media',
 });
 
@@ -334,6 +354,25 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         width: '100%',
+    },
+    icon: ViewCarousel,
+    category: 'media',
+});
+registerComponent({
+    type: 'MediaCarousel',
+    component: MediaCarouselCustom,
+    defaultProps: {
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplayDelay: 4000,
+        loop: false,
+        items: [
+            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
+            { type: 'image', src: 'https://picsum.photos/seed/2/600/400' },
+            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { type: 'image', src: 'https://picsum.photos/seed/3/600/400' },
+        ]
     },
     icon: ViewCarousel,
     category: 'media',

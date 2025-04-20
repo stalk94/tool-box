@@ -89,6 +89,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                 sx={{
                     minWidth: 80,
                     maxWidth: '95%',
+                    ml: 1,
                     ...style,
                     ...props.sx
                 }}

@@ -237,7 +237,7 @@ const Description = ({ data, navigationSlot, style }) => {
 export default function PromoSlider({ items, styleDot, styleText, style }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
     const testData = generateTestData();            // моковые данные активны если не передать items
-
+    
     return (
         <Card 
             actionAreaEnabled
@@ -245,7 +245,7 @@ export default function PromoSlider({ items, styleDot, styleText, style }: Promo
         >
             <React.Fragment>
                 <MediaImage
-                    sx={{minHeight: 240}}
+                    sx={{minHeight: 240, ...style}}
                     src={(items ?? testData)[active].images[0]}
                 />
                 <Box

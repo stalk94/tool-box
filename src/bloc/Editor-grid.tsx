@@ -224,7 +224,7 @@ export default function ({ height, desserealize }) {
                             data-id={layer.i} 
                             key={layer.i}
                             style={{
-                                overflow: 'hidden',
+                                overflowX: 'hidden',
                                 overflowY: 'auto',
                                 border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
                                 background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'

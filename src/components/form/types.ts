@@ -5,7 +5,7 @@ import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
 } from '../input/index';
 
 
-export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' | 'file'
+export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' | 'file' | 'file-combo'
 | 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete';
 
 
@@ -47,8 +47,9 @@ type TypeToSchema = {
     switch: SwitchInputProps
     toggle: Toogler
     checkbox: CheckBoxInputProps
-    file: FileLoaderProps
+    file: FileLoaderProps 
     autocomplete: AutoCompleteProps
+    'file-combo': any
 }
 
 

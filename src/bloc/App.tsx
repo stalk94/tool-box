@@ -45,7 +45,7 @@ export default function ({ height, setHeight }) {
             },
             layers: []
         }
-        exportAsHTML('test')
+        //exportAsHTML('test')
         
         Object.keys(cache).map((idLayout)=> {
             const found = children.find(el => el.getAttribute('data-id') === idLayout);
