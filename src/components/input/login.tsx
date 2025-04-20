@@ -50,6 +50,7 @@ export default function LoginInput({ value, helperText, useVerify, onChange, ...
                     disabled={props.disabled}
                     style={{
                         color: theme.palette.input.placeholder,
+                        ...props?.styles?.icon
                     }}
                 >
                     { props.left }
@@ -64,6 +65,7 @@ export default function LoginInput({ value, helperText, useVerify, onChange, ...
                     placeholder={props.placeholder}
                     error={!isValid}
                     onChange={useVerifyChange}
+                    styles={props?.styles}
                 />
             </InputPaper>
 

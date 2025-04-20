@@ -86,7 +86,7 @@ const useComponent = (elem, onChange, curSub, setSub) => {
                 sx={{px:0.2}}
                 items={[
                     { label: <More sx={{fontSize:18}}/>, id: 'props' },
-                    { label: <ColorLens sx={{fontSize:18}} />, id: 'base' },
+                    { label: <ColorLens sx={{fontSize:18}} />, id: 'styles' },
                     { label: <BorderStyle sx={{fontSize:18}} />, id: 'flex' },
                     { label: <FormatColorText sx={{fontSize:20}} />, id: 'text' },
                 ]}
@@ -117,7 +117,7 @@ const useFunctions =(elem, onChange, curSub)=> {
 export default function ({ addComponentToLayout, useDump }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
-    const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
+    const [curSubpanel, setSubPanel] = React.useState<'props'|'styles'|'flex'|'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'|'func'>('items');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
 

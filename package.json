@@ -76,6 +76,7 @@
     "@mui/x-date-pickers": "^7.27.3",
     "@textea/json-viewer": "^4.0.1",
     "html2canvas": "^1.4.1",
+    "idb-keyval": "^6.2.1",
     "lodash": "^4.17.21",
     "primeicons": "^7.0.0",
     "primereact": "^10.9.3",

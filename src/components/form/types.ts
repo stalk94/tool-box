@@ -1,12 +1,12 @@
 import { SxProps } from '@mui/material';
 import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
     DataPickerInputProps, CheckBoxInputProps, ToogleeInputProps, ColorPickerProps, 
-    SelectInputProps, FileLoaderProps
+    SelectInputProps, FileLoaderProps, AutoCompleteProps
 } from '../input/index';
 
 
 export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' | 'file'
-| 'switch' | 'toggle' | 'select' | 'checkbox';
+| 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete';
 
 
 
@@ -48,6 +48,7 @@ type TypeToSchema = {
     toggle: Toogler
     checkbox: CheckBoxInputProps
     file: FileLoaderProps
+    autocomplete: AutoCompleteProps
 }
 
 

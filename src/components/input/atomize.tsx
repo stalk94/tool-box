@@ -1,10 +1,34 @@
 import React from 'react';
-import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps, Box } from '@mui/material';
-import { alpha, lighten, darken, styled, fontStyle } from '@mui/system';
-import { debounce } from 'lodash';
+import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps as InputLabelP, Box } from '@mui/material';
+import { alpha, lighten, darken, styled, fontStyle, SxProps } from '@mui/system';
 
-type PropsInputBaseCustom = InputBaseProps & {
+
+
+export type PropsInputBaseCustom = InputBaseProps & {
     onChange: (value: string)=> void
+    styles?: {
+        placeholder?: React.CSSProperties,
+    }
+}
+export type PropsInputForm = {
+    children: any
+    elevation?: number
+    disabled?: boolean
+    error?: boolean
+    success?: boolean
+    sx?: SxProps
+    styles?: {
+        form?: {
+            borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
+            borderColor?: string | 'none'
+            background?: string | 'none'
+        }
+    }
+}
+export type InputLabelProps = InputLabelP & {
+    styles?: {
+        label?: React.CSSProperties
+    }
 }
 
 
@@ -18,7 +42,7 @@ const AnimatedBox = styled(Box)`
 
 
 // базовый лейбл
-export function Label({ id, children, sx }: InputLabelProps) {
+export function Label({ id, children, styles, sx }: InputLabelProps) {
     const theme = useTheme();
 
     return (
@@ -30,8 +54,9 @@ export function Label({ id, children, sx }: InputLabelProps) {
                 mb: 'auto',
                 opacity: 0.9,
                 color: theme.palette.text.secondary,
-                fontFamily: '"Roboto Condensed", Arial, sans-serif',    //! жестко закреплен стиль шрифта
-                ...sx
+                fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                ...sx,
+                ...styles?.label
             }}
         >
             { children }
@@ -39,17 +64,18 @@ export function Label({ id, children, sx }: InputLabelProps) {
     );
 }
 // базовая подложка под все инпуты (! тшательно доработать, я почти у цели)
-export function InputPaper({ children, elevation, ...props }) {
+export function InputPaper({ children, elevation, styles, ...props }: PropsInputForm) {
     const theme = useTheme();
 
     // цвет бордера в зависимости от состояния (error, sucess, disabled)
     const useBorderColor = () => {
-        const border = props?.borderStyle ?? 'solid';
+        const border = (styles?.form?.borderStyle ?? props?.borderStyle) ?? 'solid';
         const colors = theme.palette.input;
+        const editorBorderColor = styles?.form?.borderColor;
 
         if (props.error) return `1px ${border} ${colors.error}`;
         else if (props.success) return `1px ${border} ${colors.success}`;
-        else return `1px ${border} ${colors.border}`;
+        else return `1px ${border} ${editorBorderColor ?? colors.border}`;
     }
     // цвет бордера при фокусе в зависимости от состояния (error, sucess, disabled)
     const useColorBorderFocus = () => {
@@ -62,9 +88,11 @@ export function InputPaper({ children, elevation, ...props }) {
     // цвет фона в зависимости от состояния (error, sucess, disabled)
     const useBackgroundColor = () => {
         const colors = theme.palette.input;
+        const styleBcg = styles?.form?.background;
 
         if (props.error) return alpha(colors.error, 0.05);
         else if (props.success) return alpha(colors.success, 0.05);
+        else if(styleBcg && styleBcg !== 'none') return styleBcg;
         else return colors.main;
     }
     // цвет фона при фокусе  в зависимости от состояния (error, sucess, disabled)
@@ -131,17 +159,18 @@ export function InputPaper({ children, elevation, ...props }) {
 
 
 /** Базовый инпут */
-export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputBaseCustom) {
+export function InputBaseCustom({ value, onChange, type, styles, ...props }: PropsInputBaseCustom) {
     const theme = useTheme();
     const [v, setV] = React.useState(value);
-
+    
     const placeholderStyle = {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
         fontWeight: 400,
         fontSize: '0.9rem',         // ≈ 14px
         //fontStyle: 'italic',
         lineHeight: 1.43,
-        letterSpacing: '0.01071em'
+        letterSpacing: '0.01071em',
+        ...styles?.placeholder
     }
     
     const filtreProps =()=> {
@@ -149,6 +178,10 @@ export function InputBaseCustom({ value, onChange, type, ...props }: PropsInputB
         delete props.success;
         delete props.toolVisible;
         delete props.labelSx;
+        delete props.divider;
+        delete props.childrenSlate;
+        delete props.placeholderFont;
+        
         return props;
     }
     const useChange = (newValue) => {

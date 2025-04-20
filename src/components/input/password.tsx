@@ -51,6 +51,7 @@ export default function PasswordInput({ value, helperText, useVerify, ...props }
                     disabled={props.disabled}
                     style={{
                         color: theme.palette.input.placeholder,
+                        ...props?.styles?.icon
                     }}
                 >
                     { props.left }
@@ -67,6 +68,7 @@ export default function PasswordInput({ value, helperText, useVerify, ...props }
                     type={type}
                     error={!isValid}
                     onChange={useVerifyChange}
+                    styles={props?.styles}
                 />
 
                 {/* правая иконка смены видимости поля */}

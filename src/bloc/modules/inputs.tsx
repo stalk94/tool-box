@@ -8,39 +8,50 @@ import { SxProps } from '@mui/material';
 import { useEvent, useCtxBufer } from './utils/shared';
 import { triggerFlyFromComponent } from './utils/anim';
 import { iconsList } from '../../components/tools/icons';
+import { useHookstate } from '@hookstate/core';
 
 
-/**
- * ! присутствует много повторяешегося кода, устранить!
- */
-
-
+type InputStyles = {
+    form?: {
+        borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
+        borderColor?: string | 'none'
+        background?: string | 'none'
+    }
+    placeholder?: React.CSSProperties
+    label?: React.CSSProperties
+    icon?: React.CSSProperties
+}
 type TextWrapperProps = TextInputProps & {
     'data-id': number
     labelStyle?: SxProps
     functions: Record<string, string>,
-    startIcon?: string
+    leftIcon?: string,
+    label?: string,
+    position: 'left' | 'right' | 'column'
+    width: string | number
+    styles?: InputStyles
 }
 
 
+// styles 
 export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
         labelStyle,
         functions,
-        startIcon,
+        leftIcon,
         style,
         width,
         fullWidth,
+        styles,
         ...otherProps
     } = props;
     
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
-    const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
-    //console.log(style);
+    const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
 
     return (
         <div 
@@ -50,13 +61,14 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             style={{...style, width: '100%', display:'block'}}
         >
             <TextInput
-                left={StartIcon ? <StartIcon/> : null}
+                left={LeftIcon ? <LeftIcon/> : null}
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -70,6 +82,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         labelStyle,
         functions,
         startIcon,
+        styles,
         style,
         width,
         fullWidth,
@@ -94,6 +107,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -116,7 +130,7 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     
-
+    
     return (
         <div 
             ref={ref}
@@ -143,7 +157,8 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ['data-id']: dataId, 
         labelStyle,
         functions,
-        startIcon,
+        leftIcon,
+        rightIcon,
         style,
         width,
         fullWidth,
@@ -152,6 +167,8 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
+    const RightIcon = rightIcon && iconsList[rightIcon] ? iconsList[rightIcon] : null;
     //console.log(style);
 
     return (
@@ -163,6 +180,8 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         >
             <SliderInput
                 labelSx={labelStyle}
+                start={LeftIcon ? <LeftIcon/> : null}
+                end={RightIcon ? <RightIcon/> : null}
                 onChange={(v)=> {
                     emiter('onChange', v);
                     storage(v);
@@ -197,7 +216,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
             ref={ref}
             data-id={dataId}
             data-type='CheckBox'
-            style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
+            style={{...style, width: '100%', display:'block'}}
         >
             <CheckBoxInput
                 value={state}
@@ -205,6 +224,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
                 onChange={(v)=> {
                     emiter('onChange', v);
                     storage(v);
+                    setState(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 {...otherProps}
@@ -270,7 +290,7 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             ref={ref}
             data-id={dataId}
             data-type='ToggleButtons'
-            style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
+            style={{...style, width: '100%', display:'block'}}
         >
             <ToggleInput
                 labelSx={labelStyle}
@@ -293,6 +313,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         functions,
         startIcon,
         style,
+        styles,
         width,
         fullWidth,
         ...otherProps
@@ -315,6 +336,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -329,6 +351,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         functions,
         startIcon,
         style,
+        styles,
         width,
         fullWidth,
         ...otherProps
@@ -346,6 +369,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         >
             <AutoCompleteInput
                 labelSx={labelStyle}
+                styles={styles}
                 placeholder='выбери из двух стульев'
                 onChange={(v)=> {
                     emiter('onChange', v);
@@ -365,6 +389,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         labelStyle,
         functions,
         startIcon,
+        styles,
         style,
         width,
         fullWidth,
@@ -388,6 +413,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>

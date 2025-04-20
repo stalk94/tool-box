@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconButton, useTheme } from '@mui/material';
+import { alpha, IconButton, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { InputBaseProps } from '@mui/material/InputBase';
 import { InputPaper, InputBaseCustom  } from './atomize';
@@ -18,6 +18,7 @@ export type BaseInputProps = {
     onChange?: (value: string | number)=> void
     success?: boolean
     borderStyle?: 'dashed' | 'solid' | 'dotted'
+    divider?: 'none' | 'dashed' | 'solid' | 'dotted'
 } & InputBaseProps
 
 
@@ -27,7 +28,13 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number | string>('');
 
-    
+    const useStyleIcon =()=> {
+        const style = props?.styles?.icon;
+
+        return style ?? {
+            color: alpha(theme.palette.action.active, 0.5),
+        }
+    }
     const useFiltre =(value: string|number)=> {
         if(props.type === 'text' || props.type === 'number' || props.type === 'password') {
             if(props.type === 'number' && !isNaN(+value)) {
@@ -65,17 +72,27 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
             <IconButton
                 disabled={props.disabled}
                 sx={{
-                    color: theme.palette.action.active,
+                    ...useStyleIcon(),
+                    '&:hover': {
+                        backgroundColor: 'transparent',
+                    },
                 }}
             >
                 { left }
+                { props.divider!=='none' && 
+                    <Divider 
+                        flexItem 
+                        orientation="vertical" 
+                        variant='fullWidth' 
+                        sx={{borderStyle: props.divider, pl:0.6}} /> 
+                    }
             </IconButton>
            
             <InputBaseCustom
                 value={inputValue}
                 placeholder={placeholder}
                 onChange={useFiltre}
-                {...filteredProps()}
+                { ...filteredProps() }
             />
 
             {right &&

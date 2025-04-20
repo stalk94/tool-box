@@ -8,6 +8,11 @@ export type CustomSliderProps = SliderProps & {
     onChange: (value: number|number[])=> void,
     start?: React.ReactNode
     end?: React.ReactNode
+    styles: {
+        thumb: React.CSSProperties,
+        track: React.CSSProperties,
+        rail: React.CSSProperties
+    }
 }
 
 
@@ -18,12 +23,17 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         color: '#00000000',
         '& .MuiSlider-thumb': {
             backgroundColor: theme.palette.slider.thumb,  // Цвет "пальца" ползунка
+            border:`1px solid`,
+            ...props?.styles?.thumb,
         },
         '& .MuiSlider-track': {
             backgroundColor: theme.palette.slider.track,  // Цвет пути ползунка
+            ...props?.styles?.track,
         },
         '& .MuiSlider-rail': {
             backgroundColor: theme.palette.slider.rail,  // Цвет "рельсы" (основной фон)
+            border: '1px solid',
+            ...props?.styles?.rail
         }
     }
     

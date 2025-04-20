@@ -15,12 +15,13 @@ export type BaseSelectProps = {
     items: NavLinkItemSlider[]
     placeholder?: string
     position?: 'start' | 'end'
+    onlyId?: boolean
     variant: "fullWidth" | "inset" | "middle"
     borderStyle?: 'dashed' | 'solid' | 'dotted'
 }
 
 
-
+// ! доработать до унификации с редактором
 export default function Custom({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
     const theme = useTheme();
     const [width, setWidth] = React.useState('200px');
@@ -34,7 +35,7 @@ export default function Custom({ value, onChange, items, placeholder, ...props }
         display: 'flex',
         flexDirection: 'row'
     }
-
+    
     const chekSelected =(item, selected)=> {
         if(props.onlyId && item.id === selected) return item.label;
         else if(item.id === selected.id) return item.label;
@@ -74,7 +75,7 @@ export default function Custom({ value, onChange, items, placeholder, ...props }
         }
     }, []);
 
-
+    
     return(
         <InputPaper {...props}>
         <div tabIndex={0} style={base} ref={selectRef}>
@@ -90,7 +91,8 @@ export default function Custom({ value, onChange, items, placeholder, ...props }
                     height: '100%',
                     padding: 'auto',
                     margin: '6px',
-                    color: selected ? theme.palette.text.primary : theme.palette.text.secondary
+                    color: theme.palette.text.primary,
+                    ...props?.styles?.placeholder
                 }}
             >
                 <div style={{
@@ -98,10 +100,10 @@ export default function Custom({ value, onChange, items, placeholder, ...props }
                         fontSize: '16px'
                     }}
                 >
-                    { selected && items.find((item)=> 
-                        chekSelected(item, selected))?.label
+                    { (selected??value) && items.find((item)=> 
+                        chekSelected(item, (selected??value)))?.label
                     } 
-                    { !selected &&  chekLabel() }
+                    { !(selected??value) &&  chekLabel() }
                 </div>
                 <div
                     style={{
@@ -119,7 +121,8 @@ export default function Custom({ value, onChange, items, placeholder, ...props }
                             fontSize: '1.8rem',
                             transition: 'transform 0.3s ease',
                             transform: isOpen ? 'rotate(180deg)' : 'rotate(0deg)',
-                            color: !isOpen ? theme.palette.text.primary : theme.palette.text.secondary
+                            color: !isOpen ? theme.palette.text.primary : theme.palette.text.secondary,
+                            ...props?.styles?.icon
                         }} 
                     /> 
                 </div>

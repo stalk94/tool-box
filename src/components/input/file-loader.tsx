@@ -1,7 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
+import { get, set } from 'idb-keyval';
 import { InputPaper, InputBaseCustom  } from './atomize';
-import { Box, IconButton, Typography, useTheme } from '@mui/material';
+import { Box, IconButton, Typography, useTheme, TextField, Button } from '@mui/material';
 import { UploadFile, InsertDriveFile } from '@mui/icons-material';
 
 
@@ -126,6 +127,55 @@ export function SimpleFileLoader({
         </div>
     );
 }
+export function ImageUploaderCombo({ value, onChange }) {
+    const [url, setUrl] = React.useState(value ?? '');
+
+    const handleFile = async (file: File) => {
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+            const base64 = e.target.result as string;
+            const id = `img-${Date.now()}`;
+            const images = await get('images') || {};
+            images[id] = base64;
+            await set('images', images);
+
+            setUrl(id);
+            onChange(id);
+        };
+        reader.readAsDataURL(file);
+    }
+
+
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'row', gap: 1 }}>
+            <TextField
+                label="URL изображения"
+                size="small"
+                value={url}
+                onChange={(e) => {
+                    const val = e.target.value;
+                    setUrl(val);
+                    onChange(val);
+                }}
+            />
+            <Button
+                component="label"
+                variant="outlined"
+                size="small"
+            >
+                Загрузить файл
+                <input
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    onChange={(e) => {
+                        if (e.target.files?.[0]) handleFile(e.target.files[0]);
+                    }}
+                />
+            </Button>
+        </Box>
+    );
+}
 
 
 export default function FileLoader({
@@ -193,7 +243,7 @@ export default function FileLoader({
                 }}
             >
                 
-                <UploadFile sx={{ mr: 1, color: theme.palette.input.placeholder }} />
+                <UploadFile sx={{ mr: 1, color: theme.palette.input.placeholder, ...props?.styles?.icon }} />
 
                 {fileList.length > 0 ? (
                     <Box sx={{ flex: 1 }}>
@@ -209,7 +259,7 @@ export default function FileLoader({
                 ) : (
                     <Typography 
                         variant="body2" 
-                        sx={{ opacity: 0.5, ml: 1 }}
+                        sx={{ opacity: 0.5, ml: 1, ...props?.styles?.placeholder }}
                     >
                         { placeholder }
                     </Typography>

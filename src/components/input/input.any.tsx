@@ -97,6 +97,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
                     style={{
                         color: theme.palette.input.placeholder,
                         minHeight: 40,
+                        ...props?.styles?.icon
                     }}
                 >
                     <AlternateEmail />
@@ -105,6 +106,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
                 <InputBaseCustom
                     value={emailValue}
                     onChange={handleChange}
+                    styles={props?.styles}
                     fullWidth
                     placeholder={placeholder ?? "Введите email"}
                     disabled={disabled}
@@ -167,6 +169,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
                     disabled={disabled}
                     style={{
                         color: theme.palette.input.placeholder,
+                        ...props?.styles?.icon
                     }}
                 >
                     <Phone />
@@ -179,6 +182,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
                     placeholder={placeholder ?? "+79991234567"}
                     disabled={disabled}
                     sx={{ pl: 1, minHeight: 40,}}
+                    styles={props?.styles}
                     type='text'
                 />
             </InputPaper>
@@ -231,6 +235,8 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
                 flexWrap: 'wrap',
                 width: '100%',
                 ...props.sx,
+                border: props?.styles?.form.borderColor && '1px solid',
+                 ...props?.styles?.form,
             }}
         >
             { items.map((elem, index)=> 
@@ -240,6 +246,7 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
                         flex: 1,
                         border: `1px solid ${theme.palette.input.border}`,
                         height: 40,
+                        ...props?.styles?.button,
                         "&.Mui-selected": {
                             //backgroundColor: "red", // Цвет фона выделенной кнопки
                             //color: "white", // Цвет текста выделенной кнопки
@@ -259,21 +266,23 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
 }
 export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps) {
     const theme = useTheme();
-    const [curentValue, setCurent] = React.useState(value ?? false);
+    //const [curentValue, setCurent] = React.useState(value ?? false);
     
     const useColor =()=> {
         const colors = theme.palette.chekbox;
+        const editorStyle = props?.styles?.form;
 
-        if(props.disabled) return alpha(colors.border, 0.1);
-        else return colors.border;
+        if(props.disabled) return alpha((editorStyle?.borderColor ?? colors.border), 0.1);
+        else return editorStyle?.borderColor ?? colors.border;
     }
     const useColorCheck =()=> {
         const colors = theme.palette.chekbox;
+        const editorStyle = props?.styles?.form;
 
-        if(props.disabled) return alpha(colors.success, 0.2);
-        else return colors.success;
+        if(props.disabled) return alpha(editorStyle?.colorSuccess ?? colors.success, 0.2);
+        else return editorStyle?.colorSuccess ?? colors.success;
     }
-
+    
     return(
         <FormControlLabel
             disabled={props.disabled}
@@ -306,6 +315,7 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
                 "& .MuiFormControlLabel-label": {
                     color: alpha(theme.palette.text.secondary, 0.6),
                     fontFamily: '"Roboto Condensed", Arial, sans-serif',
+                    ...props?.styles?.label
                 }
             }}
         />
@@ -338,7 +348,7 @@ export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
             )}" d="M19,13H5V11H19V13Z" /></svg>')`,
             right: 12,
           },
-          backgroundColor: value ? useColor('trackOn') : useColor('trackOff'),
+          backgroundColor: (props?.styles?.form?.backgroundColor ?? '#00000014'),
           border: `1px solid ${useColor('border')}`
         },
         '& .MuiSwitch-thumb': {
@@ -346,12 +356,17 @@ export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
             width: 16,
             height: 16,
             margin: 2,
-            backgroundColor: useColor('thumb')
+            backgroundColor: useColor('thumb'),
+            ...props?.styles?.thumb,
         }
     }));
     
     const useColor =(type: 'trackOn'|'trackOff'|'thumb'|'icon'|'border')=> {
-        const color = theme.palette.switch[type];
+        let color = theme.palette.switch[type];
+        const styleEditor = props?.styles?.form;
+        
+        if(styleEditor?.borderColor && type === 'border') color = styleEditor.borderColor;
+       
 
         if((type!=='trackOff' && type!=='trackOn' && type!=='border') && props.disabled){
             return alpha(color, 0.1);
@@ -383,7 +398,8 @@ export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
                     "& .MuiFormControlLabel-label": {
                         color: alpha(theme.palette.text.secondary, 0.6),  // label color
                         fontFamily: '"Roboto Condensed", Arial, sans-serif',
-                        fontSize: 16
+                        fontSize: 16,
+                        ...props?.styles?.label
                     }
                 }}
             />

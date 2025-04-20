@@ -11,10 +11,13 @@ import GridComponentEditor from './Editor-grid';
 import { writeFile } from "../app/plugins";
 import GridEditor from '../components/tools/grid-editor';
 import { serializeJSX, deserializeJSX } from './utils/sanitize';
+import EventEmitter from "../app/emiter";
 
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
+// системный эммитер
+globalThis.EVENT = new EventEmitter();
 
 
 // это редактор блоков сетки
@@ -277,9 +280,10 @@ export const renderState = hookstate<LayoutCustom[]>([]);
 export default hookstate(
     {
         mod: 'home',
-        dragEnabled: true,                  // отключить перетаскивание
+        dragEnabled: true,                                          // отключить перетаскивание
+        linkMode: <number|undefined> undefined,                     // режим связи
         layout: <LayoutCustom[]> <unknown>[],
-        tools: undefined,
+        //tools: undefined,                                         // ?
         currentCell: <LayoutCustom> undefined,
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })
@@ -293,6 +297,7 @@ export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
     }, 
     localstored({key: 'cellsContent', engine: localStorage}
 ));
+
 
 export const infoState = hookstate(new Proxy({
         container: {
@@ -541,6 +546,7 @@ export default function ({ height, desserealize }) {
                 margin={margin}
             >
                 { render.get({ noproxy: true }).map((layer) => {
+                    
                     return(
                         <div 
                             onClick={(e) => {
@@ -773,18 +779,270 @@ export default DragableElement;
  */
 import React from "react";
 export { TextInput, NumberInput, SliderInput } from '../components/input';
-import { Form, Schema } from '../index';
-import { useTheme } from "@mui/material";
-import { fabrickPropsScheme, fabrickStyleScheme, getColors } from './config/utill';
+import { Form, Schema, AccordionForm, AccordionScnema } from '../index';
+import { useTheme, Theme } from "@mui/material";
+import { fabrickUnical, fabrickStyleScheme, stylesFabricScheme } from './config/utill';
 import { motion } from 'framer-motion';
 import { sanitizeProps } from './utils/sanitize';
 import { debounce } from 'lodash';
-import { PropsForm } from './type';
+import { PropsForm, ProxyComponentName } from './type';
+import { merge } from 'lodash';
 
 
 // составляет индивидуальную схему пропсов
-const useCreateSchemeProps = (typeContent, propsElem, theme) => {
-    const schema: Schema[] = [];
+const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
+    const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
+    const numberKeys = ['min', 'max', 'step'];
+    const switchKeys = ['fullWidth', ];
+  
+
+    if(switchKeys.includes(propName)) {
+        return {
+            type: 'switch',
+            id: propName,
+            label: propName,
+            labelSx: { fontSize: '14px' },
+            value: propValue
+        }
+    }
+    else if(numberKeys.includes(propName)) {
+        return {
+            type: 'number',
+            id: propName,
+            value: propValue,
+            label: propName,
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 14 }
+        }
+    }
+    else if(textKeys.includes(propName)) {
+        return {
+            type: 'text',
+            id: propName,
+            multiline: true,
+            value: propValue,
+            label: propName,
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 14 }
+        }
+    }
+    else return fabrickUnical(propName, propValue, theme, typeContent);
+}
+const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<string, any>, theme: Theme) => {
+    const result = { schema: [], acSchema: [] };
+
+    Object.keys(props).forEach((propsName) => {
+        const value = props[propsName];
+
+        // проп массив либо обьект
+        if (typeof value === 'object') {
+            //console.log(propsName, value);
+        }
+        // проп является элементарным типом
+        else {
+            const schema = useCreateSchemeProp(
+                typeComponent,
+                propsName,
+                value,
+                theme
+            );
+
+            if (schema) result.schema.push(schema);
+        }
+    });
+
+    return result;
+}
+
+
+// ! есть баг если удалить компонент при открытом редакторе (вроде)
+export default function({ type, elemLink, onChange }: PropsForm) {
+    const theme = useTheme();
+    const copyDataContent = React.useRef({});                               // кэш во избежание перерендеров
+    const [schema, setSchema] = React.useState<Schema[]>([]);
+    const [acSchema, setAcSchema] = React.useState<AccordionScnema[]>([]);
+    const [story, setStory] = React.useState<Record<string, string>[]>([]);
+    const [future, setFuture] = React.useState<Record<string, string>[]>([]);
+    const [current, setCurrent] = React.useState<Record<string, any>>(null);
+
+
+    const undo = () => {
+        if (story.length <= 1) return; // Nothing to undo
+        
+        // Take the current state and add it to future for potential redo
+        setFuture(prev => [structuredClone(current), ...prev]);
+        
+        // Get the previous state from story
+        const newStory = story.slice(0, -1);
+        const previousState = structuredClone(newStory[newStory.length - 1]);
+        
+        // Update current state and apply it to the theme
+        
+        
+        // Update story array
+        setStory(newStory);
+    }
+    const redo = () => {
+        if (future.length === 0) return; // Nothing to redo
+        
+        // Get the next state from future
+        const nextState = structuredClone(future[0]);
+        const newFuture = future.slice(1);
+        
+        // Add current state to history before applying the next state
+        setStory(prev => [...prev, structuredClone(current)]);
+        
+        // Update current state and apply it to the theme
+        
+        
+        // Update future array
+        setFuture(newFuture);
+    }
+    const useAddStory = (current) => {
+        if (current && (story.length === 0 || JSON.stringify(current) !== JSON.stringify(story[story.length - 1]))) {
+            setFuture(prev => [sanitizeProps(current), ...prev]);
+            setStory(prev => [...prev, sanitizeProps(current)]);
+        }
+    }
+    const useMergeObject = (key: 'style'|'sx'|string, newValue: any) => {
+        setCurrent((prev) => {
+            const prevValue = prev[key] ?? {};
+            const next = {
+                ...prev,
+                [key]: merge({}, prevValue, newValue)  // lodash.merge для глубокой сборки
+            };
+            useAddStory(next);
+            onChange(next);
+            return next;
+        });
+    }
+    const useEdit = React.useCallback(
+        debounce((key: string, newValue: string, keyProps?: string) => {
+            const type = copyDataContent?.current?.type;        // тип вкладки редактора
+
+            if (type === 'props') {
+                if(keyProps) {
+                    const targetSection = acSchema.find(section => section.id === keyProps);
+                    const find = targetSection?.scheme?.find((s) => s.id === key);
+                    const unit = find?.unit ?? '';
+                    useMergeObject(keyProps, { [key]: newValue + unit  });
+                }
+                else setCurrent((prev) => {
+                    const next = { ...prev, [key]: newValue };
+                    useAddStory(next);
+                    onChange(next);
+                    return next;
+                });
+            } 
+            else if(type === 'styles' && keyProps) {
+                const targetSection = acSchema.find(section => section.id === keyProps);
+                const find = targetSection?.scheme?.find((s) => s.id === key);
+                const unit = find?.unit ?? '';
+                useMergeObject('styles', {
+                    [keyProps]: {
+                        ...(current?.styles?.[keyProps] ?? {}),
+                        [key]: newValue + unit
+                    }
+                });
+            }
+            else {
+                setSchema((schema) => {
+                    const find = schema.find((s) => s.id === key);
+                    const unit = find?.unit ?? '';
+                    useMergeObject('style', { [key]: newValue + unit });
+                    return schema;
+                });
+            }
+        }, 250),
+        [elemLink, onChange]
+    );
+    const createScheme = (typeComponent: ProxyComponentName, props: Record<string, any>) => {
+        if(type === 'props') {
+            const { schema, acSchema } = useFabrickSchemeProps(typeComponent, props, theme);
+            setSchema(schema);
+            setAcSchema([]);
+        }
+        else if(type === 'styles') {
+            setSchema([]);
+            setAcSchema([...stylesFabricScheme(typeComponent, props.styles ?? {})]);
+        }
+        else {
+            const curSchema = fabrickStyleScheme(type, props.style ?? {});
+            setSchema(curSchema);
+            setAcSchema([]);
+        }
+    }
+
+    React.useEffect(() => {
+        if (!elemLink) return;
+    
+        const elem = elemLink.get({ noproxy: true });
+        const props = elem?.props;
+    
+        if (!props || !props['data-id'] || !props['data-type']) return;
+        if (!elem || !elem.props || !elem.props['data-id']) return null;
+    
+        const id = props['data-id'];
+        const internalType = props['data-type'];
+        const currentKey = `${id}-${type}`;
+    
+        if (copyDataContent.current?.key === currentKey) return;
+    
+        // Обновляем всё — новый элемент или режим
+        copyDataContent.current = {
+            key: currentKey,
+            id,
+            type,
+            'data-type': internalType
+        };
+    
+        const copyProps = sanitizeProps(props);
+        setStory([copyProps]);
+        setCurrent(copyProps);
+        setFuture([]);
+    
+        createScheme(internalType, copyProps);
+    }, [elemLink, type]);
+    React.useEffect(() => {
+        return () => useEdit.cancel();
+    }, []);
+
+
+    return(
+        <motion.div
+            className="FORM"
+            style={{display:'flex', flexDirection: 'column'}}
+            initial={{ opacity: 0 }}     // Начальная непрозрачность 0
+            animate={{ opacity: 1 }}     // Конечная непрозрачность 1
+            transition={{ duration: 1 }} // Плавное изменение за 1 секунду
+        >
+            { schema[0] &&
+                <Form
+                    key={`form-${copyDataContent.current?.key}`}
+                    scheme={schema}
+                    labelPosition="column"
+                    onSpecificChange={(old, news)=> {
+                        Object.entries(news).forEach(([key, value]) => useEdit(key, value))
+                    }}
+                />
+            }
+            { acSchema[0] &&
+                <AccordionForm
+                    key={`accordion-${copyDataContent.current?.key}`}
+                    scheme={acSchema}
+                    labelPosition="column"
+                    onSpecificChange={(old, news, keyProps: string)=> {
+                        Object.entries(news).forEach(([key, value]) => useEdit(key, value, keyProps))
+                    }}
+                />
+            }
+        </motion.div>
+    );
+}
+
+
+/**
+ * const schema: Schema[] = [];
 
     if (typeContent === 'Typography') {
         const children = fabrickPropsScheme(typeContent, propsElem.children, 'children');
@@ -859,221 +1117,16 @@ const useCreateSchemeProps = (typeContent, propsElem, theme) => {
     
         schema.push(imgixParams as Schema<'text'>);
     }
+    else if (typeContent === 'TextInput') {
+        const left = fabrickPropsScheme(typeContent, propsElem.leftIcon, 'icon');
+        const label = fabrickPropsScheme(typeContent, propsElem.label, 'children');
+        const placeholder = fabrickPropsScheme(typeContent, propsElem.label, 'children');
+        const position = fabrickPropsScheme(typeContent, propsElem.position, 'labelPosition');
+        const fullWidth = fabrickPropsScheme(typeContent, propsElem.fullWidth, 'fullWidth');
+        
+    }
     
     return schema;
-}
-
-
-
-// ! есть баг если удалить компонент при открытом редакторе (вроде)
-export default function({ type, elemLink, onChange }: PropsForm) {
-    const theme = useTheme();
-    const copyDataContent = React.useRef({});           // кэш во избежание перерендеров
-    const [schema, setSchema] = React.useState<Schema[]>([]);
-    const [story, setStory] = React.useState<Record<string, string>[]>([]);
-    const [future, setFuture] = React.useState<Record<string, string>[]>([]);
-    const [current, setCurrent] = React.useState<Record<string, any>>(null);
-
-
-    const undo = () => {
-        if (story.length <= 1) return; // Nothing to undo
-        
-        // Take the current state and add it to future for potential redo
-        setFuture(prev => [structuredClone(current), ...prev]);
-        
-        // Get the previous state from story
-        const newStory = story.slice(0, -1);
-        const previousState = structuredClone(newStory[newStory.length - 1]);
-        
-        // Update current state and apply it to the theme
-        
-        
-        // Update story array
-        setStory(newStory);
-    }
-    const redo = () => {
-        if (future.length === 0) return; // Nothing to redo
-        
-        // Get the next state from future
-        const nextState = structuredClone(future[0]);
-        const newFuture = future.slice(1);
-        
-        // Add current state to history before applying the next state
-        setStory(prev => [...prev, structuredClone(current)]);
-        
-        // Update current state and apply it to the theme
-        
-        
-        // Update future array
-        setFuture(newFuture);
-    }
-    const useAddStory = (current) => {
-        if (current && (story.length === 0 || JSON.stringify(current) !== JSON.stringify(story[story.length - 1]))) {
-            setFuture(prev => [sanitizeProps(current), ...prev]);
-            setStory(prev => [...prev, sanitizeProps(current)]);
-        }
-    }
-    const useMergeObject = (key: 'style'|'sx', newValue: any) => {
-        setCurrent((prev) => {
-            const next = {
-                ...prev,
-                [key]: { ...(prev[key] ?? {}), ...newValue }
-            };
-            useAddStory(next);
-            onChange(next);
-            return next;
-        });
-    }
-    const useEdit = React.useCallback(
-        debounce((key: string, newValue: string) => {
-            const type = copyDataContent?.current?.type;
-
-            if (type === 'props') {
-                setCurrent((prev) => {
-                    const next = { ...prev, [key]: newValue };
-                    useAddStory(next);
-                    onChange(next);
-                    return next;
-                });
-            } 
-            else {
-                setSchema((schema) => {
-                    const elem = elemLink.get({ noproxy: true });
-                    const find = schema.find((s) => s.id === key);
-                    const unit = find?.unit ?? '';
-                    useMergeObject('style', { [key]: newValue + unit });
-                    return schema;
-                });
-            }
-        }, 250),
-        [elemLink, onChange]
-    );
-    const createScheme = (typeComponent: 'string', props: Record<string, any>) => {
-        if(type === 'props') return useCreateSchemeProps(typeComponent, props, theme);
-        else return fabrickStyleScheme(type, props.style ?? {});
-    }
-    
-    React.useEffect(() => {
-        if (!elemLink) return;
-    
-        const elem = elemLink.get({ noproxy: true });
-        const props = elem?.props;
-    
-        if (!props || !props['data-id'] || !props['data-type']) return;
-        if (!elem || !elem.props || !elem.props['data-id']) return null;
-    
-        const id = props['data-id'];
-        const internalType = props['data-type'];
-        const currentKey = `${id}-${type}`;
-    
-        if (copyDataContent.current?.key === currentKey) return;
-    
-        // Обновляем всё — новый элемент или режим
-        copyDataContent.current = {
-            key: currentKey,
-            id,
-            type,
-        };
-    
-        const copyProps = sanitizeProps(props);
-        setStory([copyProps]);
-        setCurrent(copyProps);
-        setFuture([]);
-    
-        const newSchema = createScheme(internalType, copyProps);
-        setSchema(newSchema);
-    }, [elemLink, type]);
-    React.useEffect(() => {
-        return () => useEdit.cancel();
-    }, []);
-
-
-    return(
-        <motion.div
-            className="FORM"
-            style={{display:'flex', flexDirection: 'column'}}
-            initial={{ opacity: 0 }}     // Начальная непрозрачность 0
-            animate={{ opacity: 1 }}     // Конечная непрозрачность 1
-            transition={{ duration: 1 }} // Плавное изменение за 1 секунду
-        >
-            <Form
-                key={copyDataContent.current?.key}
-                scheme={schema}
-                labelPosition="column"
-                onSpecificChange={(old, news)=> {
-                    Object.entries(news).forEach(([key, value]) => useEdit(key, value))
-                }}
-            />
-        </motion.div>
-    );
-}
-
-
-/**
- *     React.useEffect(() => {
-        const handleForceSave = () => {
-            flushPendingEdit();
-            const fresh = copyDataContent.current.current;
-            if (fresh) {
-                console.log('force: ', fresh)
-                onChange(fresh);
-                useAddStory(fresh);
-            }
-        };
-        const root = document.querySelector('.LEFT-FORM');
-        root?.addEventListener('force-save', handleForceSave);
-        return () => root?.removeEventListener('force-save', handleForceSave);
-    }, []);
- */
-/**
- * const useEdit = (key: string, newValue: string) => {
-        const type = copyDataContent?.current?.type;
-        
-        if(type === 'props') setCurrent((prev) => {
-            const next = { ...prev, [key]: newValue };
-            useAddStory(next);
-            onChange(next);
-            return next;
-        });
-        // стили
-        else {
-            setSchema((schema)=> {
-                const elem = elemLink.get({ noproxy: true });
-                const find = schema.find(schema => schema.id === key);
-
-                const unit = find?.unit === undefined ? '' : find.unit;
-                useMergeObject('style', { [key]: newValue + unit });
-
-                return schema;
-            });
-        }
-    }
- */
-/**
- * React.useEffect(() => {
-        if(elemLink) {
-            const elem = elemLink.get({ noproxy: true });
-            
-            if(elem?.props 
-                && (elem?.props['data-id'] !== copyDataContent?.current?.id 
-                    || copyDataContent?.current?.type !== type
-                ) 
-            ) {
-                copyDataContent.current = ({
-                    type: type,
-                    id: elem.props['data-id'],
-                });
-
-                const copyProps = structuredClone(elem.props);
-                setStory([copyProps]);
-                setCurrent(copyProps);
-                setFuture([]);
-                const schema = createScheme(elem.props['data-type'], copyProps);
-                setSchema([]);
-                setSchema(schema);
-            }
-        }
-    }, [elemLink, type]);
  */
 import React, { useState } from 'react';
 import { Paper, IconButton, Box, Typography } from '@mui/material';
@@ -1263,7 +1316,7 @@ const useComponent = (elem, onChange, curSub, setSub) => {
                 sx={{px:0.2}}
                 items={[
                     { label: <More sx={{fontSize:18}}/>, id: 'props' },
-                    { label: <ColorLens sx={{fontSize:18}} />, id: 'base' },
+                    { label: <ColorLens sx={{fontSize:18}} />, id: 'styles' },
                     { label: <BorderStyle sx={{fontSize:18}} />, id: 'flex' },
                     { label: <FormatColorText sx={{fontSize:20}} />, id: 'text' },
                 ]}
@@ -1291,10 +1344,10 @@ const useFunctions =(elem, onChange, curSub)=> {
 
 
 // левая панель редактора
-export default function ({ addComponentToLayout, useDump, externalPanelTrigger }: Props) {
+export default function ({ addComponentToLayout, useDump }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
-    const [curSubpanel, setSubPanel] = React.useState<'props'|'base'|'flex'|'text'>('props');
+    const [curSubpanel, setSubPanel] = React.useState<'props'|'styles'|'flex'|'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'|'func'>('items');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
 
@@ -1310,25 +1363,17 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
-    // Обновление текущего выделенного компонента
+    // слушаем эмитер
     React.useEffect(() => {
-        const content = select.content.get({ noproxy: true });
-        if (content?.props?.['data-id']) {
-            setCurrent({
-                id: content.props['data-id'],
-                type: content.props['data-type']
-            });
-        } else {
-            console.warn('🚨 У контента отсутствует data-id');
+        const handler = (data) => {
+            if(data.curentComponent) setCurrent(data.curentComponent);
+            if(data.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);
+            if(data.curSubpanel) setSubPanel(data.curSubpanel);
         }
-    }, [select.content]);
 
-    // Проброс управляющей функции
-    React.useEffect(() => {
-        if (externalPanelTrigger) {
-            externalPanelTrigger(setCurrentToolPanel);
-        }
-    }, [externalPanelTrigger]);
+        EVENT.on('leftBarChange', handler);
+        return ()=> EVENT.off('leftBarChange', handler);
+    }, []);
 
     // Обработка навигации по разделам
     const changeNavigation = (item) => {
@@ -1358,6 +1403,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
     
     return (
         <LeftSideBarAndTool
+            selected={currentToolPanel}
             sx={{ height: '100%' }}
             schemaNavBar={{ items: menuItems, end: endItems }}
             width={260}
@@ -1365,9 +1411,7 @@ export default function ({ addComponentToLayout, useDump, externalPanelTrigger }
             start={start}
             end={
                 <Inspector
-                    data={
-                        globalThis.sharedContext.get()
-                    }
+                    data={ globalThis.sharedContext.get() }
                     onClose={console.log}
                 />
             }
@@ -1384,7 +1428,7 @@ import { CSS } from '@dnd-kit/utilities';
 import context, { infoState, renderState } from './context'; 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
-import { DragOverlay } from '@dnd-kit/core';
+import { getComponentById } from './utils/editor';
 
 //! особые условия стилей для компонентов (!это костыли, вся логика в обертки идет)
 class Styler {
@@ -1424,7 +1468,7 @@ class Styler {
 }
 
 
-export function SortableItem({ id, children, ...props }: { id: string, children: Component }) {
+export function SortableItem({ id, children, ...props }: { id: number, children: Component }) {
     const itemRef = React.useRef<HTMLDivElement>(null);
     const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
     const dragEnabled = useHookstate(context.dragEnabled);
@@ -1516,7 +1560,14 @@ export function SortableItem({ id, children, ...props }: { id: string, children:
             {...attributes}
             {...(dragEnabled.get() ? listeners : {})}
             onClick={handleClick} 
-            onDoubleClick={()=> window?.triggerLeftPanel?.()}
+            onDoubleClick={()=> {
+                const comp = getComponentById(id);
+                EVENT.emit('leftBarChange', {
+                    currentToolPanel: 'component',
+                    curSubpanel: 'props',
+                    curentComponent: comp
+                });
+            }}
             { ...props }
         >
             { children }
@@ -1654,18 +1705,29 @@ export const ToolBarInfo = () => {
         </Paper>
     );
 }
-import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
+import { Layout } from "react-grid-layout";
+import { RegistreTypeComponent } from './config/type';
 import React from 'react'
 
 
 // все компоненты исходные используемые в редакторе и вне
-export type ProxyComponentName = 'Button' 
-    | 'IconButton' 
-    | 'Typography'
-
-
-
+export type ProxyComponentName = RegistreTypeComponent;
 export type DataEmiters = 'onChange' | 'onClick' | 'onSelect';
+
+// ---------------- styles  -----------------
+export type InputStyles = {
+    form?: {
+        borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
+        borderColor?: string | 'none'
+        background?: string | 'none'
+    }
+    placeholder?: React.CSSProperties
+    label?: React.CSSProperties
+    icon?: React.CSSProperties
+}
+
+
+//------------------------------------------
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
@@ -1675,6 +1737,7 @@ export type ComponentProps = {
     'data-subs' ?: string | number[]
     children ?: string | any
     style ?: React.CSSProperties
+    styles?: InputStyles | any
     [key: string]: any
 }
 /** 
@@ -1709,6 +1772,7 @@ export type ComponentSerrialize = {
 
 
 
+
 export type DraggbleElementProps = {
     component: Component
     index: number
@@ -1726,10 +1790,9 @@ export type GridEditorProps = {
     renderItems: React.ReactNode[]
     tools: React.ReactNode
 }
-
 export type PropsForm = {
     elemLink: any
-    type: 'props'|'base'|'flex'|'text'
+    type: 'props'|'styles'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
 }
 import { iconsList } from '../../components/tools/icons';
@@ -1944,13 +2007,47 @@ const propsImage = {
     imgixParams: 'object', // можно редактировать позже через JSON-форму
 }
 
+const propsInput = {
+    label: 'string',
+    position: ['none', 'column', 'left', 'right'],
+    divider: ['none', 'solid', 'dashed', 'dotted'],
+    placeholder: 'string',
+    leftIcon: 'string',
+    //! композитный тип
+    styles: {
+        form: {
+            borderStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'],
+            borderColor: { type: 'color' },
+            background: { type: 'color' }
+        },
+        placeholder: {
+              // типы которые применяются как преформа
+            color: { type: 'color' },
+            opacity: { type: 'slider', min: 0, max: 1, step: 0.01 },
+            fontFamily: { type: 'autocomplete', options: globalThis.FONT_OPTIONS }
+        },
+        label: {
+            color: { type: 'color' },
+            fontSize: { type: 'slider', min: 8, max: 48, step: 1 },
+            fontFamily: { type: 'autocomplete', options: globalThis.FONT_OPTIONS }
+        },
+        icon: {
+            fontSize: { type: 'slider', min: 8, max: 48, step: 1 },
+            opacity: { type: 'slider', min: 0, max: 1, step: 0.01 },
+            color: { type: 'color' }
+        }
+    }
+}
 
 
 export default {
     Button: propsButton,
     IconButton: propsIconButton,
     Typography: propsTypography,
-    Image: propsImage
+    Image: propsImage,
+    TextInput: propsInput,
+    NumberInput: propsInput,
+    
 }
 import {
     FormatAlignLeft,
@@ -2108,6 +2205,24 @@ export const textOptions = {
     "verticalAlign": ["baseline", "top", "bottom", "middle", "sub", "super", "text-top", "text-bottom"],
     "wordBreak": ["normal", "break-all", "keep-all", "break-word"],
 }
+
+
+export const stylesOptions = {
+    borderRadius: "number",
+    borderStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'],
+    background: "color",
+    color: "color",
+
+    marginLeft: "number",
+    marginRight: "number",
+    marginTop: "number",
+    marginBottom: "number",
+
+    paddingLeft: "number",
+    paddingRight: "number",
+    paddingTop: "number",
+    paddingBottom: "number",
+}
 export interface BaseType {
     display: "block" | "inline" | "inline-block" | "flex" | "grid" | "none" | "contents" | "hidden"
     width: string
@@ -2171,7 +2286,7 @@ export interface TextType extends BaseType {
     textShadow: string
 }
 
-export type PropsTypes = 'color'
+export type PropsTypesEditor = 'color'
     | 'variant'
     | 'children'
     | 'size'
@@ -2185,6 +2300,14 @@ export type PropsTypes = 'color'
     | 'src'
     | 'alt'
     | 'sizes'
+    | 'labelPosition'
+
+export type RegistreTypeComponent = 'Button'
+    | 'IconButton'
+    | 'Image'
+    | 'Typography'
+    | 'Text'
+    | 'TextInput'
     
 export type BoxSide = 'top' | 'right' | 'bottom' | 'left';
 
@@ -2201,16 +2324,16 @@ export type SpacingInfo = {
     isSet: boolean
 }
 import React from "react";
-import { Box, Theme, Tooltip, useTheme } from "@mui/material";
+import { Theme, Tooltip } from "@mui/material";
 import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRight, LinearScale,  
-    ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, ViewModule, ViewAgenda, Widgets
+    ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, 
+    ViewModule, ViewAgenda, Widgets
 } from "@mui/icons-material";
 import { iconsList } from '../../components/tools/icons';
-import { PropsTypes } from './type';
-import { Schema } from '../../index';
-import { baseOptions, flexOptions, textOptions } from './style';
+import { RegistreTypeComponent } from './type';
+import { Schema, AccordionScnema } from '../../index';
+import { flexOptions, textOptions } from './style';
 import { iconListStyle } from './style-icons';
-import { componentDefaults } from '../modules/utils/registry';
 import metaProps from './props';                 // списки возможных пропсов каждого компонента
 
 
@@ -2222,8 +2345,9 @@ export function parseStyleValue(value?: string) {
     if (!match) return { number: 0, unit: '' };
 
     const [, number, unit] = match;
+    const num = parseFloat(number);
     return {
-        number: parseFloat(number),
+        number: isNaN(num) ? 0 : num,
         unit,
     };
 }
@@ -2272,8 +2396,8 @@ export const getColors = (theme: Theme) => {
     }
     });
 }
-export const fabrickStyleScheme = (listType: 'base' | 'flex' | 'text', sourceStyle: any) => {
-    const listTypes = { base:baseOptions, flex:flexOptions, text:textOptions }[listType];
+export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) => {
+    const listTypes = { flex:flexOptions, text:textOptions }[listType];
     const result: Schema[] = [];
 
     Object.keys(listTypes).forEach((key, index) => {
@@ -2368,6 +2492,94 @@ export const fabrickStyleScheme = (listType: 'base' | 'flex' | 'text', sourceSty
 
     return result;
 }
+/** [?] `stylesScheme` - styles props, `source` - данные которые уже есть в styles */ 
+export const stylesFabricScheme = (type: RegistreTypeComponent, source: Record<string, any>) => {
+    const result: AccordionScnema[] = [];
+    const stylesScheme: Record<string, any> = metaProps[type]?.styles ?? {};
+
+
+    Object.keys(stylesScheme).forEach((keyStyle) => {
+        const curentStyles = stylesScheme[keyStyle];
+        const acordeon: AccordionScnema = {
+            id: keyStyle,
+            label: keyStyle,
+            scheme: []
+        };
+        
+        Object.keys(curentStyles).forEach((key) => {
+            const data = curentStyles[key]; 
+
+            if(typeof data === 'object' && data !== null && !Array.isArray(data)) {
+                let parseValue = source?.[keyStyle]?.[key] ?? '';
+
+                if(data.type === 'slider') {
+                    if(!parseValue) parseValue = 0;
+                    else parseValue = +parseValue;
+                }
+
+                const schema = {
+                    ...data,
+                    id: key,
+                    label: key,
+                    //unit: parseValue.unit,
+                    value: parseValue,
+                    labelSx: {
+                        fontSize: '12px',
+                    },
+                }
+
+                acordeon.scheme.push(schema);
+            }
+            else if(Array.isArray(data)) {
+                const length = curentStyles[key].length;
+                let schema: Schema;
+
+                // диапазон
+                if (typeof data[0] === 'number') {
+                    const parseValue = source?.[keyStyle]?.[key] ?? 0;
+
+                    schema = {
+                        id: key,
+                        type: 'slider',
+                        label: key,
+                        value: parseValue,
+                        //unit: parseValue.unit,
+                        labelSx: {
+                            fontSize: '12px',
+                        },
+                        min: data[0],
+                        max: data[1]
+                    }
+                }
+                // списки
+                else {
+                    schema = {
+                        id: key,
+                        type: 'toggle',
+                        label: key,
+                        value: source?.[keyStyle]?.[key] ?? '',
+                        labelSx: {
+                            fontSize: '12px',
+                        },
+                        items: curentStyles[key].map((label, id) => ({
+                            label: decorize(key, label),
+                            id: label
+                        }))
+                    }
+                }
+
+                acordeon.scheme.push(schema);
+            }
+        });
+
+        result.push(acordeon);
+    });
+
+    return result;
+}
+
+
+
 /**
  * ФАБРИКА КОНСТРУИРУЕТ ФОРМЫ ДЛЯ ПРОПСОВ
  * @param type 
@@ -2375,7 +2587,171 @@ export const fabrickStyleScheme = (listType: 'base' | 'flex' | 'text', sourceSty
  * @param typeProps 
  * @returns 
  */
-export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) => {
+export const fabrickUnical = (propName: string, propValue:any, theme, typeComponent?:RegistreTypeComponent) => {
+    const displayIcons = {
+        left: <FormatAlignLeft />,
+        center: <FormatAlignCenter />,
+        right: <FormatAlignRight />,
+        justify: <FormatAlignJustify />,
+
+        initial: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}> init </span>,
+        block: <LinearScale />,
+        inline: <ViewColumn />,
+        'inline-block': <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>in -b </span>,
+        flex: <Widgets />,
+        'inline-flex': <ViewList />,
+        grid: <ViewQuilt />,
+        'inline-grid': <ViewArray />,
+        none: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>✖️</span>
+    }
+    Object.keys(displayIcons).map((key) => {
+        displayIcons[key] = (
+            <Tooltip title={key} placement="top" arrow >
+                { displayIcons[key] }
+            </Tooltip>
+        )
+    });
+
+
+    if (propName === 'color') {
+        return {
+            type: 'toggle',
+            id: propName,
+            items: getColors(theme),
+            label: propName,
+            value: propValue,
+            labelSx: { fontSize: '14px' }
+        }
+    }
+    else if (propName === 'size') {
+        return {
+            type: 'toggle',
+            id: propName,
+            items: [
+                { id: 'small', label: <var style={{ fontStyle: 'italic' }} > sm </var> },
+                { id: 'medium', label: <var style={{ fontWeight: 400 }}> md </var> },
+                { id: 'large', label: <var style={{ fontWeight: 'bold' }}> lg </var> }
+            ],
+            label: propName,
+            value: propValue,
+            labelSx: { fontSize: '14px' }
+        }
+    }
+    else if (propName === 'display' || propName === 'labelPosition') {
+        return {
+            type: 'toggle',
+            id: propName,
+            label: propName,
+            labelSx: { fontSize: '14px' },
+            value: propValue,
+            items: ['none', 'left', 'right', 'column'].map((key) => ({
+                id: key,
+                label: displayIcons[key]
+            }))
+        }
+    }
+    else if (['icon', 'endIcon', 'startIcon', 'leftIcon'].includes(propName)) {
+        const items = Object.keys(iconsList).map((key) => {
+            const Render = iconsList[key];
+
+            return ({
+                id: key,
+                label: <Render />
+            })
+        });
+        items.unshift({
+            id: 'none',
+            label: <span style={{ fontSize: '10px', whiteSpace: 'nowrap', color: 'gray' }}>✖️</span>
+        });
+
+        return {
+            type: 'toggle',
+            id: propName,
+            label: propName,
+            labelSx: { fontSize: '14px' },
+            value: propValue,
+            items: items
+        }
+    }
+    else if(typeComponent && metaProps[typeComponent]?.[propName]) {
+        const vars: [] | string = metaProps[typeComponent][propName];
+        
+        if(vars === 'string') {
+
+        }
+        else if(Array.isArray(vars)) {
+            const type = vars.length < 5 ? 'toggle' : 'select';
+
+            const result = {
+                type: type,
+                id: propName,
+                label: propName,
+                labelSx: { fontSize: '10px' },
+                value: propValue,
+                items: vars.map((key) => ({
+                    id: key,
+                    label: (
+                        <>
+                            { type === 'select' && <span style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>{key}</span>}
+                            { type === 'toggle' && <span style={{ fontSize: '8px', whiteSpace: 'nowrap' }}>{key}</span>}
+                        </>
+                    )
+                }))
+            }
+
+            if(type==='select') result.onlyId = true;
+            return result;
+        }
+    }
+}
+
+
+
+// ---------------------------------------------------------------------------------
+// ! снести
+export const utill = {
+    getSize(element: Element) {
+        const bound = element.getBoundingClientRect();
+        return {
+            height: bound.height,
+            width: bound.width
+        };
+    },
+    getPos(element: Element) {
+        const bound = element.getBoundingClientRect();
+        return {
+            x: bound.x,
+            y: bound.y
+        };
+    },
+    getOverlap(el1: HTMLElement, el2: HTMLElement) {
+        const rect1 = el1.getBoundingClientRect();
+        const rect2 = el2.getBoundingClientRect();
+    
+        const x_overlap = Math.max(
+            0,
+            Math.min(rect1.right, rect2.right) - Math.max(rect1.left, rect2.left)
+        );
+        const y_overlap = Math.max(
+            0,
+            Math.min(rect1.bottom, rect2.bottom) - Math.max(rect1.top, rect2.top)
+        );
+    
+        const area = x_overlap * y_overlap;
+    
+        return {
+            x_overlap,
+            y_overlap,
+            area,
+            hasCollision: area > 0
+        };
+    }
+}
+
+
+
+/**
+ * export const fabrickPropsScheme = (type: RegistreTypeComponent, defaultValue: any, typeProps: PropsTypesEditor) => {
     const alightsIcons = {
         left: <FormatAlignLeft />,
         center: <FormatAlignCenter />,
@@ -2399,6 +2775,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             </Tooltip>
         )
     });
+
 
     if (typeProps === 'children' && typeof defaultValue === 'string') {
         return {
@@ -2433,7 +2810,6 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
         }
     }
     else if (typeProps === 'variant') {
- 
         return {
             type: 'toggle',
             id: typeProps,
@@ -2462,7 +2838,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             labelSx: { fontSize: '14px' }
         }
     }
-    else if (typeProps === 'display') {
+    else if (typeProps === 'display' || typeProps === 'labelPosition') {
         return {
             type: 'toggle',
             id: typeProps,
@@ -2510,7 +2886,7 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
             }))
         }
     }
-    else if (['icon', 'endIcon', 'startIcon'].includes(typeProps)) {
+    else if (['icon', 'endIcon', 'startIcon', 'leftIcon'].includes(typeProps)) {
         const r = Object.keys(iconsList).map((key) => {
             const Render = iconsList[key];
 
@@ -2534,47 +2910,18 @@ export const fabrickPropsScheme = (type, defaultValue, typeProps: PropsTypes) =>
 
         }
     }
-}
-
-// ---------------------------------------------------------------------------------
-export const utill = {
-    getSize(element: Element) {
-        const bound = element.getBoundingClientRect();
+    else if (['min', 'max', 'step'].includes(typeProps)) {
         return {
-            height: bound.height,
-            width: bound.width
-        };
-    },
-    getPos(element: Element) {
-        const bound = element.getBoundingClientRect();
-        return {
-            x: bound.x,
-            y: bound.y
-        };
-    },
-    getOverlap(el1: HTMLElement, el2: HTMLElement) {
-        const rect1 = el1.getBoundingClientRect();
-        const rect2 = el2.getBoundingClientRect();
-    
-        const x_overlap = Math.max(
-            0,
-            Math.min(rect1.right, rect2.right) - Math.max(rect1.left, rect2.left)
-        );
-        const y_overlap = Math.max(
-            0,
-            Math.min(rect1.bottom, rect2.bottom) - Math.max(rect1.top, rect2.top)
-        );
-    
-        const area = x_overlap * y_overlap;
-    
-        return {
-            x_overlap,
-            y_overlap,
-            area,
-            hasCollision: area > 0
-        };
+            type: 'number',
+            id: typeProps,
+            value: defaultValue,
+            label: typeProps,
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 14 }
+        }
     }
 }
+ */
 import React from 'react';
 import { ContentFromCell, ComponentSerrialize } from '../type';
 
@@ -2712,7 +3059,7 @@ import { Settings } from '@mui/icons-material';
 
 
 export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
-    const { icon, children, ...otherProps } = props;
+    const { icon, children, fullWidth, ...otherProps } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : Settings;
 
     return (
@@ -2744,7 +3091,6 @@ export const ButtonWrapper = React.forwardRef((props: any, ref) => {
         </Button>
     );
 });
-
 import React from 'react';
 import { Accordion, AccordionProps } from '../../index';
 import { Box, Tabs, Tab, BottomNavigation, BottomNavigationAction, Paper } from '@mui/material';
@@ -2953,12 +3299,30 @@ import { DataSourceTableProps } from './sources/table';
 import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
+import { InputStyles } from '../type';
 
 
+/**
+ * Приоритет: 
+ * * пропс настройки компонентов 
+ * * панель проектов 
+ * * доработать редактор сетки
+ * * 
+ */
 //////////////////////////////////////////////////////////////////////
 globalThis.EDITOR = true;       // мы в контексте редактора
 globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
+// глобальный список шрифтов
+globalThis.FONT_OPTIONS = [
+    'inherit',
+    'Roboto',
+    'Arial',
+    'Georgia',
+    'Times New Roman',
+    'Inter',
+    'Montserrat',
+];
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -2970,6 +3334,8 @@ registerComponent({
         variant: 'outlined',
         color: 'primary',
         fullWidth: true,
+        startIcon: 'none',
+        endIcon: 'none',
         style: {display: 'block'}
     },
     icon: Settings,
@@ -3031,8 +3397,11 @@ registerComponent({
         label: 'label',
         position: 'column',
         placeholder: 'ввод',
+        divider: 'none',
         fullWidth: true,
         width: '100%',
+        leftIcon: 'none',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -3049,6 +3418,7 @@ registerComponent({
         placeholder: 'ввод number',
         fullWidth: true,
         width: '100%',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -3065,6 +3435,7 @@ registerComponent({
         type: 'time',
         fullWidth: true,
         width: '100%',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -3081,6 +3452,7 @@ registerComponent({
         type: 'date',
         fullWidth: true,
         width: '100%',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -3349,37 +3721,47 @@ import { triggerFlyFromComponent } from './utils/anim';
 import { iconsList } from '../../components/tools/icons';
 
 
-/**
- * ! присутствует много повторяешегося кода, устранить!
- */
-
-
+type InputStyles = {
+    form?: {
+        borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
+        borderColor?: string | 'none'
+        background?: string | 'none'
+    }
+    placeholder?: React.CSSProperties
+    label?: React.CSSProperties
+    icon?: React.CSSProperties
+}
 type TextWrapperProps = TextInputProps & {
     'data-id': number
     labelStyle?: SxProps
     functions: Record<string, string>,
-    startIcon?: string
+    leftIcon?: string,
+    label?: string,
+    position: 'left' | 'right' | 'column'
+    width: string | number
+    styles?: InputStyles
 }
 
 
+// styles 
 export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
         ['data-id']: dataId, 
         labelStyle,
         functions,
-        startIcon,
+        leftIcon,
         style,
         width,
         fullWidth,
+        styles,
         ...otherProps
     } = props;
     
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
-    const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
-    //console.log(style);
+    const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
 
     return (
         <div 
@@ -3389,13 +3771,14 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             style={{...style, width: '100%', display:'block'}}
         >
             <TextInput
-                left={StartIcon ? <StartIcon/> : null}
+                left={LeftIcon ? <LeftIcon/> : null}
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -3409,6 +3792,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         labelStyle,
         functions,
         startIcon,
+        styles,
         style,
         width,
         fullWidth,
@@ -3433,6 +3817,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -3632,6 +4017,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         functions,
         startIcon,
         style,
+        styles,
         width,
         fullWidth,
         ...otherProps
@@ -3654,6 +4040,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -3668,6 +4055,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         functions,
         startIcon,
         style,
+        styles,
         width,
         fullWidth,
         ...otherProps
@@ -3685,6 +4073,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         >
             <AutoCompleteInput
                 labelSx={labelStyle}
+                styles={styles}
                 placeholder='выбери из двух стульев'
                 onChange={(v)=> {
                     emiter('onChange', v);
@@ -3704,6 +4093,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         labelStyle,
         functions,
         startIcon,
+        styles,
         style,
         width,
         fullWidth,
@@ -3727,6 +4117,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                     storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
+                styles={styles}
                 {...otherProps}
             />
         </div>
@@ -3736,7 +4127,8 @@ import React from 'react';
 import Imgix from 'react-imgix';
 import { useComponentSize } from './utils/hooks';
 import { VerticalCarousel, HorizontalCarousel, PromoBanner } from '../../index';
-
+import Tollbar, { useToolbar } from './utils/Toolbar';
+import { Settings } from '@mui/icons-material';
 
 
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
@@ -3776,7 +4168,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             imgixParams={imgixParams}
             htmlAttributes={{
                 width : width, 
-                height : height - 5
+                height : height - 8
             }}
         />
     );
@@ -3853,6 +4245,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
 export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     const {
         items,
+        fullWidth,
         autoplay = true,
         slidesToShow = 3,
         style = {}, 
@@ -3860,6 +4253,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
+    const { visible, context } = useToolbar(componentId);
     const { width, height } = useComponentSize(componentId);
 
     const createImgx = (src: string) => {
@@ -3890,7 +4284,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
 
         return result;
     }
-
+    
 
     return (
         <div
@@ -3900,14 +4294,21 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
             style={{
                 width,
                 display: 'block',
-                height: '100%',
                 overflow: 'hidden',
+                position: 'relative',
             }}
             {...otherProps}
         >
+            <Tollbar 
+                visible={visible}
+                offsetY={0}
+                options={[
+                    { icon: <Settings/>,  },
+                ]}
+            />
             <HorizontalCarousel
                 items={parseItems() ?? []}
-                height={height}
+                height={height-8}
                 settings={{
                     autoplay,
                     slidesToShow
@@ -3926,8 +4327,9 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
-    //const { width, height } = useComponentSize(componentId);
-
+    const { visible, context } = useToolbar(componentId);
+    const { width, height } = useComponentSize(componentId);
+    
 
     return (
         <div
@@ -3937,9 +4339,17 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
             style={{
                 display: 'block',
                 overflow: 'hidden',
+                position: 'relative'
             }}
             { ...otherProps }
         >
+            <Tollbar 
+                visible={visible}
+                offsetY={0}
+                options={[
+                    { icon: <Settings/>,  },
+                ]}
+            />
             <PromoBanner
                 items={items}
                 style={style}
@@ -3948,7 +4358,7 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     );
 });
 import React, { useMemo, useCallback } from 'react';
-import { Typography } from '@mui/material';
+import { Typography, Select, MenuItem, Divider } from '@mui/material';
 import { createEditor, Descendant, Editor, Transforms, Element as SlateElement, Range } from 'slate';
 import { Slate, Editable, withReact, useSlate } from 'slate-react';
 import { withHistory } from 'slate-history';
@@ -3957,9 +4367,12 @@ import { updateComponentProps } from '../utils/updateComponentProps';
 import context, { infoState } from '../context'
 import { Popover, IconButton, Stack, Tooltip, Box } from '@mui/material';
 import { FormatBold, FormatItalic, FormatUnderlined, Title, FormatListBulleted, FormatListNumbered, 
-    FormatQuote, FormatColorText, FormatColorFill, FiberSmartRecord
+    FormatQuote, FormatColorText, FormatColorFill, InsertLink, FormatAlignLeft, FormatAlignCenter, 
+    FormatAlignRight, FormatAlignJustify
 } from '@mui/icons-material';
 import { RgbaColorPicker } from 'react-colorful';
+import { useDebounced } from 'src/components/hooks/debounce';
+import { withResetOnRightClick } from './utils/hooks';
 
 
 const LIST_TYPES = ['numbered-list', 'bulleted-list'];
@@ -3970,19 +4383,99 @@ const fallbackValue: Descendant[] = [
   },
 ];
 
+function renderInline(inlines: any[]): React.ReactNode {
+    return inlines.map((leaf, i) => {
+        let el: React.ReactNode = leaf.text;
+
+        if (leaf.bold) el = <strong key={i}>{el}</strong>;
+        if (leaf.italic) el = <em key={i}>{el}</em>;
+        if (leaf.underline) el = <u key={i}>{el}</u>;
+        if (leaf.color) el = <span key={i} style={{ color: leaf.color }}>{el}</span>;
+        if (leaf.bgcolor) el = <span key={i} style={{ backgroundColor: leaf.bgcolor }}>{el}</span>;
+        if (leaf.link?.href) {
+            el = <a key={i} style={{ color: leaf.color }} href={leaf.link.href} target="_blank" rel="noopener noreferrer">{el}</a>;
+        }
+        if (leaf.fontFamily) {
+            el = <span key={i} style={{ fontFamily: leaf.fontFamily }}>{el}</span>;
+        }
+        if (leaf.textAlign) {
+            el = <span key={i} style={{ display: 'block', textAlign: leaf.textAlign }}>{el}</span>;
+        }
+
+        return <React.Fragment key={i}>{el}</React.Fragment>;
+    });
+}
+function renderSlateContent(blocks: Descendant[]): React.ReactNode {
+    return blocks.map((block, i) => {
+        if (!block) return null;
+
+        const key = `block-${i}`;
+        const children = renderInline(block.children ?? []);
+
+        switch (block.type) {
+            case 'heading-one':
+                return <h2 key={key}>{children}</h2>;
+            case 'bulleted-list':
+                return <ul key={key}>{block.children.map((li, j) => <li key={j}>{renderInline(li.children)}</li>)}</ul>;
+            case 'numbered-list':
+                return <ol key={key}>{block.children.map((li, j) => <li key={j}>{renderInline(li.children)}</li>)}</ol>;
+            case 'blockquote':
+                return <blockquote key={key}>{children}</blockquote>;
+            default:
+                return <p key={key}>{children}</p>;
+        }
+    });
+}
+const AlignToggleButton = () => {
+    const editor = useSlate();
+    const ALIGN_MODES = ['left', 'center', 'right', 'justify'] as const;
+    const ALIGN_ICONS = {
+        left: FormatAlignLeft,
+        center: FormatAlignCenter,
+        right: FormatAlignRight,
+        justify: FormatAlignJustify
+    }
+
+    const getCurrentAlign = (): typeof ALIGN_MODES[number] => {
+        const marks = Editor.marks(editor);
+        return marks?.textAlign ?? 'left';
+    }
+    const handleToggleAlign = () => {
+        const current = getCurrentAlign();
+        const index = ALIGN_MODES.indexOf(current);
+        const next = ALIGN_MODES[(index + 1) % ALIGN_MODES.length];
+        Editor.addMark(editor, 'textAlign', next);
+    }
+
+    const CurrentIcon = ALIGN_ICONS[getCurrentAlign()];
+
+
+    return (
+        <Tooltip title="Выравнивание текста">
+            <IconButton size="small" onClick={handleToggleAlign}>
+                <CurrentIcon sx={{ fontSize: 16 }} />
+            </IconButton>
+        </Tooltip>
+    );
+}
 
 const Toolbar = () => {
     const editor = useSlate();
     const [anchorText, setAnchorText] = React.useState<HTMLElement | null>(null);
     const [anchorBg, setAnchorBg] = React.useState<HTMLElement | null>(null);
-    const [anchorMarker, setAnchorMarker] = React.useState<HTMLElement | null>(null);
+    const [colorText, setColorText] = React.useState<string>(null);
+    const [colorBg, setColorBg] = React.useState<string>(null);
 
 
+    const handleFontChange = (font: string) => {
+        Editor.addMark(editor, 'fontFamily', font);
+    }
     const toggleMark = (format: string) => {
         const isActive = isMarkActive(editor, format);
         if (isActive) {
             Editor.removeMark(editor, format);
-        } else {
+        } 
+        else {
             Editor.addMark(editor, format, true);
         }
     }
@@ -4028,16 +4521,19 @@ const Toolbar = () => {
     }
     const handleColorChange = (color: { r: number, g: number, b: number, a: number }) => {
         const rgba = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        setColorText(rgba);
         Editor.addMark(editor, 'color', rgba);
     }
     const handleBgChange = (color: { r: number, g: number, b: number, a: number }) => {
         const rgba = `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`;
+        setColorBg(rgba);
         Editor.addMark(editor, 'bgcolor', rgba);
     }
 
 
     return (
-        <Box sx={{ 
+        <Box 
+            sx={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
                 gap: 0.5, 
@@ -4046,6 +4542,8 @@ const Toolbar = () => {
                 borderRadius: 1,
                 background: '#0d0c0c40'
             }}
+            onPointerEnter={() => context.dragEnabled.set(false)}
+            onPointerLeave={() => context.dragEnabled.set(true)}
         >
             {/* Первая строка: базовые стили */}
             <Stack
@@ -4059,6 +4557,11 @@ const Toolbar = () => {
                     whiteSpace: 'nowrap',
                 }}
             >
+                <Tooltip title="Заголовок H4">
+                    <IconButton size="small" onClick={() => toggleBlock('heading-one')}>
+                        <Title sx={{ fontSize: 16 }} />
+                    </IconButton>
+                </Tooltip>
                 <Tooltip title="Жирный">
                     <IconButton size="small" onClick={() => toggleMark('bold')}>
                         <FormatBold sx={{ fontSize: 16 }} />
@@ -4070,17 +4573,53 @@ const Toolbar = () => {
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Подчёркнутый">
-                    <IconButton size="small" onClick={() => toggleMark('underline')}>
+                    <IconButton 
+                        size="small" 
+                        onClick={() => toggleMark('underline')}
+                    >
                         <FormatUnderlined sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
-                <Tooltip title="Цвет текста">
-                    <IconButton size="small" onClick={(e) => setAnchorText(e.currentTarget)}>
+                <Tooltip title="Ссылка">
+                    <IconButton style={{marginRight:'5px'}} size="small" 
+                        onClick={() => {
+                            const href = prompt('Вставьте ссылку:');
+                            if (!href) return;
+
+                            const { selection } = editor;
+                            if (!selection || Range.isCollapsed(selection)) {
+                                alert('Сначала выдели текст!');
+                                return;
+                            }
+
+                            Editor.addMark(editor, 'link', { href });
+                        }}
+                        {...withResetOnRightClick((e) => setAnchorBg(e.currentTarget), editor, 'link')}
+                    >
+                        <InsertLink sx={{ fontSize: 16 }} />
+                    </IconButton>
+                </Tooltip>
+
+                <Divider orientation="vertical" flexItem/>
+                <AlignToggleButton />
+
+                <Tooltip style={{marginLeft:'auto'}} title="Цвет текста">
+                    <IconButton 
+                        size="small" 
+                        onClick={(e) => setAnchorText(e.currentTarget)}
+                        {...withResetOnRightClick((e) => setAnchorText(e.currentTarget), editor, 'color')}
+                        sx={{ color: colorText || 'inherit' }}
+                    >
                         <FormatColorText sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title="Фон текста">
-                    <IconButton size="small" onClick={(e) => setAnchorBg(e.currentTarget)}>
+                    <IconButton 
+                        size="small" 
+                        onClick={(e) => setAnchorBg(e.currentTarget)}
+                        {...withResetOnRightClick((e) => setAnchorBg(e.currentTarget), editor, 'bgcolor')}
+                        sx={{ color: colorBg || 'inherit' }}
+                    >
                         <FormatColorFill sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
@@ -4091,7 +4630,7 @@ const Toolbar = () => {
                 direction="row"
                 spacing={0.5}
                 sx={{
-                    pt: 0.5,
+                    pt: 0.6,
                     borderTop: '1px dotted #d0cdcd29',
                     overflowX: 'auto',
                     overflowY: 'hidden',
@@ -4099,11 +4638,6 @@ const Toolbar = () => {
                     whiteSpace: 'nowrap',
                 }}
             >
-                <Tooltip title="Заголовок H1">
-                    <IconButton size="small" onClick={() => toggleBlock('heading-one')}>
-                        <Title sx={{ fontSize: 16 }} />
-                    </IconButton>
-                </Tooltip>
                 <Tooltip title="Маркированный список">
                     <IconButton size="small" onClick={() => toggleBlock('bulleted-list')}>
                         <FormatListBulleted sx={{ fontSize: 16 }} />
@@ -4119,7 +4653,20 @@ const Toolbar = () => {
                         <FormatQuote sx={{ fontSize: 16 }} />
                     </IconButton>
                 </Tooltip>
-                {/* сюда можно добавить H2, H3, выравнивание, undo/redo */}
+                <Select style={{marginLeft:'auto', marginRight:'5px'}}
+                    size="small"
+                    value=""
+                    onChange={(e) => handleFontChange(e.target.value)}
+                    displayEmpty
+                    sx={{ fontSize: 10, height: 30, color: '#ccc', background: '#2a2a2a'}}
+                >
+                    <MenuItem value="" disabled>𝓣</MenuItem>
+                    { globalThis.FONT_OPTIONS.map((font) => (
+                        <MenuItem key={font} value={font} style={{ fontFamily: font }}>
+                            {font}
+                        </MenuItem>
+                    ))}
+                </Select>
             </Stack>
 
             <Popover
@@ -4149,13 +4696,13 @@ const Toolbar = () => {
 
 
 
+// ! не сохраняются изменения стилей
 export const TextWrapper = React.forwardRef((props: any, ref) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
     const [isEditing, setIsEditing] = React.useState(false);
     const { children, ['data-id']: dataId, ...otherProps } = props;
     const selected = useHookstate(infoState.select);
-    
-    
+
     const [value, setValue] = React.useState<Descendant[]>(() => {
         if (Array.isArray(props.childrenSlate)) return props.childrenSlate;
         if (typeof props.children === 'string') {
@@ -4174,21 +4721,20 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             return '';
         }).join('\n');
     }
-    const onChange = (val: Descendant[]) => {
-        setValue(val);
-        const text = extractPlainText(val); // для простого children
-
+    const debouncedUpdate = useDebounced((val: Descendant[]) => {
+        const text = extractPlainText(val);
         const component = selected.content.get({ noproxy: true });
+
         if (component) {
             updateComponentProps({
                 component,
                 data: {
                     children: text,
-                    childrenSlate: val // 👈 сохраняем полностью
+                    childrenSlate: val
                 },
             });
         }
-    }
+    }, 400, [selected.content]);
     const renderLeaf = useCallback(({ attributes, children, leaf }) => {
         const style: React.CSSProperties = {};
         if (leaf.color) style.color = leaf.color;
@@ -4197,23 +4743,31 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         if (leaf.bold) children = <strong>{children}</strong>;
         if (leaf.italic) children = <em>{children}</em>;
         if (leaf.underline) children = <u>{children}</u>;
+        if (leaf.link?.href) {
+            children = <a style={style} href={leaf.link.href} target="_blank" rel="noopener noreferrer">{children}</a>;
+        }
+        if (leaf.fontFamily) style.fontFamily = leaf.fontFamily;
+        if (leaf.textAlign) {
+            style.display = 'block';
+            style.textAlign = leaf.textAlign;
+        }
 
         return <span {...attributes} style={style}>{children}</span>;
     }, []);
     const renderElement = useCallback(({ attributes, children, element }) => {
         switch (element.type) {
-        case 'heading-one':
-            return <h4 {...attributes}>{children}</h4>;
-        case 'bulleted-list':
-            return <ul {...attributes}>{children}</ul>;
-        case 'numbered-list':
-            return <ol {...attributes}>{children}</ol>;
-        case 'list-item':
-            return <li {...attributes}>{children}</li>;
-        case 'blockquote':
-            return <blockquote {...attributes}>{children}</blockquote>;
-        default:
-            return <p {...attributes}>{children}</p>;
+            case 'heading-one':
+                return <h4 {...attributes}>{children}</h4>;
+            case 'bulleted-list':
+                return <ul {...attributes}>{children}</ul>;
+            case 'numbered-list':
+                return <ol {...attributes}>{children}</ol>;
+            case 'list-item':
+                return <li {...attributes}>{children}</li>;
+            case 'blockquote':
+                return <blockquote {...attributes}>{children}</blockquote>;
+            default:
+                return <p {...attributes}>{children}</p>;
         }
     }, []);
 
@@ -4224,75 +4778,90 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             data-type="Text" 
             style={{ width: '100%' }}
         >
-            <Slate 
-                editor={editor} 
-                initialValue={value} 
-                onChange={onChange}
-            >
-                {selected.content.get({noproxy:true})?.props?.['data-id'] === dataId && (
-                    <Toolbar />
-                )}
-                <Editable
-                    renderLeaf={renderLeaf}
-                    renderElement={renderElement}
-                    placeholder="Введите текст..."
-                    spellCheck
-                    autoFocus
-                    onFocus={() => {
-                        setIsEditing(true);
-                        context.dragEnabled.set(false); // отключаем drag при редактировании
+            { globalThis.EDITOR ? (
+                <Slate 
+                    editor={editor} 
+                    initialValue={value} 
+                    onChange={(val) => {
+                        setValue(val);
+                        debouncedUpdate(val);
                     }}
-                    onBlur={() => {
-                        setIsEditing(false);
-                        context.dragEnabled.set(true); // возвращаем drag после редактирования
-                    }}
-                    onKeyDown={(event) => {
-                        if (event.key === 'Enter') {
-                            const { selection } = editor;
-                            if (!selection || !Range.isCollapsed(selection)) return;
+                >
+                    { selected.content.get({noproxy:true})?.props?.['data-id'] === dataId && (
+                        <Toolbar />
+                    )}
+                    <Editable
+                        readOnly={!globalThis.EDITOR}
+                        renderLeaf={renderLeaf}
+                        renderElement={renderElement}
+                        placeholder="Введите текст..."
+                        onPointerEnter={() => context.dragEnabled.set(false)}
+                        onPointerLeave={() => context.dragEnabled.set(true)}
+                        spellCheck
+                        autoFocus
+                        onFocus={() => {
+                            setIsEditing(true);
+                            context.dragEnabled.set(false); // отключаем drag при редактировании
+                        }}
+                        onBlur={() => {
+                            setIsEditing(false);
+                            context.dragEnabled.set(true); // возвращаем drag после редактирования
+                        }}
+                        onKeyDown={(event) => {
+                            if (event.key === 'Enter') {
+                                const { selection } = editor;
+                                if (!selection || !Range.isCollapsed(selection)) return;
 
-                            const [match] = Editor.nodes(editor, {
-                                match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'list-item',
-                            });
+                                const [match] = Editor.nodes(editor, {
+                                    match: n => !Editor.isEditor(n) && SlateElement.isElement(n) && n.type === 'list-item',
+                                });
 
-                            if (match) {
-                                event.preventDefault();
-                                const [node] = match;
+                                if (match) {
+                                    event.preventDefault();
+                                    const [node] = match;
 
-                                const isEmpty = Editor.isEmpty(editor, node);
+                                    const isEmpty = Editor.isEmpty(editor, node);
 
-                                if (isEmpty) {
-                                    // ВЫХОД ИЗ СПИСКА
-                                    Transforms.setNodes(editor, { type: 'paragraph' });
+                                    if (isEmpty) {
+                                        // ВЫХОД ИЗ СПИСКА
+                                        Transforms.setNodes(editor, { type: 'paragraph' });
 
-                                    Transforms.unwrapNodes(editor, {
-                                        match: n =>
-                                            !Editor.isEditor(n) &&
-                                            SlateElement.isElement(n) &&
-                                            ['bulleted-list', 'numbered-list'].includes(n.type),
-                                        split: true,
-                                    });
-                                } else {
-                                    // НОВЫЙ <li>
-                                    Transforms.insertNodes(editor, {
-                                        type: 'list-item',
-                                        children: [{ text: '' }],
-                                    });
+                                        Transforms.unwrapNodes(editor, {
+                                            match: n =>
+                                                !Editor.isEditor(n) &&
+                                                SlateElement.isElement(n) &&
+                                                ['bulleted-list', 'numbered-list'].includes(n.type),
+                                            split: true,
+                                        });
+                                    } else {
+                                        // НОВЫЙ <li>
+                                        Transforms.insertNodes(editor, {
+                                            type: 'list-item',
+                                            children: [{ text: '' }],
+                                        });
+                                    }
                                 }
                             }
-                        }
-                    }}
-                    style={{
-                        outline: 'none',
-                        padding: '4px 8px',
-                        borderRadius: 4,
-                        transition: 'box-shadow 0.2s ease',
-                        boxShadow: isEditing ? '0 0 0 1px #1976d2' : 'none',
-                        backgroundColor: 'transparent',
-                        minHeight: 30,
-                    }}
-                />
-            </Slate>
+                        }}
+                        style={{
+                            outline: 'none',
+                            padding: '4px 8px',
+                            borderRadius: 4,
+                            transition: 'box-shadow 0.2s ease',
+                            boxShadow: isEditing ? '0 0 0 1px #1976d2' : 'none',
+                            backgroundColor: 'transparent',
+                            minHeight: 30,
+                        }}
+                    />
+                </Slate>
+            ) : (
+                <>
+                    { props.childrenSlate
+                        ? renderSlateContent(props.childrenSlate)
+                        : <p>{props.children}</p>
+                    }
+                </>
+        )   }
         </div>
     );
 });
@@ -4313,73 +4882,6 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
     );
 });
 import React from 'react';
-import { Box, IconButton, Tooltip } from '@mui/material';
-import { Edit, Delete, Functions } from '@mui/icons-material';
-import { infoState } from '../context'; // путь может отличаться
-import { useHookstate } from '@hookstate/core';
-
-type Props = {
-    id: number | string;
-    children: React.ReactNode;
-};
-
-export const EditorWrapper = ({ id, children }: Props) => {
-    const selected = useHookstate(infoState.select.content);
-    const isSelected = selected?.get()?.props?.['data-id'] === id;
-
-    return (
-        <Box
-            sx={{
-                position: 'relative',
-                width: '100%',
-                display: 'block',
-            }}
-            data-wrapper
-        >
-            {/* Панелька над компонентом */}
-            {isSelected && (
-                <Box
-                    sx={{
-                        position: 'absolute',
-                        top: -28,
-                        right: 0,
-                        display: 'flex',
-                        gap: 0.5,
-                        zIndex: 20,
-                        background: '#2c2c2c',
-                        borderRadius: 1,
-                        px: 0.5,
-                        py: 0.2,
-                        boxShadow: 1,
-                        pointerEvents: 'auto',
-                    }}
-                >
-                    <Tooltip title="Редактировать">
-                        <IconButton size="small" sx={{ color: '#ccc' }} onClick={() => console.log('Edit', id)}>
-                            <Edit fontSize="inherit" />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Удалить">
-                        <IconButton size="small" sx={{ color: '#f55' }} onClick={() => console.log('Delete', id)}>
-                            <Delete fontSize="inherit" />
-                        </IconButton>
-                    </Tooltip>
-                    <Tooltip title="Функция">
-                        <IconButton size="small" sx={{ color: '#0ff' }} onClick={() => console.log('Функция', id)}>
-                            <Functions fontSize="inherit" />
-                        </IconButton>
-                    </Tooltip>
-                </Box>
-            )}
-
-            {/* Контент компонента */}
-            <Box sx={{ pointerEvents: 'auto' }}>
-                {children}
-            </Box>
-        </Box>
-    );
-}
-import React from 'react';
 import { componentMap, componentDefaults } from '../modules/utils/registry';
 
 
@@ -4393,6 +4895,21 @@ export function createComponentFromRegistry(type: string): React.ReactNode {
     props['data-type'] = type;
   
     return <Component {...props} />;
+}
+import { renderState, cellsContent } from '../context';
+import { Component } from '../type';
+import { State } from '@hookstate/core';
+
+
+export function getComponentById(id: number): Component | undefined {
+    let result;
+
+    renderState.get({ noproxy: true }).forEach((layer) => {
+        const find = layer.content.find((elem)=> elem.props['data-id'] === id);
+        if(find) result = find;
+    });
+    
+    return result;
 }
 import { writeFile } from '../../app/plugins';
 import { cellsContent, renderState } from '../context';
@@ -4863,6 +5380,63 @@ export const BlockWrapper = React.forwardRef((props: BlockWrapperProps, ref) => 
     );
 });
 
+import React from 'react';
+import { IconButton, Menu, MenuItem, Tooltip } from '@mui/material';
+import { FormatListBulleted, FormatListNumbered } from '@mui/icons-material';
+import { useSlate } from 'slate-react';
+import { Editor, Transforms } from 'slate';
+
+const listTypes = [
+  { label: '● Круги', value: 'disc' },
+  { label: '■ Квадраты', value: 'square' },
+  { label: '– Чёрточки', value: 'dash' },
+  { label: '1. Цифры', value: 'decimal' },
+];
+
+export const ListStyleToolbar: React.FC = () => {
+  const editor = useSlate();
+  const [anchor, setAnchor] = React.useState<null | HTMLElement>(null);
+
+  const handleOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchor(e.currentTarget);
+  };
+
+  const handleSelect = (style: string) => {
+    const [match] = Editor.nodes(editor, {
+      match: n => !Editor.isEditor(n) && n.type === 'bulleted-list',
+    });
+
+    if (match) {
+      Transforms.setNodes(
+        editor,
+        { listStyleType: style },
+        { match: n => !Editor.isEditor(n) && n.type === 'bulleted-list' }
+      );
+    }
+    setAnchor(null);
+  };
+
+  return (
+    <>
+      <Tooltip title="Стиль маркера">
+        <IconButton size="small" onClick={handleOpen}>
+          <FormatListBulleted sx={{ fontSize: 16 }} />
+        </IconButton>
+      </Tooltip>
+      <Menu
+        anchorEl={anchor}
+        open={Boolean(anchor)}
+        onClose={() => setAnchor(null)}
+      >
+        {listTypes.map((item) => (
+          <MenuItem key={item.value} onClick={() => handleSelect(item.value)}>
+            {item.label}
+          </MenuItem>
+        ))}
+      </Menu>
+    </>
+  );
+}
 const testId = '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE';
 
 
@@ -5095,6 +5669,7 @@ export function triggerFlyFromComponent(dataId: string) {
 }
 import React from 'react';
 import { cellsContent } from '../../context';
+import { Editor} from 'slate';
 
 type CellContext = {
     cellId: string | null;
@@ -5243,6 +5818,31 @@ export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
 
     return size;
 }
+
+
+/**
+ * Позволяет навесить сброс marks по ПКМ на любую кнопку
+ * @param onClick обычный обработчик ЛКМ
+ * @param editor slate editor instance
+ * @param marks mark или список marks, которые будут сброшены по ПКМ
+ */
+export const withResetOnRightClick = (
+    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
+    editor: Editor,
+    marks: string | string[]
+) => {
+    const marksToClear = Array.isArray(marks) ? marks : [marks];
+
+    return {
+        onClick,
+        onContextMenu: (e: React.MouseEvent<HTMLButtonElement>) => {
+            e.preventDefault();
+            for (const mark of marksToClear) {
+                Editor.removeMark(editor, mark);
+            }
+        },
+    };
+};
 import React from 'react';
 
 type ComponentDefinition = {
@@ -5326,3 +5926,94 @@ export const useEvent = (id: string | number) => {
         sharedEmmiter.emit(uid, { label, data });
     }
 }
+import React from 'react';
+import { Box, IconButton, Paper } from '@mui/material';
+import context, { infoState, cellsContent } from '../../context';
+import { useHookstate } from '@hookstate/core';
+
+
+export type ToolbarOption = {
+    icon: React.ReactNode;
+    action: () => void;
+    tooltip?: string;
+}
+export type ContextualToolbarProps = {
+    options: ToolbarOption[];
+    align?: 'top' | 'bottom';
+    offsetY?: number;
+    visible?: boolean;
+    position?: 'center' | 'left' | 'right';
+}
+export function useToolbar(id: number, onVisibleChange?: (v: boolean)=> void, alwaysVisible = false) {
+    const selected = useHookstate(infoState.select.content);
+    const [visible, setVisible] = React.useState(false);
+
+
+    React.useEffect(() => {
+        const isSelected = selected.get({noproxy:true})?.props?.['data-id'] === id;
+        const show = alwaysVisible || isSelected;
+        setVisible(show);
+        onVisibleChange?.(show);
+    }, [selected, id, alwaysVisible]);
+
+
+    return { visible, selected, context, cellsContent };
+}
+
+
+const ContextualToolbar: React.FC<ContextualToolbarProps> = ({
+    options,
+    align = 'top',
+    offsetY = -30,
+    visible = true,
+    position = 'right',
+    width = '200px'
+}) => {
+    if (!visible) return null;
+
+    let justifyContent: 'flex-start' | 'center' | 'flex-end' = 'center';
+    if (position === 'left') justifyContent = 'flex-start';
+    if (position === 'right') justifyContent = 'flex-end';
+
+
+    return (
+        <Box
+            sx={{
+                position: 'absolute',
+                [align]: offsetY,
+                [position]: 0, 
+                top: 0,
+                display: 'flex',
+                justifyContent,
+                width,
+                gap: 0.5, 
+                flexDirection: 'row',  
+                py: 1,
+                borderRadius: 2,
+                backdropFilter: 'blur(10px)',
+                backgroundColor: 'rgba(0, 0, 0, 0.4)',
+                border: '1px solid rgba(255, 255, 255, 0.3)',
+                boxShadow: `
+                    0px 2px 4px 0px rgba(0, 0, 0, 0.3),
+                    0px 1px 5px 0px rgba(0, 0, 0, 0.2)`,
+                zIndex: 100,
+                pointerEvents: 'auto',
+            }}
+            style={{padding: '6px'}}
+        >
+            { options.map((opt, i) => (
+                <IconButton
+                    key={i}
+                    size="small"
+                    onClick={opt.action}
+                    sx={{ color: '#ccc', fontSize: 14, height: 24, width:24 }}
+                >
+                    { opt.icon }
+                </IconButton>
+            ))}
+        </Box>
+    );
+}
+
+
+export default ContextualToolbar;

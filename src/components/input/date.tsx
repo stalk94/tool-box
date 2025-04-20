@@ -51,7 +51,8 @@ export default function DateTimeInput({
                 '& input::placeholder': { 
                     color: theme.palette.input.placeholder,
                     opacity: 1,
-                    fontStyle: theme.mixins.input.fontStyle
+                    fontStyle: theme.mixins.input.fontStyle,
+                    ...props?.styles?.placeholder
                  },
             }
         },
@@ -94,7 +95,7 @@ export default function DateTimeInput({
                 >
                     <IconButton 
                         disabled={disabled} 
-                        sx={{color: theme.palette.action.active, ml:0.2}}
+                        sx={{color: theme.palette.action.active, ml:0.2, ...props?.styles?.icon}}
                     >
                         { icon }
                     </IconButton>

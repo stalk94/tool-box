@@ -342,6 +342,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
     const editor = useMemo(() => withHistory(withReact(createEditor())), []);
     const [isEditing, setIsEditing] = React.useState(false);
     const { children, ['data-id']: dataId, ...otherProps } = props;
+    const componentRef = React.useRef(props);
     const selected = useHookstate(infoState.select);
 
     const [value, setValue] = React.useState<Descendant[]>(() => {
@@ -364,18 +365,18 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
     }
     const debouncedUpdate = useDebounced((val: Descendant[]) => {
         const text = extractPlainText(val);
-        const component = selected.content.get({ noproxy: true });
-
-        if (component) {
+        const props = componentRef.current;
+        
+        if (props) {
             updateComponentProps({
-                component,
+                component: { props: props },
                 data: {
                     children: text,
                     childrenSlate: val
                 },
             });
         }
-    }, 400, [selected.content]);
+    }, 400, [props]);
     const renderLeaf = useCallback(({ attributes, children, leaf }) => {
         const style: React.CSSProperties = {};
         if (leaf.color) style.color = leaf.color;
@@ -411,6 +412,9 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
                 return <p {...attributes}>{children}</p>;
         }
     }, []);
+    React.useEffect(() => {
+        componentRef.current = props;
+    }, [props]);
 
 
     return(
@@ -509,16 +513,31 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
 
 
 export const TypographyWrapper = React.forwardRef((props: any, ref) => {
-    const { children, ['data-id']: dataId, ...otherProps } = props;
+    const { children, ['data-id']: dataId, styles, style, fullWidth, ...otherProps } = props;
+    const [text, setText] = React.useState(children);
+    const selected = useHookstate(infoState.select.content);
+    
+    const handleBlur = (e) => {
+        const newText = e.target.innerText;
+        setText(newText);
+        updateComponentProps({
+            component: { props: props },
+            data: { children: newText }
+        });
+    }
 
     
     return(
         <Typography 
             ref={ref} 
             data-type="Typography" 
+            contentEditable={globalThis.EDITOR && selected.get({noproxy:true})?.props?.['data-id'] === dataId}
+            suppressContentEditableWarning
+            onBlur={handleBlur}
             {...otherProps}
+            sx={{ width: '100%', display:'block', ...styles?.text }}
         >
-            { children }
+            { text ?? children }
         </Typography>
     );
 });

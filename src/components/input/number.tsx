@@ -56,6 +56,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
                     sx={{
                         color: theme.palette.text.secondary,
                         opacity: isMin ? 0.2 : 0.6,
+                        ...props?.styles?.icon
                     }}
                 />
             </IconButton>
@@ -73,6 +74,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
                         paddingRight: 0,
                     },
                 }}
+                styles={props.styles}
             />
 
             <IconButton onClick={increase} disabled={isMax || props.disabled}>
@@ -80,6 +82,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
                     sx={{
                         color: theme.palette.text.secondary,
                         opacity: isMax ? 0.2 : 0.6,
+                        ...props?.styles?.icon
                     }}
                 />
             </IconButton>

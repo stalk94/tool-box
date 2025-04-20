@@ -1,15 +1,26 @@
-import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
+import { Layout } from "react-grid-layout";
+import { RegistreTypeComponent } from './config/type';
 import React from 'react'
 
 
 // все компоненты исходные используемые в редакторе и вне
-export type ProxyComponentName = 'Button' 
-    | 'IconButton' 
-    | 'Typography'
-
-
-
+export type ProxyComponentName = RegistreTypeComponent;
 export type DataEmiters = 'onChange' | 'onClick' | 'onSelect';
+
+// ---------------- styles  -----------------
+export type InputStyles = {
+    form?: {
+        borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
+        borderColor?: string | 'none'
+        background?: string | 'none'
+    }
+    placeholder?: React.CSSProperties
+    label?: React.CSSProperties
+    icon?: React.CSSProperties
+}
+
+
+//------------------------------------------
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
@@ -19,6 +30,7 @@ export type ComponentProps = {
     'data-subs' ?: string | number[]
     children ?: string | any
     style ?: React.CSSProperties
+    styles?: InputStyles | any
     [key: string]: any
 }
 /** 
@@ -53,6 +65,7 @@ export type ComponentSerrialize = {
 
 
 
+
 export type DraggbleElementProps = {
     component: Component
     index: number
@@ -70,9 +83,8 @@ export type GridEditorProps = {
     renderItems: React.ReactNode[]
     tools: React.ReactNode
 }
-
 export type PropsForm = {
     elemLink: any
-    type: 'props'|'base'|'flex'|'text'
+    type: 'props'|'styles'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
 }

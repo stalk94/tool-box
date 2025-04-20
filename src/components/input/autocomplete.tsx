@@ -2,6 +2,7 @@ import React from 'react';
 import { Autocomplete, AutocompleteProps, IconButton, TextField, useTheme } from '@mui/material';
 import { InputPaper } from './atomize';
 import { safeOmitInputProps } from '../hooks/omit';
+import { ExpandMore } from '@mui/icons-material';
 
 
 export type AutoCompleteOption = string | { label: string; id: string };
@@ -12,6 +13,9 @@ export type AutoCompleteProps = Omit<AutocompleteProps<any, boolean, boolean, bo
     value?: any;
     onChange?: (value: any) => void;
     placeholder?: string;
+    styles?: {
+        placeholder?: React.CSSProperties
+    }
 }
 
 
@@ -23,7 +27,8 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
         fontSize: '0.9rem',         // ≈ 14px
         //fontStyle: 'italic',
         lineHeight: 1.43,
-        letterSpacing: '0.01071em'
+        letterSpacing: '0.01071em',
+        ...props?.styles?.placeholder
     }
 
     const filteredProps = () => {
@@ -43,7 +48,6 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
         return clone;
     }
 
-
     return (
         <InputPaper { ...props }>
 
@@ -58,6 +62,7 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
 
             <Autocomplete
                 { ...filteredProps() }
+                popupIcon={<ExpandMore/>}
                 value={value}
                 options={options ?? []}
                 fullWidth
@@ -75,6 +80,16 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
                             ? opt.label === val
                             : opt.id === val.id
                 }
+                slotProps={{
+                    popupIndicator: {
+                        sx: {
+                            ...props?.styles?.icon,
+                            '&:hover': {
+                                opacity: 0.7
+                            }
+                        }
+                    }
+                }}
                 renderInput={(params) => (
                     <TextField
                         {...params}

@@ -61,7 +61,7 @@ export interface TextType extends BaseType {
     textShadow: string
 }
 
-export type PropsTypes = 'color'
+export type PropsTypesEditor = 'color'
     | 'variant'
     | 'children'
     | 'size'
@@ -75,6 +75,14 @@ export type PropsTypes = 'color'
     | 'src'
     | 'alt'
     | 'sizes'
+    | 'labelPosition'
+
+export type RegistreTypeComponent = 'Button'
+    | 'IconButton'
+    | 'Image'
+    | 'Typography'
+    | 'Text'
+    | 'TextInput'
     
 export type BoxSide = 'top' | 'right' | 'bottom' | 'left';
 

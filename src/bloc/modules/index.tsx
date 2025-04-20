@@ -19,6 +19,7 @@ import { DataSourceTableProps } from './sources/table';
 import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
+import { InputStyles } from '../type';
 
 
 /**
@@ -32,16 +33,6 @@ import { serializeJSX } from '../utils/sanitize';
 globalThis.EDITOR = true;       // мы в контексте редактора
 globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
-// глобальный список шрифтов
-globalThis.FONT_OPTIONS = [
-    'inherit',
-    'Roboto',
-    'Arial',
-    'Georgia',
-    'Times New Roman',
-    'Inter',
-    'Montserrat',
-];
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -53,6 +44,8 @@ registerComponent({
         variant: 'outlined',
         color: 'primary',
         fullWidth: true,
+        startIcon: 'none',
+        endIcon: 'none',
         style: {display: 'block'}
     },
     icon: Settings,
@@ -114,8 +107,11 @@ registerComponent({
         label: 'label',
         position: 'column',
         placeholder: 'ввод',
+        divider: 'none',
         fullWidth: true,
         width: '100%',
+        leftIcon: 'none',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -132,6 +128,7 @@ registerComponent({
         placeholder: 'ввод number',
         fullWidth: true,
         width: '100%',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -148,6 +145,7 @@ registerComponent({
         type: 'time',
         fullWidth: true,
         width: '100%',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -164,6 +162,7 @@ registerComponent({
         type: 'date',
         fullWidth: true,
         width: '100%',
+        styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
         }
@@ -179,6 +178,8 @@ registerComponent({
         position: 'column',
         fullWidth: true,
         width: '100%',
+        leftIcon: 'none',
+        rightIcon: 'none',
         labelStyle: {
             fontSize: 14,
         }

@@ -36,6 +36,7 @@ type InputCustomLabelProps = {
     position?: 'left' | 'right' | 'column'
     typeInput?: InputTupe
     children: React.ReactNode
+    styles?: any
     sx?: SxProps<Theme>
     id?: string | number
 }
@@ -53,9 +54,9 @@ function wrapWithLabel<P>(
     label: React.ReactNode,
     position: 'left' | 'right' | 'column' | undefined,
     Component: React.ReactElement,
-    props: { id?: string | number; labelSx?: any }
+    props: { id?: string | number; labelSx?: any, styles:Record<string, any> }
 ) {
-    
+   
     if (label && typeof label === 'string' && label.length) {
         return (
             <LabelInput
@@ -64,6 +65,7 @@ function wrapWithLabel<P>(
                 id={props.id}
                 sx={props.labelSx}
                 typeInput={typeInput}
+                styles={props?.styles}
             >
                 { Component }
             </LabelInput>
@@ -71,7 +73,7 @@ function wrapWithLabel<P>(
     }
     return Component;
 }
-export function LabelInput({ label, position, typeInput, children, sx, id }: InputCustomLabelProps) {
+export function LabelInput({ label, position, typeInput, children, sx, id, styles }: InputCustomLabelProps) {
     const idRef = React.useRef(`input-${typeInput}-${id ?? Date.now()}`).current;       // можно отслеживать
     
     return(
@@ -95,6 +97,7 @@ export function LabelInput({ label, position, typeInput, children, sx, id }: Inp
                 <Label 
                     id={idRef}
                     children={label} 
+                    styles={styles}
                     sx={{
                         flex: 1,
                         ml: 0.5,

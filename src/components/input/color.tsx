@@ -165,10 +165,10 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
 
 export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showCopy, variant='popup', ...props }: ColorPickerProps) {
     const theme = useTheme();
-    const [inputValue, setInputValue] = useState(value);
+    const [inputValue, setInputValue] = useState(String(value));
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
-    const [color, setColor] = useState<RgbaColor>(parseRgba(value));
+    const [color, setColor] = useState<RgbaColor>(parseRgba(String(value)));
 
 
     const debouncedEmit = useDebounced((val: string) => {
@@ -210,8 +210,8 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
 
     React.useEffect(() => {
         if (value) {
-            setInputValue(value);
-            setColor(parseRgba(value));
+            setInputValue(String(value));
+            setColor(parseRgba(String(value)));
         }
     }, [value]);
   
@@ -226,6 +226,7 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
                 value={inputValue}
                 onChange={handleManualChange}
                 placeholder={props.placeholder}
+                styles={props?.styles}
             />
 
             {showCopy && (

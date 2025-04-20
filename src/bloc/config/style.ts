@@ -104,3 +104,21 @@ export const textOptions = {
     "verticalAlign": ["baseline", "top", "bottom", "middle", "sub", "super", "text-top", "text-bottom"],
     "wordBreak": ["normal", "break-all", "keep-all", "break-word"],
 }
+
+
+export const stylesOptions = {
+    borderRadius: "number",
+    borderStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'],
+    background: "color",
+    color: "color",
+
+    marginLeft: "number",
+    marginRight: "number",
+    marginTop: "number",
+    marginBottom: "number",
+
+    paddingLeft: "number",
+    paddingRight: "number",
+    paddingTop: "number",
+    paddingBottom: "number",
+}
