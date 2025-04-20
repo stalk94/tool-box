@@ -11,17 +11,45 @@ import { SortableItem } from './Sortable';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
+function canPlace(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    all: LayoutCustom[]
+): boolean {
+    return !all.some((cell) => {
+        return (
+            x < cell.x + cell.w &&
+            x + w > cell.x &&
+            y < cell.y + cell.h &&
+            y + h > cell.y
+        );
+    });
+}
+function findFreeSpot(w: number, h: number, all: LayoutCustom[], maxCols = 12): { x: number, y: number } | null {
+    const maxY = Math.max(0, ...all.map(cell => cell.y + cell.h));
+
+    for (let y = 0; y <= maxY + 5; y++) {
+        for (let x = 0; x <= maxCols - w; x++) {
+            if (canPlace(x, y, w, h, all)) {
+                return { x, y };
+            }
+        }
+    }
+
+    return null;
+}
 
 
-
-export default function ({ height, desserealize }) {
+export default function ({ desserealize }) {
+    const ctx = useHookstate(context);
     const render = useHookstate(renderState);
     const containerRef = React.useRef(null);
     const [rowHeight, setRowHeight] = React.useState(30);
     const [selectComponent, setSelectComponent] = React.useState<Component | null>(null);
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
-    const layoutCellEditor = useHookstate(context.layout);            // синхронизация с редактором сетки
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
@@ -141,8 +169,56 @@ export default function ({ height, desserealize }) {
             return layer;
         });
     }
+    const handleChangeLayout = (layout) => {
+        ctx.layout.set((prev) =>
+            prev.map((cell) => {
+                const updated = layout.find((l) => l.i === cell.i);
+                return updated ? { ...cell, ...updated } : cell;
+            })
+        );
+    }
+    const addNewCell = () => {
+        const all = render.get({ noproxy: true });
+        const defaultW = 3;
+        const defaultH = 2;
+        const spot = findFreeSpot(defaultW, defaultH, all, 12);
 
-    
+        if (!spot) {
+            console.warn('⛔ Нет свободного места');
+            return;
+        }
+
+        const newId = `cell-${Date.now()}`;
+
+        render.set((prev) => [
+            ...prev,
+            {
+                i: newId,
+                x: spot.x,
+                y: spot.y,
+                w: defaultW,
+                h: defaultH,
+                content: []
+            }
+        ]);
+        ctx.layout.set((prev) => [
+            ...prev,
+            {
+                i: newId,
+                x: spot.x,
+                y: spot.y,
+                w: defaultW,
+                h: defaultH,
+                content: []
+            }
+        ]);
+
+        cellsCache.set((old) => {
+            old[newId] = [];
+            return old;
+        });
+    }
+
     React.useEffect(() => {
         const cur = render.get();
         console.log('layouts: ', render.get({noproxy: true}));
@@ -170,51 +246,51 @@ export default function ({ height, desserealize }) {
         if (containerRef.current) {
             resizeObserver.observe(containerRef.current);
         }
+
         return () => {
             resizeObserver.disconnect();
         };
     }, [render]);
     React.useEffect(() => {
-        const cur = layoutCellEditor.get({ noproxy: true });
-
-        if (cur[0]) render.set((prev)=> {
-            return cur.map((l) => l.name = l.content)
-        });
-    }, [layoutCellEditor]);
-    React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
-        const cache = localStorage.getItem('GRIDS');
+        EVENT.on('addCell', addNewCell);
 
-        if (cache) {
-            const loadData = JSON.parse(cache);
-            const curName = Object.keys(loadData).pop();
-            const result = consolidation(loadData[curName]);
-
-            render.set(result);
-        }
+        const layout = ctx.layout.get({noproxy:true});
+        const result = consolidation(layout);
+        render.set(result);
 
         return () => {
             document.removeEventListener('keydown', handleDeleteKeyPress);
+            EVENT.off('addCell', addNewCell);
         }
     }, []);
-
+   
     
     return (
-        <div style={{ width: '100%', height: height ? height + '%' : '100%' }} ref={containerRef}>
+        <div 
+            style={{ 
+                width: ctx.size.width?.get() ?? '100%', 
+                height: ctx.size.height?.get() ?? '100%',
+                maxHeight: ctx.size.height?.get() ?? '100%',
+                border: '1px solid red'
+            }}
+            ref={containerRef}
+        >
             <ResponsiveGridLayout
                 style={{ background: '#222222' }}
                 className="GRID-EDITOR"
-                layouts={{ lg: render.get() }}        // Схема сетки
-                breakpoints={{ lg: 0 }}         // Точки для респонсива
-                cols={{ lg: 12 }}
+                layouts={{ lg: render.get({noproxy:true}) }}        // Схема сетки
+                breakpoints={{ lg: 1200, md: 996, sm: 768 }}         // Ширина экрана для переключения
+                cols={{ lg: 12, md: 12, sm: 12 }}                    // Количество колонок для каждого размера
                 rowHeight={rowHeight}
-                compactType={null}              // Отключение автоматической компоновки
-                isDraggable={false}             // Отключить перетаскивание
-                isResizable={false}             // Отключить изменение размера
+                compactType={null}                                        // Отключение автоматической компоновки
+                preventCollision={true}
+                isDraggable={ctx.mod.get()==='grid' && true}             // Отключить перетаскивание
+                isResizable={ctx.mod.get()==='grid' && true}             // Отключить изменение размера
                 margin={margin}
+                onLayoutChange={handleChangeLayout}
             >
                 { render.get({ noproxy: true }).map((layer) => {
-                    
                     return(
                         <div 
                             onClick={(e) => {
@@ -269,3 +345,23 @@ export default function ({ height, desserealize }) {
     );
 }
 
+
+
+/**
+ *  if(!ctx.layout.get()[0]) {
+            const parse = JSON.parse(cache);
+            const curName = Object.keys(parse).pop();
+            ctx.layout.set(parse[curName]);
+            const result = consolidation(parse[curName])
+            render.set(result)
+        }
+ */
+/**
+ *   React.useEffect(() => {
+        const cur = layoutCellEditor.get({ noproxy: true });
+
+        if (cur[0]) render.set((prev)=> {
+            return cur.map((l) => l.name = l.content)
+        });
+    }, [layoutCellEditor]);
+ */

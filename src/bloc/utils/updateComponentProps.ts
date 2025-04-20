@@ -53,7 +53,8 @@ export function updateComponentProps({ component, data, rerender = true }: Param
 
                 infoState.select.content.set(updatedComponent);         // fix
                 layer.content[i] = updatedComponent;
-            } catch (e) {
+            } 
+            catch (e) {
                 console.error('❌ Ошибка при клонировании компонента:', e, current);
             }
 

@@ -1,5 +1,4 @@
 import React from "react";
-import html2canvas from 'html2canvas';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState, renderState } from './context';
@@ -8,21 +7,22 @@ import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
-import { writeFile } from "../app/plugins";
+import { saveBlockToFile } from "./utils/export";
 import GridEditor from '../components/tools/grid-editor';
-import { serializeJSX, deserializeJSX } from './utils/sanitize';
+import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
+
 // системный эммитер
 globalThis.EVENT = new EventEmitter();
 
 
 // это редактор блоков сетки
-export default function ({ height, setHeight }) {
-    const mod = useHookstate(context.mod);
+export default function () {
+    const ctx = useHookstate(context);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(renderState);
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
@@ -30,71 +30,20 @@ export default function ({ height, setHeight }) {
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     
    
-    const dumpRender = (name: string) => {
-        const gridContainer: HTMLDivElement = document.querySelector('.GRID-EDITOR');
-        const children = Array.from(gridContainer.children);
-        const cache = cellsCache.get({ noproxy: true });
-         
-        const meta = {
-            name: name ?? Date.now(),
-            data: new Date().toJSON(),
-            screen: undefined,
-            container: {
-                width: info.container.width.get(),
-                height: info.container.height.get()
-            },
-            layers: []
-        }
-        //exportAsHTML('test')
-        
-        Object.keys(cache).map((idLayout)=> {
-            const found = children.find(el => el.getAttribute('data-id') === idLayout);
-            
-            if(found) {
-                const cacheLayout = cache[idLayout];
-                const bound = found.getBoundingClientRect();
-                const findLayout = context.layout.get().find((l)=> l.i === idLayout);
-                const findRenderLayot = render.get({ noproxy: true }).find(l => l.i === idLayout);
-                
-                meta.layers.push({
-                    ...findRenderLayot,
-                    name: findLayout?.content,
-                    size: {
-                        width: bound.width,
-                        height: bound.height,
-                    },
-                    content: cacheLayout
-                });
-            }
-        });
-
-        html2canvas(gridContainer, { scrollY: -window.scrollY })
-            .then((canvas)=> {
-                return canvas.toDataURL();
-            })
-            .then((v) => {
-                const filename = `screenshot_${meta.name}.png`;
-                meta.screen = '/db/editor/screen/' + filename;
-                const content = v;
-
-                writeFile(
-                    '/db/editor/screen',
-                    filename,
-                    content,
-                    { image: true }
-                ).then(() => {
-                    writeFile(
-                        '/db/editor',
-                        `${meta.name + '.json'}`,
-                        JSON.stringify(meta, null, 2)
-                    ).then(console.log)
-                });
-            });
+    const fetchFolders = async (): Promise<string[]> => {
+        const res = await fetch('/list-folders');
+        if (!res.ok) throw new Error('Ошибка загрузки');
+        return res.json();
+    }
+    const dumpRender = () => {
+        const name = ctx.meta.name.get();
+        const scope = ctx.meta.scope.get();
+        saveBlockToFile(scope, name);
     }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, functions, parent } = component;
         const type = props["data-type"];
-
+        console.log(component)
         const Component = componentMap[type];
         Component.displayName = type;
         Component.parent = parent;
@@ -105,7 +54,7 @@ export default function ({ height, setHeight }) {
             console.warn(`Компонент типа "${type}" не найден в реестре`);
             return null;
         }
-    
+        
         return (
             <Component
                 { ...props }
@@ -232,31 +181,28 @@ export default function ({ height, setHeight }) {
         }
     
     }
-
+    React.useEffect(()=> {
+        fetchFolders().then((data)=> {
+            infoState.project.set(data);
+        });
+    }, []);
     
+
     return(
         <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
             <Tools
-                useDump={()=> dumpRender('page')}
-                externalPanelTrigger={(cb) => {
-                    // 💡 новый трюк
-                    window.triggerLeftPanel = cb;
-                }}
+                useDump={dumpRender}
+                //externalPanelTrigger={(cb) => { window.triggerLeftPanel = cb;}}
                 addComponentToLayout={addComponentToLayout}
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
 
                 <ToolBarInfo />
 
-                { mod.get() === 'home' &&
-                    <GridComponentEditor
-                        desserealize={desserealize}
-                        height={height}
-                    />
-                }
-                { mod.get() === 'grid' &&
-                    <GridEditor components={[]} />
-                }
+                <GridComponentEditor
+                    desserealize={desserealize}
+                />
+                
             </div>
         </div>
     );

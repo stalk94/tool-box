@@ -1,56 +1,56 @@
 import { writeFile } from '../../app/plugins';
-import { cellsContent, renderState } from '../context';
+import context, { cellsContent, renderState } from '../context';
 
 
 export const generateJSX = (type: string, propsRaw: Record<string, any> = {}, indent = 2): string => {
-    const props = propsRaw || {};
-    const spaces = ' '.repeat(indent);
-    const attrs = Object.entries(props)
-        .filter(([key]) => key !== 'children')
-        .map(([key, value]) => {
-            if (typeof value === 'string') return `${key}="${value}"`;
-            if (typeof value === 'boolean' || typeof value === 'number') return `${key}={${value}}`;
-            if (typeof value === 'object') return `${key}={${JSON.stringify(value)}}`;
-            return '';
-        })
-        .join(' ');
+	const props = propsRaw || {};
+	const spaces = ' '.repeat(indent);
+	const attrs = Object.entries(props)
+		.filter(([key]) => key !== 'children')
+		.map(([key, value]) => {
+			if (typeof value === 'string') return `${key}="${value}"`;
+			if (typeof value === 'boolean' || typeof value === 'number') return `${key}={${value}}`;
+			if (typeof value === 'object') return `${key}={${JSON.stringify(value)}}`;
+			return '';
+		})
+		.join(' ');
 
-    const children = props.children;
-    const hasChildren = !!children && (Array.isArray(children) ? children.length > 0 : true);
+	const children = props.children;
+	const hasChildren = !!children && (Array.isArray(children) ? children.length > 0 : true);
 
-    if (!hasChildren) {
-        return `${spaces}<${type} ${attrs} />`;
-    }
+	if (!hasChildren) {
+		return `${spaces}<${type} ${attrs} />`;
+	}
 
-    const childrenCode = Array.isArray(children)
-        ? children.map(child =>
-            typeof child === 'object' && child?.props
-                ? generateJSX(child.type?.name || 'div', child.props, indent + 2)
-                : `${' '.repeat(indent + 2)}${child}`
-        ).join('\n')
-        : typeof children === 'object' && children?.props
-            ? generateJSX(children.type?.name || 'div', children.props, indent + 2)
-            : `${' '.repeat(indent + 2)}${children}`;
+	const childrenCode = Array.isArray(children)
+		? children.map(child =>
+			typeof child === 'object' && child?.props
+				? generateJSX(child.type?.name || 'div', child.props, indent + 2)
+				: `${' '.repeat(indent + 2)}${child}`
+		).join('\n')
+		: typeof children === 'object' && children?.props
+			? generateJSX(children.type?.name || 'div', children.props, indent + 2)
+			: `${' '.repeat(indent + 2)}${children}`;
 
-    return `${spaces}<${type} ${attrs}>
+	return `${spaces}<${type} ${attrs}>
 ${childrenCode}
 ${spaces}</${type}>`;
 };
 
 export const exportAsJSX = async (name: string) => {
-  const layout = renderState.get({ noproxy: true });
-  const cells = cellsContent.get({ noproxy: true });
+	const layout = context.render.get({ noproxy: true });
+	const cells = cellsContent.get({ noproxy: true });
 
-  const renderedBlocks = layout.map(cell => {
-    const comps = cells[cell.i] ?? [];
-    const children = comps.map(c =>
-      generateJSX(c.props?.['data-type'] || 'div', c.props || {})
-    ).join('\n');
+	const renderedBlocks = layout.map(cell => {
+		const comps = cells[cell.i] ?? [];
+		const children = comps.map(c =>
+			generateJSX(c.props?.['data-type'] || 'div', c.props || {})
+		).join('\n');
 
-    return `  <div data-id="${cell.i}">\n${children}\n  </div>`;
-  });
+		return `  <div data-id="${cell.i}">\n${children}\n  </div>`;
+	});
 
-  const output = `import React from 'react';
+	const output = `import React from 'react';
 
 export default function Page() {
   return (
@@ -60,5 +60,37 @@ ${renderedBlocks.join('\n\n')}
   );
 }`;
 
-  await writeFile('/exports/jsx', `${name}.tsx`, output);
+	await writeFile('/exports/jsx', `${name}.tsx`, output);
+};
+
+
+export const saveBlockToFile = async (scope: string, name: string) => {
+	const data = {
+		layout: context.layout.get({ noproxy: true }),		// текушая сетка
+		content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
+		size: {
+			width: context.size.width.get(),
+			height: context.size.height.get()
+		}
+	};
+
+	const body = {
+		folder: `public/blocks/${scope}`,
+		filename: `${name}.json`,
+		content: JSON.stringify(data, null, 2)
+	};
+
+	//! надо полифил на next и слшать этот маршрут
+	const res = await fetch('/write-file', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body)
+	});
+
+	if (!res.ok) {
+		console.error('❌ Ошибка при сохранении блока');
+	} 
+	else {
+		console.log('✅ Блок сохранён');
+	}
 };

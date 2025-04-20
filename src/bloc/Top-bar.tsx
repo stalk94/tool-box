@@ -1,17 +1,24 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, useTheme, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup } from "@mui/material";
+import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
 import { Component, LayoutCustom } from './type';
-import { Settings, Menu, Logout, VerifiedUser, Extension, Save } from "@mui/icons-material";
+import { Settings, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
-import SelectButton from "../components/popup/select.button";
 import Inspector from './Inspector';
+import { TooglerInput } from "src/components/input/input.any";
+import NumberInput from "src/components/input/number";
+
+
 
 export type ContentData = {
     id: number 
     type: 'Button' | 'IconButton' | 'Typography'
 }
+const categories = [
+    { id: 'block', label: <TouchApp/> },
+    { id: 'grid', label: <ViewComfy/> },
+];
 
 /**
  * --------------------------------------------------------------------------
@@ -26,7 +33,7 @@ export type ContentData = {
 
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = () => {
-    const [data, setSData] = React.useState();
+    const ctx = useHookstate(context);
     const [open, setOpen] = React.useState<undefined>();
     const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
@@ -66,10 +73,76 @@ export const ToolBarInfo = () => {
                 flexDirection: 'row',
                 alignItems: 'center',
                 px: 3,
-                ml: 0.5
+                ml: 0.5,
             }}
         >
             <Box>
+                {categories.map((elem, i)=> 
+                    <button key={i}
+                        style={{
+                            cursor: 'pointer',
+                            color: ctx.mod.get() === elem.id ? '#c85b9c9e' : '#c9c5c5c7',
+                            background: 'transparent',
+                            padding: '5px',
+                            marginRight: '8px',
+                            borderRadius: '4px',
+                            border: `1px solid ${ctx.mod.get() === elem.id ? '#c85b9c9e' : '#c9c5c55f'}`, 
+                        }}
+                        onClick={()=> ctx.mod.set(elem.id)}
+                    >
+                        { elem.label }
+                    </button>
+                )}
+            </Box>
+            <Box sx={{ml: 3}}>
+                <IconButton
+                    disabled={!(ctx.mod.get()==='grid')}
+                    sx={{}}
+                    onClick={()=> EVENT.emit('addCell', {})}
+                >
+                    <Add />
+                </IconButton>
+            </Box>
+            <Box sx={{ml: 'auto', display: 'flex'}}>
+                <Box display="flex" alignItems="center">
+                    <NumberInput
+                        value={container.width.get()}
+                        min={0}
+                        max={window.innerWidth}
+                        onChange={(v) => ctx.size.width.set(v)}
+                        sx={{ 
+                            maxWidth: '80px',
+                        }}
+                    />
+                    <Typography variant="subtitle1" sx={{ mx:1.5 }}>×</Typography>
+                    <NumberInput
+                        value={container.height.get()}
+                        onChange={(v) => ctx.size.height.set(v)}
+                        min={0}
+                        max={10000}
+                        sx={{ 
+                            width: '18%',
+                            mr: 3, 
+                            width: '70px',
+                        }}
+                    />
+                </Box>
+                { bound && 
+                    <Tooltip title="ℹ размеры выбранной ячейки">
+                        <Typography variant='caption' sx={{textDecoration:'underline'}}>
+                            ⌗ { bound.width } x { bound.height }
+                        </Typography>
+                    </Tooltip>
+                }
+            </Box>
+        </Paper>
+    );
+}
+
+
+
+/**
+ * <Box>
                 <MenuPoup 
                     anchorEl={open} 
                     keepMounted 
@@ -109,23 +182,4 @@ export const ToolBarInfo = () => {
                     onChange={(v)=> context.mod.set(v.id)}
                 />
             </Box>
-            <Box
-                sx={{ml: 'auto', display: 'flex',}}
-            >
-                <span style={{marginRight:'5px',opacity:0.8}}>⊞</span> 
-                <Tooltip title="ℹ размеры базового контейнера">
-                    <Typography sx={{mr:1, color:'gold'}} variant='subtitle1'>
-                        { container.width.get() } x { container.height.get() }
-                    </Typography>
-                </Tooltip>
-                { bound && 
-                    <Tooltip title="ℹ размеры выбранной ячейки">
-                        <Typography variant='caption' sx={{textDecoration:'underline'}}>
-                            ⌗ { bound.width } x { bound.height }
-                        </Typography>
-                    </Tooltip>
-                }
-            </Box>
-        </Paper>
-    );
-}
+ */

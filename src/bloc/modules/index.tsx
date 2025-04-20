@@ -455,7 +455,7 @@ registerComponent({
         sourceType: 'google',
         source: '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE',
         refreshInterval: 25000
-    } satisfies DataSourceTableProps,
+    },
     icon: BackupTable,
     category: 'complex',
 });

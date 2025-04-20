@@ -2,7 +2,9 @@ import React from "react";
 import { Button, useTheme, Box, IconButton } from "@mui/material";
 import { BorderStyle, ColorLens, FormatColorText, More } from '@mui/icons-material';
 import { Component, LayoutCustom } from './type';
-import { Settings, Menu, Logout, Palette, Extension, Save, Functions } from "@mui/icons-material";
+import { Settings, AccountTree, Logout, Palette, Extension, Save, Functions, 
+    FolderSpecial
+} from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
@@ -26,6 +28,48 @@ type Props = {
 }
 
 
+const useProject = (currentCat, setCurrentCat) => {
+    const project = infoState.project;
+    const meta = context.meta;
+
+    const categories = [
+        { id: 'all', icon: FolderSpecial }
+    ];
+    const getCurScope =()=> {
+        const cur = project?.get({noproxy:true})?.[meta.scope.get()];
+        if(cur) cur.map((folder)=> {
+            console.log(folder);
+        });
+
+        return JSON.stringify(cur)
+    }
+
+    return {
+        start: (
+            <TooglerInput
+                value={currentCat}
+                onChange={setCurrentCat}
+                sx={{ px: 0.2 }}
+                items={categories.map((cat) => {
+                    const Icon = cat.icon ?? Settings;
+                    return {
+                        id: cat.id,
+                        label: <Icon sx={{ fontSize: 18 }} />
+                    };
+                })}
+            />
+        ),
+        children: (
+            <>
+                { currentCat === 'all' &&
+                    <div>
+                        { getCurScope() }
+                    </div>
+                }
+            </>
+        )
+    };
+}
 const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
     const categories = Object.entries(componentGroups);
     const itemsInCurrentCategory = Object.entries(componentMap).filter(([type]) => {
@@ -117,11 +161,14 @@ const useFunctions =(elem, onChange, curSub)=> {
 export default function ({ addComponentToLayout, useDump }: Props) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
+    const [project, setProject] = React.useState<'cur'|'all'>('all');
     const [curSubpanel, setSubPanel] = React.useState<'props'|'styles'|'flex'|'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'items'|'component'|'func'>('items');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project'|'items'|'component'|'func'>('items');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
-
+    
     const menuItems = [
+        { id: 'project', label: 'управление', icon: <AccountTree />},
+        { divider: true },
         { id: 'items', label: 'Библиотека', icon: <Extension />},
         { divider: true },
         { id: 'component', label: 'Настройки', icon: <Palette /> },
@@ -148,6 +195,7 @@ export default function ({ addComponentToLayout, useDump }: Props) {
     // Обработка навигации по разделам
     const changeNavigation = (item) => {
         if (item.id === 'items') setCurrentToolPanel('items');
+        else if (item.id === 'project') setCurrentToolPanel('project');
         else if (item.id === 'component') setCurrentToolPanel('component');
         else if (item.id === 'func') setCurrentToolPanel('func');
         else if (item.id === 'save') useDump();
@@ -162,6 +210,7 @@ export default function ({ addComponentToLayout, useDump }: Props) {
     }
     
     const panelRenderers = {
+        project: () => useProject(project, setProject),
         items: () => useElements(currentTool, setCurrentTool, addComponentToLayout),
         component: () => useComponent(select.content, changeEditor, curSubpanel, setSubPanel),
         func: () => useFunctions(select.content, changeFunc, curSubpanel),

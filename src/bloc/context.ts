@@ -9,11 +9,16 @@ export const renderState = hookstate<LayoutCustom[]>([]);
 
 export default hookstate(
     {
-        mod: 'home',
+        meta: {
+            scope: 'test',              // имя проекта
+            name: 'test-block'          // имя блока
+        },
+        mod: 'block',
         dragEnabled: true,                                          // отключить перетаскивание
         linkMode: <number|undefined> undefined,                     // режим связи
-        layout: <LayoutCustom[]> <unknown>[],
+        layout: <LayoutCustom[]> <unknown>[],                       // даныые текуей сетки
         //tools: undefined,                                         // ?
+        size: {width: 1000, height: 600},
         currentCell: <LayoutCustom> undefined,
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })
@@ -47,6 +52,9 @@ export const infoState = hookstate({
     inspector: {
         lastData: {},
         task: []
+    },
+    project: {
+
     },
     contentAllRefs: <Record<string, Element>>undefined
 })

@@ -52,6 +52,40 @@ export default function writeFilePlugin() {
                     }
                 });
             });
+            server.middlewares.use('/list-folders', (req, res) => {
+                const basePath = path.join(process.cwd(), 'public', 'blocks');
+
+                try {
+                    const scopes = fs.readdirSync(basePath, { withFileTypes: true })
+                        .filter((entry) => entry.isDirectory())
+                        .map((entry) => entry.name);
+
+                    const result = {};
+
+                    for (const scope of scopes) {
+                        const folderPath = path.join(basePath, scope);
+                        const files = fs.readdirSync(folderPath)
+                            .filter(file => file.endsWith('.json'));
+
+                        result[scope] = files.map(file => {
+                            const filePath = path.join(folderPath, file);
+                            const content = fs.readFileSync(filePath, 'utf8');
+                            return {
+                                name: file.replace(/\.json$/, ''),
+                                data: JSON.parse(content)
+                            };
+                        });
+                    }
+
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify(result));
+                } 
+                catch (err) {
+                    console.error('❌ Ошибка при чтении:', err);
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({ error: 'Ошибка при чтении папок и файлов' }));
+                }
+            });
         },
     };
 }

@@ -4,7 +4,7 @@ import { useDroppable, DndContext, useSensors, useSensor, PointerSensor, DragEnd
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { arrayMove } from '@dnd-kit/sortable';
 import { useHookstate } from '@hookstate/core';
-import { infoState, renderState } from '../../context';
+import { infoState } from '../../context';
 import { SortableItem } from '../../Sortable';
 import { useParentCellSize } from '../utils/hooks';
 import { deserializeJSX } from '../../utils/sanitize';
@@ -79,7 +79,7 @@ export const BlockWrapper = React.forwardRef((props: BlockWrapperProps, ref) => 
 
         const updated = arrayMove(resolvedContent, oldIndex, newIndex);
 
-        renderState.set((prev) => {
+        context.render.set((prev) => {
             const updatedRender = [...prev];
             const layer = updatedRender.find((l) => l.i === curCell.get()?.i);
             if (!layer) return prev;

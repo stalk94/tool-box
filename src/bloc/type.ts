@@ -38,7 +38,7 @@ export type ComponentProps = {
  * все дочерние компоненты установленные редактором 
  */
 export type Component = React.ReactElement & {
-    _store: {
+    _store?: {
         index: number
     }
     props: ComponentProps
@@ -49,18 +49,13 @@ export type Component = React.ReactElement & {
 }
 /** серриализованный вид */
 export type ComponentSerrialize = {
-    id: number | string
+    id: number
     /** id ячейки */
     parent: string
     functions?: {
         [key: string]: string
     }
-    props: {
-        "data-type": string,
-        "data-offset"?: { x: number; y: number },
-        [key: string]: any
-    }
-    
+    props: ComponentProps
 }
 
 
