@@ -1,5 +1,4 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
 import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
@@ -108,6 +107,7 @@ export const ToolBarInfo = () => {
                     <NumberInput
                         value={container.width.get()}
                         min={0}
+                        step={5}
                         max={window.innerWidth}
                         onChange={(v) => ctx.size.width.set(v)}
                         sx={{ 
@@ -120,6 +120,7 @@ export const ToolBarInfo = () => {
                         onChange={(v) => ctx.size.height.set(v)}
                         min={0}
                         max={10000}
+                        step={5}
                         sx={{ 
                             width: '18%',
                             mr: 3, 

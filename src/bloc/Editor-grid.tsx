@@ -46,7 +46,6 @@ export default function ({ desserealize }) {
     const ctx = useHookstate(context);
     const render = useHookstate(renderState);
     const containerRef = React.useRef(null);
-    const [rowHeight, setRowHeight] = React.useState(30);
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
@@ -238,7 +237,7 @@ export default function ({ desserealize }) {
                 const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
                 const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
 
-                setRowHeight(availableHeight / rows); // Вычисляем высоту строки
+                //setRowHeight(availableHeight / rows); // Вычисляем высоту строки
             }
         });
 
@@ -299,7 +298,7 @@ export default function ({ desserealize }) {
                 layouts={{ lg: render.get({noproxy:true}) }}        // Схема сетки
                 breakpoints={{ lg: 1200, md: 996, sm: 768 }}         // Ширина экрана для переключения
                 cols={{ lg: 12, md: 12, sm: 12 }}                    // Количество колонок для каждого размера
-                rowHeight={rowHeight}
+                rowHeight={30}
                 compactType={null}                                        // Отключение автоматической компоновки
                 preventCollision={true}
                 isDraggable={ctx.mod.get()==='grid' && true}             // Отключить перетаскивание
