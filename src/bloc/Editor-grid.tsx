@@ -47,7 +47,6 @@ export default function ({ desserealize }) {
     const render = useHookstate(renderState);
     const containerRef = React.useRef(null);
     const [rowHeight, setRowHeight] = React.useState(30);
-    const [selectComponent, setSelectComponent] = React.useState<Component | null>(null);
     const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
     const info = useHookstate(infoState);                             // данные по выделенным обьектам
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
@@ -95,7 +94,7 @@ export default function ({ desserealize }) {
         );
 
         if (currentComponent) {
-            setSelectComponent(currentComponent);             // для DragOverlay
+            //setSelectComponent(currentComponent);             //! для DragOverlay
             info.select.content.set(currentComponent);        // ✅ ReactNode
 
             document.querySelectorAll('[data-id]').forEach(el => {
@@ -252,6 +251,23 @@ export default function ({ desserealize }) {
         };
     }, [render]);
     React.useEffect(() => {
+        const meta = ctx.meta.get();
+        const currentScope = info.project?.get({ noproxy: true })?.[meta.scope];
+        const find = currentScope?.find((obj) => obj.name === meta.name);
+
+        if (find?.data) {
+            if (find.data?.content) {
+                cellsCache.set(find.data.content);
+            }
+            if (find.data?.layout) {
+                ctx.layout.set(find.data.layout);
+                const result = consolidation(find.data.layout);
+                render.set(result);
+            }
+            if (find.data.size) ctx.size.set(find.data.size);
+        }
+    }, [ctx.meta.name, info.project]);
+    React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
 
@@ -269,10 +285,11 @@ export default function ({ desserealize }) {
     return (
         <div 
             style={{ 
+                margin: 5,
                 width: ctx.size.width?.get() ?? '100%', 
                 height: ctx.size.height?.get() ?? '100%',
                 maxHeight: ctx.size.height?.get() ?? '100%',
-                border: '1px solid red'
+                border: '1px dashed #fbfbfa26'
             }}
             ref={containerRef}
         >

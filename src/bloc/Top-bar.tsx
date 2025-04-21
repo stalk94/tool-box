@@ -5,7 +5,6 @@ import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
-import Inspector from './Inspector';
 import { TooglerInput } from "src/components/input/input.any";
 import NumberInput from "src/components/input/number";
 
@@ -66,6 +65,7 @@ export const ToolBarInfo = () => {
         <Paper elevation={2}
             sx={{
                 height:'5%', 
+                minHeight: 44,
                 width:'99%', 
                 background:'rgb(58, 58, 58)',
                 border: '1px solid #cdcbcb36',

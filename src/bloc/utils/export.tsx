@@ -94,3 +94,34 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 		console.log('✅ Блок сохранён');
 	}
 };
+
+export const createBlockToFile = async (scope: string, name: string) => {
+	const data = {
+		layout: [],
+		content: {},
+		size: {
+			width: context.size.width.get(),
+			height: context.size.height.get()
+		}
+	};
+
+	const body = {
+		folder: `public/blocks/${scope}`,
+		filename: `${name}.json`,
+		content: JSON.stringify(data, null, 2)
+	};
+
+	//! надо полифил на next и слшать этот маршрут
+	const res = await fetch('/write-file', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body)
+	});
+
+	if (!res.ok) {
+		console.error('❌ Ошибка при сохранении блока');
+	} 
+	else {
+		console.log('✔️ Блок создан');
+	}
+};

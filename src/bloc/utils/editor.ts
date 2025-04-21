@@ -14,3 +14,20 @@ export function getComponentById(id: number): Component | undefined {
     return result;
 }
 
+export function getUniqueBlockName(baseName: string, existingNames: string[]): string {
+    let name = baseName;
+    let counter = 1;
+
+    while (existingNames.includes(name)) {
+        name = `${baseName}-${counter}`;
+        counter++;
+    }
+
+    return name;
+}
+
+export const fetchFolders = async (): Promise<string[]> => {
+    const res = await fetch('/list-folders');
+    if (!res.ok) throw new Error('Ошибка загрузки');
+    return res.json();
+}

@@ -83,3 +83,9 @@ export type PropsForm = {
     type: 'props'|'styles'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
 }
+export type LeftToolPanelProps = {
+    addComponentToLayout: (elem: React.ReactNode) => void
+    useDump: () => void
+    useEditProps: (component: Component, data: Record<string, any>) => void
+    externalPanelTrigger?: (fn: (panel: 'items' | 'component') => void) => void;
+}

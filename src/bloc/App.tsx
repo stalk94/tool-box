@@ -8,6 +8,7 @@ import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile } from "./utils/export";
+import { fetchFolders } from "./utils/editor";
 import GridEditor from '../components/tools/grid-editor';
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
@@ -15,6 +16,7 @@ import EventEmitter from "../app/emiter";
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
+
 
 // системный эммитер
 globalThis.EVENT = new EventEmitter();
@@ -30,11 +32,6 @@ export default function () {
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     
    
-    const fetchFolders = async (): Promise<string[]> => {
-        const res = await fetch('/list-folders');
-        if (!res.ok) throw new Error('Ошибка загрузки');
-        return res.json();
-    }
     const dumpRender = () => {
         const name = ctx.meta.name.get();
         const scope = ctx.meta.scope.get();
@@ -186,7 +183,7 @@ export default function () {
             infoState.project.set(data);
         });
     }, []);
-    
+
 
     return(
         <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
