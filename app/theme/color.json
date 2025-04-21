@@ -1,0 +1,21 @@
+{
+    "input": {},
+    "chekbox": {},
+    "switch": {
+        "trackOn": "rgba(255, 255, 255, 0.25)",
+        "trackOff": "rgba(255, 255, 255, 0.05)",
+        "thumb": "rgb(215, 215, 215)",
+        "border": "rgba(255, 255, 255, 0.6)",
+        "icon": "rgb(215, 215, 215)"
+    },
+    "appBar": {
+        "main": "rgba(57, 62, 70, 0.35)",
+        "border": "rgba(255, 255, 255, 0)"
+    },
+    "navigation": {},
+    "table": {
+        "body": "#5151513f",
+        "header": "rgba(113, 113, 113, 0.3843137254901961)",
+        "thead": "rgba(56, 57, 57, 0.7)"
+    }
+}

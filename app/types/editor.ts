@@ -26,7 +26,8 @@ export interface DataRenderGrid {
 
 
 export type RenderGridProps = {
-    data: DataRenderGrid
+    scope: string
+    name: string
     height?: number 
-    marginCell: [number, number]
+    marginCell?: [number, number]
 }

@@ -16,16 +16,16 @@ export async function POST(req: NextRequest) {
         const dirPath = path.join(process.cwd(), folder);
         const filePath = path.join(dirPath, filename);
 
-        if (!fs.existsSync(dirPath)) {
-            fs.mkdirSync(dirPath, { recursive: true });
+        if (!await fs.promises.access(dirPath).then(() => true).catch(() => false)) {
+            await fs.promises.mkdir(dirPath, { recursive: true });
         }
 
         if (settings?.image || settings?.binary) {
             const base64Data = content.split(',')[1];
-            fs.writeFileSync(filePath, base64Data, 'base64');
+            await fs.promises.writeFile(filePath, base64Data, 'base64');
         } 
         else {
-            fs.writeFileSync(filePath, content, 'utf8');
+            await fs.promises.writeFile(filePath, content, 'utf8');
         }
 
         return NextResponse.json({ path: `/${folder.replace('public/', '')}/${filename}` });

@@ -39,7 +39,12 @@ export default class ExtendedEmitter extends EventEmitter {
     private _globalListeners: ((eventName: keyof Events, payload: any) => void)[] = [];
 
     onAny(fn: (eventName: keyof Events, payload: any) => void): () => void {
-        this._globalListeners.push(fn);
+        // Добавляем проверку на дубликаты
+        if (!this._globalListeners.includes(fn)) {
+            this._globalListeners.push(fn);
+        }
+        else console.warn('повторная подписка');
+
         return () => {
             this._globalListeners = this._globalListeners.filter(listener => listener !== fn);
         };

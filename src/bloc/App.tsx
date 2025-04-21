@@ -1,3 +1,4 @@
+'use client'
 import React from "react";
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
@@ -15,6 +16,7 @@ import EventEmitter from "../app/emiter";
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
+
 
 
 // ANCHOR - системный эммитер
@@ -39,7 +41,7 @@ export default function () {
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, functions, parent } = component;
         const type = props["data-type"];
-        console.log(component)
+        //console.log(component)
         const Component = componentMap[type];
         Component.displayName = type;
         Component.parent = parent;

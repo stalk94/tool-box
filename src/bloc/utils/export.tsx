@@ -2,7 +2,8 @@ import { writeFile } from '../../app/plugins';
 import context, { cellsContent, renderState } from '../context';
 
 
-const isVite = import.meta.env?.DEV === true;
+const isVite = typeof import.meta !== 'undefined' && !!import.meta.env?.DEV;
+const isNext = !isVite;
 const API_BASE = isVite ? '' : '/api';
 
 

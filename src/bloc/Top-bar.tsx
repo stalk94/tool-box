@@ -105,7 +105,7 @@ export const ToolBarInfo = () => {
             <Box sx={{ml: 'auto', display: 'flex'}}>
                 <Box display="flex" alignItems="center">
                     <NumberInput
-                        value={container.width.get()}
+                        value={ctx.size.width.get()}
                         min={0}
                         step={5}
                         max={window.innerWidth}
@@ -116,7 +116,7 @@ export const ToolBarInfo = () => {
                     />
                     <Typography variant="subtitle1" sx={{ mx:1.5 }}>×</Typography>
                     <NumberInput
-                        value={container.height.get()}
+                        value={ctx.size.height.get()}
                         onChange={(v) => ctx.size.height.set(v)}
                         min={0}
                         max={10000}

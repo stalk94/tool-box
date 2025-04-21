@@ -72,7 +72,7 @@ export default function({ style, dataId, sourceType, source, refreshInterval, ..
             setColumns(inferred);
         }
     }, [data]);
-    console.log(props.width)
+    //console.log(props.width)
 
     return(
         <DataTable
