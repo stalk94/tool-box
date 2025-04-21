@@ -7,39 +7,11 @@ import { hookstate, useHookstate } from "@hookstate/core";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
+import { canPlace, findFreeSpot } from './utils/editor';
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
-function canPlace(
-    x: number,
-    y: number,
-    w: number,
-    h: number,
-    all: LayoutCustom[]
-): boolean {
-    return !all.some((cell) => {
-        return (
-            x < cell.x + cell.w &&
-            x + w > cell.x &&
-            y < cell.y + cell.h &&
-            y + h > cell.y
-        );
-    });
-}
-function findFreeSpot(w: number, h: number, all: LayoutCustom[], maxCols = 12): { x: number, y: number } | null {
-    const maxY = Math.max(0, ...all.map(cell => cell.y + cell.h));
-
-    for (let y = 0; y <= maxY + 5; y++) {
-        for (let x = 0; x <= maxCols - w; x++) {
-            if (canPlace(x, y, w, h, all)) {
-                return { x, y };
-            }
-        }
-    }
-
-    return null;
-}
 
 
 export default function ({ desserealize }) {
@@ -285,9 +257,8 @@ export default function ({ desserealize }) {
         <div 
             style={{ 
                 margin: 5,
-                width: ctx.size.width?.get() ?? '100%', 
+                maxWidth: ctx.size.width?.get() ?? '100%', 
                 height: ctx.size.height?.get() ?? '100%',
-                maxHeight: ctx.size.height?.get() ?? '100%',
                 border: '1px dashed #fbfbfa26'
             }}
             ref={containerRef}
@@ -296,8 +267,8 @@ export default function ({ desserealize }) {
                 style={{ background: '#222222' }}
                 className="GRID-EDITOR"
                 layouts={{ lg: render.get({noproxy:true}) }}        // Схема сетки
-                breakpoints={{ lg: 1200, md: 996, sm: 768 }}         // Ширина экрана для переключения
-                cols={{ lg: 12, md: 12, sm: 12 }}                    // Количество колонок для каждого размера
+                breakpoints={{ lg: 1200 }}         // Ширина экрана для переключения
+                cols={{ lg: 12 }}                    // Количество колонок для каждого размера
                 rowHeight={30}
                 compactType={null}                                        // Отключение автоматической компоновки
                 preventCollision={true}
@@ -346,6 +317,7 @@ export default function ({ desserealize }) {
                                     }
                                 </DndContext>
                             }
+                            {/* ANCHOR - Вне редактора */}
                             { (!EDITOR && Array.isArray(layer.content)) && 
                                 layer.content.map((component, index) => 
                                     <React.Fragment key={index}>

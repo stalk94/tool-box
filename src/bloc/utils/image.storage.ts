@@ -3,6 +3,10 @@ import { get, set } from 'idb-keyval';
 
 const IMAGE_STORE_KEY = 'images';
 
+// -------------------------------------------------------------
+//     IndexDb
+// -------------------------------------------------------------
+
 
 export async function saveImage(id: string, base64: string) {
     const images = await get(IMAGE_STORE_KEY) || {};

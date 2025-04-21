@@ -14,13 +14,16 @@ import { updateComponentProps } from './utils/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
 import { componentGroups } from './config/category';
-import { createBlockToFile } from "./utils/export";
+import { createBlockToFile, fetchFolders } from "./utils/export";
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
 import { TextInput } from "src/index";
-import { fetchFolders, getUniqueBlockName } from "./utils/editor";
+import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps } from './type';
 
+/**
+ * ! Провести рефакторинг файла
+ */
 
 const RenderListProject = ({ currentCat }) => {
     const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);

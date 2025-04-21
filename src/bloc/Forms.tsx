@@ -86,7 +86,7 @@ const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<
 }
 
 
-// ! есть баг если удалить компонент при открытом редакторе (вроде)
+
 export default function({ type, elemLink, onChange }: PropsForm) {
     const theme = useTheme();
     const copyDataContent = React.useRef({});                               // кэш во избежание перерендеров

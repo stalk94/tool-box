@@ -1,5 +1,5 @@
 import { renderState, cellsContent } from '../context';
-import { Component } from '../type';
+import { Component, LayoutCustom } from '../type';
 
 
 
@@ -26,8 +26,33 @@ export function getUniqueBlockName(baseName: string, existingNames: string[]): s
     return name;
 }
 
-export const fetchFolders = async (): Promise<string[]> => {
-    const res = await fetch('/list-folders');
-    if (!res.ok) throw new Error('Ошибка загрузки');
-    return res.json();
+
+export function canPlace(
+    x: number,
+    y: number,
+    w: number,
+    h: number,
+    all: LayoutCustom[]
+): boolean {
+    return !all.some((cell) => {
+        return (
+            x < cell.x + cell.w &&
+            x + w > cell.x &&
+            y < cell.y + cell.h &&
+            y + h > cell.y
+        );
+    });
+}
+export function findFreeSpot(w: number, h: number, all: LayoutCustom[], maxCols = 12): { x: number, y: number } | null {
+    const maxY = Math.max(0, ...all.map(cell => cell.y + cell.h));
+
+    for (let y = 0; y <= maxY + 5; y++) {
+        for (let x = 0; x <= maxCols - w; x++) {
+            if (canPlace(x, y, w, h, all)) {
+                return { x, y };
+            }
+        }
+    }
+
+    return null;
 }

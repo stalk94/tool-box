@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import writeFilePlugin from './server/vite-write';
-
+import path from 'path';
 
 
 export default defineConfig({
@@ -11,5 +11,12 @@ export default defineConfig({
     plugins: [react(), writeFilePlugin(), tsconfigPaths()],
     server: {
         port: 3001,
+    },
+    resolve: {
+        alias: {
+            '@bloc': path.resolve(__dirname, 'src/bloc'),
+            '@components': path.resolve(__dirname, 'src/components'),
+            '@system': path.resolve(__dirname, 'src/app'),
+        }
     }
 });

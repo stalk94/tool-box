@@ -9,7 +9,7 @@ type Params = {
 }
 
 
-/** Запись свойств в  */
+/** Запись свойств в компонент и список */
 export function updateComponentProps({ component, data, rerender = true }: Params) {
     const id = component?.props?.['data-id'];
     const cellId = context.currentCell.get()?.i;

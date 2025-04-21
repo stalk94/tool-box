@@ -2,6 +2,13 @@ import { writeFile } from '../../app/plugins';
 import context, { cellsContent, renderState } from '../context';
 
 
+const isVite = import.meta.env?.DEV === true;
+const API_BASE = isVite ? '' : '/api';
+
+
+//-----------------------------------------------------------------------------
+//      [?] тестовый код 
+//-----------------------------------------------------------------------------
 export const generateJSX = (type: string, propsRaw: Record<string, any> = {}, indent = 2): string => {
 	const props = propsRaw || {};
 	const spaces = ' '.repeat(indent);
@@ -35,7 +42,7 @@ export const generateJSX = (type: string, propsRaw: Record<string, any> = {}, in
 	return `${spaces}<${type} ${attrs}>
 ${childrenCode}
 ${spaces}</${type}>`;
-};
+}
 
 export const exportAsJSX = async (name: string) => {
 	const layout = context.render.get({ noproxy: true });
@@ -61,13 +68,24 @@ ${renderedBlocks.join('\n\n')}
 }`;
 
 	await writeFile('/exports/jsx', `${name}.tsx`, output);
-};
+}
 
+
+
+// ----------------------------------------------------------------------------
+//      работа с файлами editor (next or vite) (! отключить доступ в продакшене)
+// ----------------------------------------------------------------------------
 
 export const saveBlockToFile = async (scope: string, name: string) => {
 	const data = {
 		layout: context.layout.get({ noproxy: true }),		// текушая сетка
 		content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
+		meta: {
+			scope,
+			name,
+			updatedAt: Date.now(),
+			preview: ''
+		},
 		size: {
 			width: context.size.width.get(),
 			height: context.size.height.get()
@@ -80,8 +98,7 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 		content: JSON.stringify(data, null, 2)
 	};
 
-	//! надо полифил на next и слшать этот маршрут
-	const res = await fetch('/write-file', {
+	const res = await fetch(`${API_BASE}/write-file`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(body)
@@ -93,12 +110,18 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 	else {
 		console.log('✅ Блок сохранён');
 	}
-};
+}
 
 export const createBlockToFile = async (scope: string, name: string) => {
 	const data = {
 		layout: [],
 		content: {},
+		meta: {
+			scope,
+			name,
+			updatedAt: Date.now(),
+			preview: ''
+		},
 		size: {
 			width: context.size.width.get(),
 			height: context.size.height.get()
@@ -112,7 +135,7 @@ export const createBlockToFile = async (scope: string, name: string) => {
 	};
 
 	//! надо полифил на next и слшать этот маршрут
-	const res = await fetch('/write-file', {
+	const res = await fetch(`${API_BASE}/write-file`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(body)
@@ -124,4 +147,10 @@ export const createBlockToFile = async (scope: string, name: string) => {
 	else {
 		console.log('✔️ Блок создан');
 	}
-};
+}
+
+export const fetchFolders = async (): Promise<string[]> => {
+    const res = await fetch(`${API_BASE}/list-folders`);
+    if (!res.ok) throw new Error('Ошибка загрузки');
+    return res.json();
+}

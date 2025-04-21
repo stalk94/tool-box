@@ -3,12 +3,14 @@ import { componentMap } from './modules/utils/registry';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import './modules/index';               // окружение воссоздатся
 
-
+// переопределяем среду
+globalThis.EDITOR = false;
 // карта компонентов
 export const COMPONENT_MAP = componentMap;
+console.log('EDITOR MOD: ', EDITOR);
 
 
-// дессериализатор
+/** дессериализатор компонентов */
 export const desserealize = (component: ComponentSerrialize) => {
     const { props, functions, parent } = component;
     const type = props["data-type"];
@@ -30,10 +32,13 @@ export const desserealize = (component: ComponentSerrialize) => {
     }
 }
 
-/** сделает заполнение ячеек `list` компонентами из карты `listComponent` (серриализованные данные компонентов) */
-export const consolidation = (list: LayoutCustom[], listComponent: Record<number, ComponentSerrialize[]>) => {
-    return list.map((layer) => {
-        const cache = listComponent;
+/** 
+ * сделает заполнение ячеек `layout:` компонентами из карты `contents` (серриализованные данные компонентов)    
+ * * на выходе готовая схема для `<Render>`    
+ */
+export const consolidation = (layout: LayoutCustom[], contents: Record<number, ComponentSerrialize[]>) => {
+    return layout.map((layer) => {
+        const cache = contents;
         const curCacheLayout: ComponentSerrialize[] = cache[layer.i];
 
         if (curCacheLayout) {

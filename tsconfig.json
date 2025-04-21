@@ -1,14 +1,16 @@
 {
-    "compilerOptions": {
-      "target": "ESNext",
-      "module": "CommonJS",
-      "jsx": "react",
-      "outDir": "./dist",
-      "esModuleInterop": true,
-      "baseUrl": "./",
-      "paths": {
-        "@lib/*": ["src/"]
-      }
-    },
-    "include": ["src/**/*"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "CommonJS",
+    "jsx": "react",
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "baseUrl": ".", 
+    "paths": {
+      "@bloc/*": ["src/bloc/*"],
+      "@components/*": ["src/components/*"],
+      "@system/*": ["src/app/*"]
+    }
+  },
+  "include": ["src", "app"]
 }

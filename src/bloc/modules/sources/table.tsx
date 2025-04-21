@@ -72,13 +72,13 @@ export default function({ style, dataId, sourceType, source, refreshInterval, ..
             setColumns(inferred);
         }
     }, [data]);
-    
+    console.log(props.width)
 
     return(
         <DataTable
             data-id={dataId}
             data-type='DataTable'
-            style={{ ...style, width: props.width, height: props.height-15, display: 'block' }}
+            style={{ ...style, width: props.width, height: props.height, display: 'block' }}
             value={data}
             onRowClick={(e)=> props?.onSelect?.(e.data)}
             header={

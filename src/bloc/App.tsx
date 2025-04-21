@@ -7,9 +7,8 @@ import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
-import { saveBlockToFile } from "./utils/export";
-import { fetchFolders } from "./utils/editor";
-import GridEditor from '../components/tools/grid-editor';
+import { saveBlockToFile, fetchFolders } from "./utils/export";
+//import GridEditor from '../components/tools/grid-editor';
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 
@@ -18,7 +17,7 @@ import "../style/edit.css";
 import './modules/index';
 
 
-// системный эммитер
+// ANCHOR - системный эммитер
 globalThis.EVENT = new EventEmitter();
 
 
