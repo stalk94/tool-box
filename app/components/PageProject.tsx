@@ -17,6 +17,7 @@ import { DataRenderPage } from '../types/page';
 import { EditorProvider, useEditor } from './page-editor/context';
 import LeftTools from './page-editor/LeftTools';
 import TopBar from './page-editor/TopBar';
+import WorkArea from './page-editor/WorkArea';
 import { darkTheme, lightTheme } from '../theme/index';
 
 
@@ -24,8 +25,8 @@ const BlocEditorRaw = dynamic(() => import('@bloc/App'), { ssr: false });
 const BlocEditorClient = React.memo(BlocEditorRaw);
 
 
-const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[] }) => {
-    const { list, setList, curentPageName, setPageName, curentPageData, setPageData } = useEditor();
+const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], setShowBlocEditor:(v:boolean)=> void }) => {
+    const { list, setList, curentPageName, curentPageData, setPageData } = useEditor();
 
 
     async function fetchPage(name: string): Promise<DataRenderPage> {
@@ -44,9 +45,9 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[] })
         setList(listsPages);
     }, []);
 
-
+    
     return (
-        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'row' }}>
+        <div style={{ width: '100vw', height: '100%', display: 'flex', flexDirection: 'row' }}>
             <LeftTools
                 useDump={console.log}
                 addPage={console.log}
@@ -55,6 +56,7 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[] })
                 <TopBar 
                     setShowBlocEditor={setShowBlocEditor}
                 />
+                { curentPageData && <WorkArea /> }
             </div>
         </div>       
     );

@@ -27,7 +27,7 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
     const [list, setList] = React.useState<string[]>([]);
     const [curBreacpoint, setCurBreacpoint] = React.useState<'lg' | 'md' | 'sm' | 'xs'>('lg');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'catalog' | 'blocs' >('catalog');
-    const [curentPageName, setPageName] = React.useState<string>();
+    const [curentPageName, setPageName] = React.useState<string>('home');
     const [curentPageData, setPageData] = React.useState<DataRenderPage>();
 
     return (

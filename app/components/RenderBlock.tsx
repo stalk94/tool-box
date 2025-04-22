@@ -18,7 +18,7 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
 
 
     async function fetchBlock(scope: string, name: string): Promise<DataRenderGrid> {
-        const res = await fetch(`/api/blocks/${scope}/${name}`);
+        const res = await fetch(`/api/block/${scope}/${name}`);
         if (!res.ok) throw new Error('Блок не найден');
         return await res.json();
     }
@@ -50,7 +50,7 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
             data-name={name}
             style={{
                 maxWidth: '100%',           // можно ограничить ширину но при этом сетка останется отзывчивой
-                height: height ?? '100%',
+                height: '100%',
             }}
         >
             { error ? (
