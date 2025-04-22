@@ -48,10 +48,7 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
     return (
         <div
             data-name={name}
-            style={{
-                maxWidth: '100%',           // можно ограничить ширину но при этом сетка останется отзывчивой
-                height: '100%',
-            }}
+
         >
             { error ? (
                 <div style={{ color: 'red', padding: '1rem' }}>
@@ -77,13 +74,17 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
                             style={{
                                 overflowX: 'hidden',
                                 overflowY: 'auto',
+                                border: `1px dashed #87848437`,
                             }}
                         >
                             { Array.isArray(layer.content) &&
                                 layer.content.map((component, index) => (
-                                    <React.Fragment key={`${layer.i}-${index}`}>
+                                    <div
+                                        key={`${layer.i}-${index}`}
+                                        style={{}}
+                                    >
                                         { component }
-                                    </React.Fragment>
+                                    </div>
                                 ))
                             }
                         </div>

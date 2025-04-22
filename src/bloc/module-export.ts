@@ -1,13 +1,11 @@
 import React from 'react';
 import { componentMap } from './modules/utils/registry';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
-import './modules/index';               // окружение воссоздатся
+//import './modules/index';               // окружение воссоздатся
 
-// переопределяем среду
-globalThis.EDITOR = false;
+
 // карта компонентов
 export const COMPONENT_MAP = componentMap;
-console.log('EDITOR MOD: ', EDITOR);
 
 
 /** дессериализатор компонентов */

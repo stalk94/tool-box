@@ -3,8 +3,6 @@ import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { useEditor } from './context';
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { RenderPageProps, LayoutPage, PageComponent } from '../../types/page';
 import RenderBlock from '../RenderBlock';
 
@@ -17,7 +15,7 @@ const marginDefault: [number, number] = [5, 5];
 
 export default function ({ marginCell }: RenderPageProps) {
     const { curentPageData, curentPageName } = useEditor();
-    const [currentBreakpoint, setCurrentBreakpoint] = React.useState('lg');
+    const [ currentBreakpoint, setCurrentBreakpoint ] = React.useState('lg');
     const [layouts, setLayouts] = React.useState<Record<'lg' | 'md' | 'sm', LayoutPage[]>>({
         lg: [],
         md: [],
@@ -76,14 +74,24 @@ export default function ({ marginCell }: RenderPageProps) {
         <div
             data-name={curentPageName}
             style={{
-                maxWidth: '100%',           // можно ограничить ширину но при этом сетка останется отзывчивой
+                width: '100%',
                 height: '100%',
+                overflow: 'auto',
+                display: 'flex',
+                justifyContent: 'center',
+                border: '1px solid gray'
             }}
         >
+            <div
+                style={{
+                    width: 900,
+                    height: '100%',
+                }}
+            >
             <ResponsiveGridLayout
                 className="GRID-PAGE"
                 layouts={{ [currentBreakpoint]: layoutList }}
-                breakpoints={{ lg: 1200, md: 960, sm: 600 }}
+                breakpoints={{ lg: 1200, md: 960, sm: 600, xs: 460 }}
                 cols={{ lg: 12, md: 12, sm: 12 }}
                 rowHeight={30}
                 compactType={null}                      // Отключение автоматической компоновки
@@ -92,6 +100,7 @@ export default function ({ marginCell }: RenderPageProps) {
                 isResizable={false}                     // Отключить изменение размера
                 margin={marginCell ?? marginDefault}
                 onBreakpointChange={(breakpoint) => {
+                    console.log(1)
                     setCurrentBreakpoint(breakpoint);
                 }}
             >
@@ -103,6 +112,7 @@ export default function ({ marginCell }: RenderPageProps) {
                         style={{
                             width: '100%',
                             overflow: 'hidden',
+                            border: `1px dashed #f2f2f237`,
                             ...layout?.content?.props?.style
                         }}
                     >
@@ -111,6 +121,7 @@ export default function ({ marginCell }: RenderPageProps) {
                     </div>
                 ))}
             </ResponsiveGridLayout>
+            </div>
         </div>
     );
 }

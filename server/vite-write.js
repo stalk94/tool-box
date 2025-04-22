@@ -86,6 +86,23 @@ export default function writeFilePlugin() {
                     res.end(JSON.stringify({ error: 'Ошибка при чтении папок и файлов' }));
                 }
             });
+            server.middlewares.use('/list-scopes', (req, res) => {
+                const basePath = path.join(process.cwd(), 'public', 'blocks');
+
+                try {
+                    const scopes = fs.readdirSync(basePath, { withFileTypes: true })
+                        .filter(entry => entry.isDirectory())
+                        .map(entry => entry.name);
+
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify(scopes));
+                } 
+                catch (err) {
+                    console.error('❌ Ошибка при чтении папок в public/blocks:', err);
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({ error: 'Ошибка при чтении scope' }));
+                }
+            });
         },
     };
 }

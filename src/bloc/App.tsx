@@ -194,13 +194,11 @@ export default function () {
                 addComponentToLayout={addComponentToLayout}
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-
                 <ToolBarInfo />
-
+                
                 <GridComponentEditor
                     desserealize={desserealize}
                 />
-                
             </div>
         </div>
     );

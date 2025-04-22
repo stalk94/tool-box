@@ -18,7 +18,7 @@ export default hookstate(
         linkMode: <number|undefined> undefined,                     // режим связи
         layout: <LayoutCustom[]> <unknown>[],                       // даныые текуей сетки
         //tools: undefined,                                         // ?
-        size: {width: 1000, height: 600},
+        size: { width: 1000, height: 600, breackpoint: 'lg' },
         currentCell: <LayoutCustom> undefined,
     }, 
     localstored({ key: 'CONTEXT', engine: localStorage })

@@ -60,7 +60,12 @@ export default function ({ setShowBlocEditor }) {
                 </IconButton>
             </Box>
             <Box sx={{ml: 'auto', display: 'flex'}}>
-                <IconButton onClick={()=> setShowBlocEditor(true)}>
+                <IconButton 
+                    onClick={()=> {
+                        globalThis.EDITOR = true;
+                        setShowBlocEditor(true);
+                    }}
+                >
                     <GridView />
                 </IconButton>
             </Box>

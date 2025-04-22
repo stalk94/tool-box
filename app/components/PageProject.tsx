@@ -36,6 +36,8 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
     }
     React.useEffect(()=> {
         if(curentPageName) {
+            globalThis.EDITOR = false;
+
             fetchPage(listsPages[0])
                 .then(setPageData)
                 .catch(console.error)
@@ -47,7 +49,7 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
 
     
     return (
-        <div style={{ width: '100vw', height: '100%', display: 'flex', flexDirection: 'row' }}>
+        <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'row' }}>
             <LeftTools
                 useDump={console.log}
                 addPage={console.log}
@@ -66,7 +68,7 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
 
 
 export default function ({ listsPages }: { listsPages: string[] }) {
-    const [showBlocEditor, setShowBlocEditor] = React.useState(false);
+    const [showBlocEditor, setShowBlocEditor] = React.useState(true);
 
     return(
         <ThemeProvider theme={darkTheme}>

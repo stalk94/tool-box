@@ -235,7 +235,7 @@ export default function ({ desserealize }) {
                 const result = consolidation(find.data.layout);
                 render.set(result);
             }
-            if (find.data.size) ctx.size.set(find.data.size);
+            if (find.data.size) ctx.size.set((old)=> ({ ...old, ...find.data.size }));
         }
     }, [ctx.meta.name, info.project]);
     React.useEffect(() => {

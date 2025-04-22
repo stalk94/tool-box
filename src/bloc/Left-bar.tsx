@@ -1,9 +1,9 @@
 import React from "react";
-import { Button, useTheme, Box, Popover, Typography, Divider } from "@mui/material";
+import { Button, IconButton, Box, Popover, Typography, Divider, Select, MenuItem } from "@mui/material";
 import { BorderStyle, ColorLens, FormatColorText, More } from '@mui/icons-material';
 import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
-    FolderSpecial, Edit, Add
+    RadioButtonUnchecked, RadioButtonChecked, Add
 } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
@@ -17,68 +17,71 @@ import { componentGroups } from './config/category';
 import { createBlockToFile, fetchFolders } from "./utils/export";
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
-import { TextInput } from "src/index";
+import { usePopUpName } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps } from './type';
 
-/**
- * ! Провести рефакторинг файла
- */
+
 
 const RenderListProject = ({ currentCat }) => {
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-    const [blockName, setBlockName] = React.useState('');
+    const size = useHookstate(context.size);
     const meta = useHookstate(context.meta);
     const project = useHookstate(infoState.project);
-    
-    const getAllBlockFromScope = () => {
-        const currentScope = project?.get({ noproxy: true })?.[meta.scope.get()];
-        return currentScope;
-    }
-    const handleCreateNewBlock = () => {
+    const { popover, handleOpen } = usePopUpName((name)=> {
         const scope = getAllBlockFromScope();
         const existingNames = scope.map(el => el.name);
-        const uniqueName = getUniqueBlockName(blockName.trim(), existingNames);
+        const uniqueName = getUniqueBlockName(name.trim(), existingNames);
 
         createBlockToFile(meta.scope.get(), uniqueName)
             .then(()=> {
-                 fetchFolders().then((data)=> {
+                fetchFolders().then((data)=> {
                     context.meta.name.set(uniqueName);
                     infoState.project.set(data);
                 });
-                setBlockName('');
-                setAnchorEl(null);
             })
             .catch(console.error)
+    });
+    
+
+    const getKeyNameBreakpoint = (width?: number) => {
+        const breakpoints = { lg: 1200, md: 960, sm: 600, xs: 460 };
+        width = width ?? size.width.get();
+
+        // Преобразуем в отсортированный массив: от меньшего к большему
+        const sorted = Object.entries(breakpoints).sort((a, b) => a[1] - b[1]);
+
+        // Находим первый breakpoint, значение которого >= width
+        for (const [key, value] of sorted) {
+            if (width < value) return key;
+        }
+
+        // Если ничего не нашли — возвращаем самый крупный
+        return sorted[sorted.length - 1][0];
     }
-    const renderPopUp =()=> (
-        <Popover
-            open={Boolean(anchorEl)}
-            anchorEl={anchorEl}
-            onClose={() => setAnchorEl(null)}
-            anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-            }}
-        >
-            <Box sx={{ p: 1, display: 'flex', gap: 1 }}>
-                <TextInput
-                    size="small"
-                    placeholder="Имя блока"
-                    value={blockName}
-                    onChange={setBlockName}
-                />
-                <Button
-                    variant="contained"
-                    size="small"
-                    disabled={!blockName.trim()}
-                    onClick={handleCreateNewBlock}
-                >
-                    OK
-                </Button>
-            </Box>
-        </Popover>
-    );
+    const getAllBlockFromScope = () => {
+        const currentScope = project?.get({ noproxy: true })?.[meta.scope.get()];
+        return currentScope ?? [];
+    }
+    const getKeyNameSize = (name: string) => {
+        let key = '';
+        const find = getAllBlockFromScope().find((el)=> el.name === name);
+        if(find?.data?.size?.width) key = getKeyNameBreakpoint(find.data.size.width);
+
+        return key;
+    }
+    const getColor = (name: string) => {
+        let key = '';
+        const find = getAllBlockFromScope().find((el)=> el.name === name);
+        if(find?.data?.size?.width) key = getKeyNameBreakpoint(find.data.size.width);
+
+        return {
+            lg: '#b5553f',   // индиго — для десктопа, стабильный и строгий
+            md: '#d2a25a',   // teal — для планшета, свежий и универсальный
+            sm: '#83c9d4',   // тёплый оранжевый — для малых экранов, но без агрессии
+            xs: '#6e6e6e'
+        }[key] ?? '#495057';
+    }
+    
 
     return (
         <>
@@ -89,7 +92,7 @@ const RenderListProject = ({ currentCat }) => {
                         sx={{mx:2, mb:2, mt:1}} 
                         variant="outlined" 
                         color="success"
-                        onClick={(e) => setAnchorEl(e.currentTarget)}
+                        onClick={handleOpen}
                     >
                         <Add /> add block
                     </Button>
@@ -105,7 +108,11 @@ const RenderListProject = ({ currentCat }) => {
                             key={index}
                         >
                             <Typography variant='subtitle1' style={{fontSize:'14px'}}>
-                                { blockData.name }
+                                <span style={{color: getColor(blockData.name), marginRight:'5px'}}>
+                                    {`[${ getKeyNameSize(blockData.name) }]`}
+                                </span>
+                               
+                                <span style={{marginLeft:'5px'}}>{ blockData.name }</span>
                             </Typography>
                             <button
                                 style={{
@@ -114,45 +121,78 @@ const RenderListProject = ({ currentCat }) => {
                                     background: 'transparent',
                                     marginLeft: 'auto',
                                     borderRadius: '4px',
-                                    border: meta.name.get() === blockData.name ? `1px solid #C9C9C9` : 'none',
+                                    border: 'none',
                                 }}
                                 onClick={() => context.meta.name.set(blockData.name)}
                             >
-                                <Edit />
+                                { meta.name.get() === blockData.name
+                                    ? <RadioButtonChecked sx={{ fontSize: '16px'}} />
+                                    : <RadioButtonUnchecked sx={{ fontSize: '16px'}} />
+                                }
                             </button>
                         </Box>
                     )}
-                    { renderPopUp() }
+                    { popover }
                 </Box>
             }
         </>
     );
 }
+const RenderProjectTopPanel = () => {
+    const project = useHookstate(infoState.project);
+    const { popover, handleOpen } = usePopUpName((name)=> {
+        const existingNames = Object.keys(project.get({ noproxy: true })) ?? [];
+        const uniqueName = getUniqueBlockName(name.trim(), existingNames);
+
+        if(uniqueName.length > 3) createBlockToFile(uniqueName, 'root')
+            .then(()=> {
+                 fetchFolders().then((data)=> {
+                    context.meta.scope.set(uniqueName);
+                    context.meta.name.set('root');
+                    infoState.project.set(data);
+                });
+            })
+            .catch(console.error)
+    });
 
 
-const useProject = (currentCat, setCurrentCat) => {
-    const categories = [
-        { id: 'all', icon: FolderSpecial }
-    ];
+    const handleChangeScope = (newScope: string) => {
+        const currentProject = project?.get({ noproxy: true })?.[newScope];
+        const existingNamesBlocks = currentProject.map(el => el.name);
 
-    return {
-        start: (
-            <TooglerInput
-                value={currentCat}
-                onChange={setCurrentCat}
-                sx={{ px: 0.2 }}
-                items={categories.map((cat) => {
-                    const Icon = cat.icon ?? Settings;
-                    return {
-                        id: cat.id,
-                        label: <Icon sx={{ fontSize: 18 }} />
-                    };
-                })}
-            />
-        ),
-        children: (<RenderListProject currentCat={currentCat}/>)
-    };
+        context.meta.scope.set(newScope);
+        if(existingNamesBlocks[0]) context.meta.name.set(existingNamesBlocks[0]);
+    }
+
+
+    return(
+        <Box sx={{ display: 'flex' }}>
+            <Select
+                size="small"
+                defaultValue={context.meta.scope.get()}
+                onChange={(e) => handleChangeScope(e.target.value)}
+                displayEmpty
+                sx={{ fontSize: 14, height: 36, color: '#ccc', background: '#2a2a2a84', ml: 1, mt: 0.3 }}
+            >
+                {Object.keys(project.get({ noproxy: true }))?.map((scope) => (
+                    <MenuItem key={scope} value={scope} >
+                        { scope }
+                    </MenuItem>
+                ))}
+            </Select>
+            <IconButton
+                color="inherit"
+                sx={{}}
+                onClick={handleOpen}
+            >
+                <Add />
+            </IconButton>
+            { popover }
+        </Box>
+    );
 }
+
+
 const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
     const categories = Object.entries(componentGroups);
     const itemsInCurrentCategory = Object.entries(componentMap).filter(([type]) => {
@@ -204,6 +244,7 @@ const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
     };
 }
 const useComponent = (elem, onChange, curSub, setSub) => {
+    
     return {
         start: (
             <TooglerInput
@@ -228,7 +269,7 @@ const useComponent = (elem, onChange, curSub, setSub) => {
         )
     };
 }
-const useFunctions = (elem, onChange, curSub) => {
+const useFunctions = () => {
     return {
         start: (null),
         children: (
@@ -244,9 +285,8 @@ const useFunctions = (elem, onChange, curSub) => {
 export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) {
     const select = useHookstate(infoState.select);
     const [currentContentData, setCurrent] = React.useState<ContentData>();
-    const [project, setProject] = React.useState<'cur' | 'all'>('all');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'component' | 'func'>('project');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'component' | 'func'>('component');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
 
     const menuItems = [
@@ -267,8 +307,8 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
     React.useEffect(() => {
         const handler = (data) => {
             if (data.curentComponent) setCurrent(data.curentComponent);
-            if (data.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);
-            if (data.curSubpanel) setSubPanel(data.curSubpanel);
+            if (data?.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);
+            if (data?.curSubpanel) setSubPanel(data.curSubpanel);
         }
 
         EVENT.on('leftBarChange', handler);
@@ -288,20 +328,22 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
         const component = select.content.get({ noproxy: true });
         if (component) updateComponentProps({ component, data: newDataProps });
     }
-    const changeFunc = () => {
 
-    }
 
     const panelRenderers = {
-        project: () => useProject(project, setProject),
+        project: () => ({
+            start: ( <RenderProjectTopPanel /> ),
+            children: ( <RenderListProject currentCat={'all'}/> ) 
+        }),
         items: () => useElements(currentTool, setCurrentTool, addComponentToLayout),
         component: () => useComponent(select.content, changeEditor, curSubpanel, setSubPanel),
-        func: () => useFunctions(select.content, changeFunc, curSubpanel),
+        func: () => useFunctions(),
     }
     const { start, children } = panelRenderers[currentToolPanel]
         ? panelRenderers[currentToolPanel]()
         : { start: null, children: null };
 
+    
 
     return (
         <LeftSideBarAndTool
@@ -319,7 +361,7 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
             }
         >
             <Box sx={{ mt: 1, mx: 1 }}>
-                {children}
+                { children }
             </Box>
         </LeftSideBarAndTool>
     );

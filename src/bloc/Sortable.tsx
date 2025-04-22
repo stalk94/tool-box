@@ -138,6 +138,7 @@ export function SortableItem({ id, children, ...props }: { id: number, children:
             onClick={handleClick} 
             onDoubleClick={()=> {
                 const comp = getComponentById(id);
+
                 EVENT.emit('leftBarChange', {
                     currentToolPanel: 'component',
                     curSubpanel: 'props',

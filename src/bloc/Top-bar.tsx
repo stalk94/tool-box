@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
+import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { Component, LayoutCustom } from './type';
 import { Settings, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
@@ -32,13 +32,16 @@ const categories = [
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = () => {
     const ctx = useHookstate(context);
-    const [open, setOpen] = React.useState<undefined>();
-    const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
-    const container = useHookstate(infoState.container);
+    
 
-
+    const handleChangeBreackpoint = (bp: 'lg'|'md'|'sm'|'xs') => {
+        const breakpoints = { lg: 1200, md: 960, sm: 600, xs: 460 };
+        const width = breakpoints[bp] ?? 1200;
+        ctx.size.breackpoint.set(bp);
+        ctx.size.width.set(width);
+    }
     React.useEffect(()=> {
         const value = select.cell.get({noproxy:true});
 
@@ -47,17 +50,6 @@ export const ToolBarInfo = () => {
             setBound(bound);
         }
     }, [select.cell]);
-    React.useEffect(()=> {
-        const content = select.content.get({ noproxy: true });
-
-        if(content) {
-            if(content.props['data-id']) setCurrent({
-                id: content.props['data-id'],
-                type: content.props['data-type']
-            });
-            else console.warn('🚨 У контента отсутствует data-id');
-        }
-    }, [select.content]);
 
 
     return (
@@ -76,16 +68,16 @@ export const ToolBarInfo = () => {
             }}
         >
             <Box>
-                {categories.map((elem, i)=> 
+                { categories.map((elem, i)=> 
                     <button key={i}
                         style={{
                             cursor: 'pointer',
-                            color: ctx.mod.get() === elem.id ? '#c85b9c9e' : '#c9c5c5c7',
+                            color: ctx.mod.get() === elem.id ? 'rgba(255, 255, 255, 0.8)' : 'gray',
                             background: 'transparent',
                             padding: '5px',
                             marginRight: '8px',
                             borderRadius: '4px',
-                            border: `1px solid ${ctx.mod.get() === elem.id ? '#c85b9c9e' : '#c9c5c55f'}`, 
+                            border: `1px ${ctx.mod.get() === elem.id ? 'solid rgba(255, 255, 255, 0.8)' : 'dotted #c9c5c55f'}`, 
                         }}
                         onClick={()=> ctx.mod.set(elem.id)}
                     >
@@ -96,14 +88,27 @@ export const ToolBarInfo = () => {
             <Box sx={{ml: 3}}>
                 <IconButton
                     disabled={!(ctx.mod.get()==='grid')}
-                    sx={{}}
                     onClick={()=> EVENT.emit('addCell', {})}
                 >
-                    <Add />
+                    <Add style={{color: !(ctx.mod.get()==='grid') && '#595959a1'}} />
                 </IconButton>
             </Box>
             <Box sx={{ml: 'auto', display: 'flex'}}>
                 <Box display="flex" alignItems="center">
+                    <Select style={{marginLeft:'auto', marginRight:'5px'}}
+                        size="small"
+                        defaultValue={ctx.size.breackpoint.get()}
+                        onChange={(e) => handleChangeBreackpoint(e.target.value)}
+                        displayEmpty
+                        sx={{ fontSize: 14, height: 36, color: '#ccc', background: 'rgba(255, 255, 255, 0.05)'}}
+                    >
+                        { ['lg', 'md', 'sm', 'xs'].map((br) => (
+                            <MenuItem key={br} value={br} >
+                                { br }
+                            </MenuItem>
+                        ))}
+                    </Select>
+                    <span style={{marginRight:'10px', marginLeft:'7px',color:'gray'}}>⋮</span>
                     <NumberInput
                         value={ctx.size.width.get()}
                         min={0}
@@ -112,9 +117,13 @@ export const ToolBarInfo = () => {
                         onChange={(v) => ctx.size.width.set(v)}
                         sx={{ 
                             maxWidth: '80px',
+                            minHeight: '36px',
+                            height: '36px'
                         }}
                     />
-                    <Typography variant="subtitle1" sx={{ mx:1.5 }}>×</Typography>
+                    <Typography variant="subtitle1" sx={{ mx:1.5,color:'gray' }}>
+                        ×
+                    </Typography>
                     <NumberInput
                         value={ctx.size.height.get()}
                         onChange={(v) => ctx.size.height.set(v)}
@@ -125,16 +134,16 @@ export const ToolBarInfo = () => {
                             width: '18%',
                             mr: 3, 
                             width: '70px',
+                            minHeight: '36px',
+                            height: '36px'
                         }}
                     />
                 </Box>
-                { bound && 
-                    <Tooltip title="ℹ размеры выбранной ячейки">
-                        <Typography variant='caption' sx={{textDecoration:'underline'}}>
-                            ⌗ { bound.width } x { bound.height }
-                        </Typography>
-                    </Tooltip>
-                }
+                <Tooltip title="ℹ размеры выбранной ячейки">
+                    <Typography variant='caption' sx={{ textDecoration: 'underline' }}>
+                        ⌗ {bound?.width??0} x {bound?.height??0}
+                    </Typography>
+                </Tooltip>
             </Box>
         </Paper>
     );
