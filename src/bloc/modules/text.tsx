@@ -366,6 +366,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
     const debouncedUpdate = useDebounced((val: Descendant[]) => {
         const text = extractPlainText(val);
         const props = componentRef.current;
+        console.log('SAVE', props)
         
         if (props) {
             updateComponentProps({
@@ -376,7 +377,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
                 },
             });
         }
-    }, 400, [props]);
+    }, 600, [props]);
     const renderLeaf = useCallback(({ attributes, children, leaf }) => {
         const style: React.CSSProperties = {};
         if (leaf.color) style.color = leaf.color;
@@ -412,10 +413,11 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
                 return <p {...attributes}>{children}</p>;
         }
     }, []);
+    //React.useEffect(() => {componentRef.current = props; }, [props]);
     React.useEffect(() => {
-        componentRef.current = props;
-    }, [props]);
-
+        setValue(props.childrenSlate);
+    }, [dataId]);
+    
 
     return(
         <div 
@@ -426,9 +428,11 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             { globalThis.EDITOR ? (
                 <Slate 
                     editor={editor} 
+                    value={value}
                     initialValue={value} 
                     onChange={(val) => {
                         setValue(val);
+                        console.log('ONCHANGE', val)
                         debouncedUpdate(val);
                     }}
                 >
