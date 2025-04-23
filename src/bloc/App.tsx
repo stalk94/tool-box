@@ -1,5 +1,6 @@
 'use client'
 import React from "react";
+import * as htmlToImage from 'html-to-image';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState, renderState } from './context';
@@ -9,7 +10,6 @@ import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile, fetchFolders } from "./utils/export";
-//import GridEditor from '../components/tools/grid-editor';
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 
@@ -18,13 +18,12 @@ import "../style/edit.css";
 import './modules/index';
 
 
-
 // ANCHOR - системный эммитер
 globalThis.EVENT = new EventEmitter();
 
 
 // это редактор блоков сетки
-export default function () {
+export default function ({ setShowBlocEditor }) {
     const ctx = useHookstate(context);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(renderState);
@@ -33,9 +32,43 @@ export default function () {
     const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
     
    
+    const snapshotAndUpload = async (name: string) => {
+        const node = document.querySelector('.GRID-EDITOR') as HTMLElement | null;
+
+        if (!node) {
+            console.warn('❗ Элемент .GRID-EDITOR не найден');
+            return;
+        }
+
+        try {
+            const dataUrl = await htmlToImage.toPng(node, {
+                cacheBust: true,
+                backgroundColor: '#222222',
+            });
+
+            // Преобразуем base64 в Blob
+            const res = await fetch(dataUrl);
+            const blob = await res.blob();
+
+            const formData = new FormData();
+            formData.append('image', blob, `${name}.png`);
+
+            const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await uploadRes.json();
+            console.log('✅ Успешно загружено:', result);
+        } 
+        catch (err) {
+            console.error('❌ Ошибка при создании или загрузке изображения:', err);
+        }
+    }
     const dumpRender = () => {
         const name = ctx.meta.name.get();
         const scope = ctx.meta.scope.get();
+        snapshotAndUpload(`${scope}-${name}`);
         saveBlockToFile(scope, name);
     }
     const desserealize = (component: ComponentSerrialize) => {
@@ -190,11 +223,10 @@ export default function () {
         <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
             <Tools
                 useDump={dumpRender}
-                //externalPanelTrigger={(cb) => { window.triggerLeftPanel = cb;}}
                 addComponentToLayout={addComponentToLayout}
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-                <ToolBarInfo />
+                <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                 
                 <GridComponentEditor
                     desserealize={desserealize}

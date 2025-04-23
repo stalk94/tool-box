@@ -1,6 +1,7 @@
 'use client';
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { DataRenderPage } from '../../types/page';
+import { DataRenderGrid } from '../../types/editor';
 
 
 interface EditorContextType {
@@ -18,6 +19,15 @@ interface EditorContextType {
 
     currentToolPanel: 'catalog' | 'blocs'
     setCurrentToolPanel: (v: 'catalog' | 'blocs') => void
+
+    curentScope: string
+    setCurentScope: (scope: string)=> void
+    
+    curentScopeBlockData: {name: string, data: DataRenderGrid}[]
+    setScopeBlockData: (arrayDataScope: {name: string, data: DataRenderGrid}[])=> void
+
+    selectBlockData: DataRenderGrid
+    setSelectBlockData: (data: DataRenderGrid)=> void
 }
 const EditorContext = createContext<EditorContextType | undefined>(undefined);
 
@@ -29,6 +39,10 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'catalog' | 'blocs' >('catalog');
     const [curentPageName, setPageName] = React.useState<string>('home');
     const [curentPageData, setPageData] = React.useState<DataRenderPage>();
+    const [curentScope, setCurentScope] = React.useState<string>();
+    const [curentScopeBlockData, setScopeBlockData] = React.useState();
+    const [selectBlockData, setSelectBlockData] = React.useState<DataRenderGrid>();
+
 
     return (
         <EditorContext.Provider 
@@ -42,7 +56,13 @@ export const EditorProvider = ({ children }: { children: ReactNode }) => {
                 curBreacpoint, 
                 setCurBreacpoint,
                 currentToolPanel, 
-                setCurrentToolPanel
+                setCurrentToolPanel,
+                curentScope, 
+                setCurentScope,
+                curentScopeBlockData, 
+                setScopeBlockData,
+                selectBlockData, 
+                setSelectBlockData
             }}
         >
             { children }

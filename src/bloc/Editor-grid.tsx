@@ -4,7 +4,7 @@ import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import context, { cellsContent, infoState, renderState } from './context';
 import { hookstate, useHookstate } from "@hookstate/core";
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from './utils/editor';
@@ -15,6 +15,7 @@ const margin: [number, number] = [5, 5];
 
 
 export default function ({ desserealize }) {
+    const cacheDrag = React.useRef<HTMLDivElement>(null);
     const ctx = useHookstate(context);
     const render = useHookstate(renderState);
     const containerRef = React.useRef(null);
@@ -26,7 +27,6 @@ export default function ({ desserealize }) {
     );
 
 
-    // ANCHOR - изменение cellsCache (меняет позиции в массиве)
     const handleDragEnd = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
 
@@ -54,26 +54,25 @@ export default function ({ desserealize }) {
 
             return updated;
         });
-    }
-    const handleDragStart = (event, layer) => {
-        const { active } = event;
-        const render = renderState.get({ noproxy: true });
+        
+        if(cacheDrag.current) {
+            cacheDrag.current.classList.add('editor-selected');
+            const find = render.get({noproxy: true}).find(el => el.i === cellId);
 
-        const layerContent = render.find(r => r.i === layer.i)?.content ?? [];
-        const currentComponent = layerContent.find(
-            (c) => c.props['data-id'] === active.id
-        );
-
-        if (currentComponent) {
-            //setSelectComponent(currentComponent);             //! для DragOverlay
-            info.select.content.set(currentComponent);        // ✅ ReactNode
-
-            document.querySelectorAll('[data-id]').forEach(el => {
-                el.classList.remove('editor-selected');
-            });
-            const el = document.querySelector(`[data-id="${active.id}"]`);
-            if (el) el.classList.add('editor-selected');
+            if(find && Array.isArray(find.content)) {
+                const findChild = find.content.find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
+                if(findChild) requestIdleCallback(()=> info.select.content.set(findChild));
+            }
         }
+    }
+    const handleDragStart = (event: DragStartEvent, layer) => {
+        const elActivator = event.activatorEvent.target as HTMLElement;
+        const container = elActivator.closest('[ref-id]') as HTMLElement | null;
+        cacheDrag.current = container;
+
+        document.querySelectorAll('[ref-id]').forEach(el => {
+            el.classList.remove('editor-selected');
+        });
     }
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         //console.log(cellId, componentIndex);
@@ -222,6 +221,7 @@ export default function ({ desserealize }) {
         };
     }, [render]);
     React.useEffect(() => {
+        console.log('consolidation');
         const meta = ctx.meta.get();
         const currentScope = info.project?.get({ noproxy: true })?.[meta.scope];
         const find = currentScope?.find((obj) => obj.name === meta.name);
@@ -283,6 +283,7 @@ export default function ({ desserealize }) {
                             onClick={(e) => {
                                 curCell.set(layer);
                                 info.select.cell.set(e.currentTarget);
+                                EVENT.emit('onSelectCell', layer.i);
                             }}
                             data-id={layer.i} 
                             key={layer.i}
@@ -300,11 +301,12 @@ export default function ({ desserealize }) {
                                     onDragEnd={(event) => handleDragEnd(event, layer.i)}
                                     onDragStart={(event) => handleDragStart(event, layer)}
                                 >
+                                    <SortableContext
+                                        items={layer.content.map((cnt) => cnt.props['data-id'])}
+                                        strategy={rectSortingStrategy}
+                                    >
                                     { Array.isArray(layer.content) &&
-                                        <SortableContext
-                                            items={layer.content.map((cnt) => cnt.props['data-id'])}
-                                            strategy={rectSortingStrategy}
-                                        >
+                                        <>
                                             { Array.isArray(layer.content) && layer.content.map((component) => (
                                                 <SortableItem 
                                                     key={component.props['data-id']} 
@@ -313,8 +315,9 @@ export default function ({ desserealize }) {
                                                     { component }
                                                 </SortableItem>
                                             ))}
-                                        </SortableContext>
+                                        </>
                                     }
+                                    </SortableContext>
                                 </DndContext>
                             }
                             {/* ANCHOR - Вне редактора */}

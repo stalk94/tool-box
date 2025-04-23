@@ -1,7 +1,7 @@
 import React from 'react';
 import { componentMap } from './modules/utils/registry';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
-//import './modules/index';               // окружение воссоздатся
+import './modules/index';               // окружение воссоздатся
 
 
 // карта компонентов
@@ -14,10 +14,12 @@ export const desserealize = (component: ComponentSerrialize) => {
     const type = props["data-type"];
 
     const Component = componentMap[type];
-    Component.displayName = type;
-    Component.parent = parent;              // id контейнера в котором находится
-    Component.functions = functions;        //! эксперементально
 
+    if(Component) {
+        Component.displayName = type;
+        Component.parent = parent;              // id контейнера в котором находится
+        Component.functions = functions;        //! эксперементально
+    }
 
     if (!Component) {
         console.warn(`Компонент типа "${type}" не найден в реестре`);

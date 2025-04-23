@@ -530,6 +530,7 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
     return(
         <Typography 
             ref={ref} 
+            data-id={dataId}
             data-type="Typography" 
             contentEditable={globalThis.EDITOR && selected.get({noproxy:true})?.props?.['data-id'] === dataId}
             suppressContentEditableWarning

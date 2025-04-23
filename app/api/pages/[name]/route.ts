@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { NextResponse } from 'next/server';
+import { NextResponse, NextRequest } from 'next/server';
 
 interface Params {
 	params: {
@@ -27,5 +27,27 @@ export async function GET(_: Request, { params }: Params) {
 	catch (err) {
 		console.error(`❌ Ошибка при чтении блока "${name}" из scope "${scope}":`, err);
 		return NextResponse.json({ error: 'Ошибка при чтении файла' }, { status: 500 });
+	}
+}
+
+export async function POST(req: NextRequest, { params }: Params) {
+	const { name } = params;
+	const filePath = path.join(process.cwd(), 'public', 'pages', `${name}.json`);
+
+	try {
+		const body = await req.json(); // Получаем JSON из запроса
+
+		// Создаём директорию при необходимости
+		const dir = path.dirname(filePath);
+		await fs.promises.mkdir(dir, { recursive: true });
+
+		// Запись файла
+		await fs.promises.writeFile(filePath, JSON.stringify(body, null, 2), 'utf8');
+
+		return NextResponse.json({ status: 'ok', savedAs: `${name}.json` });
+	} 
+	catch (err) {
+		console.error(`❌ Ошибка при записи файла "${name}.json":`, err);
+		return NextResponse.json({ error: 'Ошибка при записи файла' }, { status: 500 });
 	}
 }

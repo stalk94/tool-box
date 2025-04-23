@@ -5,21 +5,22 @@ import "react-grid-layout/css/styles.css";
 import { useEditor } from './context';
 import { RenderPageProps, LayoutPage, PageComponent } from '../../types/page';
 import RenderBlock from '../RenderBlock';
+import { DataRenderGrid } from '../../types/editor';
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const marginDefault: [number, number] = [5, 5];
+const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
 
 
-
-
-export default function ({ marginCell }: RenderPageProps) {
-    const { curentPageData, curentPageName } = useEditor();
-    const [ currentBreakpoint, setCurrentBreakpoint ] = React.useState('lg');
-    const [layouts, setLayouts] = React.useState<Record<'lg' | 'md' | 'sm', LayoutPage[]>>({
+// решить проблему с высотой блоков (ее можно получить из схемы)
+export default function WorkArea({ marginCell }: RenderPageProps) {
+    const { curentPageData, curentPageName, curBreacpoint, setCurBreacpoint, selectBlockData, setSelectBlockData } = useEditor();
+    const [layouts, setLayouts] = React.useState<Record<'lg' | 'md' | 'sm' | 'xs', LayoutPage[]>>({
         lg: [],
         md: [],
-        sm: []
+        sm: [],
+        xs: []
     });
     
 
@@ -56,18 +57,69 @@ export default function ({ marginCell }: RenderPageProps) {
             />
         );
     }
+    // ! работаем тут
+    const addBlockToPage = (data: DataRenderGrid) => {
+        const variantLayout: { 
+            layout: LayoutPage[],
+            size: { width: number, height: number } 
+        } = curentPageData.variants[curBreacpoint];
+
+        if (!variantLayout) variantLayout[curBreacpoint] = {
+            layout: undefined satisfies LayoutPage,
+            size: { width: BREAKPOINT_WIDTH[curBreacpoint], height: '100%' }
+        }
+        
+        const layout = curentPageData.variants[curBreacpoint].layout ?? [];
+        const newId = `block-${Date.now()}`;
+        
+        // LINK - добавление нового блока
+        const newBlock: LayoutPage = {
+            i: newId,
+            x: 0,
+            y: layout.length * 2, // разместим ниже всех
+            w: 12,
+            h: Math.max(...data.layout.map(item => item.h)),
+            moved: false,
+            static: false,
+            content: {
+                props: {
+                    'data-block-scope': data.meta.scope,
+                    'data-block-name': data.meta.name,
+                    style: {
+                        
+                    }
+                }
+            }
+        };
+
+        layout.push(newBlock);
+        setLayouts((prev) => ({
+            ...prev,
+            [curBreacpoint]: [...layout]
+        }));
+        setSelectBlockData(null);
+
+        //? костыль для next
+        const memory = curBreacpoint;
+        setCurBreacpoint('m');
+        setTimeout(()=> setCurBreacpoint(memory), 600);
+    }
     React.useEffect(() => {
         if (curentPageData) {
-            const layoutsFromData: Record<'lg' | 'md' | 'sm', LayoutPage[]> = {};
+            const layoutsFromData: Record<('lg' | 'md' | 'sm' | 'xs'), LayoutPage[]> = {};
 
             Object.entries(curentPageData.variants).forEach(([key, value]) => {
-                if (value?.layout) layoutsFromData[key as 'lg' | 'md' | 'sm'] = value.layout;
+                if (value?.layout) layoutsFromData[key as 'lg' | 'md' | 'sm' | 'xs'] = value.layout;
             });
+            
 
             setLayouts(layoutsFromData);
         }
     }, [curentPageData]);
-    const layoutList = getClosestLayout(currentBreakpoint);
+    React.useEffect(()=> {
+        if(selectBlockData) addBlockToPage(selectBlockData);
+    }, [selectBlockData]);
+    const layoutList = getClosestLayout(curBreacpoint);
     
 
     return (
@@ -84,43 +136,40 @@ export default function ({ marginCell }: RenderPageProps) {
         >
             <div
                 style={{
-                    width: 900,
+                    width: BREAKPOINT_WIDTH[curBreacpoint] ?? '100%',                    //? меняем ширину и меняется layout
                     height: '100%',
                 }}
             >
-            <ResponsiveGridLayout
-                className="GRID-PAGE"
-                layouts={{ [currentBreakpoint]: layoutList }}
-                breakpoints={{ lg: 1200, md: 960, sm: 600, xs: 460 }}
-                cols={{ lg: 12, md: 12, sm: 12 }}
-                rowHeight={30}
-                compactType={null}                      // Отключение автоматической компоновки
-                preventCollision={true}
-                isDraggable={true}                     // Отключить перетаскивание
-                isResizable={false}                     // Отключить изменение размера
-                margin={marginCell ?? marginDefault}
-                onBreakpointChange={(breakpoint) => {
-                    console.log(1)
-                    setCurrentBreakpoint(breakpoint);
-                }}
-            >
-                { layoutList?.map((layout: LayoutPage) => (
-                    <div
-                        key={layout.i}
-                        data-id={layout.i}
-                        data-variant={currentBreakpoint}
-                        style={{
-                            width: '100%',
-                            overflow: 'hidden',
-                            border: `1px dashed #f2f2f237`,
-                            ...layout?.content?.props?.style
-                        }}
-                    >
+                <ResponsiveGridLayout
+                    className="GRID-PAGE"
+                    layouts={{ [curBreacpoint]: layoutList }}
+                    breakpoints={BREAKPOINT_WIDTH}
+                    cols={{ lg: 12, md: 12, sm: 12, xs: 12 }}
+                    rowHeight={30}
+                    compactType={null}                      // Отключение автоматической компоновки
+                    preventCollision={true}
+                    isDraggable={true}                     // Отключить перетаскивание
+                    isResizable={false}                     // Отключить изменение размера
+                    margin={marginCell ?? marginDefault}
+                >
+                    { layoutList?.map((layout: LayoutPage) => (
+                        <div
+                            key={layout.i}
+                            data-id={layout.i}
+                            data-variant={curBreacpoint}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                overflow: 'hidden',
+                                border: `1px dashed #f2f2f237`,
+                                ...layout?.content?.props?.style
+                            }}
+                        >
 
-                       { createComponent(layout?.content) }
-                    </div>
-                ))}
-            </ResponsiveGridLayout>
+                        { createComponent(layout?.content) }
+                        </div>
+                    ))}
+                </ResponsiveGridLayout>
             </div>
         </div>
     );

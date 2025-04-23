@@ -1,10 +1,12 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import context, { infoState, renderState } from './context'; 
+import context, { infoState, renderState, cellsContent } from './context'; 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
-import { getComponentById } from './utils/editor';
+import useContextMenu from '@components/context-main';
+import { Delete, Edit } from '@mui/icons-material';
+
 
 //! особые условия стилей для компонентов (!это костыли, вся логика в обертки идет)
 class Styler {
@@ -44,7 +46,8 @@ class Styler {
 }
 
 
-export function SortableItem({ id, children, ...props }: { id: number, children: Component }) {
+export function SortableItem({ id, children }: { id: number, children: Component }) {
+    const selectContent = useHookstate(infoState.select.content);
     const itemRef = React.useRef<HTMLDivElement>(null);
     const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
     const dragEnabled = useHookstate(context.dragEnabled);
@@ -58,8 +61,10 @@ export function SortableItem({ id, children, ...props }: { id: number, children:
         position: 'relative',
         transform: CSS.Transform.toString(transform),
         transition,
+        marginTop: 3,
         opacity: isDragging ? 0.5 : 1,
         width: children.props.fullWidth ? (children.props.width ?? '100%') : 'fit-content',
+        height: 'fit-content',
         display: 'inline-flex',
         verticalAlign: 'top',
         cursor: dragEnabled.get() ? 'grab' : 'default',
@@ -69,6 +74,46 @@ export function SortableItem({ id, children, ...props }: { id: number, children:
         borderRight: '1px dotted #8580806b',
         transformOrigin: 'center',
         scale: isDragging ? '0.95' : '1',
+    }
+    const iseDeleteComponent =(ids: number)=> {
+        const removeComponentFromCell = (cellId: string, componentIndex: number) => {
+            renderState.set((prev) => {
+                const updatedRender = [...prev];
+                const cellIndex = updatedRender.findIndex(item => item.i === cellId);
+
+                if (cellIndex !== -1) {
+                    if (Array.isArray(updatedRender[cellIndex]?.content)) {
+                        // Удаляем компонент из ячейки
+                        updatedRender[cellIndex]?.content?.splice(componentIndex, 1);
+                        // обновим наш dump
+                        cellsContent.set((old) => {
+                            old[cellId].splice(componentIndex, 1);
+
+                            return old;
+                        });
+                    }
+                }
+
+                return updatedRender;
+            });
+        }
+
+        const render = renderState.get({ noproxy: true });
+
+        if (!id) return;
+
+        const cellId = render.find((layer) =>
+            layer.content?.some?.((c) => c.props?.['data-id'] === ids)
+        )?.i;
+
+        if (!cellId) return;
+
+        const index = render.find((layer) => layer.i === cellId)
+            ?.content?.findIndex((c) => c.props?.['data-id'] === ids);
+        if (index === -1 || index === undefined) return;
+
+        removeComponentFromCell(cellId, index);
+        selectContent.set(null);
     }
     //ANCHOR - отслеживает ключевые свойства(маркеры) на компоненте и устанавливает на обертку спец стили
     const useSetStyleFromPropsComponent = () => {
@@ -80,23 +125,15 @@ export function SortableItem({ id, children, ...props }: { id: number, children:
         
         return styleWrapper;
     } 
-    const handleClick = () => {
-        // Ищем компонент в render по id
-        const all = renderState.get({ noproxy: true });
-        const found = all
-            .flatMap(layer => layer.content ?? [])
-            .find(comp => comp?.props?.['data-id'] === id);
-
-        if (found) {
-            infoState.select.content.set(found);
-
-            // Визуально подсветим
-            document.querySelectorAll('[data-id]').forEach(el => {
-                el.classList.remove('editor-selected');
-            });
-            const el = document.querySelector(`[data-id="${id}"]`);
-            if (el) el.classList.add('editor-selected');
-        }
+    const handleClick = (target: HTMLDivElement) => {
+        requestIdleCallback(()=> {
+            target.classList.add('editor-selected');
+            selectContent.set(children)
+        });
+        
+        document.querySelectorAll('[ref-id]').forEach(el => {
+            if(el != target) el.classList.remove('editor-selected');
+        });
     }
     React.useEffect(() => {
         if (!itemRef.current) return;
@@ -124,30 +161,50 @@ export function SortableItem({ id, children, ...props }: { id: number, children:
 
         return () => resizeObserver.disconnect();
     }, []);
-    
+    React.useEffect(() => {
+        const handler = (cellId)=> {
+            document.querySelectorAll('[ref-id]').forEach(el => {
+                if(el.getAttribute('ref-parent') !== String(cellId)) {
+                    el.classList.remove('editor-selected');
+                }
+            });
+        }
+
+        EVENT.on('onSelectCell', handler);
+        return ()=> EVENT.off('onSelectCell', handler);
+    }, []);
+
+
+    const { menu, handleOpen } = useContextMenu([
+        { 
+            label: <div style={{color:'red',fontSize:14}}>Удалить</div>, 
+            icon: <Delete sx={{color:'red',fontSize:18}} />, 
+            onClick: (id)=> iseDeleteComponent(id), 
+        }
+    ]);
+
 
     return (
-        <div
-            ref={(node) => {
-                setNodeRef(node);
-                itemRef.current = node;
-            }}
-            style={useSetStyleFromPropsComponent()}
-            {...attributes}
-            {...(dragEnabled.get() ? listeners : {})}
-            onClick={handleClick} 
-            onDoubleClick={()=> {
-                const comp = getComponentById(id);
-
-                EVENT.emit('leftBarChange', {
-                    currentToolPanel: 'component',
-                    curSubpanel: 'props',
-                    curentComponent: comp
-                });
-            }}
-            { ...props }
-        >
-            { children }
-        </div>
+        <React.Fragment>
+            <div
+                ref-id={id}
+                ref-parent={children.type.parent}
+                ref={(node) => {
+                    setNodeRef(node);
+                    itemRef.current = node;
+                }}
+                style={useSetStyleFromPropsComponent()}
+                {...attributes}
+                {...(dragEnabled.get() ? listeners : {})}
+                onClick={(e)=> handleClick(e.currentTarget)} 
+                onContextMenu={(e)=> {
+                    handleOpen(e, id);
+                    handleClick(e.currentTarget);
+                }}
+            >
+                { children }
+            </div>
+            { menu }
+        </React.Fragment>
     );
 }

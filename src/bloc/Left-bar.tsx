@@ -9,7 +9,6 @@ import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
-import { ContentData } from './Top-bar';
 import { updateComponentProps } from './utils/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
@@ -52,7 +51,7 @@ const RenderListProject = ({ currentCat }) => {
 
         // Находим первый breakpoint, значение которого >= width
         for (const [key, value] of sorted) {
-            if (width < value) return key;
+            if (width <= value) return key;
         }
 
         // Если ничего не нашли — возвращаем самый крупный
@@ -75,10 +74,10 @@ const RenderListProject = ({ currentCat }) => {
         if(find?.data?.size?.width) key = getKeyNameBreakpoint(find.data.size.width);
 
         return {
-            lg: '#b5553f',   // индиго — для десктопа, стабильный и строгий
-            md: '#d2a25a',   // teal — для планшета, свежий и универсальный
+            lg: '#d75d41',   // индиго — для десктопа, стабильный и строгий
+            md: '#edb156',   // teal — для планшета, свежий и универсальный
             sm: '#83c9d4',   // тёплый оранжевый — для малых экранов, но без агрессии
-            xs: '#6e6e6e'
+            xs: '#909090'
         }[key] ?? '#495057';
     }
     
@@ -102,17 +101,25 @@ const RenderListProject = ({ currentCat }) => {
                                 display: 'flex',
                                 flexDirection: 'row',
                                 my: 0.7,
-                                borderBottom: '1px dotted #83818163',
+                                cursor:'pointer',
+                                borderBottom: `1px dotted ${meta.name.get() === blockData.name ? '#ffffff61' : '#83818163'}`,
                                 opacity: meta.name.get() === blockData.name ? 1 : 0.6,
+                                '&:hover': {
+                                    backgroundColor: '#e0e0e022',
+                                }
                             }}
+                            onClick={() => context.meta.name.set(blockData.name)}
                             key={index}
                         >
-                            <Typography variant='subtitle1' style={{fontSize:'14px'}}>
+                            <Typography 
+                                variant='inherit' 
+                                style={{fontSize:'15px', color:'white'}}
+                            >
                                 <span style={{color: getColor(blockData.name), marginRight:'5px'}}>
                                     {`[${ getKeyNameSize(blockData.name) }]`}
                                 </span>
                                
-                                <span style={{marginLeft:'5px'}}>{ blockData.name }</span>
+                                <span style={{marginLeft:'5px', color:'white'}}>{ blockData.name }</span>
                             </Typography>
                             <button
                                 style={{
@@ -123,7 +130,6 @@ const RenderListProject = ({ currentCat }) => {
                                     borderRadius: '4px',
                                     border: 'none',
                                 }}
-                                onClick={() => context.meta.name.set(blockData.name)}
                             >
                                 { meta.name.get() === blockData.name
                                     ? <RadioButtonChecked sx={{ fontSize: '16px'}} />
@@ -284,9 +290,8 @@ const useFunctions = () => {
 // левая панель редактора
 export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) {
     const select = useHookstate(infoState.select);
-    const [currentContentData, setCurrent] = React.useState<ContentData>();
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'component' | 'func'>('component');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'component' | 'func'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
 
     const menuItems = [
@@ -303,10 +308,13 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
-    // слушаем эмитер
+
     React.useEffect(() => {
         const handler = (data) => {
-            if (data.curentComponent) setCurrent(data.curentComponent);
+            if (data.curentComponent) {
+                console.log('Tool bar left select content set')
+                requestIdleCallback(()=> select.content.set(data.curentComponent));
+            }
             if (data?.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);
             if (data?.curSubpanel) setSubPanel(data.curSubpanel);
         }

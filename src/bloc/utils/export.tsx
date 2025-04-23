@@ -85,7 +85,7 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 			scope,
 			name,
 			updatedAt: Date.now(),
-			preview: ''
+			preview: `snapshots/${scope}-${name}.png`
 		},
 		size: {
 			width: context.size.width.get(),

@@ -26,7 +26,15 @@ const BlocEditorClient = React.memo(BlocEditorRaw);
 
 
 const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], setShowBlocEditor:(v:boolean)=> void }) => {
-    const { list, setList, curentPageName, curentPageData, setPageData } = useEditor();
+    const { 
+        curentScope, 
+        curentScopeBlockData, 
+        setScopeBlockData,
+        setList, 
+        curentPageName, 
+        curentPageData, 
+        setPageData 
+    } = useEditor();
 
 
     async function fetchPage(name: string): Promise<DataRenderPage> {
@@ -38,11 +46,22 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
         if(curentPageName) {
             globalThis.EDITOR = false;
 
-            fetchPage(listsPages[0])
+            fetchPage(curentPageName)
                 .then(setPageData)
                 .catch(console.error)
         }
     }, [curentPageName]);
+    React.useEffect(()=> {
+        if(curentScope) {
+            fetch(`/api/block/${curentScope}`)
+                .then((res)=> res.json())
+                .then((data)=> {
+                    if(!data.error) setScopeBlockData(data);
+                    else console.error(data.error);
+                })
+                .catch(console.error)
+        }
+    }, [curentScope]);
     React.useEffect(() => {
         setList(listsPages);
     }, []);
@@ -66,9 +85,8 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
 
 
 
-
 export default function ({ listsPages }: { listsPages: string[] }) {
-    const [showBlocEditor, setShowBlocEditor] = React.useState(true);
+    const [showBlocEditor, setShowBlocEditor] = React.useState(false);
 
     return(
         <ThemeProvider theme={darkTheme}>
@@ -76,7 +94,7 @@ export default function ({ listsPages }: { listsPages: string[] }) {
             <>
                 { showBlocEditor ? (
                     <>
-                        <BlocEditorClient />
+                        <BlocEditorClient setShowBlocEditor={setShowBlocEditor} />
                         <Box 
                             sx={{position: 'fixed', zIndex:4, bottom:10,right:10}}
                         >

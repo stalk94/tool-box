@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { Component, LayoutCustom } from './type';
-import { Settings, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
+import { DynamicFeed, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
 import context, { cellsContent, infoState } from './context';
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from "src/components/input/input.any";
@@ -30,7 +30,7 @@ const categories = [
 
 
 // верхняя полоска (инфо обшее)
-export const ToolBarInfo = () => {
+export const ToolBarInfo = ({ setShowBlocEditor }) => {
     const ctx = useHookstate(context);
     const [bound, setBound] = React.useState<DOMRect>();
     const select = useHookstate(infoState.select);
@@ -63,11 +63,30 @@ export const ToolBarInfo = () => {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                px: 3,
+                px: 2,
                 ml: 0.5,
             }}
         >
             <Box>
+                { setShowBlocEditor &&
+                    <button
+                        className='ButtonToPage'
+                        style={{
+                            cursor: 'pointer',
+                            color: 'gray',
+                            background: 'transparent',
+                            padding: '5px',
+                            marginRight: '40px',
+                            borderRadius: '4px',
+                        }}
+                        onClick={() => {
+                            globalThis.EDITOR = false;
+                            setShowBlocEditor(false);
+                        }}
+                    >
+                        <DynamicFeed sx={{ color: '#c9c5c55f' }} />
+                    </button>
+                }
                 { categories.map((elem, i)=> 
                     <button key={i}
                         style={{
@@ -93,6 +112,8 @@ export const ToolBarInfo = () => {
                     <Add style={{color: !(ctx.mod.get()==='grid') && '#595959a1'}} />
                 </IconButton>
             </Box>
+
+
             <Box sx={{ml: 'auto', display: 'flex'}}>
                 <Box display="flex" alignItems="center">
                     <Select style={{marginLeft:'auto', marginRight:'5px'}}

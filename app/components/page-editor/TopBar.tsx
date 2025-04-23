@@ -9,7 +9,7 @@ import NumberInput from "src/components/input/number";
 
 const breackpoints: ['lg', 'md', 'sm', 'xs'] = ['lg', 'md', 'sm', 'xs'];
 
-
+// добавить как в редакторе блоков добавление из скопа блоков блок в страницу
 export default function ({ setShowBlocEditor }) {
     const { curBreacpoint, setCurBreacpoint, curentPageName } = useEditor();
 
@@ -38,12 +38,12 @@ export default function ({ setShowBlocEditor }) {
                     <button key={i}
                         style={{
                             cursor: 'pointer',
-                            color: curBreacpoint === br ? '#c85b9c9e' : '#c9c5c5c7',
+                            color: curBreacpoint === br ? 'white' : '#c9c5c55f',
                             background: 'transparent',
                             padding: '5px',
                             marginRight: '8px',
                             borderRadius: '4px',
-                            border: `1px solid ${curBreacpoint === br ? '#c85b9c9e' : '#c9c5c55f'}`, 
+                            border: `1px solid ${curBreacpoint === br ? 'white' : '#c9c5c55f'}`, 
                         }}
                         onClick={()=> setCurBreacpoint(br)}
                     >
