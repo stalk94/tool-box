@@ -14,6 +14,7 @@ const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
 
 
 // решить проблему с высотой блоков (ее можно получить из схемы)
+// получить breacpoint key для блоков исходя из size их схемы
 export default function WorkArea({ marginCell }: RenderPageProps) {
     const { curentPageData, curentPageName, curBreacpoint, setCurBreacpoint, selectBlockData, setSelectBlockData } = useEditor();
     const [layouts, setLayouts] = React.useState<Record<'lg' | 'md' | 'sm' | 'xs', LayoutPage[]>>({
