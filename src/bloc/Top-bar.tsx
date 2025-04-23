@@ -2,9 +2,8 @@ import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { Component, LayoutCustom } from './type';
 import { DynamicFeed, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
-import context, { cellsContent, infoState } from './context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
-import { TooglerInput } from "src/components/input/input.any";
 import NumberInput from "src/components/input/number";
 
 
@@ -31,9 +30,10 @@ const categories = [
 
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = ({ setShowBlocEditor }) => {
-    const ctx = useHookstate(context);
+    const ctx = useHookstate(useEditorContext());
     const [bound, setBound] = React.useState<DOMRect>();
-    const select = useHookstate(infoState.select);
+    const info = useHookstate(useInfoState());
+
     
 
     const handleChangeBreackpoint = (bp: 'lg'|'md'|'sm'|'xs') => {
@@ -43,13 +43,13 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         ctx.size.width.set(width);
     }
     React.useEffect(()=> {
-        const value = select.cell.get({noproxy:true});
+        const value = info.select.cell.get({noproxy:true});
 
         if(value) {
             const bound = value.getBoundingClientRect();
             setBound(bound);
         }
-    }, [select.cell]);
+    }, [info.select.cell]);
 
 
     return (

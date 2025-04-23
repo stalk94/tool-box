@@ -2,14 +2,15 @@ import React, { useState } from 'react';
 import { Paper, IconButton, Box, Typography } from '@mui/material';
 import { Close, DragIndicator, ExpandMore, ExpandLess } from '@mui/icons-material';
 import { JsonViewer } from '@textea/json-viewer';
-import context, { cellsContent, infoState } from './context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 
 
 export default function InspectorPanel ({ data, onClose }) {
     const [mod, setMod] = useState<'event'|'storage'>('event');
     const [collapsed, setCollapsed] = useState(false);
-    const inspector = useHookstate(infoState.inspector);
+    const info = useHookstate(useInfoState());
+    const inspector = info.inspector;
     
     React.useEffect(()=> {
         sharedEmmiter.onAny((key, value)=> {

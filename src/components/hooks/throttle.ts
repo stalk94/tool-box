@@ -1,26 +1,39 @@
-import { useMemo, useEffect } from 'react';
-import { throttle } from 'lodash';
+import { useRef, useEffect, useCallback } from 'react';
 
 
-/**
- * Создаёт throttled-функцию с авто-очисткой при размонтировании компонента
- * @param callback Функция, которую нужно throttle-ить
- * @param delay Задержка в миллисекундах
- * @param deps Зависимости useMemo
- * @returns Безопасная throttled-функция
- */
 export function useThrottled<T extends (...args: any[]) => void>(
     callback: T,
-    delay: number = 300,
-    deps: React.DependencyList = []
+    delay: number = 300
 ): T {
-    const throttled = useMemo(() => throttle(callback, delay), deps);
+    const lastCall = useRef(0);
+    const timeout = useRef<NodeJS.Timeout | null>(null);
+    const callbackRef = useRef(callback);
+
+    useEffect(() => {
+        callbackRef.current = callback;
+    }, [callback]);
 
     useEffect(() => {
         return () => {
-            throttled.cancel();
+            if (timeout.current) clearTimeout(timeout.current);
         };
-    }, [throttled]);
+    }, []);
 
-    return throttled as T;
+    const throttledFn = useCallback((...args: Parameters<T>) => {
+        const now = Date.now();
+        const remaining = delay - (now - lastCall.current);
+
+        if (remaining <= 0) {
+            lastCall.current = now;
+            callbackRef.current(...args);
+        } else if (!timeout.current) {
+            timeout.current = setTimeout(() => {
+                lastCall.current = Date.now();
+                timeout.current = null;
+                callbackRef.current(...args);
+            }, remaining);
+        }
+    }, [delay]);
+
+    return throttledFn as T;
 }

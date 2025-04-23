@@ -1,60 +1,86 @@
-import { hookstate, extend } from "@hookstate/core";
-import { ComponentSerrialize, LayoutCustom } from './type';
+import { hookstate } from '@hookstate/core';
 import { localstored } from '@hookstate/localstored';
+import { ComponentSerrialize, LayoutCustom } from './type';
 
 
-// копия на рендер App state
-export const renderState = hookstate<LayoutCustom[]>([]);
+let contextState: ReturnType<typeof hookstate> | null = null;
+let renderStateInstance: ReturnType<typeof hookstate<LayoutCustom[]>> | null = null;
+let cellsContentInstance: ReturnType<typeof hookstate<Record<string, ComponentSerrialize[]>>> | null = null;
+let infoStateInstance: ReturnType<typeof hookstate<any>> | null = null;
 
 
-export default hookstate(
-    {
-        meta: {
-            scope: 'test',              // имя проекта
-            name: 'test-block'          // имя блока
-        },
-        mod: 'block',
-        dragEnabled: true,                                          // отключить перетаскивание
-        linkMode: <number|undefined> undefined,                     // режим связи
-        layout: <LayoutCustom[]> <unknown>[],                       // даныые текуей сетки
-        //tools: undefined,                                         // ?
-        size: { width: 1000, height: 600, breackpoint: 'lg' },
-        currentCell: <LayoutCustom> undefined,
-    }, 
-    localstored({ key: 'CONTEXT', engine: localStorage })
-);
 
+export function useEditorContext() {
+    if (typeof window === 'undefined') return null;
 
-// сохраняемое состояние в localStorage редактора сетки (! это не дамп финальный)
-export const cellsContent = hookstate<Record<string, ComponentSerrialize[]>>(
-    {
+    if (!contextState) {
+        contextState = hookstate(
+            {
+                meta: {
+                    scope: 'test',
+                    name: 'test-block'
+                },
+                mod: 'block',
+                dragEnabled: true,
+                linkMode: undefined,
+                layout: [],
+                size: { width: 1000, height: 600, breackpoint: 'lg' },
+                currentCell: undefined,
+            },
+            localstored({ key: 'CONTEXT', engine: localStorage })
+        );
+    }
 
-    }, 
-    localstored({key: 'cellsContent', engine: localStorage}
-));
+    return contextState;
+}
 
+export function useRenderState() {
+    if (typeof window === 'undefined') return null;
 
-export const infoState = hookstate({
-    container: {
-        width: 0,
-        height: 0
-    },
-    select: {
-        /** это выбранный HTML layoout   */
-        cell: <HTMLDivElement>undefined,
-        /** это выбранный (react рендер) элемент  */
-        content: <React.ReactElement>undefined,
-        /** выделено в панели */
-        panel: <{ lastAddedType: string }>{
-            lastAddedType: ''
-        },
-    },
-    inspector: {
-        lastData: {},
-        task: []
-    },
-    project: {
+    if (!renderStateInstance) {
+        renderStateInstance = hookstate<LayoutCustom[]>([]);
+    }
 
-    },
-    contentAllRefs: <Record<string, Element>>undefined
-})
+    return renderStateInstance;
+}
+
+export function useCellsContent() {
+    if (typeof window === 'undefined') return null;
+
+    if (!cellsContentInstance) {
+        cellsContentInstance = hookstate<Record<string, ComponentSerrialize[]>>(
+            {},
+            localstored({ key: 'cellsContent', engine: localStorage })
+        );
+    }
+
+    return cellsContentInstance;
+}
+
+export function useInfoState() {
+    if (typeof window === 'undefined') return null;
+
+    if (!infoStateInstance) {
+        infoStateInstance = hookstate({
+            container: {
+                width: 0,
+                height: 0
+            },
+            select: {
+                cell: undefined,
+                content: undefined,
+                panel: {
+                    lastAddedType: ''
+                },
+            },
+            inspector: {
+                lastData: {},
+                task: []
+            },
+            project: {},
+            contentAllRefs: undefined
+        });
+    }
+
+    return infoStateInstance;
+}

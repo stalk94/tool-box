@@ -2,7 +2,7 @@ import React from "react";
 import { LayoutCustom, Component } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import context, { cellsContent, infoState, renderState } from './context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -16,12 +16,12 @@ const margin: [number, number] = [5, 5];
 
 export default function ({ desserealize }) {
     const cacheDrag = React.useRef<HTMLDivElement>(null);
-    const ctx = useHookstate(context);
-    const render = useHookstate(renderState);
+    const ctx = useHookstate(useEditorContext());
+    const render = useHookstate(useRenderState());
     const containerRef = React.useRef(null);
-    const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
-    const info = useHookstate(infoState);                             // данные по выделенным обьектам
-    const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
+    const curCell = useHookstate(ctx.currentCell);                // текушая выбранная ячейка
+    const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
+    const cellsCache = useHookstate(useCellsContent());                    // элементы в ячейках (dump из localStorage)
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
@@ -32,7 +32,7 @@ export default function ({ desserealize }) {
 
         if (!active || !over || active.id === over.id) return;
 
-        const currentList = cellsContent.get({ noproxy: true })[cellId];
+        const currentList = cellsCache.get({ noproxy: true })[cellId];
         const oldIndex = currentList.findIndex((comp) => comp.props['data-id'] === active.id);
         const newIndex = currentList.findIndex((comp) => comp.props['data-id'] === over.id);
 
@@ -47,7 +47,7 @@ export default function ({ desserealize }) {
             }
 
             // ⚠️ Обновляем и cellsContent 
-            cellsContent.set((old) => {
+            cellsCache.set((old) => {
                 old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
                 return old;
             });
@@ -97,7 +97,7 @@ export default function ({ desserealize }) {
         });
     }
     const handleDeleteKeyPress = (event: KeyboardEvent) => {
-        const render = renderState.get({noproxy: true});
+        const renderData = render.get({noproxy: true});
         if (event.key !== 'Delete') return;
       
         const selected = info.select.content.get({ noproxy: true });
@@ -106,13 +106,13 @@ export default function ({ desserealize }) {
         const id = selected.props?.['data-id'];
         if (!id) return;
         
-        const cellId = render.find((layer) =>
+        const cellId = renderData.find((layer) =>
             layer.content?.some?.((c) => c.props?.['data-id'] === id)
         )?.i;
         
         if (!cellId) return;
       
-        const index = render.find((layer) => layer.i === cellId)
+        const index = renderData.find((layer) => layer.i === cellId)
           ?.content?.findIndex((c) => c.props?.['data-id'] === id);
       
         if (index === -1 || index === undefined) return;

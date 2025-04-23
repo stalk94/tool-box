@@ -1,6 +1,6 @@
 import React from 'react';
 import { Component, ComponentSerrialize } from '../type';
-import context, { cellsContent, infoState, renderState } from '../context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../context";
 
 type Params = {
     component: Component;
@@ -11,6 +11,10 @@ type Params = {
 
 /** Запись свойств в компонент и список */
 export function updateComponentProps({ component, data, rerender = true }: Params) {
+    const context = useEditorContext();
+    const cellsContent = useCellsContent();
+    const infoState = useInfoState();
+    const renderState = useRenderState();
     const id = component?.props?.['data-id'];
     const cellId = context.currentCell.get()?.i;
     

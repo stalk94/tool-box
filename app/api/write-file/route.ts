@@ -28,7 +28,8 @@ export async function POST(req: NextRequest) {
             await fs.promises.writeFile(filePath, content, 'utf8');
         }
 
-        return NextResponse.json({ path: `/${folder.replace('public/', '')}/${filename}` });
+        const relativePath = path.posix.join('/', folder.replace(/^public\/?/, ''), filename);
+        return NextResponse.json({ path: relativePath });
     } 
     catch (err) {
         console.error('❌ Error writing file:', err);

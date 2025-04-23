@@ -1,5 +1,5 @@
 import { hookstate } from "@hookstate/core";
-import { infoState } from '../../context';
+import { useInfoState } from "../../context";
 import EventEmitter from "../../../app/emiter";
 import { DataEmiters } from "../../type";
 
@@ -16,6 +16,7 @@ export const sharedEmmiter = new EventEmitter();
 export const useCtxBufer = (id: number, initValue: any) => {
     const uid = `${id}`;
     const ref = document.querySelector(`[data-id='${uid}']`);
+    const infoState = useInfoState();
 
     // создаст storage в shared storage 
     sharedContext.set((prev)=> {

@@ -2,10 +2,46 @@ import React from 'react';
 import { Popover, Box, Button } from '@mui/material';
 import { TextInput } from "src/index";
 
+type UsePopUpNameResult = {
+    popover: React.ReactElement;
+    handleOpen: (e: React.MouseEvent<HTMLElement>) => void;
+    handleClose: () => void;
+    name: string;
+    trigger: string | null;
+}
 
-export const usePopUpName = (onConfirm: (name: string) => void) => {
+
+export function useSafeAsync(
+    callback: (isMounted: () => boolean) => void | Promise<void>,
+    deps: React.DependencyList = []
+) {
+    const isMountedRef = React.useRef(false);
+
+    React.useEffect(() => {
+        isMountedRef.current = true;
+
+        const run = async () => {
+            try {
+                await callback(() => isMountedRef.current);
+            } 
+            catch (e) {
+                console.error('❌ useSafeAsync error:', e);
+            }
+        };
+
+        run();
+
+        return () => {
+            isMountedRef.current = false;
+        };
+    }, deps);
+}
+
+
+export const usePopUpName = (): UsePopUpNameResult => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const [name, setName] = React.useState('');
+    const [trigger, setTrigger] = React.useState<string | null>(null);
     const open = Boolean(anchorEl);
 
     const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
@@ -17,7 +53,7 @@ export const usePopUpName = (onConfirm: (name: string) => void) => {
     }
     const handleSubmit = () => {
         if (!name.trim()) return;
-        onConfirm(name.trim());
+        setTrigger(name.trim());
         handleClose();
     }
 
@@ -51,11 +87,11 @@ export const usePopUpName = (onConfirm: (name: string) => void) => {
         </Popover>
     );
 
-
     return {
         handleOpen,
         handleClose,
         popover,
         name,
+        trigger, // значение, которое можно слушать в useEffect
     };
-};
+}

@@ -1,6 +1,6 @@
 import React from 'react';
-import { cellsContent } from '../../context';
-import { Editor} from 'slate';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../../context";
+import { Editor } from 'slate';
 
 
 type CellContext = {
@@ -23,6 +23,7 @@ const useCellContext = ( componentId: string, includeSelf: boolean = true ): Cel
     const [cellRef, setCellRef] = React.useState<HTMLElement | null>(null);
     const [cellRect, setCellRect] = React.useState<DOMRect | null>(null);
     const [components, setComponents] = React.useState<any[]>([]);
+    const cellsContent = useCellsContent();
 
     
     React.useEffect(() => {

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Paper } from '@mui/material';
-import context, { infoState, cellsContent } from '../../context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../../context";
 import { useHookstate } from '@hookstate/core';
 
 
@@ -17,7 +17,10 @@ export type ContextualToolbarProps = {
     position?: 'center' | 'left' | 'right';
 }
 export function useToolbar(id: number, onVisibleChange?: (v: boolean)=> void, alwaysVisible = false) {
-    const selected = useHookstate(infoState.select.content);
+    const infoState = useHookstate(useInfoState());
+    const cellsContent = useHookstate(useCellsContent());
+    const context = useHookstate(useEditorContext());
+    const selected = infoState.select.content;
     const [visible, setVisible] = React.useState(false);
 
 

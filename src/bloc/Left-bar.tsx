@@ -5,7 +5,7 @@ import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
     RadioButtonUnchecked, RadioButtonChecked, Add
 } from "@mui/icons-material";
-import context, { cellsContent, infoState } from './context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
@@ -16,30 +16,19 @@ import { componentGroups } from './config/category';
 import { createBlockToFile, fetchFolders } from "./utils/export";
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
-import { usePopUpName } from './utils/usePopUp';
+import { usePopUpName, useSafeAsync } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps } from './type';
 
 
 
 const RenderListProject = ({ currentCat }) => {
-    const size = useHookstate(context.size);
-    const meta = useHookstate(context.meta);
-    const project = useHookstate(infoState.project);
-    const { popover, handleOpen } = usePopUpName((name)=> {
-        const scope = getAllBlockFromScope();
-        const existingNames = scope.map(el => el.name);
-        const uniqueName = getUniqueBlockName(name.trim(), existingNames);
-
-        createBlockToFile(meta.scope.get(), uniqueName)
-            .then(()=> {
-                fetchFolders().then((data)=> {
-                    context.meta.name.set(uniqueName);
-                    infoState.project.set(data);
-                });
-            })
-            .catch(console.error)
-    });
+    const context = useHookstate(useEditorContext());
+    const info = useHookstate(useInfoState());
+    const size = context.size;
+    const meta = context.meta;
+    const project = info.project;
+    const { popover, handleOpen, trigger } = usePopUpName();
     
 
     const getKeyNameBreakpoint = (width?: number) => {
@@ -80,6 +69,27 @@ const RenderListProject = ({ currentCat }) => {
             xs: '#909090'
         }[key] ?? '#495057';
     }
+    useSafeAsync(async (isMounted) => {
+        if (!trigger) return;
+
+        const scope = getAllBlockFromScope();
+        const existingNames = scope.map(el => el.name);
+        const uniqueName = getUniqueBlockName(trigger, existingNames);
+
+        if (typeof window === 'undefined') return;
+
+        try {
+            await createBlockToFile(meta.scope.get(), uniqueName);
+            const data = await fetchFolders();
+
+            if (isMounted()) {
+                context.meta.name.set(uniqueName);
+                info.project.set(data);
+            }
+        } catch (err) {
+            console.error('❌ Ошибка при создании блока:', err);
+        }
+    }, [trigger]);
     
 
     return (
@@ -108,7 +118,7 @@ const RenderListProject = ({ currentCat }) => {
                                     backgroundColor: '#e0e0e022',
                                 }
                             }}
-                            onClick={() => context.meta.name.set(blockData.name)}
+                            onClick={() => meta.name.set(blockData.name)}
                             key={index}
                         >
                             <Typography 
@@ -145,42 +155,55 @@ const RenderListProject = ({ currentCat }) => {
     );
 }
 const RenderProjectTopPanel = () => {
-    const project = useHookstate(infoState.project);
-    const { popover, handleOpen } = usePopUpName((name)=> {
-        const existingNames = Object.keys(project.get({ noproxy: true })) ?? [];
-        const uniqueName = getUniqueBlockName(name.trim(), existingNames);
-
-        if(uniqueName.length > 3) createBlockToFile(uniqueName, 'root')
-            .then(()=> {
-                 fetchFolders().then((data)=> {
-                    context.meta.scope.set(uniqueName);
-                    context.meta.name.set('root');
-                    infoState.project.set(data);
-                });
-            })
-            .catch(console.error)
-    });
+    const context = useHookstate(useEditorContext());
+    const info = useHookstate(useInfoState());
+    const { popover, handleOpen, trigger } = usePopUpName();
+    const [value, setValue] = React.useState(context.meta.scope.get());
 
 
     const handleChangeScope = (newScope: string) => {
-        const currentProject = project?.get({ noproxy: true })?.[newScope];
+        const currentProject = info.project?.get({ noproxy: true })?.[newScope];
         const existingNamesBlocks = currentProject.map(el => el.name);
 
+        setValue(newScope);
         context.meta.scope.set(newScope);
         if(existingNamesBlocks[0]) context.meta.name.set(existingNamesBlocks[0]);
     }
+    useSafeAsync(async (isMounted) => {
+        if (!trigger) return;
+
+        const existingNames = Object.keys(info.project.get({ noproxy: true })) ?? [];
+        const uniqueName = getUniqueBlockName(trigger.trim(), existingNames);
+
+        if (uniqueName.length <= 3 || typeof window === 'undefined') return;
+
+        try {
+            await createBlockToFile(uniqueName, 'root');
+            const data = await fetchFolders();
+
+            if (isMounted()) {
+                context.meta.scope.set(uniqueName);
+                context.meta.name.set('root');
+                info.project.set(data);
+                handleChangeScope(uniqueName);
+            }
+        } 
+        catch (err) {
+            console.error('❌ Ошибка при создании блока:', err);
+        }
+    }, [trigger]);
 
 
     return(
         <Box sx={{ display: 'flex' }}>
             <Select
                 size="small"
-                defaultValue={context.meta.scope.get()}
+                value={value}
                 onChange={(e) => handleChangeScope(e.target.value)}
                 displayEmpty
                 sx={{ fontSize: 14, height: 36, color: '#ccc', background: '#2a2a2a84', ml: 1, mt: 0.3 }}
             >
-                {Object.keys(project.get({ noproxy: true }))?.map((scope) => (
+                {Object.keys(info.project.get({ noproxy: true }))?.map((scope) => (
                     <MenuItem key={scope} value={scope} >
                         { scope }
                     </MenuItem>
@@ -289,7 +312,8 @@ const useFunctions = () => {
 
 // левая панель редактора
 export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) {
-    const select = useHookstate(infoState.select);
+    const info = useHookstate(useInfoState());
+    const select = info.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'component' | 'func'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
@@ -307,7 +331,6 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
         { id: 'save', label: 'Сохранить', icon: <Save /> },
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
-
 
     React.useEffect(() => {
         const handler = (data) => {

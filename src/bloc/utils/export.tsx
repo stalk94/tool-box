@@ -1,6 +1,5 @@
 import { writeFile } from '../../app/plugins';
-import context, { cellsContent, renderState } from '../context';
-
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../context";
 
 const isVite = typeof import.meta !== 'undefined' && !!import.meta.env?.DEV;
 const isNext = !isVite;
@@ -46,6 +45,8 @@ ${spaces}</${type}>`;
 }
 
 export const exportAsJSX = async (name: string) => {
+	const context = useEditorContext();
+	const cellsContent = useCellsContent();
 	const layout = context.render.get({ noproxy: true });
 	const cells = cellsContent.get({ noproxy: true });
 
@@ -78,6 +79,9 @@ ${renderedBlocks.join('\n\n')}
 // ----------------------------------------------------------------------------
 
 export const saveBlockToFile = async (scope: string, name: string) => {
+	const context = useEditorContext();
+	const cellsContent = useCellsContent();
+
 	const data = {
 		layout: context.layout.get({ noproxy: true }),		// текушая сетка
 		content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
@@ -114,6 +118,8 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 }
 
 export const createBlockToFile = async (scope: string, name: string) => {
+	const context = useEditorContext();
+
 	const data = {
 		layout: [],
 		content: {},

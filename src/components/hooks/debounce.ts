@@ -1,4 +1,4 @@
-import { useMemo, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { debounce } from 'lodash';
 
 
@@ -11,16 +11,24 @@ import { debounce } from 'lodash';
  */
 export function useDebounced<T extends (...args: any[]) => void>(
     callback: T,
-    delay: number = 300,
-    deps: React.DependencyList = []
+    delay: number,
+    deps: any[] = []
 ): T {
-    const debounced = useMemo(() => debounce(callback, delay), deps);
+    const timeoutRef = useRef<NodeJS.Timeout>(null);
+    const savedCallback = useRef(callback);
 
     useEffect(() => {
-        return () => {
-            debounced.cancel();
-        };
-    }, [debounced]);
+        savedCallback.current = callback;
+    }, [callback]);
 
-    return debounced as T;
+    useEffect(() => {
+        return () => clearTimeout(timeoutRef.current);
+    }, []);
+
+    return ((...args: any[]) => {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = setTimeout(() => {
+            savedCallback.current(...args);
+        }, delay);
+    }) as T;
 }

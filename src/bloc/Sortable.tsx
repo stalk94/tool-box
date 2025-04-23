@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import context, { infoState, renderState, cellsContent } from './context'; 
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
 import useContextMenu from '@components/context-main';
@@ -47,10 +47,14 @@ class Styler {
 
 
 export function SortableItem({ id, children }: { id: number, children: Component }) {
-    const selectContent = useHookstate(infoState.select.content);
+    const info = useHookstate(useInfoState());
+    const context = useHookstate(useEditorContext());
+    const renderState = useHookstate(useRenderState());
+    const cellsContent = useHookstate(useCellsContent());
     const itemRef = React.useRef<HTMLDivElement>(null);
     const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
-    const dragEnabled = useHookstate(context.dragEnabled);
+    const selectContent = info.select.content;
+    const dragEnabled = context.dragEnabled;
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
         id ,
         disabled: !dragEnabled.get()        // ✅ глобальный флаг

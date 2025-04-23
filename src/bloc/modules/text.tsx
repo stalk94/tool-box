@@ -5,7 +5,7 @@ import { Slate, Editable, withReact, useSlate } from 'slate-react';
 import { withHistory } from 'slate-history';
 import { useHookstate } from '@hookstate/core';
 import { updateComponentProps } from '../utils/updateComponentProps';
-import context, { infoState } from '../context'
+import { useInfoState, useEditorContext } from "../context";
 import { Popover, IconButton, Stack, Tooltip, Box } from '@mui/material';
 import { FormatBold, FormatItalic, FormatUnderlined, Title, FormatListBulleted, FormatListNumbered, 
     FormatQuote, FormatColorText, FormatColorFill, InsertLink, FormatAlignLeft, FormatAlignCenter, 
@@ -102,6 +102,7 @@ const AlignToggleButton = () => {
 
 const Toolbar = () => {
     const editor = useSlate();
+    const context = useEditorContext();
     const [anchorText, setAnchorText] = React.useState<HTMLElement | null>(null);
     const [anchorBg, setAnchorBg] = React.useState<HTMLElement | null>(null);
     const [colorText, setColorText] = React.useState<string>(null);
@@ -343,6 +344,8 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
     const [isEditing, setIsEditing] = React.useState(false);
     const { children, ['data-id']: dataId, ...otherProps } = props;
     const componentRef = React.useRef(props);
+    const context = useEditorContext();
+    const infoState = useInfoState();
     const selected = useHookstate(infoState.select);
 
     const [value, setValue] = React.useState<Descendant[]>(() => {
@@ -364,9 +367,10 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         }).join('\n');
     }
     const debouncedUpdate = useDebounced((val: Descendant[]) => {
+        console.log('SAVE', val)
         const text = extractPlainText(val);
         const props = componentRef.current;
-        console.log('SAVE', props)
+        
         
         if (props) {
             updateComponentProps({
@@ -428,11 +432,10 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             { globalThis.EDITOR ? (
                 <Slate 
                     editor={editor} 
-                    value={value}
+                    //value={value}
                     initialValue={value} 
-                    onChange={(val) => {
+                    onValueChange={(val) => {
                         setValue(val);
-                        console.log('ONCHANGE', val)
                         debouncedUpdate(val);
                     }}
                 >
@@ -519,6 +522,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
 export const TypographyWrapper = React.forwardRef((props: any, ref) => {
     const { children, ['data-id']: dataId, styles, style, fullWidth, ...otherProps } = props;
     const [text, setText] = React.useState(children);
+    const infoState = useInfoState();
     const selected = useHookstate(infoState.select.content);
     
     const handleBlur = (e) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useTheme, alpha, Box } from '@mui/material';
+import { useTheme, alpha, Select, MenuItem, FormControl } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { SelectProps } from '@mui/material/Select';
 import { ArrowDropDown } from '@mui/icons-material';
@@ -21,8 +21,8 @@ export type BaseSelectProps = {
 }
 
 
-// ! доработать до унификации с редактором
-export default function Custom({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
+/** @deprecated */
+export function Custom({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
     const theme = useTheme();
     const [width, setWidth] = React.useState('200px');
     const [isOpen, setIsOpen] = React.useState(false);
@@ -144,6 +144,84 @@ export default function Custom({ value, onChange, items, placeholder, ...props }
                 )}
             </Menu>    
         </div>
+        </InputPaper>
+    );
+}
+
+
+export default function ({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
+    const theme = useTheme();
+    const [selected, setSelected] = React.useState(value);
+
+
+    const placeholderStyle = {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontWeight: 400,
+        fontSize: '0.9rem',         // ≈ 14px
+        //fontStyle: 'italic',
+        lineHeight: 1.43,
+        letterSpacing: '0.01071em',
+        paddingLeft: props.left ? 9 : 18,
+        ...props?.styles?.placeholder
+    }
+    const handleSelectItem =(item)=> {
+        setSelected(item);
+
+        if(onChange) {
+            if(props.onlyId) onChange(item.id);
+            else onChange(item);
+        }
+    }
+    React.useEffect(()=> {
+        if(value) setSelected(value);
+    }, [value]);
+
+    
+    return(
+        <InputPaper {...props}>
+            <Select
+                value={selected}
+                onChange={(event)=> handleSelectItem(event.target.value)}
+                displayEmpty
+                sx={{
+                    maxHeight: 42,
+                    width: '100%',
+                    backgroundColor: 'none',
+                    border: '0px',
+                    color: theme.palette.text.primary,
+                    '.MuiSelect-icon': {
+                        color: theme.palette.text.secondary,
+                    },
+                    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                        border: 'none',
+                    },
+                    '& .MuiOutlinedInput-notchedOutline': {
+                        border: 'none',
+                    },
+                    '&:hover .MuiOutlinedInput-notchedOutline': {
+                        border: 'none',
+                    },
+                    '& .MuiSelect-icon': {
+                       mr: 1,
+                        ...props?.styles?.icon,
+                    }
+                }}
+                renderValue={(selected) => {
+                    if (!selected) return (
+                        <span style={placeholderStyle}>
+                            { placeholder }
+                        </span>
+                    );
+                    const item = items.find((i) => i.id === selected.id);
+                    return item?.label ?? selected.id;
+                }}
+            >
+                { items.map((item) => (
+                    <MenuItem key={item.id} value={item}>
+                        { item.label }
+                    </MenuItem>
+                ))}
+            </Select>
         </InputPaper>
     );
 }

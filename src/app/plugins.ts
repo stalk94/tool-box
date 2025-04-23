@@ -5,7 +5,8 @@
  * @param content данные
  */
 export async function writeFile(folder: string, filename: string, content: string, settings?: {}) {
-    const response = await fetch('/write-file', {
+    const route = window.next ? '/api/write-file' : '/write-file';
+    const response = await fetch(route, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ folder, filename, content, settings }),
@@ -15,7 +16,8 @@ export async function writeFile(folder: string, filename: string, content: strin
 }
 
 export async function uploadFile(blob: Blob, filename?: string): Promise<string> {
-    const isDev = import.meta.env.DEV;
+    const route = window.next ? '/api/write-file' : '/write-file';
+    console.log(route)
     const mime = blob.type;
     const ext = mime.split('/')[1] || 'bin';
     const name = filename ?? `file-${Date.now()}.${ext}`;
@@ -34,7 +36,7 @@ export async function uploadFile(blob: Blob, filename?: string): Promise<string>
                     settings: { image: mime.startsWith('image/'), binary: true },
                 });
 
-                const res = await fetch('/write-file', {
+                const res = await fetch(route, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body,
@@ -51,5 +53,3 @@ export async function uploadFile(blob: Blob, filename?: string): Promise<string>
         reader.readAsDataURL(blob); // читаем как base64
     });
 }
-
-//todo:  добавить метод такой же но next.js и создать 'Стратегию'

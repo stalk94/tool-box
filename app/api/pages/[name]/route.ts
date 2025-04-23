@@ -2,16 +2,12 @@ import fs from 'fs';
 import path from 'path';
 import { NextResponse, NextRequest } from 'next/server';
 
-interface Params {
-	params: {
-		scope: string;
-		name: string;
-	};
-}
 
+export async function GET(_: Request, context: { params: { name: string, scope: string } }) {
+	const params = await Promise.resolve(context.params);
+  	const name = params.name;
+  	const scope = params.scope;
 
-export async function GET(_: Request, { params }: Params) {
-	const { name } = params;
 	const filePath = path.join(process.cwd(), 'public', 'pages', `${name}.json`);
 
 	try {
@@ -30,10 +26,12 @@ export async function GET(_: Request, { params }: Params) {
 	}
 }
 
-export async function POST(req: NextRequest, { params }: Params) {
-	const { name } = params;
+export async function POST(req: NextRequest, context: { params: { name: string } }) {
+	const params = await Promise.resolve(context.params);
+  	const name = params.name;
 	const filePath = path.join(process.cwd(), 'public', 'pages', `${name}.json`);
 
+	
 	try {
 		const body = await req.json(); // Получаем JSON из запроса
 

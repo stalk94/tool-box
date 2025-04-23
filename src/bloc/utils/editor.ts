@@ -1,9 +1,9 @@
-import { renderState, cellsContent } from '../context';
 import { Component, LayoutCustom } from '../type';
-
+import { useRenderState } from "../context";
 
 
 export function getComponentById(id: number): Component | undefined {
+    const renderState = useRenderState();
     let result;
 
     renderState.get({ noproxy: true }).forEach((layer) => {  

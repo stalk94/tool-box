@@ -3,7 +3,7 @@ import React from "react";
 import * as htmlToImage from 'html-to-image';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
-import context, { cellsContent, infoState, renderState } from './context';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/utils/registry';
@@ -12,10 +12,13 @@ import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile, fetchFolders } from "./utils/export";
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
+import { useSafeAsync } from "./utils/usePopUp";
+
 
 //import "../style/grid.css";
 import "../style/edit.css";
 import './modules/index';
+
 
 
 // ANCHOR - системный эммитер
@@ -24,12 +27,12 @@ globalThis.EVENT = new EventEmitter();
 
 // это редактор блоков сетки
 export default function ({ setShowBlocEditor }) {
-    const ctx = useHookstate(context);
+    const ctx = useHookstate(useEditorContext());
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
-    const render = useHookstate(renderState);
-    const info = useHookstate(infoState);                             // данные по выделенным обьектам
-    const curCell = useHookstate(context.currentCell);                // текушая выбранная ячейка
-    const cellsCache = useHookstate(cellsContent);                    // элементы в ячейках (dump из localStorage)
+    const render = useHookstate(useRenderState());
+    const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
+    const curCell = ctx.currentCell;                                    // текушая выбранная ячейка
+    const cellsCache = useHookstate(useCellsContent());                   // элементы в ячейках (dump из localStorage)
     
    
     const snapshotAndUpload = async (name: string) => {
@@ -212,10 +215,13 @@ export default function ({ setShowBlocEditor }) {
         }
     
     }
-    React.useEffect(()=> {
-        fetchFolders().then((data)=> {
-            infoState.project.set(data);
-        });
+    useSafeAsync(async (isMounted) => {
+        const info = useInfoState(); // 💡 теперь безопасно
+        const data = await fetchFolders();
+
+        if (isMounted()) {
+            info.project.set(data);
+        }
     }, []);
 
 
