@@ -15,9 +15,15 @@ import EventEmitter from "../app/emiter";
 import { useSafeAsync } from "./utils/usePopUp";
 
 
-//import "../style/grid.css";
 import "../style/edit.css";
-import './modules/index';
+if (!window.next) {
+    import('./modules/index').then((mod) => {
+        console.log('Модуль подгружен:', mod);
+    })
+    .catch((err) => {
+        console.error('❌ Ошибка при загрузке модуля:', err);
+    });
+}
 
 
 
@@ -26,7 +32,7 @@ globalThis.EVENT = new EventEmitter();
 
 
 // это редактор блоков сетки
-export default function ({ setShowBlocEditor }) {
+export default function Block({ setShowBlocEditor }) {
     const ctx = useHookstate(useEditorContext());
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(useRenderState());
@@ -216,7 +222,6 @@ export default function ({ setShowBlocEditor }) {
     
     }
     useSafeAsync(async (isMounted) => {
-        const info = useInfoState(); // 💡 теперь безопасно
         const data = await fetchFolders();
 
         if (isMounted()) {

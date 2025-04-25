@@ -22,6 +22,8 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
     const style = {
         color: '#00000000',
         '& .MuiSlider-thumb': {
+            width: '15px',
+            height: '15px',
             backgroundColor: theme.palette.slider.thumb,  // Цвет "пальца" ползунка
             border:`1px solid`,
             ...props?.styles?.thumb,

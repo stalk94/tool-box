@@ -335,7 +335,6 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
     React.useEffect(() => {
         const handler = (data) => {
             if (data.curentComponent) {
-                console.log('Tool bar left select content set')
                 requestIdleCallback(()=> select.content.set(data.curentComponent));
             }
             if (data?.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);

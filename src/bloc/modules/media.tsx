@@ -51,7 +51,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
     }, [file]);
     React.useEffect(() => {
         if (!src || src.length === 0){
-            setImgSrc('https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg');
+            setImgSrc('/placeholder.jpg');
         }
         else setImgSrc(src);
         setSource('src');
@@ -64,10 +64,10 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             data-id={componentId}
             data-type="Image"
             data-source={sourceType}
-            src={imgSrc ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
+            src={imgSrc ?? '/placeholder.jpg'}
             style={{
                 width : width, 
-                height : height - 8
+                height : height+6
             }}
         />
     );

@@ -176,7 +176,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             ref={ref}
             data-id={dataId}
             data-type='Slider'
-            style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
+            style={{...style, width: '100%', display:'block', marginLeft:'5px'}}
         >
             <SliderInput
                 labelSx={labelStyle}
@@ -254,7 +254,7 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             ref={ref}
             data-id={dataId}
             data-type='Switch'
-            style={{...style, width: '100%', display:'block', marginLeft:'35px'}}
+            style={{...style, width: '100%', display:'block'}}
         >
             <SwitchInput
                 labelSx={labelStyle}

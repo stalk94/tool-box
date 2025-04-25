@@ -2,14 +2,11 @@ import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
 import { TouchApp, ViewComfy, Add, GridView } from "@mui/icons-material";
 import { useEditor } from './context';
-import { useHookstate } from "@hookstate/core";
-import { TooglerInput } from "src/components/input/input.any";
-import NumberInput from "src/components/input/number";
 
 
 const breackpoints: ['lg', 'md', 'sm', 'xs'] = ['lg', 'md', 'sm', 'xs'];
 
-// добавить как в редакторе блоков добавление из скопа блоков блок в страницу
+
 export default function ({ setShowBlocEditor }) {
     const { curBreacpoint, setCurBreacpoint, curentPageName } = useEditor();
 
@@ -33,7 +30,19 @@ export default function ({ setShowBlocEditor }) {
                 ml: 0.5,
             }}
         >
-            <Box>
+            
+            <Box sx={{ml: 0, mr: '80px', display: 'flex'}}>
+                <IconButton 
+                    onClick={()=> {
+                        globalThis.EDITOR = true;
+                        setShowBlocEditor(true);
+                    }}
+                >
+                    <GridView />
+                </IconButton>
+            </Box>
+
+            <Box sx={{ml: 4}}>
                 { breackpoints.map((br, i)=> 
                     <button key={i}
                         style={{
@@ -50,24 +59,6 @@ export default function ({ setShowBlocEditor }) {
                         { br }
                     </button>
                 )}
-            </Box>
-            <Box sx={{ml: 3}}>
-                <IconButton
-                    disabled={!curentPageName}
-                    sx={{}}
-                >
-                    <Add />
-                </IconButton>
-            </Box>
-            <Box sx={{ml: 'auto', display: 'flex'}}>
-                <IconButton 
-                    onClick={()=> {
-                        globalThis.EDITOR = true;
-                        setShowBlocEditor(true);
-                    }}
-                >
-                    <GridView />
-                </IconButton>
             </Box>
         </Paper>
     );

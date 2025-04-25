@@ -5,12 +5,11 @@ import {
     FolderSpecial, Edit, Add, RadioButtonUnchecked, RadioButtonChecked
 } from "@mui/icons-material";
 import { useEditor } from './context';
-import { TooglerInput } from '@components/input/input.any';
 import LeftSideBarAndTool from '@components/nav-bars/tool-left'
-import { TextInput } from "src/index";
 import { usePopUpName } from '@bloc/utils/usePopUp';
-import { getUniqueBlockName } from "@bloc/utils/editor";
-import { fetchFolders } from "@bloc/utils/export";
+import { getUniqueBlockName } from "@bloc/utils/editor";;
+import { BREAKPOINT_WIDTH } from './WorkArea';
+
 
 
 
@@ -155,7 +154,10 @@ const RenderBlockScopeTopPanel = () => {
     const geAlltScopes = () => {
         fetch(`api/list-scopes`)
             .then((res)=> res.json())
-            .then(setList)
+            .then((data)=> {
+                setList(data);
+                if(data[0]) setCurentScope(data[data.length-1]);
+            })
             .catch(console.error);
     }
     React.useEffect(()=> {
@@ -167,7 +169,8 @@ const RenderBlockScopeTopPanel = () => {
         <Box sx={{ display: 'flex' }}>
             <Select
                 size="small"
-                defaultValue={curentScope}
+                //defaultValue={curentScope}
+                value={curentScope ?? 'any'}
                 onChange={(e) => setCurentScope(e.target.value)}
                 displayEmpty
                 sx={{ fontSize: 14, height: 36, color: '#ccc', background: '#2a2a2a84', ml: 1, mt: 0.3 }}
@@ -181,6 +184,7 @@ const RenderBlockScopeTopPanel = () => {
         </Box>
     );
 }
+// todo: доработать preview
 const RenderBlockScope = () => {
     const [link, setLink] = React.useState<string>('snapshots/test-blok-top.png');
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
@@ -191,23 +195,67 @@ const RenderBlockScope = () => {
         setLink(meta.preview);
         setAnchorEl(event.currentTarget);
     }
-    const handleClose = () => {
-        setAnchorEl(null);
-    }
+    const getKeyNameBreakpoint = (width?: number) => {;
+        const sorted = Object.entries(BREAKPOINT_WIDTH).sort((a, b) => a[1] - b[1]);
 
+        for (const [key, value] of sorted) {
+            if (width <= value) return key;
+        }
+
+        // Если ничего не нашли — возвращаем самый крупный
+        return sorted[sorted.length - 1][0];
+    }
+    const getColor = (key: string) => {
+        return {
+            lg: '#d75d41',   // индиго — для десктопа, стабильный и строгий
+            md: '#edb156',   // teal — для планшета, свежий и универсальный
+            sm: '#83c9d4',   // тёплый оранжевый — для малых экранов, но без агрессии
+            xs: '#909090'
+        }[key] ?? '#495057';
+    }
+     
 
     return(
         <Box sx={{ display: 'flex', flexDirection:'column' }}>
             { curentScopeBlockData?.map((block, index)=> 
-                <Button 
-                    variant="outlined"
-                    color="inherit"
-                    key={index}
+                <Box
+                    sx={{
+                        display: 'flex',
+                        flexDirection: 'row',
+                        my: 0.7,
+                        cursor: 'pointer',
+                        borderBottom: `1px dotted #ffffff61`,
+                        '&:hover': {
+                            backgroundColor: '#e0e0e022',
+                        }
+                    }}
                     onClick={()=> setSelectBlockData(block.data)}
-                    onContextMenu={(e)=> handleOpen(e, block.data.meta)} 
+                    key={index}
                 >
-                    { block.name }
-                </Button>
+                    <Typography
+                        variant='inherit'
+                        style={{ fontSize: '15px', color: 'white' }}
+                    >
+                        <span style={{ color: getColor(getKeyNameBreakpoint(block.data?.size?.width)), marginRight: '5px' }}>
+                            [{ getKeyNameBreakpoint(block.data?.size?.width) }]
+                        </span>
+
+                        <span style={{ marginLeft: '5px', color: 'white' }}>
+                            { block.name }
+                        </span>
+                    </Typography>
+                    <button
+                        style={{
+                            cursor: 'pointer',
+                            color: '#C9C9C9',
+                            background: 'transparent',
+                            marginLeft: 'auto',
+                            borderRadius: '4px',
+                            border: 'none',
+                        }}
+                    >
+                    </button>
+                </Box>
             )}
             <Popover
                 open={Boolean(anchorEl)}
@@ -240,11 +288,11 @@ const useProject = (currentCat:  "catalog" | "blocs") => {
 }
 
 
+
 // левая панель редактора
 export default function ({ addPage, useDump }) {
     const { list, currentToolPanel, setCurrentToolPanel } = useEditor();
     
-
     const menuItems = [
         { id: 'catalog', label: 'Каталог', icon: <AccountTree /> },
         { divider: <Divider sx={{borderColor: 'rgba(128, 128, 129, 0.266)',my:1.2}}/> },
@@ -255,13 +303,9 @@ export default function ({ addPage, useDump }) {
         { id: 'save', label: 'Сохранить', icon: <Save /> },
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
-
-    const changeNavigation = (item) => {
-        setCurrentToolPanel(item.id);
-    }
-
     const { start, children } = useProject(currentToolPanel) ?? { start: null, children: null };
 
+    
 
     return (
         <LeftSideBarAndTool
@@ -269,7 +313,10 @@ export default function ({ addPage, useDump }) {
             sx={{ height: '100%' }}
             schemaNavBar={{ items: menuItems, end: endItems }}
             width={260}
-            onChangeNavigation={changeNavigation}
+            onChangeNavigation={(item)=> {
+                if(item.id !== 'save') setCurrentToolPanel(item.id);
+                else useDump();
+            }}
             start={start}
         >
             <Box sx={{ mt: 1, mx: 1 }}>

@@ -82,7 +82,7 @@ registerComponent({
     type: 'Image',
     component: ImageWrapper,
     defaultProps: {
-        src: 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg',
+        src: '/placeholder.jpg',
         file: '',
         'data-source': 'src',
         alt: 'Картинка',

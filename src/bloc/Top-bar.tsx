@@ -67,16 +67,16 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                 ml: 0.5,
             }}
         >
-            <Box>
+            <Box sx={{ml:1}}>
                 { setShowBlocEditor &&
                     <button
-                        className='ButtonToPage'
                         style={{
+                            border: 'none',
                             cursor: 'pointer',
                             color: 'gray',
                             background: 'transparent',
                             padding: '5px',
-                            marginRight: '40px',
+                            marginRight: '80px',
                             borderRadius: '4px',
                         }}
                         onClick={() => {
@@ -84,7 +84,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                             setShowBlocEditor(false);
                         }}
                     >
-                        <DynamicFeed sx={{ color: '#c9c5c55f' }} />
+                        <DynamicFeed sx={{ color: 'white', mt: 0.7 }} />
                     </button>
                 }
                 { categories.map((elem, i)=> 

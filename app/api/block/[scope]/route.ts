@@ -9,9 +9,9 @@ interface Params {
 }
 
 
-export async function GET(_: Request, { params }: Params) {
-	const { scope } = params;
-	const folderPath = path.join(process.cwd(), 'public', 'blocks', scope);
+export async function GET(_: Request, context: { params: { scope: string } }) {
+	const params = await Promise.resolve(context.params);
+	const folderPath = path.join(process.cwd(), 'public', 'blocks', params.scope);
 
 	try {
 		const exists = await fs.promises.access(folderPath).then(() => true).catch(() => false);

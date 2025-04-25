@@ -3,10 +3,9 @@ import path from 'path';
 import { NextResponse, NextRequest } from 'next/server';
 
 
-export async function GET(_: Request, context: { params: { name: string, scope: string } }) {
+export async function GET(_: Request, context: { params: { name: string } }) {
 	const params = await Promise.resolve(context.params);
   	const name = params.name;
-  	const scope = params.scope;
 
 	const filePath = path.join(process.cwd(), 'public', 'pages', `${name}.json`);
 
@@ -21,8 +20,8 @@ export async function GET(_: Request, context: { params: { name: string, scope: 
 		return NextResponse.json(data);
 	}
 	catch (err) {
-		console.error(`❌ Ошибка при чтении блока "${name}" из scope "${scope}":`, err);
-		return NextResponse.json({ error: 'Ошибка при чтении файла' }, { status: 500 });
+		console.error(`❌ ошибка записи:`, err);
+		return NextResponse.json({ error: 'Ошибка при записи файла' }, { status: 500 });
 	}
 }
 

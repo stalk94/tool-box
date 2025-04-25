@@ -305,7 +305,7 @@ const Toolbar = () => {
                     <MenuItem value="" disabled>𝓣</MenuItem>
                     { globalThis.FONT_OPTIONS.map((font) => (
                         <MenuItem key={font} value={font} style={{ fontFamily: font }}>
-                            {font}
+                            { font }
                         </MenuItem>
                     ))}
                 </Select>

@@ -11,7 +11,8 @@ const marginDefault: [number, number] = [5, 5];
 
 
 
-export default function ({ scope, name, height, marginCell }: RenderGridProps) {
+export default function ({ scope, name, marginCell }: RenderGridProps) {
+    const blockRef = React.useRef<HTMLDivElement>(null);
     const [isLoad, setLoad] = React.useState(false);
     const [render, setRender] = React.useState<DataRenderLayout[]>([]);
     const [error, setError] = React.useState<string | null>(null);
@@ -47,8 +48,13 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
 
     return (
         <div
-            data-name={name}
-
+            ref={blockRef}
+            style={{
+                overflow: 'hidden',
+                width: '100%',
+                height: '100%',
+                border: `1px dashed #f2f2f237`,
+            }}
         >
             { error ? (
                 <div style={{ color: 'red', padding: '1rem' }}>
@@ -66,6 +72,7 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
                     isDraggable={false}
                     isResizable={false}
                     margin={marginCell ?? marginDefault}
+                    containerPadding={[0, 0]}
                 >
                     { render?.map((layer) => (
                         <div
@@ -79,10 +86,7 @@ export default function ({ scope, name, height, marginCell }: RenderGridProps) {
                         >
                             { Array.isArray(layer.content) &&
                                 layer.content.map((component, index) => (
-                                    <div
-                                        key={`${layer.i}-${index}`}
-                                        style={{}}
-                                    >
+                                    <div key={`${layer.i}-${index}`}>
                                         { component }
                                     </div>
                                 ))

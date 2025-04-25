@@ -10,7 +10,10 @@ const marginDefault: [number, number] = [5, 5];
 
 
 
-
+/**
+ * ! РЕНДЕР В ПРОЕКТЕ (не эдитор)
+ * 
+ */
 export default function ({ data, marginCell }: RenderPageProps) {
     const [name, setName] = React.useState<string>(data.meta.name);
     const [currentBreakpoint, setCurrentBreakpoint] = React.useState('lg');
@@ -75,7 +78,7 @@ export default function ({ data, marginCell }: RenderPageProps) {
             data-name={data.meta?.name}
             style={{ 
                 maxWidth: '100%',           // можно ограничить ширину но при этом сетка останется отзывчивой
-                height: '100%',
+                height: 'fit-content',
             }}
         >
             <ResponsiveGridLayout

@@ -4,8 +4,11 @@ import { NextResponse } from 'next/server';
 
 
 
-export async function GET(request: Request, { params }: { params: { scope: string; name: string } }) {
-	const { scope, name } = await params;
+export async function GET(_: Request, context: { params: { scope: string, name: string } }) {
+	const params = await Promise.resolve(context.params);
+	const name = params.name;
+  	const scope = params.scope;
+	
 	const filePath = path.join(process.cwd(), 'public', 'blocks', scope, `${name}.json`);
 
 	try {

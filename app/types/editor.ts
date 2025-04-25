@@ -30,4 +30,5 @@ export type RenderGridProps = {
     name: string
     height?: number 
     marginCell?: [number, number]
+    onResize: (height: number)=> void
 }

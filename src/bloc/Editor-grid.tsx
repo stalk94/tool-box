@@ -281,6 +281,11 @@ export default function ({ desserealize }) {
                     return(
                         <div 
                             onClick={(e) => {
+                                // если ячейка не та в которой выделенный компонент то покажем панель добавления компонентов
+                                if(curCell.get()?.i !== layer.i) {
+                                    EVENT.emit('leftBarChange', {currentToolPanel: 'items'});
+                                }
+
                                 curCell.set(layer);
                                 info.select.cell.set(e.currentTarget);
                                 EVENT.emit('onSelectCell', layer.i);
@@ -335,6 +340,7 @@ export default function ({ desserealize }) {
         </div>
     );
 }
+
 
 
 

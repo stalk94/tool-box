@@ -37,6 +37,31 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
     } = useEditor();
 
 
+    const pagaDump = async() => {
+        if (!curentPageName || !curentPageData) {
+            console.warn('Нет данных для сохранения страницы');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/pages/${curentPageName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(curentPageData),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Ошибка при сохранении страницы: ${response.statusText}`);
+            }
+
+            console.log('✅ Страница успешно сохранена');
+        } 
+        catch (error) {
+            console.error('❌ Ошибка при сохранении страницы:', error);
+        }
+    }
     async function fetchPage(name: string): Promise<DataRenderPage> {
         const res = await fetch(`/api/pages/${name}`);
         if (!res.ok) throw new Error('page не найден');
@@ -70,7 +95,7 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
     return (
         <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'row' }}>
             <LeftTools
-                useDump={console.log}
+                useDump={pagaDump}
                 addPage={console.log}
             />
             <div style={{ width: '80%', height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -90,28 +115,29 @@ export default function ({ listsPages }: { listsPages: string[] }) {
 
     return(
         <ThemeProvider theme={darkTheme}>
+            <EditorProvider>
             <CssBaseline />
-            <>
-                { showBlocEditor ? (
-                    <>
-                        <BlocEditorClient setShowBlocEditor={setShowBlocEditor} />
-                        <Box 
-                            sx={{position: 'fixed', zIndex:4, bottom:10,right:10}}
-                        >
-                            <IconButton sx={{border:'1px solid gray'}} onClick={()=> setShowBlocEditor(false)}>
-                                <ArrowBack />
-                            </IconButton>
-                        </Box>
-                    </>
-                ) : (
-                    <EditorProvider>
-                        <PageEditor 
+                <>
+                    { showBlocEditor ? (
+                        <>
+                            <BlocEditorClient setShowBlocEditor={setShowBlocEditor} />
+                            <Box 
+                                sx={{position: 'fixed', zIndex:4, bottom:10,right:10}}
+                            >
+                                <IconButton sx={{border:'1px solid gray'}} onClick={()=> setShowBlocEditor(false)}>
+                                    <ArrowBack />
+                                </IconButton>
+                            </Box>
+                        </>
+                    ) : (
+                        
+                        <PageEditor
                             setShowBlocEditor={setShowBlocEditor}
-                            listsPages={listsPages} 
+                            listsPages={listsPages}
                         />
-                    </EditorProvider>
-                )}
-            </>
+                    )}
+                </>
+            </EditorProvider>
         </ThemeProvider>
     );
 }

@@ -52,7 +52,6 @@ export function SortableItem({ id, children }: { id: number, children: Component
     const renderState = useHookstate(useRenderState());
     const cellsContent = useHookstate(useCellsContent());
     const itemRef = React.useRef<HTMLDivElement>(null);
-    const [isLastInRow, setIsLastInRow] = React.useState(false);        // флаг то что элемент последний в строке
     const selectContent = info.select.content;
     const dragEnabled = context.dragEnabled;
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
@@ -65,7 +64,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
         position: 'relative',
         transform: CSS.Transform.toString(transform),
         transition,
-        marginTop: 3,
+        //marginTop: 3,
         opacity: isDragging ? 0.5 : 1,
         width: children.props.fullWidth ? (children.props.width ?? '100%') : 'fit-content',
         height: 'fit-content',
@@ -73,11 +72,11 @@ export function SortableItem({ id, children }: { id: number, children: Component
         verticalAlign: 'top',
         cursor: dragEnabled.get() ? 'grab' : 'default',
         // для отладки
-        paddingTop: 3,
-        paddingBottom: 3,
+        //paddingTop: 3,
+        //paddingBottom: 3,
         borderRight: '1px dotted #8580806b',
         transformOrigin: 'center',
-        scale: isDragging ? '0.95' : '1',
+        
     }
     const iseDeleteComponent =(ids: number)=> {
         const removeComponentFromCell = (cellId: string, componentIndex: number) => {
@@ -119,52 +118,20 @@ export function SortableItem({ id, children }: { id: number, children: Component
         removeComponentFromCell(cellId, index);
         selectContent.set(null);
     }
-    //ANCHOR - отслеживает ключевые свойства(маркеры) на компоненте и устанавливает на обертку спец стили
-    const useSetStyleFromPropsComponent = () => {
-        if(children?.props) {
-            const childProps = children.props;
-
-            const styler = new Styler(children, styleWrapper);
-        }
-        
-        return styleWrapper;
-    } 
     const handleClick = (target: HTMLDivElement) => {
         requestIdleCallback(()=> {
             target.classList.add('editor-selected');
-            selectContent.set(children)
+            selectContent.set(children);
+
+            EVENT.emit('leftBarChange', {
+                currentToolPanel: 'component'
+            })
         });
         
         document.querySelectorAll('[ref-id]').forEach(el => {
             if(el != target) el.classList.remove('editor-selected');
         });
     }
-    React.useEffect(() => {
-        if (!itemRef.current) return;
-
-        const update = () => {
-            const parent = itemRef.current?.parentElement;
-            if (!parent) return;
-
-            const items = Array.from(parent.children) as HTMLElement[];
-
-            // Найдём себя и проверим — последняя ли строка
-            const self = itemRef.current;
-            const selfTop = self.getBoundingClientRect().top;
-
-            const lastInSameRow = items
-                .filter((el) => el.getBoundingClientRect().top === selfTop)
-                .pop();
-            
-            setIsLastInRow(lastInSameRow === self);
-        };
-
-        update();
-        const resizeObserver = new ResizeObserver(update);
-        resizeObserver.observe(itemRef.current);
-
-        return () => resizeObserver.disconnect();
-    }, []);
     React.useEffect(() => {
         const handler = (cellId)=> {
             document.querySelectorAll('[ref-id]').forEach(el => {
@@ -197,7 +164,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
                     setNodeRef(node);
                     itemRef.current = node;
                 }}
-                style={useSetStyleFromPropsComponent()}
+                style={styleWrapper}
                 {...attributes}
                 {...(dragEnabled.get() ? listeners : {})}
                 onClick={(e)=> handleClick(e.currentTarget)} 

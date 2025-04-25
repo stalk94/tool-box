@@ -10,7 +10,7 @@ import { DataRenderGrid } from '../../types/editor';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const marginDefault: [number, number] = [5, 5];
-const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
+export const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
 
 
 // решить проблему с высотой блоков (ее можно получить из схемы)
@@ -25,6 +25,9 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
     });
     
 
+    const pixelsToH =(heightPx: number, rowHeight: number, marginY: number)=> {
+        return Math.ceil((heightPx + marginY) / (rowHeight + marginY));
+    }
     const getClosestLayout = (bp: string): LayoutPage[] => {
         const order: string[] = ['lg', 'md', 'sm', 'xs'];
         const start = order.indexOf(bp);
@@ -46,10 +49,12 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
 
         return []; // вообще ничего нет
     }
-    const createComponent = (serrializeContent: PageComponent) => {
+    const createComponent = (layout: LayoutPage) => {
+        const serrializeContent = layout.content;
         const scope = serrializeContent?.props?.['data-block-scope'];
         const nameBlock = serrializeContent?.props?.['data-block-name'];
-
+        
+        
         if (!scope || !nameBlock) return <div>Ошибка данных блока</div>;
         else return (
             <RenderBlock
@@ -58,7 +63,6 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
             />
         );
     }
-    // ! работаем тут
     const addBlockToPage = (data: DataRenderGrid) => {
         const variantLayout: { 
             layout: LayoutPage[],
@@ -72,14 +76,15 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
         
         const layout = curentPageData.variants[curBreacpoint].layout ?? [];
         const newId = `block-${Date.now()}`;
+        const pxTh = pixelsToH(data.size.height, 30, (marginCell?.[1] ?? marginDefault[1]));
         
         // LINK - добавление нового блока
         const newBlock: LayoutPage = {
             i: newId,
             x: 0,
-            y: layout.length * 2, // разместим ниже всех
+            y: layout.length * 2,                                               // разместим ниже всех
             w: 12,
-            h: Math.max(...data.layout.map(item => item.h)),
+            h: pxTh,
             moved: false,
             static: false,
             content: {
@@ -127,18 +132,17 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
         <div
             data-name={curentPageName}
             style={{
-                width: '100%',
-                height: '100%',
                 overflow: 'auto',
                 display: 'flex',
                 justifyContent: 'center',
-                border: '1px solid gray'
+                border: '1px solid gray',
+                height: '100%',
             }}
         >
             <div
                 style={{
                     width: BREAKPOINT_WIDTH[curBreacpoint] ?? '100%',                    //? меняем ширину и меняется layout
-                    height: '100%',
+                    height: 'fit-content'
                 }}
             >
                 <ResponsiveGridLayout
@@ -146,28 +150,21 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
                     layouts={{ [curBreacpoint]: layoutList }}
                     breakpoints={BREAKPOINT_WIDTH}
                     cols={{ lg: 12, md: 12, sm: 12, xs: 12 }}
-                    rowHeight={30}
+                    rowHeight={29}
+                    containerPadding={[0, 0]}
                     compactType={null}                      // Отключение автоматической компоновки
-                    preventCollision={true}
+                    preventCollision={false}
                     isDraggable={true}                     // Отключить перетаскивание
                     isResizable={false}                     // Отключить изменение размера
                     margin={marginCell ?? marginDefault}
                 >
                     { layoutList?.map((layout: LayoutPage) => (
-                        <div
-                            key={layout.i}
-                            data-id={layout.i}
-                            data-variant={curBreacpoint}
-                            style={{
-                                width: '100%',
-                                height: '100%',
-                                overflow: 'hidden',
-                                border: `1px dashed #f2f2f237`,
-                                ...layout?.content?.props?.style
-                            }}
+                        <div 
+                            key={layout.i} 
+                            data-grid-id={layout.i} 
+                            style={{ width: '100%'}}
                         >
-
-                        { createComponent(layout?.content) }
+                            { createComponent(layout) }
                         </div>
                     ))}
                 </ResponsiveGridLayout>

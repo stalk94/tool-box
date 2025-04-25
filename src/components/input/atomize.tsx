@@ -45,6 +45,17 @@ const AnimatedBox = styled(Box)`
 export function Label({ id, children, styles, sx }: InputLabelProps) {
     const theme = useTheme();
 
+    const transform =()=> {
+        if(styles?.label?.fontSize) {
+            if(Number.isFinite(+styles?.label?.fontSize)) styles.label = {
+                ...styles.label,
+                fontSize: +styles.label.fontSize
+            }
+        }
+        return styles?.label;
+    }
+
+    
     return (
         <InputLabel
             htmlFor={id}
@@ -56,7 +67,7 @@ export function Label({ id, children, styles, sx }: InputLabelProps) {
                 color: theme.palette.text.secondary,
                 fontFamily: '"Roboto Condensed", Arial, sans-serif',
                 ...sx,
-                ...styles?.label
+                ...transform()
             }}
         >
             { children }
