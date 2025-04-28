@@ -24,16 +24,16 @@ import { darkTheme, lightTheme } from '../theme/index';
 const BlocEditorRaw = dynamic(() => import('@bloc/App'), { ssr: false });
 const BlocEditorClient = React.memo(BlocEditorRaw);
 
-
 const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], setShowBlocEditor:(v:boolean)=> void }) => {
     const { 
+        zoom,
         curentScope, 
         curentScopeBlockData, 
         setScopeBlockData,
         setList, 
         curentPageName, 
         curentPageData, 
-        setPageData 
+        setCurrentPageData 
     } = useEditor();
 
 
@@ -67,12 +67,17 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
         if (!res.ok) throw new Error('page не найден');
         return await res.json();
     }
+
+    // ? Внимание глобальная переменная
+    React.useEffect(() => {
+        globalThis.ZOOM = zoom;
+    }, [zoom]);
     React.useEffect(()=> {
         if(curentPageName) {
             globalThis.EDITOR = false;
 
             fetchPage(curentPageName)
-                .then(setPageData)
+                .then(setCurrentPageData)
                 .catch(console.error)
         }
     }, [curentPageName]);

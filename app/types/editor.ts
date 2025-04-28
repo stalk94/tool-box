@@ -31,4 +31,5 @@ export type RenderGridProps = {
     height?: number 
     marginCell?: [number, number]
     onResize: (height: number)=> void
+    style?: React.CSSProperties
 }

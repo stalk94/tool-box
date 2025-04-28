@@ -1,33 +1,77 @@
 'use client'
 import React from "react";
-import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { useEditor } from './context';
 import { RenderPageProps, LayoutPage, PageComponent } from '../../types/page';
 import RenderBlock from '../RenderBlock';
 import { DataRenderGrid } from '../../types/editor';
-
-
-const ResponsiveGridLayout = WidthProvider(Responsive);
-const marginDefault: [number, number] = [5, 5];
+import { CSS } from '@dnd-kit/utilities';
+import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, DragStartEvent, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
 export const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
+
+
+const SortableItem = ({ id, children, style }: { id: string, children: React.ReactNode }) => {
+    const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+    const { selectedBlock, setSelectedBlock } = useEditor();
+
+    const curStyle = {
+        transform: CSS.Transform.toString(transform),
+        transition,
+        touchAction: 'none',
+        marginTop: '5px',
+    }
+    const handleClick = (e: React.MouseEvent) => {
+        console.log('click')
+        e.stopPropagation();
+        setSelectedBlock(id);
+    }
+
+
+    return (
+        <div 
+            ref={setNodeRef} 
+            {...attributes} 
+            {...listeners} 
+            style={curStyle}
+            className={`${(selectedBlock === id && !isDragging) ? 'editor-selected' : ''}`}
+            onClick={handleClick}
+        >
+            { children }
+        </div>
+    );
+}
+
 
 
 // решить проблему с высотой блоков (ее можно получить из схемы)
 // получить breacpoint key для блоков исходя из size их схемы
 export default function WorkArea({ marginCell }: RenderPageProps) {
-    const { curentPageData, curentPageName, curBreacpoint, setCurBreacpoint, selectBlockData, setSelectBlockData } = useEditor();
+    const workAreaRef = React.useRef<HTMLDivElement>(null);
+    const { 
+        zoom,
+        setZoom,
+        selectedBlock,
+        curentPageData, 
+        setCurrentPageData,
+        curentPageName, 
+        curBreacpoint, 
+        setCurBreacpoint, 
+        selectBlockData, 
+        setSelectBlockData,
+        setSelectedBlock,
+    } = useEditor();
     const [layouts, setLayouts] = React.useState<Record<'lg' | 'md' | 'sm' | 'xs', LayoutPage[]>>({
         lg: [],
         md: [],
         sm: [],
         xs: []
     });
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 5 } })
+    );
     
 
-    const pixelsToH =(heightPx: number, rowHeight: number, marginY: number)=> {
-        return Math.ceil((heightPx + marginY) / (rowHeight + marginY));
-    }
     const getClosestLayout = (bp: string): LayoutPage[] => {
         const order: string[] = ['lg', 'md', 'sm', 'xs'];
         const start = order.indexOf(bp);
@@ -39,7 +83,6 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
             }
         }
 
-        // fallback: попробуем вверх по приоритету
         for (let i = start + 1; i < order.length; i++) {
             const layout = layouts[order[i] as keyof typeof layouts];
             if (layout && layout.length > 0) {
@@ -47,62 +90,45 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
             }
         }
 
-        return []; // вообще ничего нет
-    }
-    const createComponent = (layout: LayoutPage) => {
-        const serrializeContent = layout.content;
-        const scope = serrializeContent?.props?.['data-block-scope'];
-        const nameBlock = serrializeContent?.props?.['data-block-name'];
-        
-        
-        if (!scope || !nameBlock) return <div>Ошибка данных блока</div>;
-        else return (
-            <RenderBlock
-                scope={scope}
-                name={nameBlock}
-            />
-        );
+        return [];
     }
     const addBlockToPage = (data: DataRenderGrid) => {
-        const variantLayout: { 
-            layout: LayoutPage[],
-            size: { width: number, height: number } 
-        } = curentPageData.variants[curBreacpoint];
+        const variantLayout = curentPageData.variants[curBreacpoint];
+        
+        if (!variantLayout) return;
 
-        if (!variantLayout) variantLayout[curBreacpoint] = {
-            layout: undefined satisfies LayoutPage,
-            size: { width: BREAKPOINT_WIDTH[curBreacpoint], height: '100%' }
-        }
-        
-        const layout = curentPageData.variants[curBreacpoint].layout ?? [];
+        const layoutList = variantLayout.layout ?? [];
         const newId = `block-${Date.now()}`;
-        const pxTh = pixelsToH(data.size.height, 30, (marginCell?.[1] ?? marginDefault[1]));
-        
-        // LINK - добавление нового блока
+
         const newBlock: LayoutPage = {
             i: newId,
-            x: 0,
-            y: layout.length * 2,                                               // разместим ниже всех
-            w: 12,
-            h: pxTh,
-            moved: false,
-            static: false,
             content: {
                 props: {
                     'data-block-scope': data.meta.scope,
                     'data-block-name': data.meta.name,
-                    style: {
-                        
-                    }
+                    style: {}
                 }
             }
-        };
+        }
 
-        layout.push(newBlock);
-        setLayouts((prev) => ({
+        const newLayout = [...layoutList, newBlock];
+
+        setLayouts(prev => ({
             ...prev,
-            [curBreacpoint]: [...layout]
+            [curBreacpoint]: newLayout,
         }));
+        setCurrentPageData(prev => ({
+            ...prev,
+            variants: {
+                ...prev.variants,
+                [curBreacpoint]: {
+                    ...prev.variants[curBreacpoint],
+                    layout: newLayout,
+                }
+            }
+        }));
+
+        setSelectedBlock(newId);
         setSelectBlockData(null);
 
         //? костыль для next
@@ -110,6 +136,87 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
         setCurBreacpoint('m');
         setTimeout(()=> setCurBreacpoint(memory), 600);
     }
+    const handleDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+
+        if (active?.id) {
+            setSelectedBlock(active.id as string);
+        }
+    }
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        if (!over || active.id === over.id) return;
+
+        const layoutList = getClosestLayout(curBreacpoint);
+        const oldIndex = layoutList.findIndex(item => item.i === active.id);
+        const newIndex = layoutList.findIndex(item => item.i === over.id);
+
+        if (oldIndex !== -1 && newIndex !== -1) {
+            const newLayout = arrayMove(layoutList, oldIndex, newIndex);
+
+            setLayouts(prev => ({
+                ...prev,
+                [curBreacpoint]: [...newLayout],
+            }));
+
+             if (curentPageData) {
+                 setCurrentPageData((prev) => ({
+                     ...prev,
+                     variants: {
+                         ...prev.variants,
+                         [curBreacpoint]: {
+                             ...prev.variants[curBreacpoint],
+                             layout: [...newLayout],
+                         }
+                     }
+                 }));
+            }
+        }
+    }
+    const deleteSelectedBlock = () => {
+        if (!selectedBlock) return;
+
+        const layoutList = getClosestLayout(curBreacpoint);
+        const newLayout = layoutList.filter(block => block.i !== selectedBlock);
+
+        // Обновляем layouts
+        setLayouts(prev => ({
+            ...prev,
+            [curBreacpoint]: newLayout,
+        }));
+
+        // Обновляем curentPageData
+        setCurrentPageData(prev => ({
+            ...prev,
+            variants: {
+                ...prev.variants,
+                [curBreacpoint]: {
+                    ...prev.variants[curBreacpoint],
+                    layout: newLayout,
+                }
+            }
+        }));
+
+        setSelectedBlock(null);
+    }
+
+    React.useEffect(() => {
+        const area = workAreaRef.current;
+        if (!area) return;
+
+        const handleWheel = (e: WheelEvent) => {
+            if (e.ctrlKey) {
+                e.preventDefault();
+                setZoom(prev => Math.max(0.1, Math.min(5, prev - e.deltaY * 0.001)));
+            }
+        };
+
+        area.addEventListener('wheel', handleWheel, { passive: false });
+
+        return () => {
+            area.removeEventListener('wheel', handleWheel);
+        };
+    }, []);
     React.useEffect(() => {
         if (curentPageData) {
             const layoutsFromData: Record<('lg' | 'md' | 'sm' | 'xs'), LayoutPage[]> = {};
@@ -125,11 +232,22 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
     React.useEffect(()=> {
         if(selectBlockData) addBlockToPage(selectBlockData);
     }, [selectBlockData]);
+    React.useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === 'Delete') {
+                deleteSelectedBlock();
+            }
+        };
+
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, [selectedBlock, curBreacpoint]);
     const layoutList = getClosestLayout(curBreacpoint);
     
 
     return (
         <div
+            ref={workAreaRef}
             data-name={curentPageName}
             style={{
                 overflow: 'auto',
@@ -141,24 +259,42 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
         >
             <div
                 style={{
+                    transform: `scale(${zoom})`,
+                    transformOrigin: 'top center',
                     width: BREAKPOINT_WIDTH[curBreacpoint] ?? '100%',                    //? меняем ширину и меняется layout
                     height: 'fit-content'
                 }}
             >
-                <ResponsiveGridLayout
-                    className="GRID-PAGE"
-                    layouts={{ [curBreacpoint]: layoutList }}
-                    breakpoints={BREAKPOINT_WIDTH}
-                    cols={{ lg: 12, md: 12, sm: 12, xs: 12 }}
-                    rowHeight={29}
-                    containerPadding={[0, 0]}
-                    compactType={null}                      // Отключение автоматической компоновки
-                    preventCollision={false}
-                    isDraggable={true}                     // Отключить перетаскивание
-                    isResizable={false}                     // Отключить изменение размера
-                    margin={marginCell ?? marginDefault}
+                 <DndContext 
+                    sensors={sensors} 
+                    collisionDetection={closestCenter} 
+                    onDragStart={handleDragStart}
+                    onDragEnd={handleDragEnd}
                 >
-                    { layoutList?.map((layout: LayoutPage) => (
+                    <SortableContext items={layoutList.map(item => item.i)} strategy={verticalListSortingStrategy}>
+                        { layoutList.map(layout => (
+                            <SortableItem key={layout.i} id={layout.i}>
+                                {layout.content ? (
+                                    <RenderBlock
+                                        scope={layout.content.props['data-block-scope']}
+                                        name={layout.content.props['data-block-name']}
+                                        style={layout.content.props?.style}
+                                    />
+                                ) : (
+                                    <div>Ошибка блока</div>
+                                )}
+                            </SortableItem>
+                        ))}
+                    </SortableContext>
+                </DndContext>
+            </div>
+        </div>
+    );
+}
+
+
+/**
+ * { layoutList?.map((layout: LayoutPage) => (
                         <div 
                             key={layout.i} 
                             data-grid-id={layout.i} 
@@ -167,8 +303,4 @@ export default function WorkArea({ marginCell }: RenderPageProps) {
                             { createComponent(layout) }
                         </div>
                     ))}
-                </ResponsiveGridLayout>
-            </div>
-        </div>
-    );
-}
+ */

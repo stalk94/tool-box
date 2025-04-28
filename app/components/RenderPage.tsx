@@ -70,7 +70,7 @@ export default function ({ data, marginCell }: RenderPageProps) {
             setLayouts(layoutsFromData);
         }
     }, [data]);
-
+    
 
     return(
         <div 

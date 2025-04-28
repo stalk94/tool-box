@@ -56,7 +56,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         else setImgSrc(src);
         setSource('src');
     }, [src]);
-    
+    console.log(height)
     
     return (
         <img
@@ -67,7 +67,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             src={imgSrc ?? '/placeholder.jpg'}
             style={{
                 width : width, 
-                height : height+6
+                height : height - 1
             }}
         />
     );

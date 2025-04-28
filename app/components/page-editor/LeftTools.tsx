@@ -190,11 +190,7 @@ const RenderBlockScope = () => {
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const { curentScope, curentScopeBlockData, setSelectBlockData } = useEditor();
 
-
-    const handleOpen = (event: React.MouseEvent<HTMLElement>, meta) => {
-        setLink(meta.preview);
-        setAnchorEl(event.currentTarget);
-    }
+    
     const getKeyNameBreakpoint = (width?: number) => {;
         const sorted = Object.entries(BREAKPOINT_WIDTH).sort((a, b) => a[1] - b[1]);
 

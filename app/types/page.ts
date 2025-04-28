@@ -1,4 +1,3 @@
-import { Layout } from "react-grid-layout";
 
 
 
@@ -15,9 +14,8 @@ export type PageComponent = {
         style: React.CSSProperties
     }
 }
-export type LayoutPage = Layout & {
-    x: 0
-    w: 12
+export type LayoutPage = {
+    i: number
     content: PageComponent
 }
 

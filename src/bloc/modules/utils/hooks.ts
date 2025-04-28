@@ -79,6 +79,8 @@ const useCellContext = ( componentId: string, includeSelf: boolean = true ): Cel
 export const useComponentSize = (componentId: string) => {
     const { cellRef, components, componentIndex } = useCellContext(componentId, true);
     const [size, setSize] = React.useState({ width: 0, height: 0 });
+    const [zoom, setZoom] = React.useState(globalThis?.ZOOM ?? 1);      // ? глобал
+
 
     React.useEffect(() => {
         if (!cellRef || componentIndex === null) return;
@@ -92,22 +94,23 @@ export const useComponentSize = (componentId: string) => {
                 return acc + (el?.offsetHeight || 0);
             }, 0);
 
-            const cellRect = cellRef.getBoundingClientRect();
-            const availableHeight = cellRect.height - usedHeight;
-            //const width = cellRect.width;
-
             const usedWidth = siblingsBefore.reduce((acc, comp) => {
-                const id = comp?.props?.['data-id'];
+                const id = comp.props['data-id'];
                 const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
                 return acc + (el?.offsetWidth || 0);
             }, 0);
-            
-            const availableWidth = cellRect.width - usedWidth;
-            //console.log(availableWidth)
+
+            const cellRect = cellRef.getBoundingClientRect();
+           
+            const realCellWidth = cellRect.width / zoom;
+            const realCellHeight = cellRect.height / zoom;
+
+            const availableHeight = realCellHeight - usedHeight;
+            const availableWidth = realCellWidth - usedWidth;
 
             setSize({
                 width: Math.max(0, availableWidth),
-                height: Math.max(0, availableHeight-8),         //!
+                height: Math.max(0, availableHeight - 8),
             });
         };
 
@@ -116,7 +119,7 @@ export const useComponentSize = (componentId: string) => {
         resizeObserver.observe(cellRef);
 
         return () => resizeObserver.disconnect();
-    }, [cellRef, componentIndex, components]);
+    }, [cellRef, componentIndex, components, zoom]);
 
     return size; // { width, height }
 }

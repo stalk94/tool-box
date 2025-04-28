@@ -11,7 +11,7 @@ const marginDefault: [number, number] = [5, 5];
 
 
 
-export default function ({ scope, name, marginCell }: RenderGridProps) {
+export default function ({ scope, name, marginCell, style }: RenderGridProps) {
     const blockRef = React.useRef<HTMLDivElement>(null);
     const [isLoad, setLoad] = React.useState(false);
     const [render, setRender] = React.useState<DataRenderLayout[]>([]);
@@ -54,6 +54,7 @@ export default function ({ scope, name, marginCell }: RenderGridProps) {
                 width: '100%',
                 height: '100%',
                 border: `1px dashed #f2f2f237`,
+                ...style
             }}
         >
             { error ? (

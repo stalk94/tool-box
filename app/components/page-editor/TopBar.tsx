@@ -1,6 +1,6 @@
 import React from "react";
-import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
-import { TouchApp, ViewComfy, Add, GridView } from "@mui/icons-material";
+import { Button, TextField, Box, Stack, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
+import { TouchApp, ViewComfy, ZoomIn, GridView, Search } from "@mui/icons-material";
 import { useEditor } from './context';
 
 
@@ -8,12 +8,12 @@ const breackpoints: ['lg', 'md', 'sm', 'xs'] = ['lg', 'md', 'sm', 'xs'];
 
 
 export default function ({ setShowBlocEditor }) {
-    const { curBreacpoint, setCurBreacpoint, curentPageName } = useEditor();
+    const { curBreacpoint, setCurBreacpoint, curentPageName, zoom } = useEditor();
 
     React.useEffect(()=> {
 
     }, []);
-
+   
    
     return (
         <Paper elevation={2}
@@ -59,6 +59,14 @@ export default function ({ setShowBlocEditor }) {
                         { br }
                     </button>
                 )}
+            </Box>
+            <Box style={{ fontSize: 14 }}
+                sx={{ml:'auto'}}
+            >
+                <Stack direction="row" alignItems="center" spacing={1}>
+                    <ZoomIn style={{ fontSize: 18, marginRight: '5px' }} />
+                    { Math.round(zoom * 100) }%
+                </Stack>
             </Box>
         </Paper>
     );

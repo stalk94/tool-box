@@ -207,7 +207,6 @@ export default function ({ desserealize }) {
 
                 const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
                 const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
-
                 //setRowHeight(availableHeight / rows); // Вычисляем высоту строки
             }
         });

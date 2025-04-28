@@ -27,8 +27,8 @@ if (!window.next) {
 
 
 
-// ANCHOR - системный эммитер
-globalThis.EVENT = new EventEmitter();
+// ANCHOR - СИТЕМНЫЙ ЭММИТЕР
+if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter();
 
 
 // это редактор блоков сетки
@@ -226,6 +226,7 @@ export default function Block({ setShowBlocEditor }) {
 
         if (isMounted()) {
             info.project.set(data);
+            ctx.dragEnabled.set(true);
         }
     }, []);
 
