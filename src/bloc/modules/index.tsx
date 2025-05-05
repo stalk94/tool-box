@@ -31,7 +31,6 @@ import { MediaCarouselCustom } from './sources/media-carousel'
  * * 
  */
 //////////////////////////////////////////////////////////////////////
-globalThis.EDITOR = true;       // мы в контексте редактора
 globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
 ///////////////////////////////////////////////////////////////////////

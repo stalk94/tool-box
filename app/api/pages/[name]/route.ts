@@ -48,3 +48,17 @@ export async function POST(req: NextRequest, context: { params: { name: string }
 		return NextResponse.json({ error: 'Ошибка при записи файла' }, { status: 500 });
 	}
 }
+
+export async function DELETE(_: Request, context: { params: { name: string } }) {
+	const params = await Promise.resolve(context.params);
+	const filePath = path.join(process.cwd(), 'public', 'pages', `${params.name}.json`);
+
+	try {
+		await fs.promises.unlink(filePath);
+		return NextResponse.json({ success: true });
+	} 
+	catch (err) {
+		console.error('[DELETE PAGE ERROR]', err);
+		return NextResponse.json({ success: false, error: 'Не удалось удалить страницу' }, { status: 500 });
+	}
+}

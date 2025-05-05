@@ -2,6 +2,7 @@
 import React from 'react';
 import { DataRenderPage, LayoutPage, BREAKPOINT_WIDTH } from '../types/page';
 import RenderBlock from './RenderBlock';
+import { requestLlama } from '@system/helpers/ai';
 
 
 type Props = {
@@ -11,6 +12,19 @@ type Props = {
     footerBlock?: DataRenderPage
 }
 
+const test =()=> {
+    requestLlama({
+            vars: {
+                id: 'test', 
+                scope: 'test', 
+                'name': 'test', 
+                description: 'Надо 4 компонента. Два поля ввода текста и две кнопки'
+            }
+        }).then((resp)=> {
+            console.log(resp.response)
+        })
+}
+//test()
 
 
 /** ! РЕНДЕР В ПРОЕКТЕ (не эдитор)  */
@@ -19,7 +33,7 @@ export default function RenderPage({ schema, breakpoint = 'lg', headerBlock, foo
     const [layout, setLayout] = React.useState<LayoutPage[]>([])
     const variantOrder: ('lg' | 'md' | 'sm' | 'xs')[] = ['lg', 'md', 'sm', 'xs'];
 
-    
+
     React.useEffect(() => {
         const currentIndex = variantOrder.indexOf(breakpoint);
 

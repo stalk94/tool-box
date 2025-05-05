@@ -118,6 +118,10 @@ const PageEditor = ({ listsPages, setShowBlocEditor }: { listsPages: string[], s
 export default function ({ listsPages }: { listsPages: string[] }) {
     const [showBlocEditor, setShowBlocEditor] = React.useState(false);
 
+    React.useEffect(()=> {
+        globalThis.EDITOR = true;
+    }, []);
+
     return(
         <ThemeProvider theme={darkTheme}>
             <EditorProvider>
