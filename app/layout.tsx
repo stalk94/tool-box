@@ -1,9 +1,8 @@
 import './globals.css';
-import { Provider } from 'react-redux';
+export { generateMetadata } from './[page]/head';
 
 
-
-export const metadata = {
+const defaultMetadata = {
     title: 'editor',
     description: "Описание для SEO",
     authors: [{ name: "stalk9424", url: "" }],
@@ -13,6 +12,8 @@ export const metadata = {
         shortcut: '/favicon.ico'
     }
 }
+
+
 
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

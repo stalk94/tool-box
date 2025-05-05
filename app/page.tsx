@@ -1,20 +1,32 @@
 import React from 'react';
+import { loadProjectConfig, loadLayoutConfig, loadPageSchema } from './[page]/helpers';
 import ResponsiveRenderPage from './[page]/ResponsiveRender';
-import { DataRenderPage } from './types/page';
-import fs from 'fs/promises';
-import path from 'path';
 
 
 
 export default async function RootPage() {
-    const filePath = path.join(process.cwd(), 'public/pages/home.json');        // или любой дефолт
-    const raw = await fs.readFile(filePath, 'utf-8');
-    const schema: DataRenderPage = JSON.parse(raw);
+    const config = await loadProjectConfig();
+    const layoutConfig = await loadLayoutConfig();
+    const defaultPageFile = `${config.defaultPage}.json`;
 
+    let pageSchema, headerSchema, footerSchema;
+
+    try {
+        pageSchema = await loadPageSchema(defaultPageFile);
+        headerSchema = layoutConfig.header ? await loadPageSchema(layoutConfig.header) : undefined;
+        footerSchema = layoutConfig.footer ? await loadPageSchema(layoutConfig.footer) : undefined;
+    }
+    catch (err) {
+        console.error('Ошибка загрузки главной страницы или layout', err);
+        return <div>❌ Не удалось загрузить стартовую страницу</div>;
+    }
+    
 
     return (
         <ResponsiveRenderPage 
-            schema={schema} 
+            schema={pageSchema}
+            header={headerSchema}
+            footer={footerSchema}
         />
     );
 }

@@ -5,14 +5,16 @@ import RenderBlock from './RenderBlock';
 
 
 type Props = {
-  schema: DataRenderPage
-  breakpoint?: 'lg' | 'md' | 'sm' | 'xs'
+    schema: DataRenderPage
+    breakpoint?: 'lg' | 'md' | 'sm' | 'xs'
+    headerBlock?: DataRenderPage
+    footerBlock?: DataRenderPage
 }
 
 
 
 /** ! РЕНДЕР В ПРОЕКТЕ (не эдитор)  */
-export default function ({ schema, breakpoint = 'lg' }: Props) {
+export default function RenderPage({ schema, breakpoint = 'lg', headerBlock, footerBlock }: Props) {
     const [blocks, setBlocks] = React.useState<Record<string, any>>({})
     const [layout, setLayout] = React.useState<LayoutPage[]>([])
     const variantOrder: ('lg' | 'md' | 'sm' | 'xs')[] = ['lg', 'md', 'sm', 'xs'];
@@ -74,32 +76,49 @@ export default function ({ schema, breakpoint = 'lg' }: Props) {
             loadBlocks();
         }
     }, [layout]);
-
+   
 
     return(
         <div className="render-page">
-            { layout.map((cell, index) => {
-                const props = cell.content?.props
-                const scope = props?.['data-block-scope']
-                const name = props?.['data-block-name']
-                const id = `${scope}/${name}`
-                const block = blocks[id]
+            { headerBlock && (
+                <div className="render-header">
+                    <RenderPage 
+                        schema={headerBlock} 
+                        breakpoint={breakpoint} 
+                    />
+                </div>
+            )}
+            
+            <div className="render-body">
+                { layout.map((cell, index) => {
+                    const props = cell.content?.props
+                    const scope = props?.['data-block-scope']
+                    const name = props?.['data-block-name']
+                    const id = `${scope}/${name}`
+                    const block = blocks[id]
 
-                return (
-                    <div key={index} className="render-cell">
-                        { block ? (
-                            <RenderBlock 
-                                data={block} 
-                                preview={true}          // убираем вспомогательные стили
-                            />
-                        ) : (
-                            <div className="render-placeholder">
-                                Загрузка блока {id}...
-                            </div>
-                        )}
-                    </div>
-                )
-            })}
+                    return (
+                        <div key={index} className="render-cell">
+                            { block ? (
+                                <RenderBlock 
+                                    data={block} 
+                                    preview={true}          // убираем вспомогательные стили
+                                />
+                            ) : (
+                                <div className="render-placeholder">
+                                    Загрузка блока {id}...
+                                </div>
+                            )}
+                        </div>
+                    )
+                })}
+            </div>
+
+            { footerBlock && (
+                <div className="render-footer">
+                    <RenderPage schema={footerBlock} breakpoint={breakpoint} />
+                </div>
+            )}
         </div>
     );
 }

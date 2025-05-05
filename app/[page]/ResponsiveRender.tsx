@@ -8,9 +8,14 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { darkTheme, lightTheme } from '../theme/index';
 import '../globals.css'; // обязательно для стилей
 
+type Props = {
+  schema: DataRenderPage;
+  header?: DataRenderPage;
+  footer?: DataRenderPage;
+}
 
 
-export default function ResponsiveRenderPage({ schema }: { schema: DataRenderPage }) {
+export default function ResponsiveRenderPage({ schema, header, footer }: Props) {
     const theme = useTheme();
     const isXs = useMediaQuery(theme.breakpoints.down('sm'));
     const isSm = useMediaQuery(theme.breakpoints.between('sm', 'md'));
@@ -21,13 +26,15 @@ export default function ResponsiveRenderPage({ schema }: { schema: DataRenderPag
     else if (isSm) currentBreakpoint = 'sm';
     else if (isMd) currentBreakpoint = 'md';
     globalThis.EDITOR = false;                      // меняем флаг
-
+    
 
     return (
         <ThemeProvider theme={darkTheme}>
             <CssBaseline />
             <RenderPage 
                 schema={schema} 
+                headerBlock={header} 
+                footerBlock={footer}
                 breakpoint={currentBreakpoint}
             />
         </ThemeProvider>

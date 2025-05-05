@@ -21,7 +21,6 @@ export type LayoutPage = {
 
 
 
-
 /**
  * layout - это лист 
  */
