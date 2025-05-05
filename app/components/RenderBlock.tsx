@@ -8,42 +8,47 @@ import Skeleton from '@mui/material/Skeleton';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const marginDefault: [number, number] = [5, 5];
+type Props =
+  | { data: DataRenderGrid; marginCell?: [number, number]; style?: React.CSSProperties; preview?: boolean; }
+  | { scope: string; name: string; marginCell?: [number, number]; style?: React.CSSProperties; preview?: boolean; }
 
 
 
-export default function ({ scope, name, marginCell, style }: RenderGridProps) {
+export default function (props: Props) {
     const blockRef = React.useRef<HTMLDivElement>(null);
     const [isLoad, setLoad] = React.useState(false);
     const [render, setRender] = React.useState<DataRenderLayout[]>([]);
     const [error, setError] = React.useState<string | null>(null);
 
+    const marginCell = 'marginCell' in props ? props.marginCell : undefined;
+  
 
-    async function fetchBlock(scope: string, name: string): Promise<DataRenderGrid> {
-        const res = await fetch(`/api/block/${scope}/${name}`);
-        if (!res.ok) throw new Error('Блок не найден');
-        return await res.json();
+    const load = async () => {
+        setLoad(false);
+        setError(null);
+
+        try {
+            if ('data' in props) {
+                const { layout, content } = props.data;
+                setRender(consolidation(layout, content));
+                setLoad(true);
+            }
+            else {
+                const res = await fetch(`/api/block/${props.scope}/${props.name}`);
+                if (!res.ok) throw new Error('Блок не найден');
+                const data: DataRenderGrid = await res.json();
+                setRender(consolidation(data.layout, data.content));
+                setLoad(true);
+            }
+        }
+        catch (err) {
+            console.error('Ошибка загрузки блока', err);
+            setError('Ошибка загрузки блока');
+        }
     }
     React.useEffect(() => {
-        if (scope && name) {
-            setLoad(false);
-            setError(null);
-
-            fetchBlock(scope, name)
-                .then((data) => {
-                    if (data.layout) {
-                        setRender(consolidation(data.layout, data.content));
-                        setLoad(true);
-                    } 
-                    else {
-                        setError('Пустой блок');
-                    }
-                })
-                .catch((err) => {
-                    console.error('Ошибка загрузки блока', err);
-                    setError('Ошибка загрузки блока');
-                });
-        }
-    }, [scope, name]);
+        load();
+    }, [JSON.stringify(props)]);
 
 
     return (
@@ -53,8 +58,8 @@ export default function ({ scope, name, marginCell, style }: RenderGridProps) {
                 overflow: 'hidden',
                 width: '100%',
                 height: '100%',
-                border: `1px dashed #f2f2f237`,
-                ...style
+                ...(props.preview ? {} : { border: `1px dashed #f2f2f237` }),
+                ...props.style
             }}
         >
             { error ? (
@@ -82,7 +87,7 @@ export default function ({ scope, name, marginCell, style }: RenderGridProps) {
                             style={{
                                 overflowX: 'hidden',
                                 overflowY: 'auto',
-                                border: `1px dashed #87848437`,
+                                ...(props.preview ? {} : { border: '1px dashed #87848437' })
                             }}
                         >
                             { Array.isArray(layer.content) &&

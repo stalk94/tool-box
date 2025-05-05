@@ -2,13 +2,13 @@
 import React from "react";
 import "react-grid-layout/css/styles.css";
 import { useEditor } from './context';
-import { RenderPageProps, LayoutPage, PageComponent } from '../../types/page';
+import { RenderPageProps, LayoutPage, BREAKPOINT_WIDTH } from '../../types/page';
 import RenderBlock from '../RenderBlock';
 import { DataRenderGrid } from '../../types/editor';
 import { CSS } from '@dnd-kit/utilities';
 import { DndContext, PointerSensor, useSensor, useSensors, closestCenter, DragStartEvent, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, useSortable, verticalListSortingStrategy, arrayMove } from "@dnd-kit/sortable";
-export const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
+
 
 
 const SortableItem = ({ id, children, style }: { id: string, children: React.ReactNode }) => {

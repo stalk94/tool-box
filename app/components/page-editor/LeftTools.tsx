@@ -7,9 +7,8 @@ import {
 import { useEditor } from './context';
 import LeftSideBarAndTool from '@components/nav-bars/tool-left'
 import { usePopUpName } from '@bloc/utils/usePopUp';
-import { getUniqueBlockName } from "@bloc/utils/editor";;
-import { BREAKPOINT_WIDTH } from './WorkArea';
-
+import { getUniqueBlockName } from "@bloc/utils/editor";
+import { BREAKPOINT_WIDTH } from '../../types/page';
 
 
 

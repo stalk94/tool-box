@@ -1,4 +1,4 @@
-
+export const BREAKPOINT_WIDTH = { lg: 1200, md: 960, sm: 600, xs: 460 } as const;
 
 
 export type PageComponent = {
@@ -19,18 +19,7 @@ export type LayoutPage = {
     content: PageComponent
 }
 
-type LgSize = {
-    width: 1200,
-    heigh: number
-}
-type MdSize = {
-    width: 960,
-    heigh: number
-}
-type SmSize = {
-    width: 480,
-    heigh: number
-}
+
 
 
 /**
@@ -43,19 +32,24 @@ export type DataRenderPage = {
 	}
 	variants: {
 		lg: {
-			layout: LayoutPage[],
-			size: LgSize
+			layout: LayoutPage[]
+			width: 1200
 		}
 		md: {
-			layout: LayoutPage[],
-			size: MdSize
+			layout: LayoutPage[]
+			width: 960
 		}
 		sm: {
 			layout: LayoutPage[],
-			size: SmSize
+			width: 600
 		}
+        xs: {
+            layout: LayoutPage[],
+			width: 460
+        }
     }
 }
+
 
 export type RenderPageProps = {
     data: DataRenderPage

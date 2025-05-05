@@ -151,7 +151,7 @@ export function Custom({ value, onChange, items, placeholder, ...props }: BaseSe
 
 export default function ({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
     const theme = useTheme();
-    const [selected, setSelected] = React.useState(value);
+    const [selected, setSelected] = React.useState(value ?? 1);
 
 
     const placeholderStyle = {

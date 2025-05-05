@@ -26,6 +26,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
 
     const componentId = props['data-id'];
     const { width, height } = useComponentSize(componentId);
+   
 
     const handleUpload = async (file) => {
         setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
@@ -56,8 +57,9 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         else setImgSrc(src);
         setSource('src');
     }, [src]);
-    console.log(height)
-    
+
+
+
     return (
         <img
             ref={ref}
@@ -66,9 +68,10 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             data-source={sourceType}
             src={imgSrc ?? '/placeholder.jpg'}
             style={{
-                width : width, 
-                height : height - 1
+                width: width,
+                height: height - 1,
             }}
+            {...otherProps}
         />
     );
 });

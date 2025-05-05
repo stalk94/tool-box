@@ -1,116 +1,105 @@
 'use client'
 import React from 'react';
-import { Responsive, WidthProvider } from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
-import { RenderPageProps, LayoutPage, PageComponent } from '../types/page';
+import { DataRenderPage, LayoutPage, BREAKPOINT_WIDTH } from '../types/page';
 import RenderBlock from './RenderBlock';
 
-const ResponsiveGridLayout = WidthProvider(Responsive);
-const marginDefault: [number, number] = [5, 5];
+
+type Props = {
+  schema: DataRenderPage
+  breakpoint?: 'lg' | 'md' | 'sm' | 'xs'
+}
 
 
 
-/**
- * ! РЕНДЕР В ПРОЕКТЕ (не эдитор)
- * 
- */
-export default function ({ data, marginCell }: RenderPageProps) {
-    const [name, setName] = React.useState<string>(data.meta.name);
-    const [currentBreakpoint, setCurrentBreakpoint] = React.useState('lg');
-    const [layouts, setLayouts] = React.useState<Record<'lg'|'md'|'sm', LayoutPage[]>>({
-        lg: [],
-        md: [],
-        sm: []
-    });
+/** ! РЕНДЕР В ПРОЕКТЕ (не эдитор)  */
+export default function ({ schema, breakpoint = 'lg' }: Props) {
+    const [blocks, setBlocks] = React.useState<Record<string, any>>({})
+    const [layout, setLayout] = React.useState<LayoutPage[]>([])
+    const variantOrder: ('lg' | 'md' | 'sm' | 'xs')[] = ['lg', 'md', 'sm', 'xs'];
 
     
-    const getClosestLayout = (bp: string): LayoutPage[] => {
-        const order: string[] = ['lg', 'md', 'sm', 'xs'];
-        const start = order.indexOf(bp);
-
-        for (let i = start; i >= 0; i--) {
-            const layout = layouts[order[i] as keyof typeof layouts];
-            if (layout && layout.length > 0) {
-                return layout;
-            }
-        }
-
-        // fallback: попробуем вверх по приоритету
-        for (let i = start + 1; i < order.length; i++) {
-            const layout = layouts[order[i] as keyof typeof layouts];
-            if (layout && layout.length > 0) {
-                return layout;
-            }
-        }
-
-        return []; // вообще ничего нет
-    }
-    const createComponent =(serrializeContent: PageComponent)=> {
-        const scope = serrializeContent.props['data-block-scope'];
-        const nameBlock = serrializeContent.props['data-block-name'];
-
-        if (!scope || !nameBlock) return <div>Ошибка данных блока</div>;
-
-        return(
-            <RenderBlock
-                scope={scope}
-                name={nameBlock}
-            />
-        );
-    }
     React.useEffect(() => {
-        if (data) {
-            setName(data.meta.name);
-            const layoutsFromData: Record<'lg' | 'md' | 'sm', LayoutPage[]> = {};
+        const currentIndex = variantOrder.indexOf(breakpoint);
 
-            Object.entries(data.variants).forEach(([key, value]) => {
-                if(value?.layout) layoutsFromData[key as 'lg' | 'md' | 'sm'] = value.layout;
-            });
+        for (let i = currentIndex; i >= 0; i--) {
+            const variant = schema.variants[variantOrder[i]];
 
-            setLayouts(layoutsFromData);
+            if (variant?.layout?.length) {
+                setLayout(variant.layout);
+                return
+            }
         }
-    }, [data]);
-    
+
+        for (let i = currentIndex + 1; i < variantOrder.length; i++) {
+            const variant = schema.variants[variantOrder[i]];
+
+            if (variant?.layout?.length) {
+                setLayout(variant.layout);
+                return
+            }
+        }
+
+        setLayout([]);
+    }, [schema, breakpoint]);
+    React.useEffect(() => {
+        const loadBlocks = async () => {
+            const loaded: Record<string, any> = {}
+
+            await Promise.all(layout.map(async (cell) => {
+                const { props } = cell.content;
+                const scope = props['data-block-scope'];
+                const name = props['data-block-name'];
+                const id = `${scope}/${name}`;
+
+                if (!loaded[id]) {
+                    try {
+                        const res = await fetch(`/blocks/${scope}/${name}.json`);
+                        if (res.ok) {
+                            loaded[id] = await res.json();
+                        } 
+                        else {
+                            console.warn(`Блок не найден: ${id}`);
+                        }
+                    } 
+                    catch (err) {
+                        console.error(`Ошибка загрузки блока: ${id}`, err);
+                    }
+                }
+            }));
+
+            setBlocks(loaded);
+        }
+
+        if (layout.length > 0) {
+            loadBlocks();
+        }
+    }, [layout]);
+
 
     return(
-        <div 
-            data-meta={data.meta}
-            data-name={data.meta?.name}
-            style={{ 
-                maxWidth: '100%',           // можно ограничить ширину но при этом сетка останется отзывчивой
-                height: 'fit-content',
-            }}
-        >
-            <ResponsiveGridLayout
-                className="GRID-PAGE"
-                layouts={layouts}                           
-                breakpoints={{ lg: 1200, md: 960, sm: 600, xs: 460 }}
-                cols={{ lg: 12, md: 12, sm: 12, xs: 12 }}                                  
-                rowHeight={30}      
-                compactType={null}                      // Отключение автоматической компоновки
-                preventCollision={true}
-                isDraggable={false}                     // Отключить перетаскивание
-                isResizable={false}                     // Отключить изменение размера
-                margin={marginCell ?? marginDefault}
-                onBreakpointChange={(breakpoint) => {
-                    setCurrentBreakpoint(breakpoint);
-                }}
-            >
-                { getClosestLayout(currentBreakpoint).map((layout: LayoutPage)=> (
-                    <div
-                        key={layout.i}
-                        data-id={layout.i}
-                        data-variant={currentBreakpoint}
-                        style={{
-                            width: '100%',
-                            overflow: 'hidden',
-                            ...layout?.content?.props?.style
-                        }}
-                    >
-                        { createComponent(layout?.content) }
+        <div className="render-page">
+            { layout.map((cell, index) => {
+                const props = cell.content?.props
+                const scope = props?.['data-block-scope']
+                const name = props?.['data-block-name']
+                const id = `${scope}/${name}`
+                const block = blocks[id]
+
+                return (
+                    <div key={index} className="render-cell">
+                        { block ? (
+                            <RenderBlock 
+                                data={block} 
+                                preview={true}          // убираем вспомогательные стили
+                            />
+                        ) : (
+                            <div className="render-placeholder">
+                                Загрузка блока {id}...
+                            </div>
+                        )}
                     </div>
-                ))}
-            </ResponsiveGridLayout>
+                )
+            })}
         </div>
     );
 }

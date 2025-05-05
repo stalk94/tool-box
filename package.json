@@ -6,6 +6,7 @@
     "start": "next start",
     "dev": "vite",
     "nextdev": "npx open-cli http://localhost:3000/editor & next dev --turbo",
+    "nextbuild": "next build",
     "build": "vite build src --outDir=../dist --watch --sourcemap",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
