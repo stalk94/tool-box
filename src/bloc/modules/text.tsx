@@ -225,6 +225,7 @@ const Toolbar = () => {
                 <Tooltip title="Ссылка">
                     <IconButton style={{marginRight:'5px'}} size="small" 
                         onClick={() => {
+                            console.log('link')
                             const href = prompt('Вставьте ссылку:');
                             if (!href) return;
 
@@ -236,7 +237,7 @@ const Toolbar = () => {
 
                             Editor.addMark(editor, 'link', { href });
                         }}
-                        {...withResetOnRightClick((e) => setAnchorBg(e.currentTarget), editor, 'link')}
+                        
                     >
                         <InsertLink sx={{ fontSize: 16 }} />
                     </IconButton>
@@ -428,7 +429,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         <div 
             data-id={dataId} 
             data-type="Text" 
-            style={{ width: '100%' }}
+            style={{ width: '100%', ...props?.style }}
         >
             { globalThis.EDITOR ? (
                 <Slate 
@@ -545,6 +546,7 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
             suppressContentEditableWarning
             onBlur={handleBlur}
             { ...otherProps }
+            style={style}
             sx={{ width: '100%', display:'block', ...styles?.text, fontSize: styles?.text?.fontSize + 'px' }}
         >
             { text ?? children }

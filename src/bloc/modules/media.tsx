@@ -57,7 +57,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         else setImgSrc(src);
         setSource('src');
     }, [src]);
-
+    
 
     return (
         <img
@@ -67,8 +67,9 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             data-source={sourceType}
             src={imgSrc ?? '/placeholder.jpg'}
             style={{
-                width: width,
+                width: '100%',
                 height: height - 1,
+                ...style
             }}
             {...otherProps}
         />
@@ -170,7 +171,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
 
     const componentId = props['data-id'];
     const { width, height } = useComponentSizeWithSiblings(componentId);
-    
+    console.log(width)
    
     const createImgx = (src: string) => {
         return(
@@ -180,7 +181,6 @@ export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
                 sizes={'100vw'}
                 imgixParams={{}}
                 htmlAttributes={{
-                    width: width,
                     height: (height / slidesToShow)
                 }}
             />

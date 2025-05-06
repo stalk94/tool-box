@@ -38,13 +38,13 @@ export type ComponentProps = {
  * все дочерние компоненты установленные редактором 
  */
 export type Component = React.ReactElement & {
-    _store?: {
-        index: number
-    }
     props: ComponentProps
     type: {
         functions?: {}
         parent?: string
+    }
+    _store?: {
+        index: number
     }
 }
 /** серриализованный вид */

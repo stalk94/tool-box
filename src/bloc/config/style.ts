@@ -39,26 +39,13 @@ export const baseOptions = {
 }
 export const flexOptions = {
     //flex: false,            //! тут надо покурить документацию (можно прикольно сделать)
-    flexDirection: ["column", "column-reverse", "row", "row-reverse"],
-    flexWrap: ["nowrap", "wrap", "wrap-reverse"],
-    justifyContent: [
-        "flex-start",
-        "flex-end",
-        "center",
-        "space-between",
-        "space-around",
-        "space-evenly",
-    ],
+    //flexDirection: ["column", "column-reverse", "row", "row-reverse"],
+    //flexWrap: ["nowrap", "wrap", "wrap-reverse"],
+    margin: '',
+    justifyContent: ["flex-start","flex-end","center","space-between","space-around","space-evenly",],
     alignItems: ["stretch", "flex-start", "flex-end", "center", "baseline"],
-    alignContent: [
-        "stretch",
-        "flex-start",
-        "flex-end",
-        "center",
-        "space-between",
-        "space-around",
-    ],
-    alignSelf: ["auto", "stretch", "flex-start", "flex-end", "center", "baseline"],
+    //alignContent: ["stretch","flex-start","flex-end","center","space-between","space-around",],
+    //alignSelf: ["auto", "stretch", "flex-start", "flex-end", "center", "baseline"],
 }
 export const textOptionsAll = {
     "fontFamily": undefined,
@@ -86,9 +73,9 @@ export const textOptionsAll = {
     "text-shadow": undefined
 }
 export const textOptions = {
-    "fontFamily": 'string',
+    "fontFamily": [],
     "fontWeight": ['normal', 'bold', '600', '800'],
-    "fontSize": [6, 32],
+    //"fontSize": [6, 32],
     "letterSpacing": 'number',
     "wordSpacing": 'number',
     "fontStyle": ["normal", "italic", "oblique"],

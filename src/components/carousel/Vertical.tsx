@@ -183,7 +183,7 @@ export default function({ items, settings, height }: CarouselProps) {
         >
             {/* Слайдер */}
             <Box 
-                sx={{ height: '100%', overflow: 'hidden' }}
+                sx={{ height: '100%', width:'100%', overflow: 'hidden' }}
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 onMouseDown={handleMouseDown}

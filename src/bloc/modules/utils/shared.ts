@@ -26,6 +26,7 @@ export const useCtxBufer = (id: number, initValue: any) => {
         return prev;
     });
 
+    
     return (newValue: any)=> {
         sharedContext.set((prev)=> {
             infoState.inspector.lastData.set({

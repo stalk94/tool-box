@@ -95,8 +95,26 @@ export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) 
     Object.keys(listTypes).forEach((key, index) => {
         const data = listTypes[key];            // значение из option
 
+        
+        if(key === 'margin') {
+            const arr = ['marginTop', 'marginLeft', 'marginRight', 'marginBottom'].map((key)=> ({
+                id: key,
+                type: 'number',
+                label: key,
+                value: parseStyleValue(sourceStyle[key]).number ?? 0,
+                unit: 'px',
+                max: 30,
+                min: -30,
+                step: 2,
+                labelSx: {
+                    fontSize: '12px',
+                },
+            }));
+
+            result.push(...arr);
+        }
         // списки, диапазоны
-        if (Array.isArray(data)) {
+        else if (Array.isArray(data)) {
             const length = listTypes[key].length;
             let schema: Schema;
 
@@ -119,7 +137,23 @@ export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) 
             }
             // списки
             else {
-                schema = {
+                if(key === 'fontFamily') {
+                    schema = {
+                        id: key,
+                        type: 'autocomplete',
+                        label: key,
+                        value: sourceStyle[key],
+                        labelSx: {
+                            fontSize: '12px',
+                        },
+                        styles: {
+                            icon: {fontSize: '10px'},
+                            form: {fontSize: '14px'}
+                        },
+                        options: globalThis.FONT_OPTIONS 
+                    }
+                }
+                else schema = {
                     id: key,
                     type: 'toggle',
                     label: key,

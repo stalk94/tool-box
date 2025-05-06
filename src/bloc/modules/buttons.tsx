@@ -6,13 +6,14 @@ import { Settings } from '@mui/icons-material';
 
 
 export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
-    const { icon, children, fullWidth, ...otherProps } = props;
+    const { icon, children, fullWidth, style, ...otherProps } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : Settings;
 
     return (
         <IconButton
             ref={ref}
             data-type="IconButton"
+            style={style}
             {...otherProps}
         >
             <Icon />
@@ -20,11 +21,12 @@ export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
     );
 });
 
+
 export const ButtonWrapper = React.forwardRef((props: any, ref) => {
     const { startIcon, endIcon, children, style, ...otherProps } = props;
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
-
+    
 
     return (
         <Button
@@ -33,7 +35,8 @@ export const ButtonWrapper = React.forwardRef((props: any, ref) => {
             variant="outlined"
             startIcon={StartIcon ? <StartIcon /> : undefined}
             endIcon={EndIcon ? <EndIcon /> : undefined}
-            {...otherProps}
+            style={style}
+            { ...otherProps }
         >
             { children }
         </Button>

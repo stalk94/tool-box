@@ -20,6 +20,7 @@ export type AutoCompleteProps = Omit<AutocompleteProps<any, boolean, boolean, bo
 
 
 export default function AutoCompleteInput({ options, value, onChange, placeholder, ...props }: AutoCompleteProps) {
+    const [curvalue, setCurValue] = React.useState(value ?? 'none');
     const theme = useTheme();
     const placeholderStyle = {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -47,7 +48,11 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
         if (clone.type !== 'password') delete clone.type;
         return clone;
     }
-
+    React.useEffect(()=> {
+        if(value) setCurValue(value);
+    }, [value]);
+    
+    
     return (
         <InputPaper { ...props }>
 
@@ -63,7 +68,7 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
             <Autocomplete
                 { ...filteredProps() }
                 popupIcon={<ExpandMore/>}
-                value={value}
+                value={curvalue}
                 options={options ?? []}
                 fullWidth
                 disableClearable
@@ -115,6 +120,7 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
                                 zIndex: 2,
                                 background: 'transparent',
                                 minHeight: 30,
+                                ...props?.styles?.form,
                                 //border: '1px solid red',
                             },
                             '& input::placeholder, & textarea::placeholder': placeholderStyle,

@@ -13,12 +13,18 @@
           },
           "key": null,
           "props": {
-            "src": "/uploads/img-1745858570730.png?1745858644565",
-            "file": {},
+            "src": "/placeholder.jpg",
+            "file": "",
             "data-source": "src",
             "alt": "Картинка",
-            "data-id": 1745858570730,
-            "data-type": "Image"
+            "data-id": 1746561512791,
+            "data-type": "Image",
+            "style": {
+              "marginLeft": "0px",
+              "marginRight": "0px",
+              "marginBottom": "0px",
+              "marginTop": "0px"
+            }
           },
           "_owner": null,
           "_store": {}
@@ -32,7 +38,7 @@
       "x": 7,
       "y": 0,
       "w": 5,
-      "h": 6,
+      "h": 2,
       "content": [
         {
           "type": {
@@ -44,7 +50,9 @@
             "variant": "h3",
             "fullWidth": true,
             "style": {
-              "display": "flex"
+              "display": "flex",
+              "justifyContent": "center",
+              "marginTop": "0px"
             },
             "data-id": 1746538953407,
             "data-type": "Typography",
@@ -85,7 +93,7 @@
             "styles": {
               "form": {
                 "borderColor": "rgba(94, 114, 229, 1)",
-                "background": "rgba(221, 183, 183, 1)"
+                "background": "rgba(234, 219, 219, 0.15)"
               },
               "label": {
                 "color": "rgba(209, 40, 40, 1)",
@@ -93,7 +101,7 @@
                 "fontFamily": "Inter"
               },
               "icon": {
-                "fontSize": "8",
+                "fontSize": "19",
                 "color": "rgba(210, 14, 14, 1)"
               }
             },
@@ -122,7 +130,13 @@
               "fontSize": 14
             },
             "data-id": 1745578794401,
-            "data-type": "Slider"
+            "data-type": "Slider",
+            "style": {
+              "marginTop": "0px",
+              "marginLeft": "26px",
+              "marginRight": "20px",
+              "marginBottom": "4px"
+            }
           },
           "_owner": null,
           "_store": {}
@@ -145,7 +159,10 @@
               "fontSize": 14
             },
             "data-id": 1745578790006,
-            "data-type": "TextInput"
+            "data-type": "TextInput",
+            "style": {
+              "marginTop": "0px"
+            }
           },
           "_owner": null,
           "_store": {}
@@ -221,7 +238,11 @@
             "startIcon": "none",
             "endIcon": "none",
             "style": {
-              "display": "block"
+              "display": "block",
+              "marginTop": "14px",
+              "marginBottom": "14px",
+              "marginRight": "14px",
+              "marginLeft": "14px"
             },
             "data-id": 1745578769068,
             "data-type": "Button"
@@ -255,52 +276,41 @@
     {
       "i": "cell-1745192400724",
       "x": 7,
-      "y": 6,
+      "y": 2,
       "w": 5,
-      "h": 14,
+      "h": 18,
       "content": [
         {
           "type": {
-            "parent": "cell-1745192400724"
+            "parent": "cell-1745198699223"
           },
           "key": null,
           "props": {
-            "children": "1hhh\n5\n3",
-            "fullWidth": true,
-            "data-id": 1746538956836,
-            "data-type": "Text",
-            "childrenSlate": [
+            "slidesToShow": 3,
+            "slidesToScroll": 1,
+            "autoplay": true,
+            "autoplayDelay": 4000,
+            "loop": false,
+            "items": [
               {
-                "type": "bulleted-list",
-                "children": [
-                  {
-                    "type": "list-item",
-                    "children": [
-                      {
-                        "text": "1hhh"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "list-item",
-                    "children": [
-                      {
-                        "text": "5",
-                        "color": "rgba(240, 19, 19, 1)"
-                      }
-                    ]
-                  },
-                  {
-                    "type": "list-item",
-                    "children": [
-                      {
-                        "text": "3"
-                      }
-                    ]
-                  }
-                ]
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/2/600/400"
+              },
+              {
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/3/600/400"
               }
-            ]
+            ],
+            "data-id": 1746568245507,
+            "data-type": "MediaCarouselVertical"
           },
           "_owner": null,
           "_store": {}
@@ -361,7 +371,43 @@
       "y": 8,
       "w": 3,
       "h": 7,
-      "content": [],
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1745198699223"
+          },
+          "key": null,
+          "props": {
+            "slidesToShow": 3,
+            "slidesToScroll": 1,
+            "autoplay": true,
+            "autoplayDelay": 4000,
+            "loop": false,
+            "items": [
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/2/600/400"
+              },
+              {
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/3/600/400"
+              }
+            ],
+            "data-id": 1746568167326,
+            "data-type": "MediaCarouselVertical"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
       "moved": false,
       "static": false
     }
@@ -442,15 +488,21 @@
     ],
     "cell-1745177681237": [
       {
-        "id": 1745858570730,
+        "id": 1746561512791,
         "parent": "cell-1745177681237",
         "props": {
-          "src": "/uploads/img-1745858570730.png?1745858644565",
-          "file": {},
+          "src": "/placeholder.jpg",
+          "file": "",
           "data-source": "src",
           "alt": "Картинка",
-          "data-id": 1745858570730,
-          "data-type": "Image"
+          "data-id": 1746561512791,
+          "data-type": "Image",
+          "style": {
+            "marginLeft": "0px",
+            "marginRight": "0px",
+            "marginBottom": "0px",
+            "marginTop": "0px"
+          }
         }
       }
     ],
@@ -463,7 +515,9 @@
           "variant": "h3",
           "fullWidth": true,
           "style": {
-            "display": "flex"
+            "display": "flex",
+            "justifyContent": "center",
+            "marginTop": "0px"
           },
           "data-id": 1746538953407,
           "data-type": "Typography",
@@ -491,7 +545,7 @@
           "styles": {
             "form": {
               "borderColor": "rgba(94, 114, 229, 1)",
-              "background": "rgba(221, 183, 183, 1)"
+              "background": "rgba(234, 219, 219, 0.15)"
             },
             "label": {
               "color": "rgba(209, 40, 40, 1)",
@@ -499,7 +553,7 @@
               "fontFamily": "Inter"
             },
             "icon": {
-              "fontSize": "8",
+              "fontSize": "19",
               "color": "rgba(210, 14, 14, 1)"
             }
           },
@@ -524,7 +578,13 @@
             "fontSize": 14
           },
           "data-id": 1745578794401,
-          "data-type": "Slider"
+          "data-type": "Slider",
+          "style": {
+            "marginTop": "0px",
+            "marginLeft": "26px",
+            "marginRight": "20px",
+            "marginBottom": "4px"
+          }
         }
       },
       {
@@ -543,7 +603,10 @@
             "fontSize": 14
           },
           "data-id": 1745578790006,
-          "data-type": "TextInput"
+          "data-type": "TextInput",
+          "style": {
+            "marginTop": "0px"
+          }
         }
       },
       {
@@ -607,7 +670,11 @@
           "startIcon": "none",
           "endIcon": "none",
           "style": {
-            "display": "block"
+            "display": "block",
+            "marginTop": "14px",
+            "marginBottom": "14px",
+            "marginRight": "14px",
+            "marginLeft": "14px"
           },
           "data-id": 1745578769068,
           "data-type": "Button"
@@ -631,45 +698,34 @@
     ],
     "cell-1745192400724": [
       {
-        "id": 1746538956836,
+        "id": 1746568245507,
         "parent": "cell-1745192400724",
         "props": {
-          "children": "1hhh\n5\n3",
-          "fullWidth": true,
-          "data-id": 1746538956836,
-          "data-type": "Text",
-          "childrenSlate": [
+          "slidesToShow": 3,
+          "slidesToScroll": 1,
+          "autoplay": true,
+          "autoplayDelay": 4000,
+          "loop": false,
+          "items": [
             {
-              "type": "bulleted-list",
-              "children": [
-                {
-                  "type": "list-item",
-                  "children": [
-                    {
-                      "text": "1hhh"
-                    }
-                  ]
-                },
-                {
-                  "type": "list-item",
-                  "children": [
-                    {
-                      "text": "5",
-                      "color": "rgba(240, 19, 19, 1)"
-                    }
-                  ]
-                },
-                {
-                  "type": "list-item",
-                  "children": [
-                    {
-                      "text": "3"
-                    }
-                  ]
-                }
-              ]
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/2/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/3/600/400"
             }
-          ]
+          ],
+          "data-id": 1746568245507,
+          "data-type": "MediaCarouselVertical"
         }
       }
     ],
@@ -706,12 +762,44 @@
         }
       }
     ],
-    "cell-1745198699223": []
+    "cell-1745198699223": [
+      {
+        "id": 1746568167326,
+        "parent": "cell-1745198699223",
+        "props": {
+          "slidesToShow": 3,
+          "slidesToScroll": 1,
+          "autoplay": true,
+          "autoplayDelay": 4000,
+          "loop": false,
+          "items": [
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/2/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/3/600/400"
+            }
+          ],
+          "data-id": 1746568167326,
+          "data-type": "MediaCarouselVertical"
+        }
+      }
+    ]
   },
   "meta": {
     "scope": "test",
     "name": "test-block",
-    "updatedAt": 1746553084303,
+    "updatedAt": 1746568899011,
     "preview": "snapshots/test-test-block.png"
   },
   "size": {

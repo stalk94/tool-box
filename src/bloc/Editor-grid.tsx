@@ -233,7 +233,7 @@ export default function ({ desserealize }) {
         if (found.data.size) {
             ctx.size.set((old) => ({ ...old, ...found.data.size }));
         }
-    }, [ctx.meta.name]);
+    }, [ctx.meta.name, info.project]);
     React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);

@@ -168,6 +168,7 @@ export default function ({ value, onChange, items, placeholder, ...props }: Base
         const item = items.find(i => i.id === id);
         if (!item) return;
 
+        setSelected(item);
         if (onChange) {
             if (props.onlyId) onChange(item.id);
             else onChange(item);

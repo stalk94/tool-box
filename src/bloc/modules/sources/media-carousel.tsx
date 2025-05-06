@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
 import { useComponentSizeWithSiblings } from '../utils/hooks';
-import { ChevronLeft, ChevronRight } from '@mui/icons-material';
+import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore } from '@mui/icons-material';
 
 
 
@@ -189,6 +189,196 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
                     }
                     .carousel-button.right {
                         right: 12px;
+                    }
+                `}
+            </style>
+        </div>
+    );
+});
+
+export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
+    const pointer = useRef({ startY: 0, dragging: false });
+    const containerRef = useRef<HTMLDivElement>(null);
+    const [currentIndex, setCurrentIndex] = useState(0);
+    const [slideHeight, setSlideHeight] = useState(0);
+    const y = useMotionValue(0);
+    const {
+        items = [],
+        autoplay = false,
+        autoplayDelay = 3000,
+        loop = false,
+        slidesToShow = 3,
+        slidesToScroll = 1,
+        'data-id': dataId,
+        style = {},
+        ...otherProps
+    } = props;
+
+    
+    const size = useComponentSizeWithSiblings(dataId);
+
+
+    const goTo = (index: number) => {
+        let safeIndex = index;
+
+        if (!loop) {
+            const maxSafe = Math.max(0, items.length - slidesToShow);
+            if (safeIndex > maxSafe) {
+                safeIndex = 0;
+            } else {
+                safeIndex = Math.max(0, Math.min(safeIndex, maxSafe));
+            }
+        } else {
+            safeIndex = (index + items.length) % items.length;
+        }
+
+        setCurrentIndex(safeIndex);
+    }
+    const onPointerDown = (e: React.PointerEvent) => {
+        pointer.current.startY = e.clientY;
+        pointer.current.dragging = true;
+    }
+    const onPointerMove = (e: React.PointerEvent) => {
+        if (!pointer.current.dragging) return;
+        const delta = e.clientY - pointer.current.startY;
+        y.set(-currentIndex * slideHeight + delta);
+    }
+    const onPointerUp = (e: React.PointerEvent) => {
+        if (!pointer.current.dragging) return;
+        pointer.current.dragging = false;
+        const delta = e.clientY - pointer.current.startY;
+
+        if (Math.abs(delta) > slideHeight / 4) {
+            goTo(currentIndex + (delta < 0 ? slidesToScroll : -slidesToScroll));
+        } else {
+            goTo(currentIndex);
+        }
+    }
+
+    useEffect(() => {
+        const update = () => {
+            if (containerRef.current) {
+                const fullHeight = containerRef.current.offsetHeight;
+                const perSlide = fullHeight / slidesToShow;
+                setSlideHeight(perSlide);
+                animate(y, -currentIndex * perSlide, { type: 'spring', stiffness: 250 });
+            }
+        };
+        update();
+        window.addEventListener('resize', update);
+        return () => window.removeEventListener('resize', update);
+    }, [currentIndex, size, slidesToShow]);
+    useEffect(() => {
+        if (!autoplay || items.length <= slidesToShow) return;
+
+        const interval = setInterval(() => {
+            const nextIndex = currentIndex + slidesToScroll;
+
+            if (!loop && nextIndex > items.length - slidesToShow) {
+                goTo(0);
+            } else goTo(nextIndex);
+
+        }, autoplayDelay);
+
+        return () => clearInterval(interval);
+    }, [currentIndex, autoplay, autoplayDelay, items.length, slidesToShow, slidesToScroll, loop]);
+    
+
+
+    return (
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type="MediaCarouselVertical"
+            style={{
+                overflow: 'hidden',
+                width: size.width,
+                height: size.height,
+                position: 'relative',
+                display: 'flex',
+                justifyContent: 'center',
+                ...style,
+            }}
+            {...otherProps}
+        >
+            {items.length > slidesToShow && (
+                <>
+                    <button className="vcarousel-button top" onClick={() => goTo(currentIndex - slidesToScroll)}>
+                        <ExpandLess fontSize="inherit" />
+                    </button>
+                    <button className="vcarousel-button bottom" onClick={() => goTo(currentIndex + slidesToScroll)}>
+                        <ExpandMore fontSize="inherit" />
+                    </button>
+                </>
+            )}
+
+            <div
+                ref={containerRef}
+                style={{ height: '100%', overflow: 'hidden' }}
+                onPointerDown={onPointerDown}
+                onPointerMove={onPointerMove}
+                onPointerUp={onPointerUp}
+                onPointerLeave={onPointerUp}
+                onPointerCancel={onPointerUp}
+            >
+                <motion.div
+                    style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        y,
+                        cursor: 'grab',
+                        userSelect: 'none',
+                    }}
+                >
+                    {items.map((item, i) => (
+                        <div
+                            key={i}
+                            style={{
+                                flex: `0 0 ${100 / slidesToShow}%`,
+                                maxHeight: (size.height / slidesToShow),
+                                paddingTop: 4,
+                                paddingBottom: 4,
+                                boxSizing: 'border-box'
+                            }}
+                        >
+                            {item.type === 'image' && (
+                                <img src={item.src} style={{ width: '100%', height: size.height / slidesToShow-4 }} />
+                            )}
+                            {item.type === 'video' && (
+                                <video src={item.src} controls style={{ width: '100%', height: size.height / slidesToShow -4}} />
+                            )}
+                        </div>
+                    ))}
+                </motion.div>
+            </div>
+
+            <style>
+                {`
+                    .vcarousel-button {
+                        position: absolute;
+                        left: 50%;
+                        transform: translateX(-50%);
+                        z-index: 10;
+                        background: rgba(0, 0, 0, 0.3);
+                        border: none;
+                        color: white;
+                        font-size: 28px;
+                        width: 36px;
+                        height: 36px;
+                        cursor: pointer;
+                        border-radius: 50%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                        backdrop-filter: blur(4px);
+                        transition: background 0.25s ease;
+                    }
+                    .vcarousel-button.top {
+                        top: 12px;
+                    }
+                    .vcarousel-button.bottom {
+                        bottom: 12px;
                     }
                 `}
             </style>

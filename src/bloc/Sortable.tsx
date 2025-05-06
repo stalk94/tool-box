@@ -153,7 +153,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
             onClick: (id)=> iseDeleteComponent(id), 
         }
     ]);
-
+    
 
     return (
         <React.Fragment>

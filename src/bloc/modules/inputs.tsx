@@ -176,7 +176,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             ref={ref}
             data-id={dataId}
             data-type='Slider'
-            style={{...style, width: '100%', display:'block', marginLeft:'5px'}}
+            style={{marginLeft:'5px', ...style, width: '100%', display:'block'}}
         >
             <SliderInput
                 labelSx={labelStyle}
