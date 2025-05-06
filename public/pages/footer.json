@@ -1,0 +1,24 @@
+{
+  "meta": {
+    "name": "footer",
+    "title": "footer"
+  },
+  "variants": {
+    "lg": {
+      "layout": [],
+      "width": 1200
+    },
+    "md": {
+      "layout": [],
+      "width": 960
+    },
+    "sm": {
+      "layout": [],
+      "width": 600
+    },
+    "xs": {
+      "layout": [],
+      "width": 480
+    }
+  }
+}

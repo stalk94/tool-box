@@ -3,6 +3,7 @@
 /package-lock.json
 *storybook.log
 /db
-/public
+/public/snapshots
+/public/uploads
 /.next
 .env

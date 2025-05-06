@@ -1,0 +1,883 @@
+{
+  "layout": [
+    {
+      "i": "cell-1745177681237",
+      "x": 0,
+      "y": 0,
+      "w": 3,
+      "h": 8,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1745177681237"
+          },
+          "key": null,
+          "props": {
+            "src": "/uploads/img-1745858570730.png?1745858644565",
+            "file": {},
+            "data-source": "src",
+            "alt": "Картинка",
+            "data-id": 1745858570730,
+            "data-type": "Image"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1745177704331",
+      "x": 7,
+      "y": 0,
+      "w": 5,
+      "h": 4,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1745192400724"
+          },
+          "key": null,
+          "props": {
+            "children": "TEST",
+            "variant": "subtitle2",
+            "fullWidth": true,
+            "style": {
+              "display": "flex"
+            },
+            "data-id": 1745198839499,
+            "data-type": "Typography",
+            "styles": {
+              "text": {
+                "color": "rgba(152, 140, 236, 1)",
+                "fontFamily": "Georgia",
+                "textAlign": "center",
+                "fontSize": "18"
+              }
+            }
+          },
+          "_owner": {
+            "tag": 0,
+            "key": null,
+            "stateNode": null,
+            "return": null,
+            "child": null,
+            "sibling": null,
+            "index": 0,
+            "ref": null,
+            "refCleanup": null,
+            "pendingProps": null,
+            "memoizedProps": null,
+            "updateQueue": null,
+            "memoizedState": null,
+            "dependencies": null,
+            "mode": 27,
+            "flags": 8388608,
+            "subtreeFlags": 13371397,
+            "deletions": null,
+            "lanes": 0,
+            "childLanes": 0,
+            "alternate": null,
+            "actualDuration": 22.699999570846558,
+            "actualStartTime": 132513.70000004768,
+            "selfBaseDuration": 0.3000001907348633,
+            "treeBaseDuration": 65.29999995231628,
+            "_debugInfo": null,
+            "_debugOwner": null,
+            "_debugStack": "    at useComponent (http://localhost:3000/_next/static/chunks/src_5c6a1d8d._.js:3526:221)\n    at panelRenderers.component (http://localhost:3000/_next/static/chunks/src_5c6a1d8d._.js:3696:20)\n    at __TURBOPACK__default__export__ (http://localhost:3000/_next/static/chunks/src_5c6a1d8d._.js:3711:100)",
+            "_debugTask": {},
+            "_debugNeedsRemount": false,
+            "_debugHookTypes": [
+              "useContext",
+              "useDebugValue",
+              "useRef",
+              "useState",
+              "useState",
+              "useState",
+              "useState",
+              "useState",
+              "useCallback",
+              "useEffect",
+              "useEffect"
+            ]
+          },
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "placeholder": "ввод",
+            "divider": "none",
+            "fullWidth": true,
+            "width": "100%",
+            "leftIcon": "ArrowForward",
+            "styles": {
+              "form": {
+                "borderStyle": "dashed",
+                "borderColor": "rgba(215, 33, 33, 1)",
+                "background": "rgba(17, 17, 17, 0.35)"
+              },
+              "placeholder": {
+                "color": "rgba(153, 139, 139, 1)"
+              },
+              "label": {
+                "fontSize": 13,
+                "color": "rgba(226, 60, 60, 1)"
+              },
+              "icon": {
+                "fontSize": "15",
+                "opacity": "0.5",
+                "color": "rgba(200, 61, 61, 1)"
+              }
+            },
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745198883155,
+            "data-type": "TextInput"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1745192385236",
+      "x": 3,
+      "y": 0,
+      "w": 4,
+      "h": 15,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "placeholder": "ввод number",
+            "fullWidth": true,
+            "width": "100%",
+            "styles": {
+              "form": {
+                "borderColor": "rgba(69, 89, 200, 1)",
+                "background": "rgba(221, 183, 183, 1)"
+              },
+              "label": {
+                "color": "rgba(209, 40, 40, 1)",
+                "fontSize": 29,
+                "fontFamily": "Inter"
+              },
+              "icon": {
+                "fontSize": "8",
+                "color": "rgba(210, 14, 14, 1)"
+              }
+            },
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745578791673,
+            "data-type": "Number"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "fullWidth": true,
+            "width": "100%",
+            "leftIcon": "none",
+            "rightIcon": "none",
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745578794401,
+            "data-type": "Slider"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "placeholder": "ввод",
+            "divider": "none",
+            "fullWidth": true,
+            "width": "100%",
+            "leftIcon": "none",
+            "styles": {},
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745578790006,
+            "data-type": "TextInput"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "fullWidth": true,
+            "width": "100%",
+            "items": [
+              {
+                "id": "1",
+                "label": "test-1"
+              },
+              {
+                "id": "2",
+                "label": "test-2"
+              }
+            ],
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745578796933,
+            "data-type": "ToggleButtons"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "fullWidth": true,
+            "width": "100%",
+            "items": [
+              {
+                "id": "1",
+                "label": "test-1"
+              },
+              {
+                "id": "2",
+                "label": "test-2"
+              }
+            ],
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745578802013,
+            "data-type": "Select"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "children": "Button",
+            "variant": "outlined",
+            "color": "primary",
+            "fullWidth": true,
+            "startIcon": "none",
+            "endIcon": "none",
+            "style": {
+              "display": "block"
+            },
+            "data-id": 1745578769068,
+            "data-type": "Button"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "fullWidth": true,
+            "width": "100%",
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745581500788,
+            "data-type": "Switch"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1745192400724",
+      "x": 7,
+      "y": 9,
+      "w": 5,
+      "h": 11,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1745192400724"
+          },
+          "key": null,
+          "props": {
+            "children": "Заголовок",
+            "variant": "h5",
+            "fullWidth": true,
+            "style": {
+              "display": "flex"
+            },
+            "data-id": 1745582034352,
+            "data-type": "Typography",
+            "styles": {
+              "text": {
+                "textAlign": "center"
+              }
+            }
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192400724"
+          },
+          "key": null,
+          "props": {
+            "children": "1\n2\n3",
+            "fullWidth": true,
+            "data-id": 1745581806220,
+            "data-type": "Text",
+            "childrenSlate": [
+              {
+                "type": "bulleted-list",
+                "children": [
+                  {
+                    "type": "list-item",
+                    "children": [
+                      {
+                        "text": "1"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "list-item",
+                    "children": [
+                      {
+                        "text": "2"
+                      }
+                    ]
+                  },
+                  {
+                    "type": "list-item",
+                    "children": [
+                      {
+                        "text": "3"
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1745196991664",
+      "x": 0,
+      "y": 15,
+      "w": 7,
+      "h": 5,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1745196991664"
+          },
+          "key": null,
+          "props": {
+            "slidesToShow": 3,
+            "slidesToScroll": 1,
+            "autoplay": true,
+            "autoplayDelay": 4000,
+            "loop": false,
+            "items": [
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/2/600/400"
+              },
+              {
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/3/600/400"
+              }
+            ],
+            "data-id": 1745581721140,
+            "data-type": "MediaCarousel"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1745198699223",
+      "x": 0,
+      "y": 8,
+      "w": 3,
+      "h": 7,
+      "content": [],
+      "moved": false,
+      "static": false
+    }
+  ],
+  "content": {
+    "1745146721470": [
+      {
+        "id": 1745164546033,
+        "parent": "1745146721470",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "secondary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {
+            "display": "block"
+          },
+          "data-id": 1745164546033,
+          "data-type": "Button"
+        }
+      },
+      {
+        "id": 1745164547155,
+        "parent": "1745146721470",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {
+            "display": "block"
+          },
+          "data-id": 1745164547155,
+          "data-type": "Button"
+        }
+      }
+    ],
+    "cell-1745167123710": [],
+    "1745146691113": [
+      {
+        "id": 1745167177765,
+        "parent": "1745146691113",
+        "props": {
+          "children": "tr\ngg",
+          "fullWidth": true,
+          "data-id": 1745167177765,
+          "data-type": "Text",
+          "childrenSlate": [
+            {
+              "type": "bulleted-list",
+              "children": [
+                {
+                  "type": "list-item",
+                  "children": [
+                    {
+                      "text": "tr",
+                      "underline": true
+                    }
+                  ]
+                },
+                {
+                  "type": "list-item",
+                  "children": [
+                    {
+                      "text": "gg"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "cell-1745177681237": [
+      {
+        "id": 1745858570730,
+        "parent": "cell-1745177681237",
+        "props": {
+          "src": "/uploads/img-1745858570730.png?1745858644565",
+          "file": {},
+          "data-source": "src",
+          "alt": "Картинка",
+          "data-id": 1745858570730,
+          "data-type": "Image"
+        }
+      }
+    ],
+    "cell-1745177704331": [
+      {
+        "id": 1745198839499,
+        "parent": "cell-1745177704331",
+        "props": {
+          "children": "TEST",
+          "variant": "subtitle2",
+          "fullWidth": true,
+          "style": {
+            "display": "flex"
+          },
+          "data-id": 1745198839499,
+          "data-type": "Typography",
+          "styles": {
+            "text": {
+              "color": "rgba(152, 140, 236, 1)",
+              "fontFamily": "Georgia",
+              "textAlign": "center",
+              "fontSize": "18"
+            }
+          }
+        }
+      },
+      {
+        "id": 1745198883155,
+        "parent": "cell-1745177704331",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод",
+          "divider": "none",
+          "fullWidth": true,
+          "width": "100%",
+          "leftIcon": "ArrowForward",
+          "styles": {
+            "form": {
+              "borderStyle": "dashed",
+              "borderColor": "rgba(215, 33, 33, 1)",
+              "background": "rgba(17, 17, 17, 0.35)"
+            },
+            "placeholder": {
+              "color": "rgba(153, 139, 139, 1)"
+            },
+            "label": {
+              "fontSize": 13,
+              "color": "rgba(226, 60, 60, 1)"
+            },
+            "icon": {
+              "fontSize": "15",
+              "opacity": "0.5",
+              "color": "rgba(200, 61, 61, 1)"
+            }
+          },
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745198883155,
+          "data-type": "TextInput"
+        }
+      }
+    ],
+    "cell-1745192385236": [
+      {
+        "id": 1745578791673,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод number",
+          "fullWidth": true,
+          "width": "100%",
+          "styles": {
+            "form": {
+              "borderColor": "rgba(69, 89, 200, 1)",
+              "background": "rgba(221, 183, 183, 1)"
+            },
+            "label": {
+              "color": "rgba(209, 40, 40, 1)",
+              "fontSize": 29,
+              "fontFamily": "Inter"
+            },
+            "icon": {
+              "fontSize": "8",
+              "color": "rgba(210, 14, 14, 1)"
+            }
+          },
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745578791673,
+          "data-type": "Number"
+        }
+      },
+      {
+        "id": 1745578794401,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "width": "100%",
+          "leftIcon": "none",
+          "rightIcon": "none",
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745578794401,
+          "data-type": "Slider"
+        }
+      },
+      {
+        "id": 1745578790006,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод",
+          "divider": "none",
+          "fullWidth": true,
+          "width": "100%",
+          "leftIcon": "none",
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745578790006,
+          "data-type": "TextInput"
+        }
+      },
+      {
+        "id": 1745578796933,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "width": "100%",
+          "items": [
+            {
+              "id": "1",
+              "label": "test-1"
+            },
+            {
+              "id": "2",
+              "label": "test-2"
+            }
+          ],
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745578796933,
+          "data-type": "ToggleButtons"
+        }
+      },
+      {
+        "id": 1745578802013,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "width": "100%",
+          "items": [
+            {
+              "id": "1",
+              "label": "test-1"
+            },
+            {
+              "id": "2",
+              "label": "test-2"
+            }
+          ],
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745578802013,
+          "data-type": "Select"
+        }
+      },
+      {
+        "id": 1745578769068,
+        "parent": "cell-1745192385236",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {
+            "display": "block"
+          },
+          "data-id": 1745578769068,
+          "data-type": "Button"
+        }
+      },
+      {
+        "id": 1745581500788,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "width": "100%",
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745581500788,
+          "data-type": "Switch"
+        }
+      }
+    ],
+    "cell-1745192400724": [
+      {
+        "id": 1745582034352,
+        "parent": "cell-1745192400724",
+        "props": {
+          "children": "Заголовок",
+          "variant": "h5",
+          "fullWidth": true,
+          "style": {
+            "display": "flex"
+          },
+          "data-id": 1745582034352,
+          "data-type": "Typography",
+          "styles": {
+            "text": {
+              "textAlign": "center"
+            }
+          }
+        }
+      },
+      {
+        "id": 1745581806220,
+        "parent": "cell-1745192400724",
+        "props": {
+          "children": "1\n2\n3",
+          "fullWidth": true,
+          "data-id": 1745581806220,
+          "data-type": "Text",
+          "childrenSlate": [
+            {
+              "type": "bulleted-list",
+              "children": [
+                {
+                  "type": "list-item",
+                  "children": [
+                    {
+                      "text": "1"
+                    }
+                  ]
+                },
+                {
+                  "type": "list-item",
+                  "children": [
+                    {
+                      "text": "2"
+                    }
+                  ]
+                },
+                {
+                  "type": "list-item",
+                  "children": [
+                    {
+                      "text": "3"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    ],
+    "cell-1745196991664": [
+      {
+        "id": 1745581721140,
+        "parent": "cell-1745196991664",
+        "props": {
+          "slidesToShow": 3,
+          "slidesToScroll": 1,
+          "autoplay": true,
+          "autoplayDelay": 4000,
+          "loop": false,
+          "items": [
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/2/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/3/600/400"
+            }
+          ],
+          "data-id": 1745581721140,
+          "data-type": "MediaCarousel"
+        }
+      }
+    ],
+    "cell-1745198699223": []
+  },
+  "meta": {
+    "scope": "test",
+    "name": "test-block",
+    "updatedAt": 1746462999087,
+    "preview": "snapshots/test-test-block.png"
+  },
+  "size": {
+    "width": 1200,
+    "height": 710
+  }
+}
