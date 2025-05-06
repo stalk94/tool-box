@@ -12,6 +12,7 @@ type Props = {
     footerBlock?: DataRenderPage
 }
 
+// ! test функция генератора на основе промпта
 const test =()=> {
     requestLlama({
             vars: {
