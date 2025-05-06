@@ -2,9 +2,10 @@ import React from "react";
 import { Button, TextField, Box, Stack, Paper, Typography, Tooltip, IconButton, Menu as MenuPoup, ButtonGroup } from "@mui/material";
 import { TouchApp, ViewComfy, ZoomIn, GridView, Search } from "@mui/icons-material";
 import { useEditor } from './context';
-
+import FileLoader from '@components/input/file-loader';
 
 const breackpoints: ['lg', 'md', 'sm', 'xs'] = ['lg', 'md', 'sm', 'xs'];
+
 
 
 export default function ({ setShowBlocEditor }) {
@@ -60,6 +61,7 @@ export default function ({ setShowBlocEditor }) {
                     </button>
                 )}
             </Box>
+            
             <Box style={{ fontSize: 14 }}
                 sx={{ml:'auto'}}
             >

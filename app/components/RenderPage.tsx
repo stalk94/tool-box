@@ -17,7 +17,7 @@ const test =()=> {
             vars: {
                 id: 'test', 
                 scope: 'test', 
-                'name': 'test', 
+                name: 'test', 
                 description: 'Надо 4 компонента. Два поля ввода текста и две кнопки'
             }
         }).then((resp)=> {

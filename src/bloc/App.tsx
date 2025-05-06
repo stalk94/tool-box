@@ -229,6 +229,16 @@ export default function Block({ setShowBlocEditor }) {
             ctx.dragEnabled.set(true);
         }
     }, []);
+    React.useEffect(()=> {
+        const call =(data)=> {
+            const cell = curCell.get();
+            addComponentToCell(cell.i, data);
+        }
+
+        // ! data bus, вставка компонента в тек. выделенную ячейку
+        EVENT.on('addComponent', call);
+        return ()=> EVENT.off('addComponent', call);
+    }, []);
 
 
     return(

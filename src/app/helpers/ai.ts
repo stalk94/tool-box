@@ -1,4 +1,4 @@
-const promptAi = `Ты — ИИ, создающий блоки для визуального редактора сайтов. Каждый блок описывается в формате JSON-структуры, которую может понять и отрисовать редактор. Ты не должен возвращать объяснения — только чистый JSON.
+export const promptAi = `Ты — ИИ, создающий блоки для визуального редактора сайтов. Каждый блок описывается в формате JSON-структуры, которую может понять и отрисовать редактор. Ты не должен возвращать объяснения — только чистый JSON.
 
 Массив должен состоять из одного или нескольких компонентов, соответствующих описанию пользователя.
 
@@ -85,9 +85,11 @@ const promptAi = `Ты — ИИ, создающий блоки для визуа
 
 
 type RequestLlamaParams = {
-    model?: 'llama3.2:latest'
+    model?: 'llama3.2:latest' | 'llava'
     vars: AiPromptVariables
     context?: number[]
+	/** `data:image/png;base64,${base64}` */
+	images?: string[]
 }
 export type AiPromptVariables = {
     /** идентификатор ячейки (например, "cell-123456") */
@@ -99,8 +101,9 @@ export type AiPromptVariables = {
 }
 
 
-export function applyPromptTemplate(variables: AiPromptVariables): string {
-    return promptAi.replace(/{{(.*?)}}/g, (_, key) => variables[key.trim()] ?? '');
+export function applyPromptTemplate(variables: AiPromptVariables, prompt?:string): string {
+    const pr = prompt ?? promptAi;
+    return pr.replace(/{{(.*?)}}/g, (_, key) => variables[key.trim()] ?? '');
 }
 
 
@@ -108,7 +111,7 @@ export function applyPromptTemplate(variables: AiPromptVariables): string {
  * ИИ генератор блоков для редактора        
  * Делает запросы к локальной модели llama3.2
  */
-export async function requestLlama({ vars, context }: RequestLlamaParams) {
+export async function requestLlama({ vars, context, images }: RequestLlamaParams) {
     vars.timestamp = Date.now();
 
     const response = await fetch('http://localhost:11434/api/generate', {
@@ -117,9 +120,10 @@ export async function requestLlama({ vars, context }: RequestLlamaParams) {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-            model: 'llama3.2:latest',
+            model: images ? 'llava' : 'llama3.2:latest',
             stream: false,
             prompt: applyPromptTemplate(vars),
+			images,
             context
         })
     });

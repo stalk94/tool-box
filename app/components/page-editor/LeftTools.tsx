@@ -252,7 +252,6 @@ const RenderBlockScope = () => {
         else setFiltre(value);
     }
     const getKeyNameBreakpoint = (width?: number) => {
-        ;
         const sorted = Object.entries(BREAKPOINT_WIDTH).sort((a, b) => a[1] - b[1]);
 
         for (const [key, value] of sorted) {
