@@ -27,6 +27,7 @@ export default function ({ desserealize }) {
     );
 
 
+ 
     const handleDragEnd = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
 
@@ -189,54 +190,50 @@ export default function ({ desserealize }) {
     }
 
     React.useEffect(() => {
-        const cur = render.get();
-        console.log('layouts: ', render.get({noproxy: true}));
-
-        // Обновляем максимальное количество колонок
+        const cur = render.get({ noproxy: true });
+        
+        if (!cur || !cur.length) return;
+        
         const resizeObserver = new ResizeObserver(() => {
-            if (containerRef.current) {
-                const parentHeight = containerRef.current.clientHeight; // Получаем высоту родительского контейнера
-                const containerWidth = containerRef.current.offsetWidth;
+            if (!containerRef.current) return;
 
-                info.container.height.set(parentHeight);
-                info.container.width.set(containerWidth);
+            const parentHeight = containerRef.current.clientHeight;
+            const containerWidth = containerRef.current.offsetWidth;
 
-                // Рассчитываем количество строк, исходя из переданной схемы
-                const maxY = Math.max(...cur.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
-                const rows = maxY; // Количество строк = максимальное значение y + 1
+            info.container.height.set(parentHeight);
+            info.container.width.set(containerWidth);
 
-                const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
-                const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
-                //setRowHeight(availableHeight / rows); // Вычисляем высоту строки
-            }
+            const maxY = Math.max(...cur.map((item) => item.y + item.h));
+            const totalVerticalMargin = margin[1] * (maxY + 1);
+            const availableHeight = parentHeight - totalVerticalMargin;
+            // setRowHeight(availableHeight / maxY);
         });
 
-        if (containerRef.current) {
-            resizeObserver.observe(containerRef.current);
-        }
+        const ref = containerRef.current;
+        if (ref) resizeObserver.observe(ref);
 
         return () => {
             resizeObserver.disconnect();
-        };
-    }, [render]);
-    React.useEffect(() => {
-        console.log('consolidation');
-        const meta = ctx.meta.get();
-        const currentScope = info.project?.get({ noproxy: true })?.[meta.scope];
-        const find = currentScope?.find((obj) => obj.name === meta.name);
-
-        if (find?.data) {
-            if (find.data?.content) {
-                cellsCache.set(find.data.content);
-            }
-            if (find.data?.layout) {
-                ctx.layout.set(find.data.layout);
-                const result = consolidation(find.data.layout);
-                render.set(result);
-            }
-            if (find.data.size) ctx.size.set((old)=> ({ ...old, ...find.data.size }));
+            if (ref) resizeObserver.unobserve(ref); // ⬅️ важно: unobserve тот же ref
         }
-    }, [ctx.meta.name, info.project]);
+    }, []);
+    React.useEffect(() => {
+        const meta = ctx.meta.get({ noproxy: true });
+        const currentScope = info.project.get({ noproxy: true })?.[meta.scope];
+        const found = currentScope?.find((obj) => obj.name === meta.name);
+
+       
+        if (!found?.data) return;
+
+        if (found.data.content) cellsCache.set(found.data.content);
+        if (found.data.layout) {
+            ctx.layout.set(found.data.layout);
+            render.set(consolidation(found.data.layout));
+        }
+        if (found.data.size) {
+            ctx.size.set((old) => ({ ...old, ...found.data.size }));
+        }
+    }, [ctx.meta.name]);
     React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
@@ -250,7 +247,7 @@ export default function ({ desserealize }) {
             EVENT.off('addCell', addNewCell);
         }
     }, []);
-   
+    
     
     return (
         <div 
@@ -284,8 +281,8 @@ export default function ({ desserealize }) {
                                 if(curCell.get()?.i !== layer.i) {
                                     EVENT.emit('leftBarChange', {currentToolPanel: 'items'});
                                 }
-
-                                curCell.set(layer);
+                                
+                                curCell.set({ i: layer.i });
                                 info.select.cell.set(e.currentTarget);
                                 EVENT.emit('onSelectCell', layer.i);
                             }}
@@ -316,7 +313,10 @@ export default function ({ desserealize }) {
                                                     key={component.props['data-id']} 
                                                     id={component.props['data-id']}
                                                 >
-                                                    { component }
+                                                    { React.isValidElement(component) 
+                                                        ? component 
+                                                        : desserealize(component) 
+                                                    }
                                                 </SortableItem>
                                             ))}
                                         </>
@@ -328,7 +328,7 @@ export default function ({ desserealize }) {
                             { (!EDITOR && Array.isArray(layer.content)) && 
                                 layer.content.map((component, index) => 
                                     <React.Fragment key={index}>
-                                        { component }
+                                        { React.isValidElement(component) ? component : desserealize(component) }
                                     </React.Fragment>
                                 )
                             }
@@ -341,6 +341,63 @@ export default function ({ desserealize }) {
 }
 
 
+
+/**
+ *  React.useEffect(() => {
+        const cur = render.get({ noproxy: true });
+
+        if (cur && cur[0]) {
+            console.log('layouts: ', cur);
+
+            // Обновляем максимальное количество колонок
+            const resizeObserver = new ResizeObserver(() => {
+                if (containerRef.current) {
+                    const parentHeight = containerRef.current.clientHeight; // Получаем высоту родительского контейнера
+                    const containerWidth = containerRef.current.offsetWidth;
+
+                    info.container.height.set(parentHeight);
+                    info.container.width.set(containerWidth);
+
+                    // Рассчитываем количество строк, исходя из переданной схемы
+                    const maxY = Math.max(...cur.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
+                    const rows = maxY; // Количество строк = максимальное значение y + 1
+
+                    const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
+                    const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
+                    //setRowHeight(availableHeight / rows); // Вычисляем высоту строки
+                }
+            });
+
+            if (containerRef.current) {
+                resizeObserver.observe(containerRef.current);
+            }
+
+            return () => {
+                resizeObserver.disconnect();
+            }
+        }
+    }, [render]);
+ */
+/**
+ * React.useEffect(() => {
+        console.log('consolidation');
+        const meta = ctx.meta.get();
+        const currentScope = info.project?.get({ noproxy: true })?.[meta.scope];
+        const find = currentScope?.find((obj) => obj.name === meta.name);
+
+        if (find?.data) {
+            if (find.data?.content) {
+                cellsCache.set(find.data.content);
+            }
+            if (find.data?.layout) {
+                ctx.layout.set(find.data.layout);
+                const result = consolidation(find.data.layout);
+                render.set(result);
+            }
+            if (find.data.size) ctx.size.set((old)=> ({ ...old, ...find.data.size }));
+        }
+    }, [ctx.meta.name, info.project]);
+ */
 
 
 /**

@@ -12,7 +12,7 @@ import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile, fetchFolders } from "./utils/export";
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
-import { useSafeAsync } from "./utils/usePopUp";
+import { useSafeAsync, useSafeAsyncEffect } from "./utils/usePopUp";
 
 
 import "../style/edit.css";
@@ -25,14 +25,14 @@ if (!window.next) {
     });
 }
 
-
-
 // ANCHOR - СИТЕМНЫЙ ЭММИТЕР
 if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter();
 
 
+
 // это редактор блоков сетки
 export default function Block({ setShowBlocEditor }) {
+    globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
     const ctx = useHookstate(useEditorContext());
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(useRenderState());
@@ -221,24 +221,20 @@ export default function Block({ setShowBlocEditor }) {
         }
     
     }
-    useSafeAsync(async (isMounted) => {
-        const data = await fetchFolders();
+    useSafeAsyncEffect(async (isMounted) => {
+        try {
+            const data = await fetchFolders();
 
-        if (isMounted()) {
-            info.project.set(data);
-            ctx.dragEnabled.set(true);
+            if (isMounted() && data) {
+                info.project.set(data);
+                ctx.dragEnabled.set(true);
+            }
+        }
+        catch (e) {
+            console.error("fetchFolders error:", e);
         }
     }, []);
-    React.useEffect(()=> {
-        const call =(data)=> {
-            const cell = curCell.get();
-            addComponentToCell(cell.i, data);
-        }
-
-        // ! data bus, вставка компонента в тек. выделенную ячейку
-        EVENT.on('addComponent', call);
-        return ()=> EVENT.off('addComponent', call);
-    }, []);
+  
 
 
     return(
@@ -259,6 +255,19 @@ export default function Block({ setShowBlocEditor }) {
 }
 
 
+
+/**
+ *   React.useEffect(()=> {
+        const call =(data)=> {
+            const cell = curCell.get();
+            addComponentToCell(cell.i, data);
+        }
+
+        // ! data bus, вставка компонента в тек. выделенную ячейку
+        EVENT.on('addComponentToCell', call);
+        return ()=> EVENT.off('addComponentToCel', call);
+    }, []);
+ */
 /**
  *   addComponentToLayout={(elem)=> {
                     if(curCell.get()?.i) addComponentToCell(curCell.get().i, elem);

@@ -59,7 +59,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
         disabled: !dragEnabled.get()        // ✅ глобальный флаг
     });
 
-    
+   
     const styleWrapper: React.CSSProperties = {
         position: 'relative',
         transform: CSS.Transform.toString(transform),

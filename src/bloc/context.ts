@@ -27,7 +27,10 @@ export function useEditorContext() {
                 size: { width: 1000, height: 600, breackpoint: 'lg' },
                 currentCell: undefined,
             },
-            localstored({ key: 'CONTEXT', engine: localStorage })
+            localstored({ 
+                key: 'CONTEXT', 
+                engine: localStorage 
+            })
         );
     }
 

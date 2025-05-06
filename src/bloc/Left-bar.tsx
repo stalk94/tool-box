@@ -16,7 +16,7 @@ import { componentGroups } from './config/category';
 import { createBlockToFile, fetchFolders } from "./utils/export";
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
-import { usePopUpName, useSafeAsync } from './utils/usePopUp';
+import { usePopUpName, useSafeAsync, useSafeAsyncEffect } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps } from './type';
 
@@ -69,7 +69,7 @@ const RenderListProject = ({ currentCat }) => {
             xs: '#909090'
         }[key] ?? '#495057';
     }
-    useSafeAsync(async (isMounted) => {
+    useSafeAsyncEffect (async (isMounted) => {
         if (!trigger) return;
 
         const scope = getAllBlockFromScope();
@@ -82,11 +82,12 @@ const RenderListProject = ({ currentCat }) => {
             await createBlockToFile(meta.scope.get(), uniqueName);
             const data = await fetchFolders();
 
-            if (isMounted()) {
+            if (isMounted() && data) {
                 context.meta.name.set(uniqueName);
                 info.project.set(data);
             }
-        } catch (err) {
+        } 
+        catch (err) {
             console.error('❌ Ошибка при создании блока:', err);
         }
     }, [trigger]);
@@ -169,7 +170,7 @@ const RenderProjectTopPanel = () => {
         context.meta.scope.set(newScope);
         if(existingNamesBlocks[0]) context.meta.name.set(existingNamesBlocks[0]);
     }
-    useSafeAsync(async (isMounted) => {
+    useSafeAsyncEffect(async (isMounted) => {
         if (!trigger) return;
 
         const existingNames = Object.keys(info.project.get({ noproxy: true })) ?? [];
@@ -181,7 +182,7 @@ const RenderProjectTopPanel = () => {
             await createBlockToFile(uniqueName, 'root');
             const data = await fetchFolders();
 
-            if (isMounted()) {
+            if (isMounted() && data) {
                 context.meta.scope.set(uniqueName);
                 context.meta.name.set('root');
                 info.project.set(data);
@@ -353,7 +354,6 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
         else if (item.id === 'func') setCurrentToolPanel('func');
         else if (item.id === 'save') useDump();
     }
-    // ANCHOR - updateComponentProps
     const changeEditor = (newDataProps) => {
         const component = select.content.get({ noproxy: true });
         if (component) updateComponentProps({ component, data: newDataProps });

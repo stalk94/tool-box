@@ -7,7 +7,7 @@ import { triggerFlyFromComponent } from './utils/anim';
 import { useEvent, useCtxBufer } from './utils/shared';
 import { iconsList } from '../../components/tools/icons';
 import DataTable, { DataSourceTableProps }  from './sources/table';
-import { useComponentSize } from './utils/hooks';
+import { useComponentSizeWithSiblings } from './utils/hooks';
 
 
 type AccordionWrapperProps = AccordionProps & ComponentProps;
@@ -166,7 +166,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
     } = props;
     
 
-    const { width, height } = useComponentSize(dataId);
+    const { width, height } = useComponentSizeWithSiblings(dataId);
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     //const storage = React.useMemo(() => useCtxBufer(dataId, value), [dataId]);
     //const parsedItems = React.useMemo(() => deserializeJSX(children), [children]);

@@ -1,14 +1,48 @@
 {
-  "layout": [],
-  "content": {},
+  "layout": [
+    {
+      "i": "cell-1746527949939",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 3,
+      "content": [],
+      "moved": false,
+      "static": false
+    }
+  ],
+  "content": {
+    "cell-1746527949939": [
+      {
+        "id": 1746527983321,
+        "parent": "cell-1746527949939",
+        "props": {
+          "children": "Заголовок",
+          "variant": "h5",
+          "fullWidth": true,
+          "style": {
+            "display": "flex"
+          },
+          "data-id": 1746527983321,
+          "data-type": "Typography",
+          "styles": {
+            "text": {
+              "textAlign": "center",
+              "color": "rgba(0, 255, 119, 1)"
+            }
+          }
+        }
+      }
+    ]
+  },
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1745859763356,
-    "preview": ""
+    "updatedAt": 1746528014262,
+    "preview": "snapshots/home-root.png"
   },
   "size": {
     "width": 1005,
-    "height": 710
+    "height": 115
   }
 }

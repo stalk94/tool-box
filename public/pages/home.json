@@ -7,6 +7,16 @@
     "lg": {
       "layout": [
         {
+          "i": "block-1746528032297",
+          "content": {
+            "props": {
+              "data-block-scope": "home",
+              "data-block-name": "root",
+              "style": {}
+            }
+          }
+        },
+        {
           "i": "block-1745585278181",
           "content": {
             "props": {

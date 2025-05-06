@@ -86,6 +86,4 @@ export type PropsForm = {
 export type LeftToolPanelProps = {
     addComponentToLayout: (elem: React.ReactNode) => void
     useDump: () => void
-    useEditProps: (component: Component, data: Record<string, any>) => void
-    externalPanelTrigger?: (fn: (panel: 'items' | 'component') => void) => void;
 }

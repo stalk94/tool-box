@@ -17,6 +17,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
     const renderState = useRenderState();
     const id = component?.props?.['data-id'];
     const cellId = context.currentCell.get()?.i;
+   
     
     if (!id || !cellId) {
         console.warn('updateComponentProps: отсутствует data-id или data-cell');
@@ -36,7 +37,8 @@ export function updateComponentProps({ component, data, rerender = true }: Param
 
     // 🔁 Обновляем визуальный рендер через context.render
     if (rerender) renderState.set((layers) => {
-        console.log('update props: ', component, data)
+        console.log('update props: ', component, data);
+        
         const updated = layers.map((layer) => {
             if (!Array.isArray(layer.content)) return layer;
 
@@ -55,7 +57,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
                     ...data,
                 });
 
-                infoState.select.content.set(updatedComponent);         // fix
+                infoState.select?.content?.set(updatedComponent);         // fix
                 layer.content[i] = updatedComponent;
             } 
             catch (e) {

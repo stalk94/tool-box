@@ -5,6 +5,7 @@ import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './theme/index';
 import './style/index.css';
+import './bloc/modules/index';
 import Editor from './bloc/App';
 
 
@@ -23,6 +24,7 @@ const App = () => {
         setDarkMode(!darkMode);
     }
     React.useEffect(()=> {
+        globalThis.EDITOR = true;
     }, []);
 
     
@@ -34,8 +36,7 @@ const App = () => {
                     <Routes>
                         <Route path="/" element={
                             <Editor 
-                                height={size.height} 
-                                setHeight={(height: number)=> setSize({...size, height})}
+                             
                             />
                         } />
                         <Route path="*" element={<Navigate to='/' replace />} />

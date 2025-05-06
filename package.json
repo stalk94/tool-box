@@ -76,6 +76,7 @@
     "@mui/material": "^6.4.7",
     "@mui/x-data-grid": "^7.27.3",
     "@mui/x-date-pickers": "^7.27.3",
+    "@react-hook/resize-observer": "^2.0.2",
     "@supabase/supabase-js": "^2.49.4",
     "@textea/json-viewer": "^4.0.1",
     "better-sqlite3": "^11.9.1",

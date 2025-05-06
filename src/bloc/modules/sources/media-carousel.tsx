@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
-import { useComponentSize } from '../utils/hooks';
+import { useComponentSizeWithSiblings } from '../utils/hooks';
 import { ChevronLeft, ChevronRight } from '@mui/icons-material';
 
 
@@ -23,7 +23,7 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
         ...otherProps
     } = props;
 
-    const { width, height } = useComponentSize(dataId);
+    const { width, height } = useComponentSizeWithSiblings(dataId);
     
     
     const goTo = (index: number) => {

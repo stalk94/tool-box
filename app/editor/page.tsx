@@ -1,6 +1,7 @@
 import React from 'react';
-import Project from '../components/PageProject';
 import { listPages } from '../api/loadPage';
+import Project from './client';
+
 
 
 export default async function ProjectEditorPage() {

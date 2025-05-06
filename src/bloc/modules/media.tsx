@@ -1,6 +1,6 @@
 import React from 'react';
 import Imgix from 'react-imgix';
-import { useComponentSize } from './utils/hooks';
+import { useComponentSizeWithSiblings } from './utils/hooks';
 import { VerticalCarousel, HorizontalCarousel, PromoBanner } from '../../index';
 import Tollbar, { useToolbar } from './utils/Toolbar';
 import { Settings } from '@mui/icons-material';
@@ -25,8 +25,8 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
-    const { width, height } = useComponentSize(componentId);
-   
+    const { width, height } = useComponentSizeWithSiblings(componentId);
+    
 
     const handleUpload = async (file) => {
         setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
@@ -57,7 +57,6 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         else setImgSrc(src);
         setSource('src');
     }, [src]);
-
 
 
     return (
@@ -92,7 +91,8 @@ export const VideoWrapper = React.forwardRef((props: any, ref) => {
         ...otherProps 
     } = props;
 
-    const { width, height } = useComponentSize(dataId);
+    const { width, height } = useComponentSizeWithSiblings(dataId);
+    
    
     const handleUpload = async (file: File) => {
         setVideoSrc('https://i.gifer.com/YCZH.gif'); // временная заглушка
@@ -169,7 +169,8 @@ export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
-    const { width, height } = useComponentSize(componentId);
+    const { width, height } = useComponentSizeWithSiblings(componentId);
+    
    
     const createImgx = (src: string) => {
         return(
@@ -238,7 +239,8 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
 
     const componentId = props['data-id'];
     const { visible, context } = useToolbar(componentId);
-    const { width, height } = useComponentSize(componentId);
+    const { width, height } = useComponentSizeWithSiblings(componentId);
+    
 
     const createImgx = (src: string) => {
         return(
@@ -312,8 +314,8 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
 
     const componentId = props['data-id'];
     const { visible, context } = useToolbar(componentId);
-    const { width, height } = useComponentSize(componentId);
-    
+    const { width, height } = useComponentSizeWithSiblings(componentId);
+    console.log(width, height)
 
     return (
         <div

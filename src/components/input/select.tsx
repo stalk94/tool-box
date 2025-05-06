@@ -151,8 +151,8 @@ export function Custom({ value, onChange, items, placeholder, ...props }: BaseSe
 
 export default function ({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
     const theme = useTheme();
-    const [selected, setSelected] = React.useState(value ?? 1);
-
+    const [selected, setSelected] = React.useState({});
+    
 
     const placeholderStyle = {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -164,16 +164,20 @@ export default function ({ value, onChange, items, placeholder, ...props }: Base
         paddingLeft: props.left ? 9 : 18,
         ...props?.styles?.placeholder
     }
-    const handleSelectItem =(item)=> {
-        setSelected(item);
+    const handleSelectItem = (id: string) => {
+        const item = items.find(i => i.id === id);
+        if (!item) return;
 
-        if(onChange) {
-            if(props.onlyId) onChange(item.id);
+        if (onChange) {
+            if (props.onlyId) onChange(item.id);
             else onChange(item);
         }
     }
     React.useEffect(()=> {
-        if(value) setSelected(value);
+        if(value) {
+            if(typeof value === 'object') setSelected(value);
+            else setSelected({ id: value, label: value });
+        }
     }, [value]);
 
     
@@ -217,7 +221,7 @@ export default function ({ value, onChange, items, placeholder, ...props }: Base
                 }}
             >
                 { items.map((item) => (
-                    <MenuItem key={item.id} value={item}>
+                    <MenuItem key={item.id} value={item.id}>
                         { item.label }
                     </MenuItem>
                 ))}

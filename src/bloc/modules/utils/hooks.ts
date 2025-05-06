@@ -1,125 +1,8 @@
 import React from 'react';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../../context";
+import useResizeObserver from '@react-hook/resize-observer';
 import { Editor } from 'slate';
 
-
-type CellContext = {
-    cellId: string | null;
-    componentIndex: number | null;
-    components: any[];
-    cellRect: DOMRect | null;
-    cellRef: HTMLElement | null;
-}
-
-
-/**
- * Возвращает информацию о ячейке, в которой находится компонент
- * @param componentId ID компонента (`data-id`)
- * @param includeSelf включать ли сам компонент в список окружения
- */
-const useCellContext = ( componentId: string, includeSelf: boolean = true ): CellContext => {
-    const [cellId, setCellId] = React.useState<string | null>(null);
-    const [componentIndex, setComponentIndex] = React.useState<number | null>(null);
-    const [cellRef, setCellRef] = React.useState<HTMLElement | null>(null);
-    const [cellRect, setCellRect] = React.useState<DOMRect | null>(null);
-    const [components, setComponents] = React.useState<any[]>([]);
-    const cellsContent = useCellsContent();
-
-    
-    React.useEffect(() => {
-        const cells = cellsContent.get({ noproxy: true });
-
-        for (const [id, comps] of Object.entries(cells)) {
-            const index = comps.findIndex((comp) => comp?.props?.['data-id'] === componentId);
-            if (index !== -1) {
-                setCellId(id);
-                setComponentIndex(index);
-
-                const filtered = includeSelf
-                    ? comps
-                    : comps.filter((comp) => comp?.props?.['data-id'] !== componentId);
-
-                setComponents(filtered);
-                break;
-            }
-        }
-    }, [componentId, includeSelf]);
-    React.useEffect(() => {
-        if (!cellId) return;
-
-        const el = document.querySelector(`[data-id="${cellId}"]`) as HTMLElement | null;
-        if (!el) return;
-
-        setCellRef(el);
-        setCellRect(el.getBoundingClientRect());
-
-        const resizeObserver = new ResizeObserver(() => {
-            setCellRect(el.getBoundingClientRect());
-        });
-
-        resizeObserver.observe(el);
-        return () => resizeObserver.disconnect();
-    }, [cellId]);
-
-
-    return {
-        cellId,
-        componentIndex,
-        components,
-        cellRect,
-        cellRef
-    };
-}
-
-/**
- * информация по размерам которые занимает компонент
- * @param componentId D компонента (`data-id`)
- * @returns 
- */
-export const useComponentSize = (componentId: string) => {
-    const { cellRef, components, componentIndex } = useCellContext(componentId, true);
-    const [size, setSize] = React.useState({ width: 100, height: 100 });
-
-    React.useEffect(() => {
-        if (!cellRef || componentIndex === null) return;
-
-        const calcSize = () => {
-            const siblingsBefore = components.slice(0, componentIndex);
-
-            const usedHeight = siblingsBefore.reduce((acc, comp) => {
-                const id = comp.props['data-id'];
-                const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
-                return acc + (el?.offsetHeight || 0);
-            }, 0);
-
-            const cellRect = cellRef.getBoundingClientRect();
-            const availableHeight = cellRect.height - usedHeight;
-            //const width = cellRect.width;
-
-            const usedWidth = siblingsBefore.reduce((acc, comp) => {
-                const id = comp?.props?.['data-id'];
-                const el = document.querySelector(`[data-id="${id}"]`) as HTMLElement;
-                return acc + (el?.offsetWidth || 0);
-            }, 0);
-            
-            const availableWidth = cellRect.width - usedWidth;
-            //console.log(availableWidth)
-
-            setSize({
-                width: Math.max(0, availableWidth),
-                height: Math.max(0, availableHeight-8),         //!
-            });
-        };
-
-        calcSize();
-        const resizeObserver = new ResizeObserver(calcSize);
-        resizeObserver.observe(cellRef);
-
-        return () => resizeObserver.disconnect();
-    }, [cellRef, componentIndex, components]);
-
-    return size; // { width, height }
-}
+type Size = { width: number; height: number };
 
 
 export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
@@ -152,7 +35,6 @@ export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
     return size;
 }
 
-
 /**
  * Позволяет навесить сброс marks по ПКМ на любую кнопку
  * @param onClick обычный обработчик ЛКМ
@@ -176,3 +58,56 @@ export const withResetOnRightClick = (
         },
     };
 };
+
+export const useComponentSizeWithSiblings = (componentId: string): Size => {
+    const [size, setSize] = React.useState<Size>({ width: 100, height: 100 });
+    const containerRef = React.useRef<HTMLElement | null>(null);
+    const componentRef = React.useRef<HTMLElement | null>(null);
+
+    // Подключаем ResizeObserver к .react-grid-item
+    useResizeObserver(containerRef, () => {
+        calculateSize();
+    });
+
+   
+    const calculateSize = () => {
+        const container = containerRef.current;
+        const current = componentRef.current;
+
+        if (!container || !current) return;
+
+        const all = Array.from(container.querySelectorAll('[data-id]')) as HTMLElement[];
+        const index = all.findIndex((el) => el === current);
+        if (index === -1) return;
+
+        const siblingsBefore = all.slice(0, index);
+
+        const usedHeight = siblingsBefore.reduce((sum, el) => sum + (el.offsetHeight || 0), 0);
+        const usedWidth = siblingsBefore.reduce((sum, el) => sum + (el.offsetWidth || 0), 0);
+
+        const containerRect = container.getBoundingClientRect();
+
+        setSize({
+            width: Math.max(0, (containerRect.width - usedWidth) / globalThis.ZOOM),
+            height: Math.max(0, (containerRect.height - usedHeight - 8) / globalThis.ZOOM),
+        });
+    };
+
+    // Первый рендер
+    React.useEffect(() => {
+        const current = document.querySelector(`[data-id="${componentId}"]`) as HTMLElement | null;
+        if (!current) return;
+
+        const gridItem = current.closest('.react-grid-item') as HTMLElement | null;
+        if (!gridItem) return;
+
+        containerRef.current = gridItem;
+        componentRef.current = current;
+
+        // Подождём layout
+        requestAnimationFrame(calculateSize);
+    }, [componentId]);
+
+
+    return size;
+}

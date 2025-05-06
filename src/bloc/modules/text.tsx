@@ -347,6 +347,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
     const context = useEditorContext();
     const infoState = useInfoState();
     const selected = useHookstate(infoState.select);
+    const dragEnabled = useHookstate(context.dragEnabled);
 
     const [value, setValue] = React.useState<Descendant[]>(() => {
         if (Array.isArray(props.childrenSlate)) return props.childrenSlate;
@@ -422,7 +423,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         setValue(props.childrenSlate);
     }, [dataId]);
     
-
+    
     return(
         <div 
             data-id={dataId} 
@@ -447,17 +448,17 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
                         renderLeaf={renderLeaf}
                         renderElement={renderElement}
                         placeholder="Введите текст..."
-                        onPointerEnter={() => context.dragEnabled.set(false)}
-                        onPointerLeave={() => context.dragEnabled.set(true)}
+                        onPointerEnter={() => dragEnabled.set(false)}
+                        onPointerLeave={() => dragEnabled.set(true)}
                         spellCheck
                         autoFocus
                         onFocus={() => {
                             setIsEditing(true);
-                            context.dragEnabled.set(false); // отключаем drag при редактировании
+                            dragEnabled.set(false); // отключаем drag при редактировании
                         }}
                         onBlur={() => {
                             setIsEditing(false);
-                            context.dragEnabled.set(true); // возвращаем drag после редактирования
+                            dragEnabled.set(true); // возвращаем drag после редактирования
                         }}
                         onKeyDown={(event) => {
                             if (event.key === 'Enter') {
@@ -533,7 +534,7 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
             data: { children: newText }
         });
     }
-
+    
     
     return(
         <Typography 
@@ -543,8 +544,8 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
             contentEditable={globalThis.EDITOR && selected.get({noproxy:true})?.props?.['data-id'] === dataId}
             suppressContentEditableWarning
             onBlur={handleBlur}
-            {...otherProps}
-            sx={{ width: '100%', display:'block', ...styles?.text }}
+            { ...otherProps }
+            sx={{ width: '100%', display:'block', ...styles?.text, fontSize: styles?.text?.fontSize + 'px' }}
         >
             { text ?? children }
         </Typography>

@@ -1,5 +1,5 @@
 const nextConfig = {
-  reactStrictMode: true, // ⛔ отключить двойной рендер в dev
+  reactStrictMode: false, // ⛔ отключить двойной рендер в dev
   typescript: {
     ignoreBuildErrors: true,
   },

@@ -36,6 +36,28 @@ export function useSafeAsync(
         };
     }, deps);
 }
+export function useSafeAsyncEffect(
+    callback: (isMounted: () => boolean) => void | Promise<void>,
+    deps: React.DependencyList = []
+) {
+    React.useEffect(() => {
+        let mounted = true;
+
+        const run = async () => {
+            try {
+                await callback(() => mounted);
+            } catch (e) {
+                console.error('❌ useSafeAsync error:', e);
+            }
+        };
+
+        run();
+
+        return () => {
+            mounted = false;
+        };
+    }, deps);
+}
 
 
 export const usePopUpName = (): UsePopUpNameResult => {
