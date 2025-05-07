@@ -4,6 +4,7 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 const isVite = typeof import.meta !== 'undefined' && !!import.meta.env?.DEV;
 const isNext = !isVite;
 const API_BASE = isVite ? '' : '/api';
+const API_DB = isVite ? '' : '/api/db';
 
 
 //-----------------------------------------------------------------------------
@@ -160,4 +161,23 @@ export const fetchFolders = async (): Promise<string[]> => {
     const res = await fetch(`${API_BASE}/list-folders`);
     if (!res.ok) throw new Error('Ошибка загрузки');
     return res.json();
+}
+
+export const db = {
+	async set(key: string, value: any) {
+		const res = await fetch(`${API_DB}/write`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				key: key,
+				value: value,
+			})
+		});
+	},
+	async get(key: string) {
+		const res = await fetch(`${API_DB}/read?key=${key}`);
+		const data = await res.json();
+		console.log('DB GET: ', data)
+		return data;
+	}
 }

@@ -5,45 +5,10 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
 import useContextMenu from '@components/context-main';
-import { Delete, Edit } from '@mui/icons-material';
+import { Delete, Edit, Star } from '@mui/icons-material';
+import { db } from "./utils/export";
+import { serializeJSX } from './utils/sanitize';
 
-
-//! особые условия стилей для компонентов (!это костыли, вся логика в обертки идет)
-class Styler {
-    ref: Element
-    styleWrapper: React.CSSProperties
-    children: Component
-
-    constructor(children, styleWrapper) {
-        this.ref = document.querySelector(`[data-id="${children.props['data-id']}"]`);
-        this.styleWrapper = styleWrapper;
-        this.children = children;
-        this.type = this.children.props['data-type'];
-        this.init();
-    }
-    Typography() {
-        this.ref.style.width = '100%'
-    }
-    init() {
-        const childProps = this.children.props;
-
-        if(childProps.style) {
-            const style = childProps.style;
-            
-            if(childProps.fullWidth) {
-                this.styleWrapper.display === 'block'
-                this.styleWrapper.display = 'flex';
-                this.styleWrapper.width = '100%';
-
-                if(this.ref) {
-                    if(this[this.type]) this[this.type]();
-                    // что бы кнопка с иконками не ратекелась
-                    this.ref.style.display = 'flex';
-                }
-            }
-        }
-    }
-}
 
 
 export function SortableItem({ id, children }: { id: number, children: Component }) {
@@ -78,7 +43,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
         transformOrigin: 'center',
         
     }
-    const iseDeleteComponent =(ids: number)=> {
+    const iseDeleteComponent = (ids: number) => {
         const removeComponentFromCell = (cellId: string, componentIndex: number) => {
             renderState.set((prev) => {
                 const updatedRender = [...prev];
@@ -118,6 +83,29 @@ export function SortableItem({ id, children }: { id: number, children: Component
         removeComponentFromCell(cellId, index);
         selectContent.set(null);
     }
+    const useAddToCollection = (ids: number) => {
+        const serialize =()=> {
+            const rawProps = { ...children.props };
+            const type = rawProps['data-type'];
+            const id = rawProps['data-id'];
+
+            delete rawProps.ref;
+            const cleanedProps = serializeJSX(rawProps);
+            console.log(cleanedProps)
+
+            return {
+                id,
+                props: {
+                    ...cleanedProps,
+                    'data-id': id,
+                    'data-type': type,
+                }
+            };
+        }
+
+        const name = prompt('Введите key name для компонента (не менее 3х символов)');
+        if(name && name.length > 3) db.set(`blank.${name}`, serialize());
+    }
     const handleClick = (target: HTMLDivElement) => {
         requestIdleCallback(()=> {
             target.classList.add('editor-selected');
@@ -148,10 +136,16 @@ export function SortableItem({ id, children }: { id: number, children: Component
 
     const { menu, handleOpen } = useContextMenu([
         { 
+            label: <div style={{color:'gold',fontSize:14}}>В заготовки</div>, 
+            icon: <Star sx={{color:'gold',fontSize:18}} />, 
+            onClick: (id)=> useAddToCollection(id), 
+            showIf: (type)=> type==='Card' 
+        },
+        { 
             label: <div style={{color:'red',fontSize:14}}>Удалить</div>, 
             icon: <Delete sx={{color:'red',fontSize:18}} />, 
             onClick: (id)=> iseDeleteComponent(id), 
-        }
+        },
     ]);
     
 
@@ -169,7 +163,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
                 {...(dragEnabled.get() ? listeners : {})}
                 onClick={(e)=> handleClick(e.currentTarget)} 
                 onContextMenu={(e)=> {
-                    handleOpen(e, id);
+                    handleOpen(e, {id, type: children.props['data-type']});
                     handleClick(e.currentTarget);
                 }}
             >

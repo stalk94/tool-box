@@ -1,10 +1,11 @@
 import React from "react";
 import { Button, IconButton, Box, Popover, Typography, Divider, Select, MenuItem } from "@mui/material";
-import { BorderStyle, ColorLens, FormatColorText, More } from '@mui/icons-material';
+import { BorderStyle, ColorLens, FormatColorText, More, Widgets } from '@mui/icons-material';
 import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
     RadioButtonUnchecked, RadioButtonChecked, Add
 } from "@mui/icons-material";
+import { FaReact } from 'react-icons/fa';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
@@ -12,13 +13,14 @@ import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { updateComponentProps } from './utils/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
-import { componentGroups } from './config/category';
+import { componentGroups, componentAtom } from './config/category';
 import { createBlockToFile, fetchFolders } from "./utils/export";
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
 import { usePopUpName, useSafeAsync, useSafeAsyncEffect } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps } from './type';
+import { db } from "./utils/export";
 
 
 
@@ -221,8 +223,72 @@ const RenderProjectTopPanel = () => {
         </Box>
     );
 }
+function AtomsRenderer({ category, setCategory, desserealize }) {
+    const [blankComponents, setBlankComponents] = React.useState<JSX.Element[]>([]);
+
+    React.useEffect(() => {
+        if (category === 'blank') {
+            (async () => {
+                const value = await db.get('blank');
+                const result = Object.keys(value || {}).map(key => desserealize(value[key]));
+                setBlankComponents(result);
+            })();
+        }
+    }, [category]);
+
+    return (
+        <>
+            {category === 'blank' && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
+                    {blankComponents.map((el, i) => (
+                        <div key={i} style={{ width: 80, height: 80, overflow: 'hidden', border: '1px solid #ccc' }}>
+                            <div
+                                style={{
+                                    transform: `scale(0.2)`,
+                                    transformOrigin: 'top left',
+                                    width: `${100 / 0.2}%`,
+                                    height: `${100 / 0.2}%`,
+                                    pointerEvents: 'none',
+                                }}
+                            >
+                                { el }
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            )}
+        </>
+    );
+}
 
 
+const useAtoms =(category, setCategory, desserealize)=> {
+    const categories = Object.entries(componentAtom);
+
+    return {
+        start: (
+            <TooglerInput
+                value={category}
+                onChange={setCategory}
+                sx={{ px: 0.2 }}
+                items={categories.map(([id, group]) => {
+                    const Icon = group.icon ?? Settings;
+                    return {
+                        id,
+                        label: <Icon style={{ fontSize: 18 }} />
+                    };
+                })}
+            />
+        ),
+        children: (
+            <AtomsRenderer
+                category={category} 
+                setCategory={setCategory}
+                desserealize={desserealize} 
+            />
+        )
+    };
+}
 const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
     const categories = Object.entries(componentGroups);
     const itemsInCurrentCategory = Object.entries(componentMap).filter(([type]) => {
@@ -312,17 +378,20 @@ const useFunctions = () => {
 
 
 // левая панель редактора
-export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) {
+export default function ({ addComponentToLayout, useDump, desserealize }: LeftToolPanelProps) {
     const info = useHookstate(useInfoState());
     const select = info.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'component' | 'func'>('project');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'atoms' | 'component' | 'func'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
+    const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
 
     const menuItems = [
         { id: 'project', label: 'управление', icon: <AccountTree /> },
         { divider: <Divider sx={{borderColor: 'rgba(128, 128, 129, 0.266)',my:1.2}}/> },
         { id: 'items', label: 'Библиотека', icon: <Extension /> },
+        { divider: true },
+        { id: 'atoms', label: 'Атомы', icon: <FaReact size={24}/> },
         { divider: true },
         { id: 'component', label: 'Настройки', icon: <Palette /> },
         { divider: true },
@@ -352,6 +421,7 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
         else if (item.id === 'project') setCurrentToolPanel('project');
         else if (item.id === 'component') setCurrentToolPanel('component');
         else if (item.id === 'func') setCurrentToolPanel('func');
+        else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') useDump();
     }
     const changeEditor = (newDataProps) => {
@@ -368,6 +438,7 @@ export default function ({ addComponentToLayout, useDump }: LeftToolPanelProps) 
         items: () => useElements(currentTool, setCurrentTool, addComponentToLayout),
         component: () => useComponent(select.content, changeEditor, curSubpanel, setSubPanel),
         func: () => useFunctions(),
+        atoms: () => useAtoms(currentAtom, setCurrentAtom, desserealize)
     }
     const { start, children } = panelRenderers[currentToolPanel]
         ? panelRenderers[currentToolPanel]()

@@ -11,6 +11,7 @@ export type BaseCardProps = CardProps & {
     /** делает карточку кликабельной как кнопка */
     actionAreaEnabled?: boolean
     footer?: [],
+    elevation?: number
 }
 
 
@@ -66,14 +67,14 @@ export default function SimpleCard({ children, footer, ...props }: BaseCardProps
     
     
     return (
-        <Card component="div"
-            elevation={1}  
+        <Card 
+            component="div"
+            elevation={props?.elevation ?? 1}  
             sx={{ 
                 backgroundColor: (theme)=> theme.palette.card.main, 
                 borderRadius: '5px',
                 border: '1px solid',
                 borderColor: (theme)=> theme.palette.card.border,
-                //boxShadow: '0 3px 4px rgba(0, 0, 0, 0.2)',
                 ...props.sx
             }}
             style={{...props.style}}
@@ -89,7 +90,7 @@ export default function SimpleCard({ children, footer, ...props }: BaseCardProps
                     {footer &&
                         <CardActions
                             sx={{
-                                //borderTop: '1px dotted gray' 
+                                
                             }}
                         >
                             { footer }
@@ -102,7 +103,7 @@ export default function SimpleCard({ children, footer, ...props }: BaseCardProps
                     {footer &&
                         <CardActions
                             sx={{
-                                //borderTop: '1px dotted gray' 
+                                 
                             }}
                         >
                             { footer }

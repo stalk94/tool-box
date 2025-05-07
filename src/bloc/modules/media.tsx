@@ -1,11 +1,13 @@
 import React from 'react';
 import Imgix from 'react-imgix';
 import { useComponentSizeWithSiblings } from './utils/hooks';
-import { VerticalCarousel, HorizontalCarousel, PromoBanner } from '../../index';
+import { HorizontalCarousel, PromoBanner, Card, Header, MediaImage } from '../../index';
 import Tollbar, { useToolbar } from './utils/Toolbar';
 import { Settings } from '@mui/icons-material';
 import { updateComponentProps } from '../utils/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
+import { Box, CardContent, Typography } from '@mui/material';
+import { TypographySlot } from './slots';
 
 
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
@@ -160,73 +162,9 @@ export const VideoWrapper = React.forwardRef((props: any, ref) => {
     );
 });
 
-export const VerticalCarouselWrapper = React.forwardRef((props: any, ref) => {
-    const {
-        items,
-        style = {}, 
-        autoplay = true,
-        slidesToShow = 3,
-        ...otherProps
-    } = props;
 
-    const componentId = props['data-id'];
-    const { width, height } = useComponentSizeWithSiblings(componentId);
-    console.log(width)
-   
-    const createImgx = (src: string) => {
-        return(
-            <Imgix
-                data-type="Image"
-                src={src ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
-                sizes={'100vw'}
-                imgixParams={{}}
-                htmlAttributes={{
-                    height: (height / slidesToShow)
-                }}
-            />
-        );
-    }
-    // дегидратор
-    const parseItems = () => {
-        const result = [];
 
-        items.map((elem, index)=> {
-            if(elem.type === 'img') {
-                if(elem.props.src) result.push(
-                    createImgx(elem.props.src)
-                );
-            }
-        });
-
-        return result;
-    }
-
-    return (
-        <div
-            ref={ref}
-            data-type="VerticalCarousel"
-            data-id={componentId}
-            style={{
-                width,
-                display: 'block',
-                height: '100%',
-                overflow: 'hidden',
-            }}
-            {...otherProps}
-        >
-            <VerticalCarousel
-                items={parseItems() ?? []}
-                height={height}
-                settings={{
-                    autoplay,
-                    slidesToShow
-                }}
-            />
-        </div>
-    );
-});
-
-// todo: сделать умный расчет по умолчанию сколько слайдов выводить
+// ! deprecate
 export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     const {
         items,
@@ -341,6 +279,87 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
                 items={items}
                 style={{...style, height, width}}
             />
+        </div>
+    );
+});
+
+
+export const CardWrapper = React.forwardRef((props: any, ref) => {
+    const {
+        fullWidth,
+        style = {}, 
+        elevation = 1,
+        slots,
+        ...otherProps
+    } = props;
+
+    const componentId = props['data-id'];
+    const onChange = (slot, data) => {
+        updateComponentProps({
+            component: { props: props },
+            data: { slots: { ...slots, [slot]: data } }
+        });
+    }
+
+
+    return (
+        <div
+            ref={ref}
+            data-type="Card"
+            data-id={componentId}
+            { ...otherProps }
+        >
+            <Card
+                elevation={elevation}
+                footer={
+                    <Box sx={{display:'flex', flexDirection:'row',width:'100%'}}>
+                        <Box>
+                            
+                        </Box>
+                        <Box sx={{ml:'auto'}}>
+                            
+                        </Box>
+                        
+                    </Box>
+                }
+            >
+                <Header
+                    avatar={undefined}
+                    title={
+                        <TypographySlot
+                            variant="h6"
+                            color="text.secondary"
+                            onChangeProps={(data) => onChange('title', data)}
+                        >
+                            {slots?.title?.children ?? "Shrimp and Chorizo Paella"}
+                        </TypographySlot>
+                    }
+                    
+                    subheader={
+                        <TypographySlot
+                            variant="subtitle2"
+                            onChangeProps={(data) => onChange('subheader', data)}
+                        >
+                            {slots?.subheader?.children ?? "subheader"}
+                        </TypographySlot>
+                    }
+                    action={<></>}
+                />
+
+                <MediaImage
+                    sx={{ px: 0.7 }}
+                    
+                />
+
+                <TypographySlot 
+                    sx={{ p: 2 }} 
+                    variant="body2" 
+                    color="text.secondary"
+                    onChangeProps={(data)=> onChange('text', data)}
+                >
+                    { slots?.text?.children ?? 'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.' }
+                </TypographySlot>
+            </Card>
         </div>
     );
 });

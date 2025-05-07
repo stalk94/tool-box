@@ -42,7 +42,7 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
             { ...props }
             component="img"
             height={height}
-            width={width??'100%'}
+            width={width}
             image={src ?? "https://material-ui.com/static/images/cards/paella.jpg"}
             alt={useAlt()}
         />

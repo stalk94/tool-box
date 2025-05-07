@@ -81,3 +81,9 @@ body {
 .custom-select.open .dropdown {
     display: block;
 }
+
+.SlotEmpty:hover {
+    opacity: 0.3;
+    cursor: pointer;
+    color: red;
+}

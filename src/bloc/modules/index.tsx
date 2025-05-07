@@ -13,7 +13,7 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
-import { VerticalCarouselWrapper, HorizontalCarouselWrapper, PromoBannerWrapper, VideoWrapper } from './media';
+import { HorizontalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
 import { DividerWrapper } from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper } from './complex';
 import { DataSourceTableProps } from './sources/table';
@@ -359,7 +359,7 @@ registerComponent({
     category: 'media',
 });
 registerComponent({
-    type: 'MediaCarouselVertical',
+    type: 'CarouselVertical',
     component: MediaCarouselVertical,
     defaultProps: {
         slidesToShow: 3,
@@ -377,24 +377,6 @@ registerComponent({
     icon: ViewCarousel,
     category: 'media',
 });
-registerComponent({
-    type: 'VerticalCarousel',
-    component: VerticalCarouselWrapper,
-    defaultProps: {
-        fullWidth: true,
-        width: '100%',
-        items: [
-            <img
-                src='https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'
-
-            />,
-            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/600/600' alt="Slide 1" /> ,
-            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/300/300' alt="Slide 1" /> 
-        ]
-    },
-    icon: ViewCarousel,
-    category: 'media',
-});
 
 
 // any
@@ -407,6 +389,22 @@ registerComponent({
     },
     icon: LinearScale,
     category: 'misc',
+});
+registerComponent({
+    type: 'Card',
+    component: CardWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+        slots: {
+            title: undefined,
+            subheader: undefined,
+            text: undefined,
+            image: undefined
+        }
+    },
+    icon: LinearScale,
+    category: 'media',
 });
 
 

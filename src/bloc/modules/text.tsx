@@ -538,7 +538,7 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
     
     
     return(
-        <Typography 
+        <Typography
             ref={ref} 
             data-id={dataId}
             data-type="Typography" 

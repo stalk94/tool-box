@@ -11,6 +11,7 @@ export type ContextMenuState<T = any> = {
     mouseX: number;
     mouseY: number;
     targetData: T | null;
+    showIf?: (target: T) => boolean;
 }
 
 
@@ -19,6 +20,7 @@ export default function useContextMenu<T = any>(items: ContextMenuItem<T>[]) {
 
     const handleOpen = (e: React.MouseEvent, data: T) => {
         e.preventDefault();
+
         setMenuState({
             mouseX: e.clientX,
             mouseY: e.clientY,
@@ -34,20 +36,20 @@ export default function useContextMenu<T = any>(items: ContextMenuItem<T>[]) {
             anchorReference="anchorPosition"
             anchorPosition={{ top: menuState.mouseY, left: menuState.mouseX }}
         >
-            { items.map((item, index) => (
-                <MenuItem
-                    key={index}
-                    onClick={() => {
-                        item.onClick?.(menuState.targetData);
-                        handleClose();
-                    }}
-                >
-                    { item.icon && <ListItemIcon>{ item.icon }</ListItemIcon> }
-                    <ListItemText>
-                        { item.label }
-                    </ListItemText>
-                </MenuItem>
-            ))}
+            {items
+                .filter(item => item.showIf?.(menuState.targetData.type) !== false)
+                .map((item, index) => (
+                    <MenuItem
+                        key={index}
+                        onClick={() => {
+                            item.onClick?.(menuState.targetData.id);
+                            handleClose();
+                        }}
+                    >
+                        {item.icon && <ListItemIcon>{item.icon}</ListItemIcon>}
+                        <ListItemText>{item.label}</ListItemText>
+                    </MenuItem>
+                ))}
         </Menu>
     ) : null;
 

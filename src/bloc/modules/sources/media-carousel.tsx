@@ -289,7 +289,7 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
         <div
             ref={ref}
             data-id={dataId}
-            data-type="MediaCarouselVertical"
+            data-type="CarouselVertical"
             style={{
                 overflow: 'hidden',
                 width: size.width,
