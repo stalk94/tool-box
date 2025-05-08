@@ -81,3 +81,30 @@
     outline-color: #2196f377;
   }
 }
+
+.bubble-menu {
+  background: white;
+  border: 1px solid #ccc;
+  padding: 6px;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  gap: 6px;
+  z-index: 50;
+}
+.bubble-menu button {
+  font-weight: bold;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.no-p-margin p {
+  margin: 0;
+  padding: 0;
+}
+.card-text {
+  margin-top: 20;
+  margin-left: 15;
+  margin-right: 15;
+}

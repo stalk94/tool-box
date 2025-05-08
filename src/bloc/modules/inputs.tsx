@@ -11,6 +11,7 @@ import { iconsList } from '../../components/tools/icons';
 
 
 
+
 type InputStyles = {
     form?: {
         borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
@@ -100,6 +101,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             data-type='Number'
             style={{...style, width: '100%', display:'block'}}
         >
+            
             <NumberInput
                 labelSx={labelStyle}
                 onChange={(v)=> {

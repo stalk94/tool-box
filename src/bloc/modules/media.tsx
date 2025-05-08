@@ -7,7 +7,7 @@ import { Settings } from '@mui/icons-material';
 import { updateComponentProps } from '../utils/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
 import { Box, CardContent, Typography } from '@mui/material';
-import { TypographySlot } from './slots';
+import TipTapSlotEditor from './tip-tap';
 
 
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
@@ -268,13 +268,6 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
             }}
             { ...otherProps }
         >
-            <Tollbar 
-                visible={visible}
-                offsetY={0}
-                options={[
-                    { icon: <Settings/>,  },
-                ]}
-            />
             <PromoBanner
                 items={items}
                 style={{...style, height, width}}
@@ -310,7 +303,7 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
             { ...otherProps }
         >
             <Card
-                elevation={elevation}
+                elevation={8}
                 footer={
                     <Box sx={{display:'flex', flexDirection:'row',width:'100%'}}>
                         <Box>
@@ -326,22 +319,34 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
                 <Header
                     avatar={undefined}
                     title={
-                        <TypographySlot
-                            variant="h6"
-                            color="text.secondary"
-                            onChangeProps={(data) => onChange('title', data)}
-                        >
-                            {slots?.title?.children ?? "Shrimp and Chorizo Paella"}
-                        </TypographySlot>
+                        <TipTapSlotEditor
+                            value={slots?.title}
+                            onChange={(html) => onChange('title', html)}
+                            placeholder="Текст"
+                            className="no-p-margin"
+                            isEditable={EDITOR}
+                            initialInsert={{
+                                text: 'Title',
+                                fontSize: '1.5rem',
+                                fontFamily: 'Roboto Condensed", Arial, sans-serif',
+                                fontWeight: '500',
+                            }}
+                        />
                     }
-                    
                     subheader={
-                        <TypographySlot
-                            variant="subtitle2"
-                            onChangeProps={(data) => onChange('subheader', data)}
-                        >
-                            {slots?.subheader?.children ?? "subheader"}
-                        </TypographySlot>
+                        <TipTapSlotEditor
+                            value={slots?.subheader}
+                            onChange={(html) => onChange('subheader', html)}
+                            placeholder="Текст"
+                            className="no-p-margin"
+                            isEditable={EDITOR}
+                            initialInsert={{
+                                text: 'subheader',
+                                fontSize: '0.875rem',
+                                fontFamily: 'Roboto Condensed", Arial, sans-serif',
+                                fontWeight: '500',
+                            }}
+                        />
                     }
                     action={<></>}
                 />
@@ -351,14 +356,18 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
                     
                 />
 
-                <TypographySlot 
-                    sx={{ p: 2 }} 
-                    variant="body2" 
-                    color="text.secondary"
-                    onChangeProps={(data)=> onChange('text', data)}
-                >
-                    { slots?.text?.children ?? 'This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.' }
-                </TypographySlot>
+                <TipTapSlotEditor
+                    value={ slots?.text }
+                    onChange={(html) => onChange('text', html)}
+                    placeholder="Текст"
+                    className="card-text no-p-margin p"
+                    isEditable={EDITOR}
+                    initialInsert={{
+                        text: 'В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические возможности',
+                        fontSize: '0.975rem',
+                        fontFamily: 'Roboto Condensed", Arial, sans-serif',
+                    }}
+                />
             </Card>
         </div>
     );

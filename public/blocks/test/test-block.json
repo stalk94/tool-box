@@ -87,6 +87,33 @@
           "props": {
             "label": "label",
             "position": "column",
+            "fullWidth": true,
+            "width": "100%",
+            "leftIcon": "none",
+            "rightIcon": "none",
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1745578794401,
+            "data-type": "Slider",
+            "style": {
+              "marginTop": "0px",
+              "marginLeft": "26px",
+              "marginRight": "20px",
+              "marginBottom": "4px"
+            }
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1745192385236"
+          },
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
             "placeholder": "ввод number",
             "fullWidth": true,
             "width": "100%",
@@ -110,33 +137,6 @@
             },
             "data-id": 1745578791673,
             "data-type": "Number"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "width": "100%",
-            "leftIcon": "none",
-            "rightIcon": "none",
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745578794401,
-            "data-type": "Slider",
-            "style": {
-              "marginTop": "0px",
-              "marginLeft": "26px",
-              "marginRight": "20px",
-              "marginBottom": "4px"
-            }
           },
           "_owner": null,
           "_store": {}
@@ -245,7 +245,11 @@
               "marginLeft": "14px"
             },
             "data-id": 1745578769068,
-            "data-type": "Button"
+            "data-type": "Button",
+            "data-subs": [
+              "1745578794401",
+              "1745578796933"
+            ]
           },
           "_owner": null,
           "_store": {}
@@ -288,27 +292,154 @@
           "props": {
             "fullWidth": true,
             "width": "100%",
-            "data-id": 1746573621871,
-            "data-type": "Card",
             "slots": {
               "text": {
-                "sx": {
-                  "p": 2
-                },
-                "variant": "body2",
-                "color": "text.secondary",
-                "children": "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like."
-              },
-              "title": {
-                "variant": "h6",
-                "color": "text.secondary",
-                "children": "Shrimp and Chorizo Paella"
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "14px"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "В зависимости от того, что вы хотите построить, представления узлов "
+                      },
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "textStyle",
+                            "attrs": {
+                              "color": "rgba(239, 100, 100, 1)"
+                            }
+                          },
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "14px"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "работают "
+                      },
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "14px"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "немного по-разному и могут иметь свои очень специфические возможности"
+                      }
+                    ]
+                  }
+                ]
               },
               "subheader": {
-                "variant": "subtitle2",
-                "children": "subheader"
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "textStyle",
+                            "attrs": {
+                              "color": null
+                            }
+                          },
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "0.875rem"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "subheader"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "title": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "textStyle",
+                            "attrs": {
+                              "color": null
+                            }
+                          },
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "1.5rem"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "Title"
+                      }
+                    ]
+                  }
+                ]
               }
-            }
+            },
+            "data-id": 1746640913133,
+            "data-type": "Card"
           },
           "_owner": null,
           "_store": {}
@@ -323,7 +454,169 @@
       "y": 15,
       "w": 7,
       "h": 5,
-      "content": [],
+      "content": [
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "data-id": 1746660456991,
+            "data-type": "Text",
+            "children": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": "center"
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": "rgba(182, 56, 56, 1)"
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "24px"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        },
+                        {
+                          "type": "strike"
+                        }
+                      ],
+                      "text": "Title "
+                    },
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "f"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": "rgba(232, 42, 212, 1)"
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "fddffddsssss "
+                    },
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "dd "
+                    },
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": "rgba(231, 225, 41, 1)"
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "yyy"
+                    }
+                  ]
+                },
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  }
+                }
+              ]
+            }
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
       "moved": false,
       "static": false
     },
@@ -460,6 +753,29 @@
     ],
     "cell-1745192385236": [
       {
+        "id": 1745578794401,
+        "parent": "cell-1745192385236",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "width": "100%",
+          "leftIcon": "none",
+          "rightIcon": "none",
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1745578794401,
+          "data-type": "Slider",
+          "style": {
+            "marginTop": "0px",
+            "marginLeft": "26px",
+            "marginRight": "20px",
+            "marginBottom": "4px"
+          }
+        }
+      },
+      {
         "id": 1745578791673,
         "parent": "cell-1745192385236",
         "props": {
@@ -488,29 +804,6 @@
           },
           "data-id": 1745578791673,
           "data-type": "Number"
-        }
-      },
-      {
-        "id": 1745578794401,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "width": "100%",
-          "leftIcon": "none",
-          "rightIcon": "none",
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745578794401,
-          "data-type": "Slider",
-          "style": {
-            "marginTop": "0px",
-            "marginLeft": "26px",
-            "marginRight": "20px",
-            "marginBottom": "4px"
-          }
         }
       },
       {
@@ -603,7 +896,11 @@
             "marginLeft": "14px"
           },
           "data-id": 1745578769068,
-          "data-type": "Button"
+          "data-type": "Button",
+          "data-subs": [
+            "1745578794401",
+            "1745578796933"
+          ]
         }
       },
       {
@@ -624,42 +921,329 @@
     ],
     "cell-1745192400724": [
       {
-        "id": 1746573621871,
+        "id": 1746640913133,
         "parent": "cell-1745192400724",
         "props": {
           "fullWidth": true,
           "width": "100%",
-          "data-id": 1746573621871,
-          "data-type": "Card",
           "slots": {
             "text": {
-              "sx": {
-                "p": 2
-              },
-              "variant": "body2",
-              "color": "text.secondary",
-              "children": "This impressive paella is a perfect party dish and a fun meal to cook together with your guests. Add 1 cup of frozen peas along with the mussels,if you like."
-            },
-            "title": {
-              "variant": "h6",
-              "color": "text.secondary",
-              "children": "Shrimp and Chorizo Paella"
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "14px"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "В зависимости от того, что вы хотите построить, представления узлов "
+                    },
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": "rgba(239, 100, 100, 1)"
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "14px"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "работают "
+                    },
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "14px"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "немного по-разному и могут иметь свои очень специфические возможности"
+                    }
+                  ]
+                }
+              ]
             },
             "subheader": {
-              "variant": "subtitle2",
-              "children": "subheader"
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "0.875rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "subheader"
+                    }
+                  ]
+                }
+              ]
+            },
+            "title": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1.5rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "Title"
+                    }
+                  ]
+                }
+              ]
             }
+          },
+          "data-id": 1746640913133,
+          "data-type": "Card"
+        }
+      }
+    ],
+    "cell-1745196991664": [
+      {
+        "id": 1746660456991,
+        "parent": "cell-1745196991664",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1746660456991,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": "center"
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": "rgba(182, 56, 56, 1)"
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "24px"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      },
+                      {
+                        "type": "strike"
+                      }
+                    ],
+                    "text": "Title "
+                  },
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "f"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": "rgba(232, 42, 212, 1)"
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "fddffddsssss "
+                  },
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "dd "
+                  },
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": "rgba(231, 225, 41, 1)"
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "yyy"
+                  }
+                ]
+              },
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                }
+              }
+            ]
           }
         }
       }
     ],
-    "cell-1745196991664": [],
     "cell-1745198699223": []
   },
   "meta": {
     "scope": "test",
     "name": "test-block",
-    "updatedAt": 1746601883610,
+    "updatedAt": 1746660666801,
     "preview": "snapshots/test-test-block.png"
   },
   "size": {

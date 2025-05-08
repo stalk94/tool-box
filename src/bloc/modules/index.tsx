@@ -23,6 +23,7 @@ import { serializeJSX } from '../utils/sanitize';
 import { InputStyles } from '../type';
 import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-carousel'
 
+
 /**
  * Приоритет: 
  * * пропс настройки компонентов 
@@ -70,7 +71,6 @@ registerComponent({
     type: 'Text',
     component: TextWrapper,
     defaultProps: {
-        children: '',
         fullWidth: true,
     },
     icon: TextFields,

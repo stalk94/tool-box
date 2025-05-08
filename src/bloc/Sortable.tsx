@@ -5,10 +5,11 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
 import useContextMenu from '@components/context-main';
+import { updateComponentProps } from './utils/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./utils/export";
 import { serializeJSX } from './utils/sanitize';
-
+import { LinktoolBar } from './modules/utils/Toolbar';
 
 
 export function SortableItem({ id, children }: { id: number, children: Component }) {
@@ -23,7 +24,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
         id ,
         disabled: !dragEnabled.get()        // ✅ глобальный флаг
     });
-
+    
    
     const styleWrapper: React.CSSProperties = {
         position: 'relative',
@@ -133,7 +134,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
         return ()=> EVENT.off('onSelectCell', handler);
     }, []);
 
-
+    
     const { menu, handleOpen } = useContextMenu([
         { 
             label: <div style={{color:'gold',fontSize:14}}>В заготовки</div>, 
@@ -167,6 +168,13 @@ export function SortableItem({ id, children }: { id: number, children: Component
                     handleClick(e.currentTarget);
                 }}
             >
+                { context.mod.get() === 'link' &&
+                    <LinktoolBar 
+                        dataId={children.props['data-id']}
+                        subs={children.props['data-subs'] ?? []}
+                        onChange={(data)=> updateComponentProps({component:children, data})}
+                    />
+                }
                 { children }
             </div>
             { menu }

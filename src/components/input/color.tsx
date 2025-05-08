@@ -93,6 +93,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
         const str = toRgbaString(val);
         setColor(val);
         debouncedEmit(str);
+        setAnchorEl(null);
     }
 
 
@@ -107,6 +108,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
         <>
             <Box
                 onClick={handleOpen}
+                //onMouseEnter={handleOpen}
                 sx={{
                     width: 30,
                     height: 30,
@@ -115,8 +117,9 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
                     cursor: 'pointer',
                     border: `1px solid ${theme.palette.input.border}`,
                     opacity: props.disabled && 0.5,
-                    m: 1
+                    m: 1,
                 }}
+                style={{ ...props.style }}
             />
             {variant === 'popup' && (
                 <Popover
@@ -132,8 +135,8 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
                 >
                     <ColorWindow 
                         sx={{
-                            width: '25vw',
-                            height: '27vh',
+                            width: '20vw',
+                            height: '25vh',
                         }}
                         color={color} 
                         onChange={handlePickerChange} 

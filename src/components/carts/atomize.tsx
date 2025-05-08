@@ -43,7 +43,7 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
             component="img"
             height={height}
             width={width}
-            image={src ?? "https://material-ui.com/static/images/cards/paella.jpg"}
+            image={src ?? "https://png.pngtree.com/thumb_back/fh260/background/20240801/pngtree-new-cb-background-images-photos-pics-wallpaper-pictures-image_16123145.jpg"}
             alt={useAlt()}
         />
     )
@@ -83,7 +83,9 @@ export const Header =({ avatar, title, subheader, action, bcg }: HeaderProps)=> 
 
     return(
         <CardHeader 
-            sx={getColor()}
+            sx={{
+                ...getColor(), 
+            }}
             avatar={avatar}
             title={title}
             subheader={subheader}

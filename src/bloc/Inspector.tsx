@@ -12,17 +12,6 @@ export default function InspectorPanel ({ data, onClose }) {
     const info = useHookstate(useInfoState());
     const inspector = info.inspector;
     
-    React.useEffect(()=> {
-        sharedEmmiter.onAny((key, value)=> {
-            inspector.task.set((prew)=> {
-                prew.push({
-                    component: key,
-                    ...value,
-                });
-                return prew;
-            });
-        });
-    }, []);
 
 
     return (
@@ -99,3 +88,19 @@ export default function InspectorPanel ({ data, onClose }) {
         </Paper>
     );
 }
+
+
+
+/**
+ *   React.useEffect(()=> {
+        sharedEmmiter.onAny((key, value)=> {
+            inspector.task.set((prew)=> {
+                prew.push({
+                    component: key,
+                    ...value,
+                });
+                return prew;
+            });
+        });
+    }, []);
+ */

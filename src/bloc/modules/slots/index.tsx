@@ -1,1 +1,0 @@
-export { TypographySlot } from './typography';
