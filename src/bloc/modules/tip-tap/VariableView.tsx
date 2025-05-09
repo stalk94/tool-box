@@ -1,16 +1,21 @@
 import { NodeViewWrapper } from '@tiptap/react';
+import { useStorageContext } from '../../context';
+import { useHookstate } from '@hookstate/core';
+
 
 
 // ! пример
 export const VariableView = ({ node }: any) => {
     const name = node.attrs.name;
+    const index = node.attrs.rowIndex;
+
 
     return (
         <NodeViewWrapper
             as="span"
             contentEditable={false}
             style={{
-                backgroundColor: '#eef',
+                
                 padding: '2px 6px',
                 borderRadius: '4px',
                 fontSize: '0.875rem',
@@ -19,9 +24,9 @@ export const VariableView = ({ node }: any) => {
                 cursor: 'pointer',
             }}
             title={`Переменная: ${name}`}
-            onClick={() => alert(`Вы кликнули по переменной "${name}"`)}
+            //onClick={() => alert(`Вы кликнули по переменной "${name}"`)}
         >
-            {{ name }}
+            {`${name}[${index}]`}
         </NodeViewWrapper>
     );
 }

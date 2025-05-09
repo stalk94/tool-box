@@ -1,0 +1,293 @@
+{
+  "layout": [
+    {
+      "i": "cell-1746697054051",
+      "x": 0,
+      "y": 0,
+      "w": 7,
+      "h": 3,
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1746697055063",
+      "x": 0,
+      "y": 3,
+      "w": 7,
+      "h": 8,
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1746697065872",
+      "x": 0,
+      "y": 11,
+      "w": 7,
+      "h": 7,
+      "content": [],
+      "moved": false,
+      "static": false
+    }
+  ],
+  "content": {
+    "cell-1746697054051": [
+      {
+        "id": 1746697152062,
+        "parent": "cell-1746697054051",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1746697152062,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "Title"
+                  }
+                ]
+              }
+            ]
+          },
+          "style": {
+            "marginTop": "26px",
+            "marginLeft": "10px"
+          }
+        }
+      },
+      {
+        "id": 1746697377058,
+        "parent": "cell-1746697054051",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1746697377058,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "Title"
+                  }
+                ]
+              }
+            ]
+          },
+          "style": {
+            "marginLeft": "12px",
+            "fontWeight": "bold"
+          }
+        }
+      }
+    ],
+    "cell-1746697055063": [
+      {
+        "id": 1746697111545,
+        "parent": "cell-1746697055063",
+        "props": {
+          "src": "/placeholder.jpg",
+          "file": "",
+          "data-source": "src",
+          "alt": "Картинка",
+          "data-id": 1746697111545,
+          "data-type": "Image",
+          "style": {
+            "marginLeft": "0px"
+          }
+        }
+      }
+    ],
+    "cell-1746697065872": [
+      {
+        "id": 1746697174009,
+        "parent": "cell-1746697065872",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1746697174009,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "bulletList",
+                "content": [
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "textAlign": null
+                        },
+                        "content": [
+                          {
+                            "type": "text",
+                            "marks": [
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "text": "Оплата"
+                          },
+                          {
+                            "type": "text",
+                            "text": ": Используйте безопасные методы оплаты, такие как PayPal, чтобы иметь возможность воспользоваться защитой покупателя в случае "
+                          },
+                          {
+                            "type": "text",
+                            "marks": [
+                              {
+                                "type": "textStyle",
+                                "attrs": {
+                                  "color": "rgba(229, 26, 26, 1)"
+                                }
+                              }
+                            ],
+                            "text": "проблем"
+                          },
+                          {
+                            "type": "text",
+                            "text": "."
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "textAlign": null
+                        },
+                        "content": [
+                          {
+                            "type": "text",
+                            "marks": [
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "text": "Проверка товара"
+                          },
+                          {
+                            "type": "text",
+                            "text": ": Тщательно "
+                          },
+                          {
+                            "type": "text",
+                            "marks": [
+                              {
+                                "type": "underline"
+                              }
+                            ],
+                            "text": "проверяйте "
+                          },
+                          {
+                            "type": "text",
+                            "text": "описание и характеристики товара перед покупкой."
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "type": "listItem",
+                    "content": [
+                      {
+                        "type": "paragraph",
+                        "attrs": {
+                          "textAlign": null
+                        },
+                        "content": [
+                          {
+                            "type": "text",
+                            "marks": [
+                              {
+                                "type": "bold"
+                              }
+                            ],
+                            "text": "Отзывы"
+                          },
+                          {
+                            "type": "text",
+                            "text": ": Изучите отзывы о конкретном товаре и продавце, чтобы получить полное представление."
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ]
+  },
+  "meta": {
+    "scope": "global",
+    "name": "card",
+    "updatedAt": 1746698620970,
+    "preview": "snapshots/global-card.png"
+  },
+  "size": {
+    "width": 600,
+    "height": 640
+  }
+}

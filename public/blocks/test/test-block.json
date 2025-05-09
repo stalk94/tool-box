@@ -17,14 +17,8 @@
             "file": "",
             "data-source": "src",
             "alt": "Картинка",
-            "data-id": 1746561512791,
-            "data-type": "Image",
-            "style": {
-              "marginLeft": "0px",
-              "marginRight": "0px",
-              "marginBottom": "0px",
-              "marginTop": "0px"
-            }
+            "data-id": 1746740026793,
+            "data-type": "Image"
           },
           "_owner": null,
           "_store": {}
@@ -39,36 +33,7 @@
       "y": 0,
       "w": 5,
       "h": 2,
-      "content": [
-        {
-          "type": {
-            "parent": "cell-1745177704331"
-          },
-          "key": null,
-          "props": {
-            "children": "Заголовок333",
-            "variant": "h3",
-            "fullWidth": true,
-            "style": {
-              "display": "flex",
-              "justifyContent": "center",
-              "marginTop": "0px"
-            },
-            "data-id": 1746538953407,
-            "data-type": "Typography",
-            "styles": {
-              "text": {
-                "textAlign": "center",
-                "fontSize": "15",
-                "color": "rgba(233, 35, 35, 1)",
-                "fontFamily": "inherit"
-              }
-            }
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false
     },
@@ -78,202 +43,7 @@
       "y": 0,
       "w": 4,
       "h": 15,
-      "content": [
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "width": "100%",
-            "leftIcon": "none",
-            "rightIcon": "none",
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745578794401,
-            "data-type": "Slider",
-            "style": {
-              "marginTop": "0px",
-              "marginLeft": "26px",
-              "marginRight": "20px",
-              "marginBottom": "4px"
-            }
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "placeholder": "ввод number",
-            "fullWidth": true,
-            "width": "100%",
-            "styles": {
-              "form": {
-                "borderColor": "rgba(94, 114, 229, 1)",
-                "background": "rgba(234, 219, 219, 0.15)"
-              },
-              "label": {
-                "color": "rgba(209, 40, 40, 1)",
-                "fontSize": 29,
-                "fontFamily": "Inter"
-              },
-              "icon": {
-                "fontSize": "19",
-                "color": "rgba(210, 14, 14, 1)"
-              }
-            },
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745578791673,
-            "data-type": "Number"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "placeholder": "ввод",
-            "divider": "none",
-            "fullWidth": true,
-            "width": "100%",
-            "leftIcon": "none",
-            "styles": {},
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745578790006,
-            "data-type": "TextInput",
-            "style": {
-              "marginTop": "0px"
-            }
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "width": "100%",
-            "items": [
-              {
-                "id": "1",
-                "label": "test-1"
-              },
-              {
-                "id": "2",
-                "label": "test-2"
-              }
-            ],
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745578796933,
-            "data-type": "ToggleButtons"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "width": "100%",
-            "items": [
-              {
-                "id": "1",
-                "label": "test-1"
-              },
-              {
-                "id": "2",
-                "label": "test-2"
-              }
-            ],
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745578802013,
-            "data-type": "Select"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "children": "Button",
-            "variant": "outlined",
-            "color": "primary",
-            "fullWidth": true,
-            "startIcon": "none",
-            "endIcon": "none",
-            "style": {
-              "display": "block",
-              "marginTop": "14px",
-              "marginBottom": "14px",
-              "marginRight": "14px",
-              "marginLeft": "14px"
-            },
-            "data-id": 1745578769068,
-            "data-type": "Button",
-            "data-subs": [
-              "1745578794401",
-              "1745578796933"
-            ]
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {
-            "parent": "cell-1745192385236"
-          },
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "width": "100%",
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1745581500788,
-            "data-type": "Switch"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false
     },
@@ -290,8 +60,12 @@
           },
           "key": null,
           "props": {
-            "fullWidth": true,
+            "fullHeight": true,
             "width": "100%",
+            "heightMedia": 300,
+            "src": "",
+            "file": "",
+            "data-source": "",
             "slots": {
               "text": {
                 "type": "doc",
@@ -308,7 +82,7 @@
                           {
                             "type": "fontSize",
                             "attrs": {
-                              "size": "14px"
+                              "size": "0.975rem"
                             }
                           },
                           {
@@ -318,7 +92,7 @@
                             }
                           }
                         ],
-                        "text": "В зависимости от того, что вы хотите построить, представления узлов "
+                        "text": "В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические "
                       },
                       {
                         "type": "text",
@@ -326,13 +100,13 @@
                           {
                             "type": "textStyle",
                             "attrs": {
-                              "color": "rgba(239, 100, 100, 1)"
+                              "color": "rgba(226, 19, 19, 1)"
                             }
                           },
                           {
                             "type": "fontSize",
                             "attrs": {
-                              "size": "14px"
+                              "size": "0.975rem"
                             }
                           },
                           {
@@ -342,25 +116,25 @@
                             }
                           }
                         ],
-                        "text": "работают "
+                        "text": "возможности "
                       },
                       {
                         "type": "text",
                         "marks": [
                           {
-                            "type": "fontSize",
+                            "type": "textStyle",
                             "attrs": {
-                              "size": "14px"
+                              "color": ""
                             }
                           },
                           {
-                            "type": "fontFamily",
+                            "type": "fontSize",
                             "attrs": {
-                              "family": "Roboto Condensed\", Arial, sans-serif"
+                              "size": null
                             }
                           }
                         ],
-                        "text": "немного по-разному и могут иметь свои очень специфические возможности"
+                        "text": "В зависимости от того"
                       }
                     ]
                   }
@@ -371,6 +145,9 @@
                 "content": [
                   {
                     "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
                     "content": [
                       {
                         "type": "text",
@@ -438,7 +215,7 @@
                 ]
               }
             },
-            "data-id": 1746640913133,
+            "data-id": 1746742758621,
             "data-type": "Card"
           },
           "_owner": null,
@@ -456,7 +233,9 @@
       "h": 5,
       "content": [
         {
-          "type": {},
+          "type": {
+            "parent": "cell-1745196991664"
+          },
           "key": null,
           "props": {
             "fullWidth": true,
@@ -472,55 +251,20 @@
                   },
                   "content": [
                     {
-                      "type": "text",
-                      "marks": [
-                        {
-                          "type": "textStyle",
-                          "attrs": {
-                            "color": "rgba(182, 56, 56, 1)"
-                          }
-                        },
-                        {
-                          "type": "fontSize",
-                          "attrs": {
-                            "size": "24px"
-                          }
-                        },
-                        {
-                          "type": "fontFamily",
-                          "attrs": {
-                            "family": "Roboto Condensed\", Arial, sans-serif"
-                          }
-                        },
-                        {
-                          "type": "strike"
-                        }
-                      ],
-                      "text": "Title "
+                      "type": "variable",
+                      "attrs": {
+                        "name": "test",
+                        "rowIndex": 0,
+                        "db": "BASE"
+                      }
                     },
                     {
-                      "type": "text",
-                      "marks": [
-                        {
-                          "type": "textStyle",
-                          "attrs": {
-                            "color": null
-                          }
-                        },
-                        {
-                          "type": "fontSize",
-                          "attrs": {
-                            "size": "1rem"
-                          }
-                        },
-                        {
-                          "type": "fontFamily",
-                          "attrs": {
-                            "family": "Roboto Condensed\", Arial, sans-serif"
-                          }
-                        }
-                      ],
-                      "text": "f"
+                      "type": "variable",
+                      "attrs": {
+                        "name": "test",
+                        "rowIndex": 0,
+                        "db": "BASE"
+                      }
                     }
                   ]
                 },
@@ -531,28 +275,12 @@
                   },
                   "content": [
                     {
-                      "type": "text",
-                      "marks": [
-                        {
-                          "type": "textStyle",
-                          "attrs": {
-                            "color": "rgba(232, 42, 212, 1)"
-                          }
-                        },
-                        {
-                          "type": "fontSize",
-                          "attrs": {
-                            "size": "1rem"
-                          }
-                        },
-                        {
-                          "type": "fontFamily",
-                          "attrs": {
-                            "family": "Roboto Condensed\", Arial, sans-serif"
-                          }
-                        }
-                      ],
-                      "text": "fddffddsssss "
+                      "type": "variable",
+                      "attrs": {
+                        "name": "test2",
+                        "rowIndex": 0,
+                        "db": "BASE"
+                      }
                     },
                     {
                       "type": "text",
@@ -562,6 +290,9 @@
                           "attrs": {
                             "color": null
                           }
+                        },
+                        {
+                          "type": "italic"
                         },
                         {
                           "type": "fontSize",
@@ -586,6 +317,9 @@
                           "attrs": {
                             "color": "rgba(231, 225, 41, 1)"
                           }
+                        },
+                        {
+                          "type": "bold"
                         },
                         {
                           "type": "fontSize",
@@ -707,225 +441,31 @@
     ],
     "cell-1745177681237": [
       {
-        "id": 1746561512791,
+        "id": 1746740026793,
         "parent": "cell-1745177681237",
         "props": {
           "src": "/placeholder.jpg",
           "file": "",
           "data-source": "src",
           "alt": "Картинка",
-          "data-id": 1746561512791,
-          "data-type": "Image",
-          "style": {
-            "marginLeft": "0px",
-            "marginRight": "0px",
-            "marginBottom": "0px",
-            "marginTop": "0px"
-          }
+          "data-id": 1746740026793,
+          "data-type": "Image"
         }
       }
     ],
-    "cell-1745177704331": [
-      {
-        "id": 1746538953407,
-        "parent": "cell-1745177704331",
-        "props": {
-          "children": "Заголовок333",
-          "variant": "h3",
-          "fullWidth": true,
-          "style": {
-            "display": "flex",
-            "justifyContent": "center",
-            "marginTop": "0px"
-          },
-          "data-id": 1746538953407,
-          "data-type": "Typography",
-          "styles": {
-            "text": {
-              "textAlign": "center",
-              "fontSize": "15",
-              "color": "rgba(233, 35, 35, 1)",
-              "fontFamily": "inherit"
-            }
-          }
-        }
-      }
-    ],
-    "cell-1745192385236": [
-      {
-        "id": 1745578794401,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "width": "100%",
-          "leftIcon": "none",
-          "rightIcon": "none",
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745578794401,
-          "data-type": "Slider",
-          "style": {
-            "marginTop": "0px",
-            "marginLeft": "26px",
-            "marginRight": "20px",
-            "marginBottom": "4px"
-          }
-        }
-      },
-      {
-        "id": 1745578791673,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "placeholder": "ввод number",
-          "fullWidth": true,
-          "width": "100%",
-          "styles": {
-            "form": {
-              "borderColor": "rgba(94, 114, 229, 1)",
-              "background": "rgba(234, 219, 219, 0.15)"
-            },
-            "label": {
-              "color": "rgba(209, 40, 40, 1)",
-              "fontSize": 29,
-              "fontFamily": "Inter"
-            },
-            "icon": {
-              "fontSize": "19",
-              "color": "rgba(210, 14, 14, 1)"
-            }
-          },
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745578791673,
-          "data-type": "Number"
-        }
-      },
-      {
-        "id": 1745578790006,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "placeholder": "ввод",
-          "divider": "none",
-          "fullWidth": true,
-          "width": "100%",
-          "leftIcon": "none",
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745578790006,
-          "data-type": "TextInput",
-          "style": {
-            "marginTop": "0px"
-          }
-        }
-      },
-      {
-        "id": 1745578796933,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "width": "100%",
-          "items": [
-            {
-              "id": "1",
-              "label": "test-1"
-            },
-            {
-              "id": "2",
-              "label": "test-2"
-            }
-          ],
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745578796933,
-          "data-type": "ToggleButtons"
-        }
-      },
-      {
-        "id": 1745578802013,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "width": "100%",
-          "items": [
-            {
-              "id": "1",
-              "label": "test-1"
-            },
-            {
-              "id": "2",
-              "label": "test-2"
-            }
-          ],
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745578802013,
-          "data-type": "Select"
-        }
-      },
-      {
-        "id": 1745578769068,
-        "parent": "cell-1745192385236",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "primary",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {
-            "display": "block",
-            "marginTop": "14px",
-            "marginBottom": "14px",
-            "marginRight": "14px",
-            "marginLeft": "14px"
-          },
-          "data-id": 1745578769068,
-          "data-type": "Button",
-          "data-subs": [
-            "1745578794401",
-            "1745578796933"
-          ]
-        }
-      },
-      {
-        "id": 1745581500788,
-        "parent": "cell-1745192385236",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "width": "100%",
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1745581500788,
-          "data-type": "Switch"
-        }
-      }
-    ],
+    "cell-1745177704331": [],
+    "cell-1745192385236": [],
     "cell-1745192400724": [
       {
-        "id": 1746640913133,
+        "id": 1746742758621,
         "parent": "cell-1745192400724",
         "props": {
-          "fullWidth": true,
+          "fullHeight": true,
           "width": "100%",
+          "heightMedia": 300,
+          "src": "",
+          "file": "",
+          "data-source": "",
           "slots": {
             "text": {
               "type": "doc",
@@ -942,7 +482,7 @@
                         {
                           "type": "fontSize",
                           "attrs": {
-                            "size": "14px"
+                            "size": "0.975rem"
                           }
                         },
                         {
@@ -952,7 +492,7 @@
                           }
                         }
                       ],
-                      "text": "В зависимости от того, что вы хотите построить, представления узлов "
+                      "text": "В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические "
                     },
                     {
                       "type": "text",
@@ -960,13 +500,13 @@
                         {
                           "type": "textStyle",
                           "attrs": {
-                            "color": "rgba(239, 100, 100, 1)"
+                            "color": "rgba(226, 19, 19, 1)"
                           }
                         },
                         {
                           "type": "fontSize",
                           "attrs": {
-                            "size": "14px"
+                            "size": "0.975rem"
                           }
                         },
                         {
@@ -976,25 +516,25 @@
                           }
                         }
                       ],
-                      "text": "работают "
+                      "text": "возможности "
                     },
                     {
                       "type": "text",
                       "marks": [
                         {
-                          "type": "fontSize",
+                          "type": "textStyle",
                           "attrs": {
-                            "size": "14px"
+                            "color": ""
                           }
                         },
                         {
-                          "type": "fontFamily",
+                          "type": "fontSize",
                           "attrs": {
-                            "family": "Roboto Condensed\", Arial, sans-serif"
+                            "size": null
                           }
                         }
                       ],
-                      "text": "немного по-разному и могут иметь свои очень специфические возможности"
+                      "text": "В зависимости от того"
                     }
                   ]
                 }
@@ -1005,6 +545,9 @@
               "content": [
                 {
                   "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
                   "content": [
                     {
                       "type": "text",
@@ -1072,7 +615,7 @@
               ]
             }
           },
-          "data-id": 1746640913133,
+          "data-id": 1746742758621,
           "data-type": "Card"
         }
       }
@@ -1095,55 +638,20 @@
                 },
                 "content": [
                   {
-                    "type": "text",
-                    "marks": [
-                      {
-                        "type": "textStyle",
-                        "attrs": {
-                          "color": "rgba(182, 56, 56, 1)"
-                        }
-                      },
-                      {
-                        "type": "fontSize",
-                        "attrs": {
-                          "size": "24px"
-                        }
-                      },
-                      {
-                        "type": "fontFamily",
-                        "attrs": {
-                          "family": "Roboto Condensed\", Arial, sans-serif"
-                        }
-                      },
-                      {
-                        "type": "strike"
-                      }
-                    ],
-                    "text": "Title "
+                    "type": "variable",
+                    "attrs": {
+                      "name": "test",
+                      "rowIndex": 0,
+                      "db": "BASE"
+                    }
                   },
                   {
-                    "type": "text",
-                    "marks": [
-                      {
-                        "type": "textStyle",
-                        "attrs": {
-                          "color": null
-                        }
-                      },
-                      {
-                        "type": "fontSize",
-                        "attrs": {
-                          "size": "1rem"
-                        }
-                      },
-                      {
-                        "type": "fontFamily",
-                        "attrs": {
-                          "family": "Roboto Condensed\", Arial, sans-serif"
-                        }
-                      }
-                    ],
-                    "text": "f"
+                    "type": "variable",
+                    "attrs": {
+                      "name": "test",
+                      "rowIndex": 0,
+                      "db": "BASE"
+                    }
                   }
                 ]
               },
@@ -1154,28 +662,12 @@
                 },
                 "content": [
                   {
-                    "type": "text",
-                    "marks": [
-                      {
-                        "type": "textStyle",
-                        "attrs": {
-                          "color": "rgba(232, 42, 212, 1)"
-                        }
-                      },
-                      {
-                        "type": "fontSize",
-                        "attrs": {
-                          "size": "1rem"
-                        }
-                      },
-                      {
-                        "type": "fontFamily",
-                        "attrs": {
-                          "family": "Roboto Condensed\", Arial, sans-serif"
-                        }
-                      }
-                    ],
-                    "text": "fddffddsssss "
+                    "type": "variable",
+                    "attrs": {
+                      "name": "test2",
+                      "rowIndex": 0,
+                      "db": "BASE"
+                    }
                   },
                   {
                     "type": "text",
@@ -1185,6 +677,9 @@
                         "attrs": {
                           "color": null
                         }
+                      },
+                      {
+                        "type": "italic"
                       },
                       {
                         "type": "fontSize",
@@ -1209,6 +704,9 @@
                         "attrs": {
                           "color": "rgba(231, 225, 41, 1)"
                         }
+                      },
+                      {
+                        "type": "bold"
                       },
                       {
                         "type": "fontSize",
@@ -1243,7 +741,7 @@
   "meta": {
     "scope": "test",
     "name": "test-block",
-    "updatedAt": 1746660666801,
+    "updatedAt": 1746752629340,
     "preview": "snapshots/test-test-block.png"
   },
   "size": {

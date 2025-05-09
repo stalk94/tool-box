@@ -20,6 +20,14 @@ type MediaImageProps = CardMediaProps & {
     height?: string|number 
     width?: string|number
 }
+function getMediaType(src: string): 'img' | 'video' {
+    if (!src) return 'img';
+    // Убираем query-параметры
+    const cleanSrc = src.split('?')[0];
+    const ext = cleanSrc.split('.').pop()?.toLowerCase();
+    if (['mp4', 'webm', 'ogg'].includes(ext || '')) return 'video';
+    return 'img';
+}
 
 
 /**
@@ -27,6 +35,7 @@ type MediaImageProps = CardMediaProps & {
  * 
  */
 export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) => {
+    const type = getMediaType(src);
     const useAlt =(src?: string)=> {
         try {
             const match = src?.match(/\/([^\/]+\.[a-zA-Z0-9]+)$/);
@@ -37,16 +46,28 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
         }
     }
     
-    return(
+    if (type === 'video') {
+        return (
+            <CardMedia
+                component="video"
+                src={src}
+                height={height}
+                width={width}
+                controls
+                {...props}
+            />
+        );
+    }
+    return (
         <CardMedia
-            { ...props }
             component="img"
+            image={src ?? "https://png.pngtree.com/thumb_back/fh260/background/20240801/pngtree-new-cb-background-images-photos-pics-wallpaper-pictures-image_16123145.jpg"}
             height={height}
             width={width}
-            image={src ?? "https://png.pngtree.com/thumb_back/fh260/background/20240801/pngtree-new-cb-background-images-photos-pics-wallpaper-pictures-image_16123145.jpg"}
             alt={useAlt()}
+            {...props}
         />
-    )
+    );
 }
 /**
  * Произвольный контент для карточки с flex позиционированием

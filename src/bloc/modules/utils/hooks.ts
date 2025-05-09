@@ -89,7 +89,7 @@ export const useComponentSizeWithSiblings = (componentId: string): Size => {
 
         setSize({
             width: Math.max(0, (containerRect.width - usedWidth) / globalThis.ZOOM),
-            height: Math.max(0, (containerRect.height - usedHeight - 8) / globalThis.ZOOM),
+            height: Math.max(0, (containerRect.height - usedHeight - 5) / globalThis.ZOOM),
         });
     };
 

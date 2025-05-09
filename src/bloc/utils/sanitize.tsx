@@ -68,6 +68,7 @@ export function serializeJSX(node: any): any {
 
     return node;
 }
+
 export function deserializeJSX(node: any, maps?: Record<string, any>): any {
     if (node === null || typeof node === 'string' || typeof node === 'number') {
         return node;

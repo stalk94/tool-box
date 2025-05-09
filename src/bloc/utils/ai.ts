@@ -32,3 +32,7 @@ export const loadImageToAiGenerateComponentGpt = async (file: File, prompt: stri
         return JSON.parse(data.json);
     }
 }
+
+export const fetchAi = async (prompt: string) => {
+    
+}

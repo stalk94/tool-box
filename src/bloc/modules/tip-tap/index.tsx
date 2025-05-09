@@ -6,23 +6,48 @@ import Color from '@tiptap/extension-color';
 import Highlight from '@tiptap/extension-highlight';
 import { Variable } from './extension/variable';
 import BubbleMenuText from './BubbleMenu';
-import { useEditorContext } from '@bloc/context';
+import { useEditorContext, useInfoState } from '@bloc/context';
 import Underline from '@tiptap/extension-underline';
 import Strike from '@tiptap/extension-strike';
 import TextAlign from '@tiptap/extension-text-align';
 import { FontSize, FontFamily } from './extension/fonts';
 import Link from '@tiptap/extension-link';
 import { JSONContent } from '@tiptap/react';
-import { generateHTML } from '@tiptap/html';
+import JSONRenderer from './Render';
+import { generateHTML } from '@tiptap/core';
 
 
-type PropsEditor =  { 
-    value: JSONContent; 
-    onChange: (html: JSONContent) => void; 
-    readOnly?: boolean; 
+const extension = [
+    StarterKit.configure({
+        strike: false,
+    }),
+    Variable,
+    TextStyle,
+    Color,
+    Highlight,
+    FontSize,
+    FontFamily,
+    Underline,
+    Strike,
+    Link.configure({
+        openOnClick: false, // отключаем переход при клике в редакторе
+        autolink: false,
+        linkOnPaste: false,
+    }),
+    TextAlign.configure({
+        types: ['heading', 'paragraph'],
+    }),
+];
+
+
+type PropsEditor = {
+    value: JSONContent;
+    onChange: (html: JSONContent) => void;
+    readOnly?: boolean;
     placeholder?: string;
     className?: string;
     isEditable?: boolean;
+    autoIndex?: number;
     initialInsert?: {
         text: string;
         fontSize?: string;
@@ -32,46 +57,26 @@ type PropsEditor =  {
 }
 
 
-export default function TipTapSlotEditor({ 
-    value, 
-    onChange, 
-    readOnly = false, 
+export default function TipTapSlotEditor({
+    value,
+    onChange,
+    readOnly = false,
     placeholder = '',
     className,
     isEditable = true,
     initialInsert,
+    autoIndex,
 }: PropsEditor) {
     const context = useEditorContext();
-    const extension = [
-        StarterKit.configure({
-            strike: false,
-        }),
-        Variable, 
-        TextStyle, 
-        Color, 
-        Highlight, 
-        FontSize, 
-        FontFamily, 
-        Underline,
-        Strike,
-        Link.configure({
-            openOnClick: false, // отключаем переход при клике в редакторе
-            autolink: false,
-            linkOnPaste: false,
-        }),
-        TextAlign.configure({
-            types: ['heading', 'paragraph'],
-        }),
-    ];
+    const info = useInfoState();
 
-
+   
     if (!isEditable) {
-        const html = generateHTML(value, extension);
-
         return (
-            <div
+            <JSONRenderer
+                autoIndex={autoIndex}
+                value={value}
                 className={className}
-                dangerouslySetInnerHTML={{ __html: html }}
             />
         );
     }
@@ -89,7 +94,14 @@ export default function TipTapSlotEditor({
                 placeholder,
             },
         },
+        onFocus: ({ editor }) => {
+            info.activeEditorTipTop.set(editor);
+        },
+        onBlur:({ editor }) => {
+            setTimeout(()=> info.activeEditorTipTop.set(undefined), 1000);
+        },
     });
+    
     React.useEffect(() => {
         if (editor && editor.isEmpty && !value?.trim() && initialInsert) {
             const chain = editor.chain().focus();
@@ -109,13 +121,20 @@ export default function TipTapSlotEditor({
     }, [editor, value, initialInsert]);
 
 
+
     return (
-        <div 
-            onFocus={()=> context.dragEnabled.set(false)}
+        <div
+            onFocus={() => context.dragEnabled.set(false)}
             onBlur={() => context.dragEnabled.set(true)}
         >
             <EditorContent editor={editor} />
             <BubbleMenuText editor={editor} />
         </div>
     );
+}
+
+
+
+export const rendeHtml =(value)=> {
+    return generateHTML(value, extension);
 }

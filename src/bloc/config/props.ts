@@ -79,8 +79,12 @@ const propsTypography = {
 const propsImage = {
     src: 'string',
     alt: 'string',
-    sizes: 'string',
-    imgixParams: 'object', // можно редактировать позже через JSON-форму
+    sizes: 'string'
+}
+const propsCard = {
+    src: 'string',
+    alt: 'string',
+    heightMedia: 'number'
 }
 
 const propsInput = {
@@ -220,5 +224,6 @@ export default {
     Slider: propsInputSlider,
     ToggleButtons: propsInputToogle,
     CheckBox: propsInputCheck,
-    Switch: propsInputSwitch
+    Switch: propsInputSwitch,
+    Card: propsCard
 }

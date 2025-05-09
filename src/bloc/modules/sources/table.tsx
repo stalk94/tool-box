@@ -7,12 +7,13 @@ import { iconsList } from '../../../components/tools/icons';
 import { Column } from 'primereact/column';
 import { useHookstate } from '@hookstate/core';
 import { loadTableData } from './providers';
+import { InputText } from 'primereact/inputtext';
 
 
 export type DataSourceTableProps = {
     dataId: string | number
     style?: React.CSSProperties
-    sourceType?: 'json' | 'google' | 'json-url'
+    sourceType?: 'json' | 'google' | 'json-url' | 'db'
     refreshInterval?: number;           // интервал в миллисекундах
     source: string                      // URL или JSON-строка
     header?: null       // пока отключен
@@ -72,7 +73,7 @@ export default function({ style, dataId, sourceType, source, refreshInterval, ..
             setColumns(inferred);
         }
     }, [data]);
-    //console.log(props.width)
+    
 
     return(
         <DataTable
@@ -80,19 +81,30 @@ export default function({ style, dataId, sourceType, source, refreshInterval, ..
             data-type='DataTable'
             style={{ ...style, width: props.width, height: props.height, display: 'block' }}
             value={data}
-            onRowClick={(e)=> props?.onSelect?.(e.data)}
+            //onRowClick={(e)=> console.log(e.data)}
             header={
                 <div style={{ fontSize: 12, color: 'gray' }}>
                     { loading && <><CircularProgress size='13'/> Обновление данных...</> }
                 </div>
             }
         >
-            { columns.map((col) => (
+            { columns.map((col, index) => (
                 <Column 
                     sortable
-                    key={col.field} 
+                    key={index} 
                     field={col.field} 
-                    header={col.header} 
+                    header={col.header}
+                    body={(rowData, props) => (
+                        <span
+                            style={{ cursor: 'pointer' }}
+                            onClick={() => {
+                               const columnName = props.field;
+
+                            }}
+                        >
+                            { rowData[col.field] }
+                        </span>
+                    )}
                 />
             ))}
         </DataTable>

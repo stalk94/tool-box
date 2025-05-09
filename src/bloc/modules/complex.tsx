@@ -8,7 +8,7 @@ import { useEvent, useCtxBufer } from './utils/shared';
 import { iconsList } from '../../components/tools/icons';
 import DataTable, { DataSourceTableProps }  from './sources/table';
 import { useComponentSizeWithSiblings } from './utils/hooks';
-
+import render from './export/Acordeon';
 
 type AccordionWrapperProps = AccordionProps & ComponentProps;
 type TableSourcesProps = DataSourceTableProps & ComponentProps;
@@ -29,7 +29,14 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         }));
     }
     const parsedItems = React.useMemo(() => parse(), [items]);
-
+    const degidratation = () => {
+        return render(
+            activeIndexs,
+            tabStyle,
+            parsedItems,
+            { ...style, width: '100%', display: 'block' }
+        );
+    }
 
     return (
         <div

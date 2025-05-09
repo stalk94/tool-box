@@ -6,8 +6,10 @@ import { useTheme } from '@mui/material';
 
 
 export type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
+
+
 // todo: стилизировать через тему
-const StyledTableWrapper = styled.div<{ theme: Theme }>`
+const StyledTableWrapper = styled.div<{ theme: Theme; fontSizeHead:string }>`
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -47,7 +49,6 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         color: ${({ theme })=> theme.palette.text.primary};
         font-size: 18px;
         font-weight: bold;
-        padding: 12px 16px;
     }
     .p-datatable-footer {
         border-top: 1px solid;
@@ -66,7 +67,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         text-align: left;
         box-shadow: 0 4px 3px rgba(0, 0, 0, 0.08) inset, 0 3px 4px rgba(0, 0, 0, 0.06);
         backdrop-filter: blur(10px);
-        font-size:  14px;
+        font-size:  ${({ fontSizeHead }) => fontSizeHead || '14px'};
         white-space: nowrap;
     }
     // нечетные row 
@@ -80,7 +81,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
         transition: background 0.2s ease-in-out;
     }
     // при наведении на row
-    .p-datatable-tbody > tr:hover {
+    .p-datatable-tbody > tr > td:hover {
         background: #3a3c52;
         cursor: pointer;
     }
@@ -101,7 +102,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme }>`
  * добавляет автоматическую подстройку высоты контейнера,       
  * сохраняя оригинальное API компонента.
  */
-export default function({ value, children, header, footer, ...props }: DataTablePropsWrapper) {
+export default function({ value, children, header, footer, fontSizeHead, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
@@ -170,7 +171,7 @@ export default function({ value, children, header, footer, ...props }: DataTable
     
     
     return (
-        <StyledTableWrapper theme={theme}>
+        <StyledTableWrapper theme={theme} fontSizeHead={fontSizeHead}>
             <DataTable
                 ref={tableRef}
                 value={value}

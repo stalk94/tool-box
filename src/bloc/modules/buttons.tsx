@@ -28,12 +28,22 @@ export const ButtonWrapper = React.forwardRef((props: any, ref) => {
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
     const [s, setS] = React.useState(0);
     
+    const degidratation = () => {
+        return render(
+            startIcon,
+            endIcon,
+            style,
+            children,
+            otherProps
+        );
+    }
     React.useEffect(()=> {
         if(subs) subs.map((id)=> {
             sharedEmmiter.on(id, (d)=> setS(d.data))
         });
     }, [subs]);
     
+
     return (
         <Button
             ref={ref}

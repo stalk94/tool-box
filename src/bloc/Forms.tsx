@@ -5,7 +5,7 @@ import { useTheme, Theme } from "@mui/material";
 import { fabrickUnical, fabrickStyleScheme, stylesFabricScheme } from './config/utill';
 import { motion } from 'framer-motion';
 import { sanitizeProps } from './utils/sanitize';
-import { debounce } from 'lodash';
+import { debounce, max } from 'lodash';
 import { PropsForm, ProxyComponentName } from './type';
 import { merge } from 'lodash';
 
@@ -13,8 +13,8 @@ import { merge } from 'lodash';
 // составляет индивидуальную схему пропсов
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
-    const numberKeys = ['min', 'max', 'step'];
-    const switchKeys = ['fullWidth', ];
+    const numberKeys = ['min', 'max', 'step', 'heightMedia'];
+    const switchKeys = ['fullWidth', 'fullHeight'];
     //const fileKeys = [''];
 
     
@@ -43,6 +43,8 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             value: propValue,
             label: propName,
             labelSx: { fontSize: '14px' },
+            max: propName==='heightMedia' && 500,
+            step: propName==='heightMedia' && 20,
             sx: { fontSize: 14 }
         }
     }

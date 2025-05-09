@@ -1,7 +1,7 @@
 import React from 'react'
 import Card, { CardProps } from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
-import { Avatar, Button, CardActionArea, CardActions, CardHeader, IconButton, Typography } from '@mui/material';
+import { Avatar, Button, CardActionArea, CardActions, CardHeader, IconButton, Typography, Box } from '@mui/material';
 import { iconsList } from '../tools/icons';
 import { MediaImage, FlexContent, Header } from './atomize';
 
@@ -16,7 +16,7 @@ export type BaseCardProps = CardProps & {
 
 
 
-export default function SimpleCard({ children, footer, ...props }: BaseCardProps) {
+export default function SimpleCard({ children, footer, style, ...props }: BaseCardProps) {
     const getIcon =(name: string, color?: string)=> {
         const IconComponent = iconsList[name];
 
@@ -77,7 +77,7 @@ export default function SimpleCard({ children, footer, ...props }: BaseCardProps
                 borderColor: (theme)=> theme.palette.card.border,
                 ...props.sx
             }}
-            style={{...props.style}}
+            style={{...style}}
         >
 
             { !children && getHeaderData() }

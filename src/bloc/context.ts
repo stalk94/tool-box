@@ -1,24 +1,66 @@
-import { hookstate } from '@hookstate/core';
+import { hookstate, State } from '@hookstate/core';
 import { localstored } from '@hookstate/localstored';
 import { ComponentSerrialize, LayoutCustom } from './type';
+import { Editor } from '@tiptap/react';
 
 
-let contextState: ReturnType<typeof hookstate> | null = null;
-let renderStateInstance: ReturnType<typeof hookstate<LayoutCustom[]>> | null = null;
-let cellsContentInstance: ReturnType<typeof hookstate<Record<string, ComponentSerrialize[]>>> | null = null;
-let infoStateInstance: ReturnType<typeof hookstate<any>> | null = null;
+export type EditorContextType = {
+    meta: {
+        scope: string;
+        name: string;
+    };
+    mod: 'block' | 'link' | 'grid' | 'storage';
+    dragEnabled: boolean;
+    linkMode: string | undefined;
+    layout: LayoutCustom[];
+    size: {
+        width: number;
+        height: number;
+        breackpoint: string;
+    };
+    currentCell?: string;
+}
+export type InfoStateType = {
+    container: {
+        width: number;
+        height: number;
+    };
+    select: {
+        cell?: string;
+        content?: string;
+        panel: {
+            lastAddedType: string;
+        };
+    };
+    inspector: {
+        lastData: any;
+        task: any[];
+    };
+    project: Record<string, any>;
+    contentAllRefs?: any;
+    activeEditorTipTop: Editor
+}
+export type StorageStateType = {
+    [key: string]: []
+}
 
 
+let contextState: State<EditorContextType> | null = null;
+let storageState: State<StorageStateType> | null = null;
+let renderStateInstance: State<LayoutCustom[]> | null = null;
+let cellsContentInstance: State<Record<string, ComponentSerrialize[]>> | null = null;
+let infoStateInstance: State<InfoStateType> | null = null;
 
-export function useEditorContext() {
+export function useEditorContext(): State<EditorContextType> | null {
     if (typeof window === 'undefined') return null;
 
     if (!contextState) {
-        contextState = hookstate(
+        console.log('contextState')
+        contextState = hookstate<EditorContextType>(
             {
                 meta: {
                     scope: 'test',
-                    name: 'test-block'
+                    name: 'test-block',
                 },
                 mod: 'block',
                 dragEnabled: true,
@@ -37,7 +79,7 @@ export function useEditorContext() {
     return contextState;
 }
 
-export function useRenderState() {
+export function useRenderState(): State<LayoutCustom[]> | null {
     if (typeof window === 'undefined') return null;
 
     if (!renderStateInstance) {
@@ -47,7 +89,7 @@ export function useRenderState() {
     return renderStateInstance;
 }
 
-export function useCellsContent() {
+export function useCellsContent(): State<Record<string, ComponentSerrialize[]>> | null {
     if (typeof window === 'undefined') return null;
 
     if (!cellsContentInstance) {
@@ -60,30 +102,41 @@ export function useCellsContent() {
     return cellsContentInstance;
 }
 
-export function useInfoState() {
+export function useInfoState(): State<InfoStateType> | null {
     if (typeof window === 'undefined') return null;
 
     if (!infoStateInstance) {
-        infoStateInstance = hookstate({
+        infoStateInstance = hookstate<InfoStateType>({
             container: {
                 width: 0,
-                height: 0
+                height: 0,
             },
             select: {
                 cell: undefined,
                 content: undefined,
                 panel: {
-                    lastAddedType: ''
+                    lastAddedType: '',
                 },
             },
             inspector: {
                 lastData: {},
-                task: []
+                task: [],
             },
             project: {},
-            contentAllRefs: undefined
+            contentAllRefs: undefined,
+            activeEditorTipTop: undefined,
         });
     }
 
     return infoStateInstance;
+}
+
+export function useStorageContext(): State<StorageStateType> | null {
+    if (typeof window === 'undefined') return null;
+
+    if (!storageState) {
+        storageState = hookstate<StorageStateType>({});
+    }
+
+    return storageState;
 }

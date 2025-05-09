@@ -14,11 +14,23 @@ export const Variable = Node.create({
             name: {
                 default: '',
             },
+            rowIndex: {
+                default: null,
+            },
+            db: {
+                default: 'BASE'
+            },
         };
     },
 
     parseHTML() {
-        return [{ tag: 'span[data-variable]' }];
+        return [{ 
+            tag: 'span[data-variable]', 
+            getAttrs: el => ({
+                name: (el as HTMLElement).getAttribute('data-variable'),
+                rowIndex: parseInt((el as HTMLElement).getAttribute('data-row-index') || '0', 10),
+            }),
+        }];
     },
 
     renderHTML({ HTMLAttributes }) {
@@ -26,13 +38,14 @@ export const Variable = Node.create({
             'span',
             mergeAttributes(HTMLAttributes, {
                 'data-variable': HTMLAttributes.name,
+                'data-row-index': HTMLAttributes.rowIndex,
             }),
-            `{{${HTMLAttributes.name}}}`,
+            `{{${HTMLAttributes.name}}{${HTMLAttributes.rowIndex}}}`,
         ];
     },
 
     renderText({ node }) {
-        return `{{${node.attrs.name}}}`;
+        return `{{${node.attrs.name}}:{${node.attrs.rowIndex}}}`;
     },
 
     addNodeView() {

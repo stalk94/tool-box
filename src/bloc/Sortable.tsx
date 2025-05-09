@@ -164,6 +164,7 @@ export function SortableItem({ id, children }: { id: number, children: Component
                 {...(dragEnabled.get() ? listeners : {})}
                 onClick={(e)=> handleClick(e.currentTarget)} 
                 onContextMenu={(e)=> {
+                    e.stopPropagation();
                     handleOpen(e, {id, type: children.props['data-type']});
                     handleClick(e.currentTarget);
                 }}

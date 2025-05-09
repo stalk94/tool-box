@@ -1,7 +1,8 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { Component, LayoutCustom } from './type';
-import { DynamicFeed, Menu, Logout, VerifiedUser, Extension, TouchApp, ViewComfy, Add } from "@mui/icons-material";
+import { DynamicFeed, TouchApp, ViewComfy, Add } from "@mui/icons-material";
+import { GrStorage } from "react-icons/gr";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import NumberInput from "src/components/input/number";
@@ -15,7 +16,22 @@ export type ContentData = {
 const categories = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> },
+    { id: 'storage', label: <GrStorage style={{fontSize: 24}} /> }
 ];
+const Instrument = () => {
+    const mod = useHookstate(useEditorContext().mod);
+
+    if(mod.get() === 'grid') return(
+        <>
+            <IconButton
+                onClick={() => EVENT.emit('addCell', {})}
+            >
+                <Add />
+            </IconButton>
+        </>
+    );
+}
+
 
 /**
  * --------------------------------------------------------------------------
@@ -104,13 +120,9 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                     </button>
                 )}
             </Box>
+            
             <Box sx={{ml: 3}}>
-                <IconButton
-                    disabled={!(ctx.mod.get()==='grid')}
-                    onClick={()=> EVENT.emit('addCell', {})}
-                >
-                    <Add style={{color: !(ctx.mod.get()==='grid') && '#595959a1'}} />
-                </IconButton>
+                <Instrument />
             </Box>
 
 
@@ -118,7 +130,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                 <Box display="flex" alignItems="center">
                     <Select style={{marginLeft:'auto', marginRight:'5px'}}
                         size="small"
-                        defaultValue={ctx.size.breackpoint.get()}
+                        value={ctx?.size?.breackpoint?.get() ?? 'lg'}
                         onChange={(e) => handleChangeBreackpoint(e.target.value)}
                         displayEmpty
                         sx={{ fontSize: 14, height: 36, color: '#ccc', background: 'rgba(255, 255, 255, 0.05)'}}

@@ -4,7 +4,6 @@ import { useHookstate } from '@hookstate/core';
 import { updateComponentProps } from '../utils/updateComponentProps';
 import { useInfoState, useEditorContext } from "../context";
 import { useDebounced } from 'src/components/hooks/debounce';
-import { withResetOnRightClick } from './utils/hooks';
 import TipTapSlotEditor from './tip-tap';
 
 

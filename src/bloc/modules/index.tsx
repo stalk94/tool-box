@@ -7,7 +7,8 @@ import {
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
     ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt,
-    VideoCameraFront
+    VideoCameraFront,
+    Height
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
@@ -21,7 +22,9 @@ import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
 import { InputStyles } from '../type';
-import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-carousel'
+import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-carousel';
+import './export/utils';
+
 
 
 /**
@@ -394,8 +397,13 @@ registerComponent({
     type: 'Card',
     component: CardWrapper,
     defaultProps: {
-        fullWidth: true,
+        fullHeight: true,
         width: '100%',
+        heightMedia: 'auto',
+        src: '',
+        file: '',
+        'data-source': '',
+        alt: undefined,
         slots: {
             title: undefined,
             subheader: undefined,

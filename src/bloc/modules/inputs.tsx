@@ -8,7 +8,7 @@ import { SxProps } from '@mui/material';
 import { useEvent, useCtxBufer } from './utils/shared';
 import { triggerFlyFromComponent } from './utils/anim';
 import { iconsList } from '../../components/tools/icons';
-
+import render, { sliderRender } from './export/Inputs';
 
 
 
@@ -53,6 +53,16 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
+    const degidratation = () => {
+        return render(
+            'text',
+            leftIcon,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            styles,
+            otherProps
+        );
+    }
 
     return (
         <div 
@@ -92,7 +102,17 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
-    //console.log(style);
+    const degidratation = () => {
+        return render(
+            'number',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            styles,
+            otherProps
+        );
+    }
+    
 
     return (
         <div 
@@ -131,6 +151,16 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'date',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            {},
+            otherProps
+        );
+    }
     
     
     return (
@@ -171,7 +201,15 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
     const RightIcon = rightIcon && iconsList[rightIcon] ? iconsList[rightIcon] : null;
-    //console.log(style);
+    const degidratation = () => {
+        return sliderRender(
+            leftIcon,
+            rightIcon,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            otherProps
+        );
+    }
 
     return (
         <div 
@@ -211,6 +249,17 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'chek',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            {},
+            otherProps
+        );
+    }
+    
     
 
     return (
@@ -250,6 +299,16 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'switch',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            {},
+            otherProps
+        );
+    }
 
     return (
         <div 
@@ -286,6 +345,16 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'toogle',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            {},
+            otherProps
+        );
+    }
 
     return (
         <div 
@@ -323,6 +392,16 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'select',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            styles,
+            otherProps
+        );
+    }
 
     return (
         <div 
@@ -361,6 +440,16 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'autocomplete',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            styles,
+            otherProps
+        );
+    }
 
     return (
         <div 
@@ -400,6 +489,17 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
+    const degidratation = () => {
+        return render(
+            'file',
+            undefined,
+            {...style, width: '100%', display:'block'},
+            labelStyle,
+            styles,
+            otherProps
+        );
+    }
+
 
     return (
         <div 

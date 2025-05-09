@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Popover, IconButton, useTheme, Dialog, InputBaseProps, Box } from '@mui/material';
 import { InputPaper, InputBaseCustom, Label } from './atomize';
 import { RgbaColorPicker, RgbaColor } from 'react-colorful';
-import { FileCopy } from '@mui/icons-material';
+import { FileCopy, Padding } from '@mui/icons-material';
 import { useDebounced } from '../hooks/debounce';
 
 
@@ -29,8 +29,9 @@ const toRgbaString = ({ r, g, b, a }: RgbaColor) => {
 const ColorWindow =({ color, onChange, sx })=> (
     <Box
         sx={{
-            p: 3,
-            borderRadius: 5,
+            p: 1,
+            background: '#343434f9',
+            border: '1px solid #79787840',
             '& .react-colorful': {
                 width: '45vw',
                 height: '45vh',
@@ -93,7 +94,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
         const str = toRgbaString(val);
         setColor(val);
         debouncedEmit(str);
-        setAnchorEl(null);
+        //setAnchorEl(null);
     }
 
 
@@ -119,7 +120,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
                     opacity: props.disabled && 0.5,
                     m: 1,
                 }}
-                style={{ ...props.style }}
+                style={{ ...props.style, padding: 0 }}
             />
             {variant === 'popup' && (
                 <Popover
@@ -127,6 +128,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
                     sx={{
                         mt: 1,
                         borderRadius: 5,
+                        padding: 0
                     }}
                     open={Boolean(anchorEl)}
                     anchorEl={anchorEl}

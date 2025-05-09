@@ -1,3 +1,4 @@
+import { db } from "../../utils/export";
 const testId = '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE';
 
 
@@ -44,7 +45,7 @@ export async function fetchJson(source: string) {
     }
 }
 
-export async function loadTableData(sourceType: 'json' | 'google' | 'json-url', source: string): Promise<any[]> {
+export async function loadTableData(sourceType: 'json' | 'google' | 'json-url' | 'db', source: string): Promise<any[]> {
     try {
         if (sourceType === 'json') {
             return JSON.parse(source);
@@ -54,6 +55,9 @@ export async function loadTableData(sourceType: 'json' | 'google' | 'json-url', 
         }
         if (sourceType === 'google') {
             return await fetchGoogleSheet(source);
+        }
+        if (sourceType === 'db') {
+            return await db.get(`STORAGES.${source}`);
         }
 
         throw new Error(`Неподдерживаемый sourceType: ${sourceType}`);

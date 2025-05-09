@@ -83,20 +83,8 @@
 }
 
 .bubble-menu {
-  background: white;
-  border: 1px solid #ccc;
-  padding: 6px;
-  border-radius: 6px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  display: flex;
-  gap: 6px;
-  z-index: 50;
-}
-.bubble-menu button {
-  font-weight: bold;
-  border: none;
-  background: transparent;
-  cursor: pointer;
+  z-index: 9999 !important;
+  position: absolute;
 }
 
 .no-p-margin p {
@@ -107,4 +95,7 @@
   margin-top: 20;
   margin-left: 15;
   margin-right: 15;
+}
+.buttontable:hover {
+    opacity: 0.5;
 }

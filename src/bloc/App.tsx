@@ -3,19 +3,21 @@ import React from "react";
 import * as htmlToImage from 'html-to-image';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import "react-grid-layout/css/styles.css";
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
+import { useEditorContext, useRenderState, useCellsContent, useInfoState, useStorageContext } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
+import StorageWidget from './Storage';
 import { saveBlockToFile, fetchFolders } from "./utils/export";
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 import { useSafeAsync, useSafeAsyncEffect } from "./utils/usePopUp";
-
+import { db } from "./utils/export";
 
 import "../style/edit.css";
+
 if (!window.next) {
     import('./modules/index').then((mod) => {
         console.log('Модуль подгружен:', mod);
@@ -34,6 +36,7 @@ if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter();
 export default function Block({ setShowBlocEditor }) {
     globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
     const ctx = useHookstate(useEditorContext());
+    const mod = useHookstate(ctx.mod);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(useRenderState());
     const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
@@ -224,6 +227,9 @@ export default function Block({ setShowBlocEditor }) {
     useSafeAsyncEffect(async (isMounted) => {
         try {
             const data = await fetchFolders();
+            const baseStorage = await db.get(`STORAGES.BASE`);
+            useStorageContext().set({'BASE': baseStorage});
+            
 
             if (isMounted() && data) {
                 info.project.set(data);
@@ -234,7 +240,7 @@ export default function Block({ setShowBlocEditor }) {
             console.error("fetchFolders error:", e);
         }
     }, []);
-  
+    
 
 
     return(
@@ -246,6 +252,7 @@ export default function Block({ setShowBlocEditor }) {
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                 <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
+                { mod.get() === 'storage' && <StorageWidget /> }
                 
                 <GridComponentEditor
                     desserealize={desserealize}
