@@ -2,6 +2,7 @@ import { Add } from '@mui/icons-material';
 import { Button, Typography, Avatar, Box } from '@mui/material';
 import Rating from '@mui/material/Rating';
 import React from 'react';
+import { toJSXProps } from './export/Inputs';
 
 
 type SimpleComponentFn = (...args: any) => React.JSX.Element;
@@ -9,34 +10,19 @@ export interface SimpleComponent {
     id: string;
     name: string;
     description?: string;
-    props: Record<string, any>;
+    propsList: Record<string, any>;
     render: SimpleComponentFn;
+    degidratation: (props: Record<string, any>)=> void
 }
 
 
 
 
 export const simpleComponents: Record<string, SimpleComponent> = {
-    button: {
-        id: 'button',
-        name: 'Кнопка',
-        props: {
-            variant: ["text", "contained", "outlined"],
-            size: ['medium', 'small', 'large'],
-            onClick: '(e: React.MouseEvent<HTMLButtonElement, MouseEvent>)'
-        },
-        render: (props: Record<string, any>) => (
-            <Button 
-                variant="text" 
-                size="small"
-                {...props}
-            />
-        ),
-    },
     rating: {
         id: 'rating',
         name: 'Ratings',
-        props: {
+        propsList: {
             defaultValue: 'number',
             precision: 'number',
             max: 'number',
@@ -53,11 +39,23 @@ export const simpleComponents: Record<string, SimpleComponent> = {
                 { ...props }
             />
         ),
+        degidratation: (props) => {
+            return({
+                imports: [
+                    `import Rating from '@mui/material/Rating';`
+                ],
+                body: `
+                    <Rating 
+                        ${ toJSXProps(props) }
+                    />
+                `
+            });
+        }
     },
     avatar: {
         id: 'avatar',
         name: 'Аватар',
-        props: {
+        propsList: {
             size: { width: 'number', height: 'number' },
             src: 'string',
             children: 'string',
@@ -70,6 +68,18 @@ export const simpleComponents: Record<string, SimpleComponent> = {
                 {...props}
             />
         ),
+        degidratation: (props) => {
+            return({
+                imports: [
+                    `import Avatar from '@mui/material/Avatar';`
+                ],
+                body: `
+                    <Avatar 
+                        ${ toJSXProps(props) }
+                    />
+                `
+            });
+        }
     },
 };
 

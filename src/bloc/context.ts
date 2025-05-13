@@ -4,12 +4,19 @@ import { ComponentSerrialize, LayoutCustom } from './type';
 import { Editor } from '@tiptap/react';
 
 
+export type PropsSimpleList = {
+    defaultValue?: 'number'
+    size?: 'medium' | 'small' | 'large'
+    src?: 'string'
+    max?: 'number'
+    [key: string] : any
+}
 export type EditorContextType = {
     meta: {
         scope: string;
         name: string;
     };
-    mod: 'block' | 'link' | 'grid' | 'storage';
+    mod: 'block' | 'link' | 'grid' | 'storage' | 'slot';
     dragEnabled: boolean;
     linkMode: string | undefined;
     layout: LayoutCustom[];
@@ -24,14 +31,23 @@ export type InfoStateType = {
     container: {
         width: number;
         height: number;
-    };
+    }
     select: {
         cell?: string;
         content?: string;
+        slot: {
+            id: string
+            props?: Record<string, any>
+            source: {
+                propsList: PropsSimpleList
+                render: ()=> void
+                degidratation: (props: Record<string, any>)=> void
+            }
+        }
         panel: {
             lastAddedType: string;
         };
-    };
+    }
     inspector: {
         lastData: any;
         task: any[];
@@ -114,6 +130,7 @@ export function useInfoState(): State<InfoStateType> | null {
             select: {
                 cell: undefined,
                 content: undefined,
+                slot: undefined,
                 panel: {
                     lastAddedType: '',
                 },

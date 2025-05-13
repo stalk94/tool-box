@@ -20,6 +20,7 @@ export interface NavLinkItem {
     state?: StateNavLinks
     /** вложенные элементы */
     children?: NavLinkItem[]
+    style?: React.CSSProperties
 }
 
 export interface NavLinkItemSlider {

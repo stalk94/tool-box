@@ -19,7 +19,7 @@ import PageEditorClient from './page-editor/PageEditor'
 
 
 export default function Editor({ listsPages }: { listsPages: string[] }) {
-    const [showBlocEditor, setShowBlocEditor] = React.useState(false);
+    const [showBlocEditor, setShowBlocEditor] = React.useState(true);
 
 
     React.useEffect(()=> {

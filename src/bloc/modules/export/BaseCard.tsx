@@ -1,8 +1,9 @@
 import { rendeHtml } from '../tip-tap';
+import { toJSXProps } from './Inputs';
 
 
 
-export default function exportedCard(style, slots, heightMedia, srcMedia) {
+export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
     const getMediaType =(src: string)=> {
         if (!src) return 'img';
         // Убираем query-параметры
@@ -129,4 +130,37 @@ export default function exportedCard(style, slots, heightMedia, srcMedia) {
             );
         }
     `);
+}
+
+export function renderImage(src, style, otherProps) {
+    const toObjectLiteral = (obj) => {
+        return Object.entries(obj || {})
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+            .join(', ');
+    }
+
+
+    return (`
+        <img
+            src={${src ?? '/placeholder.jpg'}}
+            style={{ ${toObjectLiteral(style)} }}
+            ${ toJSXProps(otherProps) }
+        />
+    `)
+}
+export function renderVideo(src, style, otherProps) {
+    const toObjectLiteral = (obj) => {
+        return Object.entries(obj || {})
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+            .join(', ');
+    }
+
+
+    return (`
+        <video
+            src={${src}}
+            style={{ ${toObjectLiteral(style)} }}
+            ${ toJSXProps(otherProps) }
+        />
+    `)
 }

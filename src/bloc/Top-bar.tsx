@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { Component, LayoutCustom } from './type';
-import { DynamicFeed, TouchApp, ViewComfy, Add } from "@mui/icons-material";
+import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
 import { GrStorage } from "react-icons/gr";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
@@ -16,7 +16,7 @@ export type ContentData = {
 const categories = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> },
-    { id: 'storage', label: <GrStorage style={{fontSize: 24}} /> }
+    { id: 'slot', label: <Input style={{fontSize: 24}} /> }
 ];
 const Instrument = () => {
     const mod = useHookstate(useEditorContext().mod);

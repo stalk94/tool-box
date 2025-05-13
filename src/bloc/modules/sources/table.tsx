@@ -7,7 +7,7 @@ import { iconsList } from '../../../components/tools/icons';
 import { Column } from 'primereact/column';
 import { useHookstate } from '@hookstate/core';
 import { loadTableData } from './providers';
-import { InputText } from 'primereact/inputtext';
+
 
 
 export type DataSourceTableProps = {
@@ -81,7 +81,6 @@ export default function({ style, dataId, sourceType, source, refreshInterval, ..
             data-type='DataTable'
             style={{ ...style, width: props.width, height: props.height, display: 'block' }}
             value={data}
-            //onRowClick={(e)=> console.log(e.data)}
             header={
                 <div style={{ fontSize: 12, color: 'gray' }}>
                     { loading && <><CircularProgress size='13'/> Обновление данных...</> }

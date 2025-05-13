@@ -127,8 +127,8 @@ export default function TipTapSlotEditor({
             onFocus={() => context.dragEnabled.set(false)}
             onBlur={() => context.dragEnabled.set(true)}
         >
+            {editor && <BubbleMenuText editor={editor} />}
             <EditorContent editor={editor} />
-            <BubbleMenuText editor={editor} />
         </div>
     );
 }

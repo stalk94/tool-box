@@ -239,7 +239,7 @@
           "key": null,
           "props": {
             "fullWidth": true,
-            "data-id": 1746660456991,
+            "data-id": 1746878516728,
             "data-type": "Text",
             "children": {
               "type": "doc",
@@ -247,41 +247,9 @@
                 {
                   "type": "paragraph",
                   "attrs": {
-                    "textAlign": "center"
-                  },
-                  "content": [
-                    {
-                      "type": "variable",
-                      "attrs": {
-                        "name": "test",
-                        "rowIndex": 0,
-                        "db": "BASE"
-                      }
-                    },
-                    {
-                      "type": "variable",
-                      "attrs": {
-                        "name": "test",
-                        "rowIndex": 0,
-                        "db": "BASE"
-                      }
-                    }
-                  ]
-                },
-                {
-                  "type": "paragraph",
-                  "attrs": {
                     "textAlign": null
                   },
                   "content": [
-                    {
-                      "type": "variable",
-                      "attrs": {
-                        "name": "test2",
-                        "rowIndex": 0,
-                        "db": "BASE"
-                      }
-                    },
                     {
                       "type": "text",
                       "marks": [
@@ -292,9 +260,6 @@
                           }
                         },
                         {
-                          "type": "italic"
-                        },
-                        {
                           "type": "fontSize",
                           "attrs": {
                             "size": "1rem"
@@ -307,42 +272,9 @@
                           }
                         }
                       ],
-                      "text": "dd "
-                    },
-                    {
-                      "type": "text",
-                      "marks": [
-                        {
-                          "type": "textStyle",
-                          "attrs": {
-                            "color": "rgba(231, 225, 41, 1)"
-                          }
-                        },
-                        {
-                          "type": "bold"
-                        },
-                        {
-                          "type": "fontSize",
-                          "attrs": {
-                            "size": "1rem"
-                          }
-                        },
-                        {
-                          "type": "fontFamily",
-                          "attrs": {
-                            "family": "Roboto Condensed\", Arial, sans-serif"
-                          }
-                        }
-                      ],
-                      "text": "yyy"
+                      "text": "Title"
                     }
                   ]
-                },
-                {
-                  "type": "paragraph",
-                  "attrs": {
-                    "textAlign": null
-                  }
                 }
               ]
             }
@@ -622,11 +554,11 @@
     ],
     "cell-1745196991664": [
       {
-        "id": 1746660456991,
+        "id": 1746878516728,
         "parent": "cell-1745196991664",
         "props": {
           "fullWidth": true,
-          "data-id": 1746660456991,
+          "data-id": 1746878516728,
           "data-type": "Text",
           "children": {
             "type": "doc",
@@ -634,41 +566,9 @@
               {
                 "type": "paragraph",
                 "attrs": {
-                  "textAlign": "center"
-                },
-                "content": [
-                  {
-                    "type": "variable",
-                    "attrs": {
-                      "name": "test",
-                      "rowIndex": 0,
-                      "db": "BASE"
-                    }
-                  },
-                  {
-                    "type": "variable",
-                    "attrs": {
-                      "name": "test",
-                      "rowIndex": 0,
-                      "db": "BASE"
-                    }
-                  }
-                ]
-              },
-              {
-                "type": "paragraph",
-                "attrs": {
                   "textAlign": null
                 },
                 "content": [
-                  {
-                    "type": "variable",
-                    "attrs": {
-                      "name": "test2",
-                      "rowIndex": 0,
-                      "db": "BASE"
-                    }
-                  },
                   {
                     "type": "text",
                     "marks": [
@@ -679,9 +579,6 @@
                         }
                       },
                       {
-                        "type": "italic"
-                      },
-                      {
                         "type": "fontSize",
                         "attrs": {
                           "size": "1rem"
@@ -694,42 +591,9 @@
                         }
                       }
                     ],
-                    "text": "dd "
-                  },
-                  {
-                    "type": "text",
-                    "marks": [
-                      {
-                        "type": "textStyle",
-                        "attrs": {
-                          "color": "rgba(231, 225, 41, 1)"
-                        }
-                      },
-                      {
-                        "type": "bold"
-                      },
-                      {
-                        "type": "fontSize",
-                        "attrs": {
-                          "size": "1rem"
-                        }
-                      },
-                      {
-                        "type": "fontFamily",
-                        "attrs": {
-                          "family": "Roboto Condensed\", Arial, sans-serif"
-                        }
-                      }
-                    ],
-                    "text": "yyy"
+                    "text": "Title"
                   }
                 ]
-              },
-              {
-                "type": "paragraph",
-                "attrs": {
-                  "textAlign": null
-                }
               }
             ]
           }
@@ -741,7 +605,7 @@
   "meta": {
     "scope": "test",
     "name": "test-block",
-    "updatedAt": 1746752629340,
+    "updatedAt": 1746878521149,
     "preview": "snapshots/test-test-block.png"
   },
   "size": {

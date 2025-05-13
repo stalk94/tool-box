@@ -1,5 +1,5 @@
 import React from "react";
-import AppBar, { Start, Center, MobailBurger } from "./index";
+import AppBar, { Start, LinearNavigation, MobailBurger } from "./index";
 import { AccountBox, Home, Settings, Info } from "@mui/icons-material";
 import { IconButton, Box } from "@mui/material";
 import { NavLinkItem } from '../menu/type';
@@ -88,7 +88,7 @@ export default function({ linkItems, onClick }: Props) {
                 </Start>
             }
             center={
-                <Center
+                <LinearNavigation
                     sx={{
                         justifyContent: 'flex-end',
                         mr: 2

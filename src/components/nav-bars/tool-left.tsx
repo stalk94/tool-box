@@ -7,12 +7,15 @@ import BaseLeftSideBar from "./left-nav";
 export type SideBarAndToolPanelProps = {
     /** слоты навигационной панели */
     schemaNavBar: {
+        start?: NavLinkItem[]
         items: NavLinkItem[]
         /** нижняя субпанелька, всегда поверх базовой */
         end?: NavLinkItem[]
     }
     /** ⬇️ Нижняя панелька для дополнительных элементов(tool) */
     end?: React.ReactNode
+    /** центральные элементы */
+    center?: React.ReactNode
     /** ⬆️ Верхняя панелька для дополнительных элементов(tool) */
     start?: React.ReactNode
     /** 💻 Контент рабочей области(правая панель) */
@@ -36,7 +39,7 @@ export type SideBarAndToolPanelProps = {
  * - слушаем `onChangeNavigation`
  * - меняем `children`
  */
-export default function SideBarAndToolPanel({ schemaNavBar, start, end, children, onChangeNavigation, ...props }: SideBarAndToolPanelProps) {
+export default function SideBarAndToolPanel({ schemaNavBar, center, start, end, children, onChangeNavigation, ...props }: SideBarAndToolPanelProps) {
     const theme = useTheme();
     
 
@@ -69,8 +72,9 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                 type="drawer"
                 collapsed={true}
                 onChange={onChangeNavigation}
-                items={schemaNavBar.items}
                 isFocusSelected={true}
+                start={schemaNavBar?.start}
+                items={schemaNavBar.items}
                 end={schemaNavBar.end}
                 selected={props.selected}
             />
@@ -101,7 +105,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, start, end, children
                             background: useTopOrEndColor('start'),
                         }}
                     >
-                        { start }
+                        { center }
                     </Box>
 
                     { children }

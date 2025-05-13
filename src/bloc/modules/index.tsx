@@ -15,15 +15,15 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
 import { HorizontalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
-import { DividerWrapper } from './any';
-import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper } from './complex';
+import { DividerWrapper, LinearNavigationWrapper } from './any';
+import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, HeaderWrapper, BreadcrumbsWrapper } from './complex';
 import { DataSourceTableProps } from './sources/table';
 import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
 import { InputStyles } from '../type';
 import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-carousel';
-import './export/utils';
+import { renderChildrenToLiteral } from './export/utils';
 
 
 
@@ -37,6 +37,7 @@ import './export/utils';
 //////////////////////////////////////////////////////////////////////
 globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
+globalThis.degidratationBuffer = {};
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -50,7 +51,7 @@ registerComponent({
         fullWidth: true,
         startIcon: 'none',
         endIcon: 'none',
-        style: {display: 'block'}
+        style: {}
     },
     icon: Settings,
     category: 'interactive',
@@ -414,6 +415,19 @@ registerComponent({
     icon: LinearScale,
     category: 'media',
 });
+registerComponent({
+    type: 'LinearNavigation',
+    component: LinearNavigationWrapper,
+    defaultProps: {
+        fullWidth: true,
+        width: '100%',
+        linkItems: [
+            
+        ]
+    },
+    icon: Repartition,
+    category: 'complex',
+});
 
 
 // complex
@@ -471,6 +485,18 @@ registerComponent({
     icon: Repartition,
     category: 'complex',
 });
+registerComponent({
+    type: 'Breadcrumbs',
+    component: BreadcrumbsWrapper,
+    defaultProps: {
+        fullWidth: true,
+        pathname: 'test/room/any',
+        style: {}
+    },
+    icon: Repartition,
+    category: 'complex',
+});
+
 // data table
 registerComponent({
     type: 'DataTable',
@@ -482,4 +508,23 @@ registerComponent({
     },
     icon: BackupTable,
     category: 'complex',
+});
+registerComponent({
+    type: 'AppBar',
+    component: HeaderWrapper,
+    defaultProps: {
+        fullWidth: true,
+        logo: '',
+        file: '',
+        'data-source': 'src',
+        linkItems: [
+            {id: 'test', label: 'test'},
+            {id: 'settings', label: 'settings'}
+        ],
+        slots: {
+            
+        }
+    },
+    icon: Repartition,
+    category: 'block',
 });

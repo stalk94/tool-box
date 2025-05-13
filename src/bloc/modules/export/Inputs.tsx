@@ -24,10 +24,10 @@ export default function exported(
     styles, 
     otherProps
 ) {
-    const rendericon = () => leftIconName ? `<${leftIconName} />` : 'undefined';
-    const importIcon = leftIconName ? `import { ${leftIconName} } from '@mui/icons-material';\n` : '';
+    const rendericon = () => (leftIconName && leftIconName!=='none')  ? `<${leftIconName} />` : 'undefined';
+    const importIcon = (leftIconName && leftIconName!=='none') ? `import { ${leftIconName} } from '@mui/icons-material';\n` : '';
     const rendertype = {
-        text: 'LabelTextInput',
+        text: 'TextInput',
         number: 'NumberInput',
         date: 'DateInput',
         chek: 'CheckBoxInput',
@@ -47,7 +47,7 @@ export default function exported(
 
     return (`
         import React from 'react';
-        import { ${rendertype} } from '@lib';
+        import { ${rendertype} } from '@lib/index';
         ${importIcon}
 
 
@@ -59,9 +59,7 @@ export default function exported(
                     <${rendertype}
                         left={ ${rendericon()} }
                         style={{ ${toObjectLiteral(labelStyle)} }}
-                        onChange={(v)=> {
-                            console.log(v);
-                        }}
+                        onChange={(v)=> console.log(v)}
                         styles={{ ${toObjectLiteral(styles)} }}
                         ${ toJSXProps(otherProps) }
                     />

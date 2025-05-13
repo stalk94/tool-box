@@ -56,3 +56,4 @@ export function findFreeSpot(w: number, h: number, all: LayoutCustom[], maxCols 
 
     return null;
 }
+

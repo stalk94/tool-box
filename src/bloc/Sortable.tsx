@@ -44,6 +44,9 @@ export function SortableItem({ id, children }: { id: number, children: Component
         transformOrigin: 'center',
         
     }
+    const useDegidratationHandler = (code: string) => {
+        console.log(code)
+    }
     const iseDeleteComponent = (ids: number) => {
         const removeComponentFromCell = (cellId: string, componentIndex: number) => {
             renderState.set((prev) => {
@@ -143,11 +146,19 @@ export function SortableItem({ id, children }: { id: number, children: Component
             showIf: (type)=> type==='Card' 
         },
         { 
+            label: <div style={{color:'gold',fontSize:14}}>export code</div>, 
+            icon: <Star sx={{color:'gold',fontSize:18}} />, 
+            onClick: (id)=> {
+                sharedEmmiter.emit('degidratation.'+id, {call: useDegidratationHandler})
+            }
+        },
+        { 
             label: <div style={{color:'red',fontSize:14}}>Удалить</div>, 
             icon: <Delete sx={{color:'red',fontSize:18}} />, 
             onClick: (id)=> iseDeleteComponent(id), 
         },
     ]);
+    
     
 
     return (

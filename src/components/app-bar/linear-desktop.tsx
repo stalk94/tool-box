@@ -126,7 +126,7 @@ export default function LinearNavigationItemsDesktop({ items, elementOverflow, s
     const [hiddenItems, setHiddenItems] = useState<NavLinkItem[]>([]);
   
 
-    //? надо придумать отслежку размера либо типо того
+    //? размер на каждый элемент фиксирован (130px)
     React.useEffect(()=> {
         const updateVisibleItems =()=> {
             if (!containerRef.current) return;

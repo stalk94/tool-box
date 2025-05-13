@@ -8,6 +8,7 @@ type AppBarCustomProps = AppBarProps & {
     start: React.ReactNode
     center: React.ReactNode
     end: React.ReactNode
+    height: number
 }
 
 
@@ -34,7 +35,7 @@ export const Start =({ children })=> {
  * шаблон центрального слота, (! это линейная навигация она видна только на desktop)    
  * * ❗ внимание отключается видимость на экранах МЕНЬШЕ 600px ширины
  */
-export const Center = LinearNavigationDesktop;
+export const LinearNavigation = LinearNavigationDesktop;
 /** 
  * компонент мобильного меню заменяет LinearNavigation на маленьких экранах     
  * * ❗ внимание отключается видимость на экранах БОЛЬШЕ 600px ширины
@@ -49,7 +50,7 @@ export const MobailBurger = MobailBurgerNavigation;
  * - `center` - центральный слот (к примеру линейная навигация)
  * - `end` - правый слот (к примеру user, main)
  */
-export default function ({ start, center, end, ...props }: AppBarCustomProps) {
+export default function ({ start, center, end, height, ...props }: AppBarCustomProps) {
     const theme = useTheme();
 
     // alpha(theme.palette.background.input, 0.35)
@@ -64,19 +65,28 @@ export default function ({ start, center, end, ...props }: AppBarCustomProps) {
                 border: `1px solid`,
                 borderColor: theme.palette.appBar.border,
                 backdropFilter: "blur(14px)",
+                minHeight: height ?? 30,
+                display: 'flex',
                 ...props.sx
             }}
         >
             <Toolbar 
                 disableGutters 
-                sx={{ px: 1, }}
+                sx={{ px: 1 }}
+                style={{
+                    minHeight: height ?? 30,
+                    display: 'flex',
+                    justifyContent: 'flex-start'
+                }}
             >
                { start }
                { center }
 
                <Box
                     sx={{
-                        ml: 'auto'
+                        ml: 'auto',
+                        display: 'flex',
+                        justifyContent: 'flex-start'
                     }}
                 >
                     { end }

@@ -1,11 +1,31 @@
 import ReactDOMServer from 'react-dom/server';
-import { Box, Button } from '@mui/material';
 import React from 'react';
-import { ButtonWrapper } from '../buttons';
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';
+import prettier from 'prettier/standalone';
+import parserBabel from 'prettier/plugins/babel';
+import pluginEstree from 'prettier/plugins/estree';
+import * as parserTypescript from 'prettier/plugins/typescript';
 
 
+
+export function formatJsx(code: string): Promise<string> {
+    return prettier.format(code, {
+        parser: 'typescript',
+        plugins: [parserTypescript, pluginEstree],
+
+        // 👉 Настройки форматирования:
+        semi: true,                     // ставить ; в конце
+        singleQuote: true,             // одинарные кавычки
+        tabWidth: 4,                   // ширина отступа (в пробелах)
+        useTabs: false,                // использовать табы вместо пробелов
+        trailingComma: 'none',         // запятые в конце объектов/массивов
+        bracketSpacing: true,          // пробелы между скобками: { foo: bar }
+        jsxBracketSameLine: false,     // перенос > в JSX
+        printWidth: 80,                // максимальная ширина строки
+        arrowParens: 'avoid',          // скобки у стрелочных функций
+    });
+}
 function debugComponentTree(node: React.ReactElement) {
     console.log('type:', node.type);
     console.log('type.name:', node.type?.name);
@@ -100,7 +120,6 @@ export function renderChildrenToLiteral(children: any, indent = 4): string {
 
     return '';
 }
-
 
 
 

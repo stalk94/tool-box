@@ -9,6 +9,12 @@ type UsePopUpNameResult = {
     name: string;
     trigger: string | null;
 }
+type UsePopUpCustom = {
+    popover: React.ReactElement;
+    handleOpen: (e: React.MouseEvent<HTMLElement>) => void;
+    handleClose: () => void;
+    trigger: string | null;
+}
 
 
 export function useSafeAsync(
@@ -114,6 +120,43 @@ export const usePopUpName = (): UsePopUpNameResult => {
         handleClose,
         popover,
         name,
+        trigger, // значение, которое можно слушать в useEffect
+    };
+}
+
+export const usePopUpCustom = (content): UsePopUpCustom => {
+    const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
+    const [trigger, setTrigger] = React.useState<string | null>(null);
+    const open = Boolean(anchorEl);
+
+    const handleOpen = (e: React.MouseEvent<HTMLElement>) => {
+        setAnchorEl(e.currentTarget);
+    }
+    const handleClose = () => {
+        setAnchorEl(null);
+    }
+
+
+    const popover = (
+        <Popover
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'left',
+            }}
+        >
+            <Box sx={{ p: 1, display: 'flex', gap: 1 }}>
+                { content }
+            </Box>
+        </Popover>
+    );
+
+    return {
+        handleOpen,
+        handleClose,
+        popover,
         trigger, // значение, которое можно слушать в useEffect
     };
 }

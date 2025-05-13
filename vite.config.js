@@ -3,14 +3,13 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import writeFilePlugin from './server/vite-write';
 import quickDbPlugin from './server/vite-db.js';
-import ssrPlugin from './server/vite-ssr';
 import path from 'path';
 
 
 export default defineConfig({
     root: 'src',
     publicDir: '../public',
-    plugins: [react(), writeFilePlugin(), quickDbPlugin(), ssrPlugin(), tsconfigPaths()],
+    plugins: [react(), writeFilePlugin(), quickDbPlugin(), tsconfigPaths()],
     server: {
         port: 3001,
     },
@@ -18,6 +17,7 @@ export default defineConfig({
         alias: {
             '@bloc': path.resolve(__dirname, 'src/bloc'),
             '@components': path.resolve(__dirname, 'src/components'),
+            '@lib': path.resolve(__dirname, 'src'),
             '@system': path.resolve(__dirname, 'src/app'),
         }
     }

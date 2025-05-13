@@ -9,10 +9,11 @@ import { uploadFile } from 'src/app/plugins';
 import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/material';
 import TipTapSlotEditor from './tip-tap';
 import { simpleCardFooter } from './atoms';
-import renderCart from './export/BaseCard';
+import renderCart, { renderImage, renderVideo } from './export/BaseCard';
 
 
 export const ImageWrapper = React.forwardRef((props: any, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [imgSrc, setImgSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
     const {
@@ -42,6 +43,29 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             data: { src: `${url}?${Date.now()}` } 
         });
     }
+    degidratationRef.current = (call) => {
+        const code = renderImage(
+            imgSrc, 
+            {
+                width: '100%',
+                height: height - 1,
+                ...style
+            },
+            otherProps
+        );
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + componentId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + componentId, handler);
+        }
+    }, []);
     React.useEffect(() => {
         if (file instanceof File) {
             const id = file.lastModified;
@@ -76,6 +100,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
     );
 });
 export const VideoWrapper = React.forwardRef((props: any, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [videoSrc, setVideoSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
     const { 
@@ -93,7 +118,37 @@ export const VideoWrapper = React.forwardRef((props: any, ref) => {
 
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
-   
+    degidratationRef.current = (call) => {
+        const code = renderVideo(
+            videoSrc,
+            {
+                display: 'block',
+                width: '100%',
+                height: 'auto',
+                maxHeight: height - 1,
+                objectFit: 'contain',
+                ...style
+            },
+            {
+                controls,
+                autoplay,
+                loop,
+                ...otherProps
+            }
+        );
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + componentId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + componentId, handler);
+        }
+    }, []);
     const handleUpload = async (file: File) => {
         setVideoSrc('https://i.gifer.com/YCZH.gif'); // временная заглушка
 
@@ -138,7 +193,7 @@ export const VideoWrapper = React.forwardRef((props: any, ref) => {
             data-id={dataId}
             data-type="Video"
             width={width}
-            height={height-8}
+            height={height-1}
             src={videoSrc}
             controls={controls}
             autoPlay={autoplay}
@@ -273,6 +328,8 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
 
 
 export const CardWrapper = React.forwardRef((props: any, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
+    const lastFileRef = React.useRef<number | null>(null);
     const {
         fullHeight,
         style = {display:'flex',flexDirection: 'column'}, 
@@ -286,7 +343,6 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const [imgSrc, setImgSrc] = React.useState<string>();
-    const lastFileRef = React.useRef<number | null>(null);
     const componentId = props['data-id'];
     //const { width, height } = useComponentSizeWithSiblings(componentId);
 
@@ -309,14 +365,27 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
         });
     }
     // в JSX строку
-    const degidratation = () => {
-        return renderCart(
+    degidratationRef.current = (call) => {
+        const code = renderCart(
+            componentId,
             {...style, height: fullHeight && '100%'}, 
             slots, 
             heightMedia, 
             imgSrc
         );
+
+        call(code);
     }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + componentId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + componentId, handler);
+        }
+    }, []);
     React.useEffect(() => {
         if (file instanceof File) {
             const id = file.lastModified;
@@ -333,7 +402,7 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
         }
         else setImgSrc(src);
     }, [src]);
-
+    
     
     return (
         <div

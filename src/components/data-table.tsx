@@ -5,11 +5,32 @@ import styled from 'styled-components';
 import { useTheme } from '@mui/material';
 
 
-export type DataTablePropsWrapper = ComponentProps<typeof DataTable>;
+export type TableStyles = {
+    body: {
+        background: string
+        borderColor: string
+        textColor: string
+    }
+    header: {
+        background: string
+    }
+    thead: {
+        background: string
+        textColor: string
+    }
+}
+export type DataTablePropsWrapper = ComponentProps<typeof DataTable> & {
+    fontSizeHead: string
+    styles: TableStyles
+}
+
 
 
 // todo: стилизировать через тему
-const StyledTableWrapper = styled.div<{ theme: Theme; fontSizeHead:string }>`
+const StyledTableWrapper = styled.div<{ 
+    theme: TableStyles; 
+    fontSizeHead: string;
+}>`
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -35,33 +56,33 @@ const StyledTableWrapper = styled.div<{ theme: Theme; fontSizeHead:string }>`
 
 
     .p-datatable {
-        background: ${({ theme })=> theme.palette.table.body};
+        background: ${({ theme })=> theme.body.background };
         border-radius: 5px;
         overflow: hidden;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
         border: 1px solid;
-        border-color: ${({ theme })=> theme.palette.card.border };
+        border-color: ${({ theme })=> theme.body.borderColor };
         width: 100%;
     }
     .p-datatable-header {
-        background: ${({ theme })=> alpha(theme.palette.table.header, 0.1)};
+        background: ${({ theme })=> alpha(theme.header.background, 0.1)};
         border-bottom: 1px solid #5f5f5f35;
-        color: ${({ theme })=> theme.palette.text.primary};
+        color: ${({ theme })=> theme.body.textColor };
         font-size: 18px;
         font-weight: bold;
     }
     .p-datatable-footer {
         border-top: 1px solid;
-        border-color: ${({ theme })=> alpha(theme.palette.action.active, 0.1)};
-        background: ${({ theme })=> alpha(theme.palette.table.header, 0.1)};
-        color: ${({ theme })=> theme.palette.text.primary};
+        border-color: ${({ theme })=> alpha(theme.body.borderColor, 0.1)};
+        background: ${({ theme })=> alpha(theme.header.background, 0.1)};
+        color: ${({ theme })=> theme.body.textColor };
         font-size: 16px;
         padding: 12px 16px;
     }
     // панель фильтры и сортировка
     .p-datatable-thead > tr > th {
-        background: ${({ theme })=> theme.palette.table.thead};
-        color: ${({ theme })=> theme.palette.grey[500]};
+        background: ${({ theme })=> theme.thead.background };
+        color: ${({ theme })=> theme.thead.textColor };
         font-weight: bold;
         padding: 1.5%;
         text-align: left;
@@ -76,7 +97,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme; fontSizeHead:string }>`
     }
     // стили row текста 
     .p-datatable-tbody > tr {
-        color: ${({ theme })=> theme.palette.text.primary};
+        color: ${({ theme })=> theme.body.textColor };
         font-size: 16px;
         transition: background 0.2s ease-in-out;
     }
@@ -88,7 +109,7 @@ const StyledTableWrapper = styled.div<{ theme: Theme; fontSizeHead:string }>`
     // границы row
     .p-datatable-tbody > tr > td {
         padding: 12px;
-        border-bottom: 1px dashed ${({ theme })=> theme.palette.card.border};
+        border-bottom: 1px dashed ${({ theme })=> theme.body.borderColor };
     }
     .p-datatable-tbody > tr.p-highlight {
         background: #574b90 !important;
@@ -102,13 +123,41 @@ const StyledTableWrapper = styled.div<{ theme: Theme; fontSizeHead:string }>`
  * добавляет автоматическую подстройку высоты контейнера,       
  * сохраняя оригинальное API компонента.
  */
-export default function({ value, children, header, footer, fontSizeHead, ...props }: DataTablePropsWrapper) {
+export default function DataTableCustom({ value, children, header, footer, fontSizeHead, styles, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
     const [height, setHeight] = useState<number>();
     
     
+    const mergeStyle = () => {
+        const bodyBcg = theme.palette?.table?.body;
+        const borderColor = theme.palette?.card?.border;
+        const headerBcg = theme.palette?.table?.header;
+        const theadBcg = theme.palette?.table?.thead;
+        const textColor = theme.palette?.text?.primary;
+        const theadColor = theme.palette.grey[500]
+
+        const style: TableStyle = {
+            body: {
+                background: bodyBcg,
+                borderColor: borderColor,
+                textColor: textColor,
+                ...styles?.body
+            },
+            header: {
+                background: headerBcg,
+                ...styles?.header
+            },
+            thead: {
+                background: theadBcg,
+                textColor: theadColor,
+                ...styles?.thead
+            }
+        }
+
+        return style;
+    }
     const getPadding =(element: Element)=> {
         const style = getComputedStyle(element);
         const padding = parseFloat(style.paddingBottom);
@@ -171,7 +220,10 @@ export default function({ value, children, header, footer, fontSizeHead, ...prop
     
     
     return (
-        <StyledTableWrapper theme={theme} fontSizeHead={fontSizeHead}>
+        <StyledTableWrapper 
+            theme={mergeStyle()} 
+            fontSizeHead={fontSizeHead}
+        >
             <DataTable
                 ref={tableRef}
                 value={value}

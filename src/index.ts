@@ -31,7 +31,7 @@ export type{ DataTablePropsWrapper as DataTableProps } from './components/data-t
 // appBar
 export { default as AppBar } from './components/app-bar';
 // слоты appBar
-export { Start, Center, MobailBurger } from './components/app-bar';
+export { Start, LinearNavigation, MobailBurger } from './components/app-bar';
 
 // левая панелька как в vs code
 export { default as LeftSideBar } from './components/nav-bars/left-nav';

@@ -9,12 +9,13 @@ import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
 import GridComponentEditor from './Editor-grid';
-import StorageWidget from './Storage';
+import StorageWidget, { PropsEditor } from './Storage';
 import { saveBlockToFile, fetchFolders } from "./utils/export";
 import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 import { useSafeAsync, useSafeAsyncEffect } from "./utils/usePopUp";
 import { db } from "./utils/export";
+import GridTest from 'public/export/test/header/index.tsx';
 
 import "../style/edit.css";
 
@@ -90,7 +91,6 @@ export default function Block({ setShowBlocEditor }) {
         const Component = componentMap[type];
         Component.displayName = type;
         Component.parent = parent;
-        Component.functions = functions;
         
     
         if (!Component) {
@@ -245,6 +245,7 @@ export default function Block({ setShowBlocEditor }) {
 
     return(
         <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+            
             <Tools
                 desserealize={desserealize}
                 useDump={dumpRender}
@@ -252,11 +253,12 @@ export default function Block({ setShowBlocEditor }) {
             />
             <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                 <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
-                { mod.get() === 'storage' && <StorageWidget /> }
+                { mod.get() === 'slot' && <PropsEditor /> }
                 
                 <GridComponentEditor
                     desserealize={desserealize}
                 />
+                <GridTest/>
             </div>
         </div>
     );

@@ -1,5 +1,7 @@
 import { writeFile } from '../../app/plugins';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../context";
+import { formatJsx } from '../modules/export/utils';
+
 
 const isVite = typeof import.meta !== 'undefined' && !!import.meta.env?.DEV;
 const isNext = !isVite;
@@ -117,7 +119,27 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 		console.log('✅ Блок сохранён');
 	}
 }
+export const exportLiteralToFile = async (path: string[], fileName: string, fileData: string) => {
+	const body = {
+		folder: `public/export/${path[0]}/${path[1]}`,
+		filename: `${fileName}.tsx`,
+		content: await formatJsx(fileData)
+	};
 
+	const res = await fetch(`${API_BASE}/write-file`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body)
+	});
+
+	if (!res.ok) {
+		console.error('❌ Ошибка при сохранении блока');
+	} 
+	else {
+		console.log('✅ export file');
+		return `/${path[1]}/${fileName}.tsx`;
+	}
+}
 export const createBlockToFile = async (scope: string, name: string) => {
 	const context = useEditorContext();
 

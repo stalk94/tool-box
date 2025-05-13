@@ -1,6 +1,7 @@
 import React from 'react';
 import { Breadcrumbs, Typography, useMediaQuery } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import { Home } from '@mui/icons-material';
 
 
 export type Breadcrumb = {
@@ -17,10 +18,12 @@ export type Options = {
     base?: { label: string; href: string };
 }
 export type BreadcrumbsNavProps = {
+    isMobile?: boolean
     pathname: string
     push: (href: string) => void
     nameMap?: Record<string, string>
     separator?: string | React.ReactNode
+    linkStyle?: React.CSSProperties
     Link: React.ComponentType<{ href: string; children: React.ReactNode }>
 }
 
@@ -49,21 +52,42 @@ export function useBreadcrumbs(pathname: string, options?: Options): Breadcrumb[
 }
 
 
-export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMap }: BreadcrumbsNavProps) {
-    const isMobile = useMediaQuery('(max-width:600px)');
+export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMap, linkStyle, isMobile }: BreadcrumbsNavProps) {
+    const parentRef = React.useRef<HTMLDivElement>(null);
+    const itemRefs = React.useRef<HTMLSpanElement[]>([]);
+    const [collapsed, setCollapsed] = React.useState(false);
 
-    const crumbs = useBreadcrumbs(pathname, {
-        nameMap,
-        base: { label: 'Главная', href: '/' },
-    });
     const commonSx = (isLast: boolean) => ({
         textTransform: 'capitalize',
         fontSize: 14,
         fontWeight: isLast ? 500 : 400,
         opacity: isLast ? 1 : 0.7,
+        ...linkStyle
+    });
+    const crumbs = useBreadcrumbs(pathname, {
+        nameMap,
+        base: { label: <Home sx={commonSx(false)} />, href: '/' },
     });
 
-    if (isMobile) {
+    React.useEffect(() => {
+        const checkOverflow = () => {
+            if (!parentRef.current) return;
+            const el = parentRef.current;
+            const totalItemsWidth = itemRefs.current.reduce((sum, item) => {
+                return sum + (item?.getBoundingClientRect().width ?? 0) + (5+14);
+            }, 0);
+            setCollapsed(el.offsetWidth < totalItemsWidth);
+        }
+
+        const observer = new ResizeObserver(checkOverflow);
+        if (parentRef.current) observer.observe(parentRef.current);
+
+        // также на инициализацию
+        checkOverflow();
+
+        return () => observer.disconnect();
+    }, []);
+    if (isMobile || collapsed) {
         const current = crumbs.at(-1);
         const previous = crumbs.at(-2) || crumbs[0];
 
@@ -73,28 +97,33 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
                     display: 'flex',
                     alignItems: 'center',
                     gap: 8,
-                    marginBottom: 8,
+                    margin: 8,
                     cursor: 'pointer',
                 }}
                 onClick={() => push(previous?.href || '/')}
             >
                 <ArrowBackIcon fontSize="small" />
-                <Typography variant="body2" sx={{ fontWeight: 500 }}>
+                <Typography 
+                    sx={commonSx(true)}
+                >
                     { current?.label }
                 </Typography>
             </div>
         );
     }
+    
 
     return (
         <Breadcrumbs
+            ref={parentRef}
             aria-label="breadcrumb"
             separator={separator}
             sx={{ m: 1 }}
         >
-            { crumbs.map((segment) =>
+            { crumbs.map((segment, index) =>
                 segment.isLast ? (
                     <Typography
+                        ref={(el) => (itemRefs.current[index] = el!)}
                         key={segment.href}
                         color="text.primary"
                         sx={commonSx(true)}
@@ -102,11 +131,14 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
                         { segment.label }
                     </Typography>
                 ) : (
-                    <Link key={segment.href} href={segment.href}>
-                        <Typography sx={commonSx(false)}>
-                            { segment.label }
-                        </Typography>
-                    </Link>
+                        <Link key={segment.href} href={segment.href}>
+                            <Typography
+                                sx={commonSx(false)}
+                                ref={(el) => (itemRefs.current[index] = el!)}
+                            >
+                                {segment.label}
+                            </Typography>
+                        </Link>
                 )
             )}
         </Breadcrumbs>

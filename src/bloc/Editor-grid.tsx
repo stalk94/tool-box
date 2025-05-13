@@ -27,7 +27,6 @@ export default function ({ desserealize }) {
     );
 
 
- 
     const handleDragEnd = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
 
@@ -204,6 +203,7 @@ export default function ({ desserealize }) {
             info.container.width.set(containerWidth);
 
             const maxY = Math.max(...cur.map((item) => item.y + item.h));
+            console.log(maxY)
             const totalVerticalMargin = margin[1] * (maxY + 1);
             const availableHeight = parentHeight - totalVerticalMargin;
             // setRowHeight(availableHeight / maxY);
@@ -249,6 +249,7 @@ export default function ({ desserealize }) {
     }, []);
     
     
+    
     return (
         <div 
             style={{ 
@@ -265,7 +266,7 @@ export default function ({ desserealize }) {
                 layouts={{ lg: render.get({noproxy:true}) }}        // Схема сетки
                 breakpoints={{ lg: 1200 }}         // Ширина экрана для переключения
                 cols={{ lg: 12 }}                    // Количество колонок для каждого размера
-                rowHeight={30}
+                rowHeight={20}
                 compactType={null}                                        // Отключение автоматической компоновки
                 preventCollision={true}
                 isDraggable={ctx.mod.get()==='grid' && true}             // Отключить перетаскивание

@@ -5,6 +5,7 @@ import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, D
 import { ExpandLess, ExpandMore, FiberManualRecord } from "@mui/icons-material";
 import { NavLinkItem } from '../menu/type';
 import Menu from '../menu/index';
+import { start } from "slate";
 
 
 type SidebarMenuProps = {
@@ -18,6 +19,7 @@ type SidebarMenuProps = {
 type LeftNavigationProps = SidebarMenuProps & BoxProps & {
     type: 'box' | 'drawer'
     end?: NavLinkItem[]
+    start?: NavLinkItem[]
     /** показывать выделленным цветом текуший выбранный элемент */
     isFocusSelected?: boolean 
 }
@@ -30,7 +32,7 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
  * Можно передавать onChange которая для каждого выполнится выбранного.  
  * * так же у каждого item может быть свой comand()
  */
-export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, selected }: SidebarMenuProps) {
+export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, selected, ...props }: SidebarMenuProps) {
     const theme = useTheme();
     const [openMenus, setOpenMenus] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
@@ -104,7 +106,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, s
                     ...theme.mixins.scrollbar
                 }}
             >
-                <List>
+                <List sx={{...props?.listStyle}}>
                     { items.map((item, index) => (
                         <React.Fragment key={index}>
                             {/* разделитель */}
@@ -122,6 +124,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, s
                                         sx={{
                                             justifyContent: collapsed ? "center" : "flex-start",
                                             px: collapsed ? 0 : 2,
+                                            ...item?.style
                                         }}
                                     >
                                         <ListItemIcon 
@@ -241,13 +244,21 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, s
  * Панель навигации как в vs code (без рабочей области)     
  * с рабочей областью отдельный компонент
  */
-export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx, ...props }: LeftNavigationProps) {
+export default function BaseLeftSideBar({ collapsed, start, items, onChange, end, sx, ...props }: LeftNavigationProps) {
     const theme = useTheme();
     const styleEnd = { 
         borderTop: `1px dotted ${theme.palette.divider}`,
         backdropFilter: "blur(14px)",
         backgroundColor: darken(theme.palette.toolNavBar.main, 0.1),
         ...theme.mixins.scrollbar
+    }
+    const merge = () => {
+        const startTransform = start.map((elem)=> {
+            elem.style = { backgroundColor: darken(theme.palette.toolNavBar.main, 0.1), padding:2 } 
+            return elem;
+        });
+
+        return [...startTransform, ...items];
     }
 
     
@@ -269,9 +280,10 @@ export default function BaseLeftSideBar({ collapsed, items, onChange, end, sx, .
             <SidebarMenu
                 selected={props.selected}
                 collapsed={collapsed}
-                items={items}
+                items={merge()}
                 onChange={onChange}
                 isFocusSelected={props.isFocusSelected}
+                listStyle={{p: 0}}
             />
             {/* низ */}
             { end &&

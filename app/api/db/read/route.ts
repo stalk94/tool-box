@@ -1,7 +1,5 @@
 import { NextRequest } from 'next/server';
-import { QuickDB } from 'quick.db';
-
-const db = new QuickDB();
+import db from '../../db';
 
 
 export async function GET(req: NextRequest) {

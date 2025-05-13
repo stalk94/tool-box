@@ -1,15 +1,55 @@
 import { toJSXProps } from './Inputs';
+import { renderComponentSsr, formatJsx } from './utils';
+
 
 
 export function exportedMuiButton(
-    startIconName,
-    endIconName,
+    id,
+    startIcon,
+    endIcon,
     style,
     children,
     otherProps
 ) {
-    const rendericon = (icon) => icon ? `<${icon} />` : 'undefined';
-    const importIcon = `import { ${startIconName??''}, ${endIconName??''} } from '@mui/icons-material';\n`;
+    const rendericon = (icon) => icon ? renderComponentSsr(icon) : 'undefined';
+    const toObjectLiteral = (obj) => {
+        return Object.entries(obj || {})
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+            .join(', ');
+    }
+   
+    return (`
+        import React from 'react';
+        import { Button } from '@mui/material';
+
+
+        export default function ButtonWrap() {
+            return (
+                <Button
+                    startIcon={
+                        ${rendericon(startIcon)}
+                    }
+                    endIcon={${rendericon(endIcon)}}
+                    style={{ ${toObjectLiteral(style)} }}
+                    ${ toJSXProps(otherProps) }
+                    onClick={()=> sharedEmmiter.emit('event', {
+                        id: ${id},
+                        type: 'click'
+                    })}
+                >
+                    ${children} 
+                </Button>
+            );
+        }
+    `);
+}
+export function exportedMuiIconButton(
+    id,
+    icon,
+    style,
+    otherProps
+) {
+    const rendericon = (icon) => icon ? renderComponentSsr(icon) : 'undefined';
     const toObjectLiteral = (obj) => {
         return Object.entries(obj || {})
             .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
@@ -17,27 +57,28 @@ export function exportedMuiButton(
     }
    
 
-
     return (`
         import React from 'react';
-        import { Button } from '@mui/material';
-        ${importIcon}
+        import { IconButton } from '@mui/material';
 
 
-        export default function ButtonWrap() {
+        export default function IconButtonWrap() {
             return (
-                <Button
-                    startIcon={${rendericon(startIconName)}}
-                    endIcon={${rendericon(endIconName)}}
+                <IconButton
                     style={{ ${toObjectLiteral(style)} }}
+                    onClick={()=> sharedEmmiter.emit('event', {
+                        id: ${id},
+                        type: 'click'
+                    })}
                     ${ toJSXProps(otherProps) }
                 >
-                    { ${children} }
-                </Button>
+                    ${ rendericon(icon) } 
+                </IconButton>
             );
         }
     `);
 }
+
 
 export function exportButtonInline(
     style: React.CSSProperties,

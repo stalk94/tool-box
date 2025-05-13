@@ -8,7 +8,7 @@ export default async function DynamicPage({ params }: { params: { page: string }
     const config = await loadProjectConfig();
     const layoutConfig = await loadLayoutConfig();
     
-
+    
     const pageKey = params.page || config.defaultPage;
     const pageEntry = config.routes?.[pageKey];
     const pageFile = `${pageKey}.json`;

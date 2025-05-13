@@ -1,0 +1,338 @@
+{
+  "layout": [
+    {
+      "i": "cell-1746978848104",
+      "x": 1,
+      "y": 6,
+      "w": 4,
+      "h": 3,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1746978848104"
+          },
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "data-id": 1747091972512,
+            "data-type": "Text",
+            "children": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "Title "
+                    },
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": "rgba(226, 51, 51, 1)"
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "yyy"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1746978852542",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 2,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1746978852542"
+          },
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "logo": "",
+            "file": "",
+            "data-source": "src",
+            "icon": "AccountBox",
+            "linkItems": [
+              {
+                "id": "test",
+                "label": "test",
+                "path": "/test"
+              },
+              {
+                "id": "settings",
+                "label": "settings",
+                "path": "/settings"
+              }
+            ],
+            "data-id": 1747033044136,
+            "data-type": "AppBar"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1746978863758",
+      "x": 5,
+      "y": 6,
+      "w": 4,
+      "h": 4,
+      "content": [
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "placeholder": "ввод",
+            "divider": "none",
+            "fullWidth": true,
+            "width": "100%",
+            "leftIcon": "none",
+            "styles": {},
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1747101947039,
+            "data-type": "TextInput"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1747075557335",
+      "x": 0,
+      "y": 2,
+      "w": 12,
+      "h": 2,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1747075557335"
+          },
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "pathname": "test/room/any",
+            "style": {
+              "marginTop": "0px",
+              "marginLeft": "30px"
+            },
+            "data-id": 1747075581246,
+            "data-type": "Breadcrumbs"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    }
+  ],
+  "content": {
+    "cell-1746978848104": [
+      {
+        "id": 1747091972512,
+        "parent": "cell-1746978848104",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1747091972512,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "Title "
+                  },
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": "rgba(226, 51, 51, 1)"
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "yyy"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "cell-1746978852542": [
+      {
+        "id": 1747033044136,
+        "parent": "cell-1746978852542",
+        "props": {
+          "fullWidth": true,
+          "logo": "",
+          "file": "",
+          "data-source": "src",
+          "icon": "AccountBox",
+          "linkItems": [
+            {
+              "id": "test",
+              "label": "test",
+              "path": "/test"
+            },
+            {
+              "id": "settings",
+              "label": "settings",
+              "path": "/settings"
+            }
+          ],
+          "data-id": 1747033044136,
+          "data-type": "AppBar"
+        }
+      }
+    ],
+    "cell-1746978863758": [
+      {
+        "id": 1747101947039,
+        "parent": "cell-1746978863758",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод",
+          "divider": "none",
+          "fullWidth": true,
+          "width": "100%",
+          "leftIcon": "none",
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747101947039,
+          "data-type": "TextInput"
+        }
+      }
+    ],
+    "cell-1747075557335": [
+      {
+        "id": 1747075581246,
+        "parent": "cell-1747075557335",
+        "props": {
+          "fullWidth": true,
+          "pathname": "test/room/any",
+          "style": {
+            "marginTop": "0px",
+            "marginLeft": "30px"
+          },
+          "data-id": 1747075581246,
+          "data-type": "Breadcrumbs"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "scope": "test",
+    "name": "header",
+    "updatedAt": 1747101976279,
+    "preview": "snapshots/test-header.png"
+  },
+  "size": {
+    "width": 1200,
+    "height": 350
+  }
+}

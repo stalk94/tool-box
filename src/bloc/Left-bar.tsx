@@ -3,7 +3,7 @@ import { Button, IconButton, Box, Popover, Typography, Divider, Select, MenuItem
 import { BorderStyle, ColorLens, FormatColorText, More, Widgets } from '@mui/icons-material';
 import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
-    RadioButtonUnchecked, RadioButtonChecked, Add
+    RadioButtonUnchecked, RadioButtonChecked, Add, Code
 } from "@mui/icons-material";
 import { FaReact } from 'react-icons/fa';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
@@ -20,8 +20,9 @@ import { componentMap, componentRegistry } from "./modules/utils/registry";
 import { usePopUpName, useSafeAsync, useSafeAsyncEffect } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps } from './type';
+import { useKeyboardListener } from './utils/hooks';
 import { db } from "./utils/export";
-
+import exportGrid from './modules/export/Grid';
 
 
 const RenderListProject = ({ currentCat }) => {
@@ -383,11 +384,15 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
     const select = info.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'atoms' | 'component' | 'func'>('project');
-    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('interactive');
+    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
     const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
 
+    const startItems = [
+        { id: 'save', label: 'Сохранить', icon: <Save /> },
+        { id: 'export', label: 'export', icon: <Code /> },
+    ];
     const menuItems = [
-        { id: 'project', label: 'управление', icon: <AccountTree /> },
+        { id: 'project', label: 'управление', icon: <AccountTree />, style: {paddingTop:2} },
         { divider: <Divider sx={{borderColor: 'rgba(128, 128, 129, 0.266)',my:1.2}}/> },
         { id: 'items', label: 'Библиотека', icon: <Extension /> },
         { divider: true },
@@ -395,13 +400,18 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
         { divider: true },
         { id: 'component', label: 'Настройки', icon: <Palette /> },
         { divider: true },
-        { id: 'func', label: 'Функции', icon: <Functions /> },
     ];
     const endItems = [
-        { id: 'save', label: 'Сохранить', icon: <Save /> },
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
+    useKeyboardListener((key)=> {
+        if(key === '1') setCurrentTool('block');
+        else if(key === '2') setCurrentTool('interactive');
+        else if(key === '3') setCurrentTool('media');
+        else if(key === '4') setCurrentTool('complex');
+        else if(key === '5') setCurrentTool('misc');
+    });
     React.useEffect(() => {
         const handler = (data) => {
             if (data.curentComponent) {
@@ -423,12 +433,18 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
         else if (item.id === 'func') setCurrentToolPanel('func');
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') useDump();
+        else if (item.id === 'export') {
+            const render = useRenderState().get({noproxy: true});
+            const meta = useEditorContext().meta.get({noproxy: true});
+           
+            exportGrid(render, meta.scope, meta.name)
+        };
     }
     const changeEditor = (newDataProps) => {
         const component = select.content.get({ noproxy: true });
         if (component) updateComponentProps({ component, data: newDataProps });
     }
-
+   
 
     const panelRenderers = {
         project: () => ({
@@ -450,10 +466,15 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
         <LeftSideBarAndTool
             selected={currentToolPanel}
             sx={{ height: '100%' }}
-            schemaNavBar={{ items: menuItems, end: endItems }}
+            schemaNavBar={{ 
+                start: startItems,
+                items: menuItems, 
+                end: endItems 
+            }}
             width={260}
             onChangeNavigation={changeNavigation}
-            start={start}
+            start={[]}
+            center={start}
             end={
                 <Inspector
                     data={globalThis.sharedContext.get()}

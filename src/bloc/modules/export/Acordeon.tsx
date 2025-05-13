@@ -31,10 +31,10 @@ export default function exported(
 
     return (`
         import React from 'react';
-        import { Accordion } from '@lib';
+        import { Accordion } from '@lib/index';
         
 
-        export default function () {
+        export default function AcordionWrap() {
             return (
                 <div
                     style={{ ${toObjectLiteral(style)} }}
@@ -50,3 +50,27 @@ export default function exported(
     `);
 }
 
+
+
+export function exportedTable(
+   
+) {
+    const toObjectLiteral = (obj) => {
+        return Object.entries(obj || {})
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+            .join(', ');
+    }
+
+
+    return (`
+        import React from 'react';
+        import { Accordion } from '@lib/index';
+        
+
+        export default function () {
+            return (
+                
+            );
+        }
+    `);
+}
