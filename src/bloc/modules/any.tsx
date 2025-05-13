@@ -41,7 +41,6 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
     );
 });
 
-
 export const LinearNavigationWrapper = React.forwardRef((props: LinearWrapperProps, ref) => {
     const { 
         ['data-id']: dataId, 

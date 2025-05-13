@@ -1,5 +1,3 @@
-import { toJSXProps } from './Inputs';
-import { renderComponentSsr, formatJsx } from './utils';
 import { LayoutCustom } from '../../type';
 import { exportLiteralToFile } from "../../utils/export";
 
@@ -56,9 +54,24 @@ function toValidVariableName(input: string): string {
     const prefixed = replaced.match(/^[0-9]/) ? '_' + replaced : replaced; // если начинается с цифры — добавим _
     return prefixed;
 }
+function objectArrayToJsLiteralWithoutContent(arr: object[], indent = 4): string {
+    const space = ' '.repeat(indent);
+
+    return `[\n` + arr.map(obj => {
+        const entries = Object.entries(obj)
+            .filter(([key]) => key !== 'content') // ❌ исключаем `content`
+            .map(([key, value]) => {
+                const valStr = typeof value === 'string'
+                    ? `"${value}"`
+                    : JSON.stringify(value, null, 0);
+                return `${space}${key}: ${valStr}`;
+            }).join(',\n');
+
+        return `${space}{\n${entries}\n${space}}`;
+    }).join(',\n') + `\n]`;
+}
 
 
-// ! доработать export компонентов
 export default function exportsGrid(
     render: LayoutCustom[],
     scope: string,
@@ -66,28 +79,7 @@ export default function exportsGrid(
     style?: React.CSSProperties,
 ) {
     const singleList = ['Breadcrumbs', 'AppBar'];
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .filter(([key, value]) => (key !== 'content' && value !== undefined))
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
-    function objectArrayToJsLiteralWithoutContent(arr: object[], indent = 4): string {
-        const space = ' '.repeat(indent);
-
-        return `[\n` + arr.map(obj => {
-            const entries = Object.entries(obj)
-                .filter(([key]) => key !== 'content') // ❌ исключаем `content`
-                .map(([key, value]) => {
-                    const valStr = typeof value === 'string'
-                        ? `"${value}"`
-                        : JSON.stringify(value, null, 0);
-                    return `${space}${key}: ${valStr}`;
-                }).join(',\n');
-
-            return `${space}{\n${entries}\n${space}}`;
-        }).join(',\n') + `\n]`;
-    }
+    
     const splitImportsAndBody =(code: string)=> {
         const lines = code.trim().split('\n');
 
@@ -114,7 +106,7 @@ export default function exportsGrid(
         const match = code.match(/return\s*\(\s*([\s\S]*?)\s*\);/);
         const extractedJSX = match?.[1]?.trim();
 
-        return extractedJSX;
+        return extractedJSX ?? code;
     }
     const renderComponents = async(content: [], cell: LayoutCustom) => {
         const imports: string[] = [];
@@ -136,6 +128,7 @@ export default function exportsGrid(
                             singletonsimports.push(...result.imports);
                         } 
                         else {
+                            console.log(result.body)
                             bodys.push(getComponentLiteral(result.body));
                             imports.push(...result.imports);
                         }
@@ -262,10 +255,11 @@ export default function exportsGrid(
                 );
             }
         `);
+        
         exportLiteralToFile([scope, name], 'index', literal);
     }
 
    
-    renderLiteralGrid()
+    renderLiteralGrid();
 }
 

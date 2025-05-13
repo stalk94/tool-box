@@ -381,6 +381,8 @@ const useFunctions = () => {
 // левая панель редактора
 export default function ({ addComponentToLayout, useDump, desserealize }: LeftToolPanelProps) {
     const info = useHookstate(useInfoState());
+    const render = useHookstate(useRenderState());
+    const meta = useHookstate(useEditorContext().meta);
     const select = info.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'items' | 'atoms' | 'component' | 'func'>('project');
@@ -426,7 +428,7 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
     }, []);
 
     // Обработка навигации по разделам
-    const changeNavigation = (item) => {
+    const changeNavigation =(item) => {
         if (item.id === 'items') setCurrentToolPanel('items');
         else if (item.id === 'project') setCurrentToolPanel('project');
         else if (item.id === 'component') setCurrentToolPanel('component');
@@ -434,12 +436,13 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') useDump();
         else if (item.id === 'export') {
-            const render = useRenderState().get({noproxy: true});
-            const meta = useEditorContext().meta.get({noproxy: true});
-           
-            exportGrid(render, meta.scope, meta.name)
+            exportGrid(
+                render.get({noproxy:true}), 
+                meta.scope.get({noproxy:true}), 
+                meta.name.get({noproxy:true})
+            );
         };
-    }
+    };
     const changeEditor = (newDataProps) => {
         const component = select.content.get({ noproxy: true });
         if (component) updateComponentProps({ component, data: newDataProps });

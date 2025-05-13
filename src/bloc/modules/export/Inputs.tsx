@@ -17,12 +17,12 @@ export function toJSXProps(obj: Record<string, any>): string {
 
 
 export default function exported(
-    type: 'text'|'number'|'date', 
-    leftIconName, 
-    style, 
-    labelStyle, 
-    styles, 
-    otherProps
+    type: 'text'|'number'|'date'|'chek'|'switch'|'toogle'|'select'|'autocomplete'|'file', 
+    leftIconName: string, 
+    style: React.CSSProperties, 
+    labelStyle: React.CSSProperties, 
+    styles: any, 
+    otherProps: any
 ) {
     const rendericon = () => (leftIconName && leftIconName!=='none')  ? `<${leftIconName} />` : 'undefined';
     const importIcon = (leftIconName && leftIconName!=='none') ? `import { ${leftIconName} } from '@mui/icons-material';\n` : '';
@@ -70,12 +70,14 @@ export default function exported(
 }
 
 export function sliderRender( 
-    startIconName, 
-    endIconName,
-    style, 
-    labelStyle, 
-    otherProps
+    startIconName: string, 
+    endIconName: string,
+    style: React.CSSProperties, 
+    labelStyle: React.CSSProperties, 
+    otherProps: any
 ) {
+    if(startIconName === 'none') startIconName = undefined;
+    if(endIconName === 'none') endIconName = undefined;
     const importIcon = `import { ${startIconName??''}, ${endIconName??''} } from '@mui/icons-material';\n`;
     const rendericon = (iconName) => iconName ? `<${iconName} />` : 'undefined';
     const toObjectLiteral = (obj) => {
@@ -99,9 +101,7 @@ export function sliderRender(
                         start={${rendericon(startIconName)}}
                         end={${rendericon(endIconName)}}
                         style={{ ${toObjectLiteral(labelStyle)} }}
-                        onChange={(v)=> {
-                            console.log(v);
-                        }}
+                        onChange={(v)=> console.log(v)}
                         ${ toJSXProps(otherProps) }
                     />
                 </div>

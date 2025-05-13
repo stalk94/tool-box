@@ -53,7 +53,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
             },
             otherProps
         );
-
+        
         call(code);
     }
     React.useEffect(() => {
@@ -142,11 +142,11 @@ export const VideoWrapper = React.forwardRef((props: any, ref) => {
     React.useEffect(() => {
         const handler = (data) => degidratationRef.current(data.call);
         sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.' + componentId, handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
 
         return () => {
             sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.' + componentId, handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
     const handleUpload = async (file: File) => {
@@ -214,7 +214,6 @@ export const VideoWrapper = React.forwardRef((props: any, ref) => {
 
 
 
-// ! deprecate
 export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
     const {
         items,
@@ -326,7 +325,6 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     );
 });
 
-
 export const CardWrapper = React.forwardRef((props: any, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const lastFileRef = React.useRef<number | null>(null);
@@ -409,7 +407,6 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
             ref={ref}
             data-type="Card"
             data-id={componentId}
-           
             { ...otherProps }
         >
             <Card
@@ -469,13 +466,18 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
                     height={heightMedia}
                     src={imgSrc}
                 />
-                <div style={{marginTop:'3%',marginBottom:'auto',overflow: 'auto'}}>
+                <div style={{
+                        marginTop: '3%',
+                        marginBottom: 'auto',
+                        overflow: 'auto'
+                    }}
+                >
                     <TipTapSlotEditor
                         autoIndex={index}
                         value={ slots?.text }
                         onChange={(html) => onChange('text', html)}
                         placeholder="Текст"
-                        className="card-text no-p-margin p"
+                        className="no-p-margin p"
                         isEditable={EDITOR}
                         initialInsert={{
                             text: 'В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические возможности',

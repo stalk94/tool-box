@@ -1,3 +1,4 @@
+import { renderComponentSsr, formatJsx } from './utils';
 export function toJSXProps(obj: Record<string, any>): string {
     return Object.entries(obj || {})
         .map(([key, value]) => {
@@ -17,10 +18,15 @@ export function toJSXProps(obj: Record<string, any>): string {
 
 
 export default function exported(
-    activeIndexs:[],
-    tabStyle,
-    items,
-    style
+    activeIndexs: number[],
+    tabStyle: React.CSSProperties,
+    items: {
+        /** label аккордеона */
+        title: React.ReactNode
+        /** тело аккордеона */
+        content: React.ReactNode
+    }[],
+    style: React.CSSProperties
 ) {
     const toObjectLiteral = (obj) => {
         return Object.entries(obj || {})

@@ -56,10 +56,9 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
     const parentRef = React.useRef<HTMLDivElement>(null);
     const itemRefs = React.useRef<HTMLSpanElement[]>([]);
     const [collapsed, setCollapsed] = React.useState(false);
-
+    
     const commonSx = (isLast: boolean) => ({
         textTransform: 'capitalize',
-        fontSize: 14,
         fontWeight: isLast ? 500 : 400,
         opacity: isLast ? 1 : 0.7,
         ...linkStyle

@@ -135,6 +135,9 @@ export default function TipTapSlotEditor({
 
 
 
-export const rendeHtml =(value)=> {
-    return generateHTML(value, extension);
+export const rendeHtml =(value: JSONContent)=> {
+    const result = generateHTML(value, extension);
+    const match = result.match(/^<p>([\s\S]*)<\/p>$/);
+
+    return match ? match[1] : result;
 }

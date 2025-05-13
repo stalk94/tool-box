@@ -93,6 +93,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
     );
 });
 
+
 export const TabsWrapper = React.forwardRef((props: any, ref) => {
     const [value, setValue] = React.useState(0);
     const { ['data-id']: dataId, style, items, fullWidth, textColor, indicatorColor, ...otherProps } = props;
@@ -145,9 +146,6 @@ export const TabsWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
-
-// сделать зпкреп снизу, сделать маршрутизацию
-// * обеспечивает внутреннюю навигацию
 export const BottomNavWrapper = React.forwardRef((props: any, ref) => {
     const [value, setValue] = React.useState(0);
     const { ['data-id']: dataId, style, items, fullWidth, textColor, indicatorColor, ...otherProps } = props;
@@ -199,9 +197,6 @@ export const BottomNavWrapper = React.forwardRef((props: any, ref) => {
         </Paper>
     );
 });
-
-// !нет export
-// пока только текстовые данные. Надо стили
 export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref) => {
     const { 
         ['data-id']: dataId, 
@@ -231,6 +226,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
        />
     );
 });
+
 
 
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
@@ -378,7 +374,6 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
     );
 });
 
-
 export const BreadcrumbsWrapper = React.forwardRef((props: any, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [linkStyleState, setState] = React.useState({});
@@ -425,7 +420,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: any, ref) => {
     }, [style]);
     
 
-
+    
     return (
         <div
             ref={ref}

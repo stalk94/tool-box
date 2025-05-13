@@ -145,6 +145,8 @@ export default function ({ desserealize }) {
                 return updated ? { ...cell, ...updated } : cell;
             })
         );
+        
+        render.set(consolidation(layout))
     }
     const addNewCell = () => {
         const all = render.get({ noproxy: true });

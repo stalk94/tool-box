@@ -10,7 +10,7 @@ import * as parserTypescript from 'prettier/plugins/typescript';
 
 
 export function formatJsx(code: string): Promise<string> {
-    return prettier.format(code, {
+    return prettier.format(modifiedCode, {
         parser: 'typescript',
         plugins: [parserTypescript, pluginEstree],
 
@@ -123,7 +123,7 @@ export function renderChildrenToLiteral(children: any, indent = 4): string {
 
 
 
-// 
+
 export function renderComponentSsr(element: React.ReactElement) {
     try {
         const html = ReactDOMServer.renderToStaticMarkup(element);

@@ -1,6 +1,8 @@
 import { toJSXProps } from './Inputs';
 export { formatJsx } from './utils';
 import { rendeHtml } from '../tip-tap';
+import { JSONContent } from '@tiptap/react';
+import { SxProps } from '@mui/material';
 
 
 export function htmlToJsx(html: string): string {
@@ -49,7 +51,7 @@ function cssStringToObject(styleStr: string): string {
 
 
 export function exportText(
-    text,
+    text: JSONContent,
     style: React.CSSProperties,
 ) {
     const toObjectLiteral = (obj) => {
@@ -75,10 +77,10 @@ export function exportText(
     `);
 }
 export function exportTypography(
-    text,
-    sx,
+    text: string,
+    sx: SxProps,
     style: React.CSSProperties,
-    otherProps
+    otherProps: any
 ) {
     const toObjectLiteral = (obj) => {
         return Object.entries(obj || {})

@@ -4,12 +4,12 @@ import { renderComponentSsr, formatJsx } from './utils';
 
 
 export function exportedMuiButton(
-    id,
-    startIcon,
-    endIcon,
-    style,
-    children,
-    otherProps
+    id: string | number,
+    startIcon: string | 'none',
+    endIcon: string | 'none',
+    style: React.CSSProperties,
+    children: string,
+    otherProps: any
 ) {
     const rendericon = (icon) => icon ? renderComponentSsr(icon) : 'undefined';
     const toObjectLiteral = (obj) => {
@@ -44,10 +44,10 @@ export function exportedMuiButton(
     `);
 }
 export function exportedMuiIconButton(
-    id,
-    icon,
-    style,
-    otherProps
+    id: string | number,
+    icon: string | 'none',
+    style: React.CSSProperties,
+    otherProps: any
 ) {
     const rendericon = (icon) => icon ? renderComponentSsr(icon) : 'undefined';
     const toObjectLiteral = (obj) => {

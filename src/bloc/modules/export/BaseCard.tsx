@@ -1,9 +1,16 @@
 import { rendeHtml } from '../tip-tap';
 import { toJSXProps } from './Inputs';
+import { htmlToJsx } from './Text';
 
 
 
-export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
+export default function exportedCard(
+    id: number | string, 
+    style: React.CSSProperties,
+    slots: any, 
+    heightMedia, 
+    srcMedia: string
+) {
     const getMediaType =(src: string)=> {
         if (!src) return 'img';
         // Убираем query-параметры
@@ -16,8 +23,8 @@ export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
         const result = {};
 
         Object.keys(slots).map((slotName)=> {
-            if(slots[slotName]) result[slotName] = rendeHtml(slots[slotName]);
-            else result[slotName] = `<div dangerouslySetInnerHTML={__html: <p>${slotName}</p>}/>`;
+            if(slots[slotName]) result[slotName] = htmlToJsx(rendeHtml(slots[slotName]));
+            else result[slotName] = `<div dangerouslySetInnerHTML={{__html: <p>${slotName}</p>}}/>`;
         });
 
         return result;
@@ -29,8 +36,8 @@ export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
             return (`
                 <CardMedia
                     component="video"
-                    src="${srcMedia}"
-                    height={${heightMedia}}
+                    src={"${srcMedia}"}
+                    height={"${heightMedia}"}
                     controls
                     alt={'video'}
                 />
@@ -39,9 +46,8 @@ export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
         else return (`
             <CardMedia
                 component="img"
-                src="${srcMedia}"
-                height={${heightMedia}}
-                height={height}
+                src={"${srcMedia}"}
+                height={"${heightMedia}"}
                 alt={'image'}
             />
         `);
@@ -57,7 +63,7 @@ export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
 
     return (`
         import React from 'react';
-        import { Chip, Box, Rating, Button, Card, CardHeader, CardMedia } from '@mui/material';
+        import { Chip, Box, Rating, Button, Card, CardHeader, CardMedia, CardActions } from '@mui/material';
         import { StarBorder } from '@mui/icons-material';
 
 
@@ -70,43 +76,11 @@ export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
                         borderRadius: '5px',
                         border: '1px solid',
                         borderColor: 'rgba(255, 255, 255, 0.15)',
+                        display: 'flex',
+                        flexDirection: 'column'
                     }}
                     style={{ ${toObjectLiteral(style)} }}
                     elevation={8}
-                    footer={
-                        <Box 
-                            sx={{ 
-                                display: 'flex', 
-                                flexDirection: 'row',
-                                width: '100%', 
-                                mb: 0.5 
-                            }}
-                        >
-                            <Box sx={{ p: 1 }}>
-                                <Rating 
-                                    defaultValue={2} 
-                                    precision={1} 
-                                    size={'medium'}                     // 'medium', 'small', 'large'
-                                    max={5}
-                                    onChange={(e, v)=> {
-                                        console.log(v)
-                                    }}
-                                />
-                            </Box>
-                            <Box sx={{ ml: 'auto' }}>
-                                <Button 
-                                    sx={{ m: 0.5 }} 
-                                    variant='outlined' 
-                                    size={'medium'}                    // 'medium', 'small', 'large'
-                                    onClick={()=> {
-                                        console.log('click')
-                                    }}
-                                >
-                                    add to cart
-                                </Button>
-                            </Box>
-                        </Box>
-                    }
                 >
                     <CardHeader 
                         avatar={<StarBorder />}
@@ -123,9 +97,40 @@ export default function exportedCard(id, style, slots, heightMedia, srcMedia) {
 
                     ${ mediaRender() }
 
-                    <div style={{ marginTop: '3%', marginBottom: 'auto', overflow: 'auto' }}>
+                    <div style={{ marginTop: '3%', marginLeft:8, marginBottom: 'auto', overflow: 'auto' }}>
                         ${slotsRender.text}
                     </div>
+
+                    <CardActions 
+                        sx={{ 
+                            width: '100%', 
+                            mb: 0.5
+                        }}
+                    >
+                        <Box sx={{ p: 1 }}>
+                            <Rating 
+                                defaultValue={2} 
+                                precision={1} 
+                                size={'medium'}                     // 'medium', 'small', 'large'
+                                max={5}
+                                onChange={(e, v)=> {
+                                    console.log(v)
+                                }}
+                            />
+                        </Box>
+                        <Box sx={{ ml: 'auto' }}>
+                            <Button 
+                                sx={{ m: 0.5 }} 
+                                variant='outlined' 
+                                size={'medium'}                    // 'medium', 'small', 'large'
+                                onClick={()=> {
+                                    console.log('click')
+                                }}
+                            >
+                                add to cart
+                            </Button>
+                        </Box>
+                    </CardActions>
                 </Card>
             );
         }
@@ -142,7 +147,7 @@ export function renderImage(src, style, otherProps) {
 
     return (`
         <img
-            src={${src ?? '/placeholder.jpg'}}
+            src={"${src ?? '/placeholder.jpg'}"}
             style={{ ${toObjectLiteral(style)} }}
             ${ toJSXProps(otherProps) }
         />
@@ -158,7 +163,7 @@ export function renderVideo(src, style, otherProps) {
 
     return (`
         <video
-            src={${src}}
+            src={"${src}"}
             style={{ ${toObjectLiteral(style)} }}
             ${ toJSXProps(otherProps) }
         />
