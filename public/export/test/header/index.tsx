@@ -1,6 +1,7 @@
 import cell_1746978848104 from './cell-1746978848104.tsx';
 import cell_1746978852542 from '../shared/cell-1746978852542.tsx';
 import cell_1746978863758 from './cell-1746978863758.tsx';
+import cell_1747137570401 from './cell-1747137570401.tsx';
 import React from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -48,6 +49,15 @@ export default function RenderGrid() {
                         h: 2,
                         moved: false,
                         static: false
+                    },
+                    {
+                        i: 'cell-1747137570401',
+                        x: 0,
+                        y: 6,
+                        w: 6,
+                        h: 10,
+                        moved: false,
+                        static: false
                     }
                 ]
             }}
@@ -88,6 +98,16 @@ export default function RenderGrid() {
                 }}
             >
                 {cell_1746978863758()}
+            </div>
+
+            <div
+                key={'cell-1747137570401'}
+                style={{
+                    overflowX: 'hidden',
+                    overflowY: 'auto'
+                }}
+            >
+                {cell_1747137570401()}
             </div>
         </ResponsiveGridLayout>
     );

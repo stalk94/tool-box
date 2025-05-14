@@ -2,7 +2,6 @@ import { Box } from '@mui/material';
 import { AppBar, LinearNavigation, MobailBurger, Start } from '@lib/index';
 import React from 'react';
 
-
 export default function HeaderBar(linkItems = [{ id: 'test', label: 'test' }]) {
     // реализация функции клика по элементу навигации
     const handlerClickNavigation = (path: string) => {
@@ -33,7 +32,7 @@ export default function HeaderBar(linkItems = [{ id: 'test', label: 'test' }]) {
 
     return (
         <AppBar
-            style={{}}
+            style={{ marginTop: '0px' }}
             elevation={1}
             height={40}
             start={

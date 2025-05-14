@@ -9,10 +9,11 @@ import { updateComponentProps } from './utils/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./utils/export";
 import { serializeJSX } from './utils/sanitize';
-import { LinktoolBar } from './modules/utils/Toolbar';
+import { LinktoolBar, SlotToolBar } from './modules/utils/Toolbar';
 
 
-export function SortableItem({ id, children }: { id: number, children: Component }) {
+
+export function SortableItem({ id, children, cellId }: { id: number, children: Component, cellId: string }) {
     const info = useHookstate(useInfoState());
     const context = useHookstate(useEditorContext());
     const renderState = useHookstate(useRenderState());
@@ -22,6 +23,10 @@ export function SortableItem({ id, children }: { id: number, children: Component
     const dragEnabled = context.dragEnabled;
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
         id ,
+        data: {
+            type: 'sortable',
+            cellId
+        },
         disabled: !dragEnabled.get()        // ✅ глобальный флаг
     });
     
@@ -187,6 +192,13 @@ export function SortableItem({ id, children }: { id: number, children: Component
                         onChange={(data)=> updateComponentProps({component:children, data})}
                     />
                 }
+               
+                <SlotToolBar
+                    dataId={children.props['data-id']}
+                    type={children.props['data-type']}
+                    onChange={console.log}
+                />
+                
                 { children }
             </div>
             { menu }

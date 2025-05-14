@@ -15,7 +15,6 @@ import Forms from './Forms';
 import Inspector from './Inspector';
 import { componentGroups, componentAtom } from './config/category';
 import { createBlockToFile, fetchFolders } from "./utils/export";
-import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { componentMap, componentRegistry } from "./modules/utils/registry";
 import { usePopUpName, useSafeAsync, useSafeAsyncEffect } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
@@ -23,6 +22,7 @@ import { LeftToolPanelProps } from './type';
 import { useKeyboardListener } from './utils/hooks';
 import { db } from "./utils/export";
 import exportGrid from './modules/export/Grid';
+import { DraggableToolItem } from './Dragable';
 
 
 const RenderListProject = ({ currentCat }) => {
@@ -321,18 +321,22 @@ const useElements = (currentTool, setCurrentTool, addComponentToLayout) => {
 
                     return (
                         <Box key={type} sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
-                            <Button
-                                variant="outlined"
-                                style={{ color: '#fcfcfc', borderColor: '#fcfcfc61', boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.4)' }}
-                                startIcon={<Icon sx={{ color: 'gray', fontSize: 18 }} />}
-                                sx={{ width: '100%', opacity: 0.6 }}
-                                onClick={() => {
-                                    //infoState.select.panel.lastAddedType.set(type);
-                                    addComponentToLayout(createComponentFromRegistry(type))
-                                }}
-                            >
-                                {type}
-                            </Button>
+                            <DraggableToolItem
+                                id={type}
+                                dataType={type}
+                                type={'element'}
+                                element={
+                                    <Button
+                                        variant="outlined"
+                                        style={{ color: '#fcfcfc', borderColor: '#fcfcfc61', boxShadow: '0px 2px 1px rgba(0, 0, 0, 0.4)' }}
+                                        startIcon={<Icon sx={{ color: 'gray', fontSize: 18 }} />}
+                                        sx={{ width: '100%', opacity: 0.6 }}
+                                        
+                                    >
+                                        { type }
+                                    </Button>
+                                }
+                            />
                         </Box>
                     );
                 })}
@@ -404,6 +408,8 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
         { divider: true },
     ];
     const endItems = [
+        { id: 'save', label: 'Сохранить', icon: <Save /> },
+        { id: 'export', label: 'export', icon: <Code /> },
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
@@ -468,9 +474,9 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
     return (
         <LeftSideBarAndTool
             selected={currentToolPanel}
-            sx={{ height: '100%' }}
+            sx={{ height: '100%', overflow: 'hidden' }}
+            style={{overflow: 'hidden'}}
             schemaNavBar={{ 
-                start: startItems,
                 items: menuItems, 
                 end: endItems 
             }}

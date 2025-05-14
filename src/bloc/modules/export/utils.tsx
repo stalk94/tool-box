@@ -1,7 +1,7 @@
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
+import { act } from 'react';
 import prettier from 'prettier/standalone';
 import parserBabel from 'prettier/plugins/babel';
 import pluginEstree from 'prettier/plugins/estree';
@@ -10,7 +10,7 @@ import * as parserTypescript from 'prettier/plugins/typescript';
 
 
 export function formatJsx(code: string): Promise<string> {
-    return prettier.format(modifiedCode, {
+    return prettier.format(code, {
         parser: 'typescript',
         plugins: [parserTypescript, pluginEstree],
 
@@ -75,7 +75,7 @@ const isReactElement = (value: any): value is React.ReactElement => {
  * @param indent 
  * @returns 
  */
-export function renderChildrenToLiteral(children: any, indent = 4): string {
+export function renderJsonToLiteral(children: any, indent = 4): string {
     const pad = ' '.repeat(indent);
 
     if (typeof children === 'string' || typeof children === 'number' || typeof children === 'boolean') {
@@ -83,7 +83,7 @@ export function renderChildrenToLiteral(children: any, indent = 4): string {
     }
     if (Array.isArray(children)) {
         return children
-            .map(child => renderChildrenToLiteral(child, indent))
+            .map(child => renderJsonToLiteral(child, indent))
             .join('\n');
     }
 
@@ -92,7 +92,7 @@ export function renderChildrenToLiteral(children: any, indent = 4): string {
         const type = getTypeNameFromReactComponent(children);
         const props = children.props || {};
 
-        const childCode = renderChildrenToLiteral(props.children, indent + 2);
+        const childCode = renderJsonToLiteral(props.children, indent + 2);
 
         const attrs = Object.entries(props)
             .filter(([k]) => k !== 'children')
@@ -106,7 +106,7 @@ export function renderChildrenToLiteral(children: any, indent = 4): string {
                         return `${k}={<div dangerouslySetInnerHTML={{ __html: \`${html}\` }} />}`;
                     } 
                     catch (e) {
-                        const jsx = renderChildrenToLiteral(v, 0).trim();
+                        const jsx = renderJsonToLiteral(v, 0).trim();
                         return `${k}={${jsx}}`;
                     }
                 }
@@ -122,7 +122,33 @@ export function renderChildrenToLiteral(children: any, indent = 4): string {
 }
 
 
+export function jsxJsonToString(node: any): string {
+    if (typeof node === 'string') return node;
+    if (!node || node.$$jsx !== true || typeof node.type !== 'string') return '';
 
+    const { type, props = {} } = node;
+
+    const attrs = Object.entries(props)
+        .filter(([key]) => key !== 'children')
+        .map(([key, val]) => {
+            return `${key}={${JSON.stringify(val)}}`;
+        })
+        .join(' ');
+
+    const children = props.children;
+
+    const childrenStr = Array.isArray(children)
+        ? children.map(child => {
+            return typeof child === 'object' && child.$$jsx
+                ? jsxJsonToString(child)
+                : child;
+        }).join('')
+        : (typeof children === 'object' && children?.$$jsx
+            ? jsxJsonToString(children)
+            : (children ?? ''));
+
+    return `<${type}${attrs ? ' ' + attrs : ''}>${childrenStr}</${type}>`;
+}
 
 export function renderComponentSsr(element: React.ReactElement) {
     try {
@@ -138,13 +164,11 @@ export function renderComponentSsr(element: React.ReactElement) {
 export async function renderComponentSsrPrerender(element: React.ReactElement): Promise<string> {
     return new Promise((resolve) => {
         const container = document.createElement('div');
-
-        act(() => {
-            createRoot(container).render(element);
-        });
+        createRoot(container).render(element);
+        
 
         setTimeout(() => {
             resolve(container.innerHTML);
-        }, 500);
+        }, 700);
     });
 }

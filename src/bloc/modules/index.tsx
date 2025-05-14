@@ -23,7 +23,7 @@ import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
 import { InputStyles } from '../type';
 import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-carousel';
-import { renderChildrenToLiteral } from './export/utils';
+
 
 
 
@@ -389,6 +389,7 @@ registerComponent({
     component: DividerWrapper,
     defaultProps: {
         fullWidth: true,
+        variant: 'fullWidth',
         width: '100%',
     },
     icon: LinearScale,
@@ -415,19 +416,6 @@ registerComponent({
     icon: LinearScale,
     category: 'media',
 });
-registerComponent({
-    type: 'LinearNavigation',
-    component: LinearNavigationWrapper,
-    defaultProps: {
-        fullWidth: true,
-        width: '100%',
-        linkItems: [
-            
-        ]
-    },
-    icon: Repartition,
-    category: 'complex',
-});
 
 
 // complex
@@ -438,15 +426,12 @@ registerComponent({
         fullWidth: true,
         width: '100%',
         activeIndexs: [],
+        styles: {},
         items: [
             {
                 title: serializeJSX(<Box sx={{ml: 1.5}}>・test-1</Box>),
                 content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
-            },
-            {
-                title: serializeJSX(<Box sx={{ml: 1.5}}>・test-2</Box>),
-                content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
-            },
+            }
         ]
     },
     icon: ListAlt,
@@ -458,11 +443,15 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         width: '100%',
+        slots: {
+            0: [],
+            1: [],
+            2: []
+        },
         items: [
             'one',
             'two',
-            'three',
-            'any position'
+            'three'
         ]
     },
     icon: Repartition,

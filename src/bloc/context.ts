@@ -1,6 +1,6 @@
 import { hookstate, State } from '@hookstate/core';
 import { localstored } from '@hookstate/localstored';
-import { ComponentSerrialize, LayoutCustom } from './type';
+import { ComponentSerrialize, LayoutCustom, ProxyComponentName } from './type';
 import { Editor } from '@tiptap/react';
 
 

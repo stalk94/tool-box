@@ -1,6 +1,7 @@
 import { Settings } from '@mui/icons-material';
 import { Box } from '@mui/material';
 import React from 'react';
+import { componentMap } from '../modules/utils/registry';
 
 
 export function sanitizeProps<T extends Record<string, any>>(props: T): T {
@@ -100,4 +101,26 @@ export function deserializeJSX(node: any, maps?: Record<string, any>): any {
     }
 
     return node;
+}
+
+export const desserealize = (component: ComponentSerrialize, data?: Record<string, any>) => {
+        const { id, props, functions, parent } = component;
+        const type = props["data-type"];
+        //console.log(component)
+        const Component = componentMap[type];
+        Component.displayName = type;
+        Component.parent = parent;
+        
+    
+        if (!Component) {
+            console.warn(`Компонент типа "${type}" не найден в реестре`);
+            return null;
+        }
+        
+        return (
+            <Component
+                { ...props }
+                { ...data }
+            />
+        );
 }

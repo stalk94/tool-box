@@ -21,10 +21,11 @@ export type AccordionProps = {
     activeIndexs?: number[]
     /** стили для одного раздела акордеона (header + content) !только в свернутом состоянии */
     tabStyle?: React.CSSProperties
+    headerStyle?: React.CSSProperties
 }
 
 
-const AccordionHeader = ({ header, isExpanded }) => {
+const AccordionHeader = ({ header, isExpanded, headerStyle }) => {
     const theme = useTheme();
     const useColor =(key: string)=> {
         if(theme.palette.accordion[key]) {
@@ -44,19 +45,24 @@ const AccordionHeader = ({ header, isExpanded }) => {
                 alignItems: 'center',   // вертикльное выравнивание
                 width: '100%',
                 color: useColor('headerContent'),
-                backgroundColor: useColor('headerMain')
+                backgroundColor: useColor('headerMain'),
+            }}
+            style={{
+                ...headerStyle,
+                borderRadius: headerStyle?.borderRadius + 'px',
+                border: `1px ${headerStyle?.borderStyle} ${headerStyle?.borderColor}`
             }}
         >
             { header }
             <IconButton
                 sx={{
-                    color: useColor('headerIcon'),
+                    color: headerStyle?.color ?? useColor('headerIcon'),
                     marginLeft: 'auto',
                     transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)', // Поворот стрелочки
                     transition: 'transform 0.3s ease', // Плавное вращение
                 }}
             >
-                <ExpandMore />
+                <ExpandMore sx={{ fontSize: headerStyle?.fontSize ? (+headerStyle?.fontSize + 2) : 16 }} />
             </IconButton>
         </Box>
     );
@@ -68,14 +74,15 @@ const AccordionHeader = ({ header, isExpanded }) => {
  * @example
  * <Accordion 
  *  activeIndexs={[0]}    <- развернутой по дефолту будет первая вкладка
- *  tabStyle={{marginBottom: '5px'}}
+ *  tabStyle - стиль внутреннего мюню раздела
+ *  headerStyle - стиль заголовка раздела
  *  items={[
  *      { title: "FAQ", content: <div>Content 1</div> },
  *      { title: <Box>кастомный title</Box>, content: "Свяжитесь с нами" }
  *  ]} 
  * />
  */
-export default function CustomAccordion({ items, activeIndexs, tabStyle }: AccordionProps): React.JSX.Element {
+export default function CustomAccordion({ items, activeIndexs, tabStyle, headerStyle }: AccordionProps): React.JSX.Element {
     const [activeIndex, setActiveIndex] = React.useState(activeIndexs ?? []);
     
     const useActive =(index: number)=> {
@@ -93,17 +100,17 @@ export default function CustomAccordion({ items, activeIndexs, tabStyle }: Accor
             >
                 {items.map((elem, index) => (
                     <AccordionTab
-                        headerStyle={{}}
                         style={!useActive(index) ? { marginBottom: 2 } : {} }
                         key={index}
                         header={
                             <AccordionHeader
+                                headerStyle={headerStyle}
                                 header={elem.title ?? 'title-' + index}
                                 isExpanded={useActive(index)}
                             />
                         }
                     >
-                        <Box sx={tabStyle}>
+                        <Box style={{...tabStyle}}>
                             { elem.content }
                         </Box>
                     </AccordionTab>

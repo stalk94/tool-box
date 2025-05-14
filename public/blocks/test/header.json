@@ -108,7 +108,7 @@
             "logo": "",
             "file": "",
             "data-source": "src",
-            "icon": "AccountBox",
+            "icon": "Home",
             "linkItems": [
               {
                 "id": "test",
@@ -122,7 +122,10 @@
               }
             ],
             "data-id": 1747033044136,
-            "data-type": "AppBar"
+            "data-type": "AppBar",
+            "style": {
+              "marginTop": "0px"
+            }
           },
           "_owner": null,
           "_store": {}
@@ -176,7 +179,7 @@
                             }
                           }
                         ],
-                        "text": "В зависимости от того, что вы "
+                        "text": "В зависимости от того, что вы  hh."
                       }
                     ]
                   }
@@ -218,6 +221,43 @@
                     ]
                   }
                 ]
+              },
+              "title": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "textStyle",
+                            "attrs": {
+                              "color": null
+                            }
+                          },
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "1.5rem"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "Titles"
+                      }
+                    ]
+                  }
+                ]
               }
             },
             "data-id": 1747126593282,
@@ -240,6 +280,76 @@
       "w": 12,
       "h": 2,
       "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1747137570401",
+      "x": 0,
+      "y": 6,
+      "w": 6,
+      "h": 10,
+      "content": [
+        {
+          "type": {
+            "parent": "cell-1747137570401"
+          },
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "width": "100%",
+            "activeIndexs": [],
+            "styles": {
+              "title": {
+                "paddingLeft": "19"
+              }
+            },
+            "items": [
+              {
+                "title": "・tesgt-1",
+                "content": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "m": 3
+                    },
+                    "children": "content"
+                  }
+                }
+              }
+            ],
+            "data-id": 1747151749900,
+            "data-type": "Accordion"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {
+            "parent": "cell-1747137570401"
+          },
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "width": "100%",
+            "slots": {
+              "0": [],
+              "1": [],
+              "2": []
+            },
+            "items": [
+              "one",
+              "two",
+              "THREE"
+            ],
+            "data-id": 1747186171601,
+            "data-type": "Tabs"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
       "moved": false,
       "static": false
     }
@@ -332,7 +442,7 @@
           "logo": "",
           "file": "",
           "data-source": "src",
-          "icon": "AccountBox",
+          "icon": "Home",
           "linkItems": [
             {
               "id": "test",
@@ -346,7 +456,10 @@
             }
           ],
           "data-id": 1747033044136,
-          "data-type": "AppBar"
+          "data-type": "AppBar",
+          "style": {
+            "marginTop": "0px"
+          }
         }
       }
     ],
@@ -476,12 +589,117 @@
         }
       }
     ],
-    "cell-1747075557335": []
+    "cell-1747075557335": [],
+    "cell-1747137570401": [
+      {
+        "id": 1747151749900,
+        "parent": "cell-1747137570401",
+        "props": {
+          "fullWidth": true,
+          "width": "100%",
+          "activeIndexs": [],
+          "styles": {
+            "title": {
+              "paddingLeft": "19"
+            }
+          },
+          "items": [
+            {
+              "title": "・tesgt-1",
+              "content": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "m": 3
+                  },
+                  "children": "content"
+                }
+              }
+            }
+          ],
+          "data-id": 1747151749900,
+          "data-type": "Accordion"
+        }
+      },
+      {
+        "id": 1747186171601,
+        "parent": "cell-1747137570401",
+        "props": {
+          "fullWidth": true,
+          "width": "100%",
+          "slots": {
+            "0": [
+              {
+                "type": {},
+                "key": null,
+                "props": {
+                  "children": "Button",
+                  "variant": "outlined",
+                  "color": "primary",
+                  "fullWidth": true,
+                  "startIcon": "none",
+                  "endIcon": "none",
+                  "style": {},
+                  "data-id": 1747186371532,
+                  "data-type": "Button"
+                },
+                "_owner": null,
+                "_store": {}
+              },
+              {
+                "type": {},
+                "key": null,
+                "props": {
+                  "children": "Button",
+                  "variant": "outlined",
+                  "color": "primary",
+                  "fullWidth": true,
+                  "startIcon": "none",
+                  "endIcon": "none",
+                  "style": {},
+                  "data-id": 1747186391363,
+                  "data-type": "Button"
+                },
+                "_owner": null,
+                "_store": {}
+              },
+              {
+                "type": {},
+                "key": null,
+                "props": {
+                  "children": "Button",
+                  "variant": "outlined",
+                  "color": "primary",
+                  "fullWidth": true,
+                  "startIcon": "none",
+                  "endIcon": "none",
+                  "style": {},
+                  "data-id": 1747186396535,
+                  "data-type": "Button"
+                },
+                "_owner": null,
+                "_store": {}
+              }
+            ],
+            "1": [],
+            "2": []
+          },
+          "items": [
+            "one",
+            "two",
+            "THREE"
+          ],
+          "data-id": 1747186171601,
+          "data-type": "Tabs"
+        }
+      }
+    ]
   },
   "meta": {
     "scope": "test",
     "name": "header",
-    "updatedAt": 1747132889135,
+    "updatedAt": 1747186561105,
     "preview": "snapshots/test-header.png"
   },
   "size": {

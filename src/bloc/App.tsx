@@ -2,9 +2,12 @@
 import React from "react";
 import * as htmlToImage from 'html-to-image';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
+import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
+import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState, useStorageContext } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
+import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/utils/registry';
 import Tools from './Left-bar';
@@ -15,9 +18,10 @@ import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 import { useSafeAsync, useSafeAsyncEffect } from "./utils/usePopUp";
 import { db } from "./utils/export";
+import { DragItemCopyElement, activeSlotState } from './Dragable';
 import GridTest from 'public/export/test/header/index.tsx';
-
 import "../style/edit.css";
+
 
 if (!window.next) {
     import('./modules/index').then((mod) => {
@@ -36,6 +40,8 @@ if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter();
 // это редактор блоков сетки
 export default function Block({ setShowBlocEditor }) {
     globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
+    const cacheDrag = React.useRef<HTMLDivElement>(null);
+    const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
     const ctx = useHookstate(useEditorContext());
     const mod = useHookstate(ctx.mod);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
@@ -43,8 +49,12 @@ export default function Block({ setShowBlocEditor }) {
     const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
     const curCell = ctx.currentCell;                                    // текушая выбранная ячейка
     const cellsCache = useHookstate(useCellsContent());                   // элементы в ячейках (dump из localStorage)
-    
+    const activeSlot = useHookstate(activeSlotState);
+    const sensors = useSensors(
+        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    );
    
+
     const snapshotAndUpload = async (name: string) => {
         const node = document.querySelector('.GRID-EDITOR') as HTMLElement | null;
 
@@ -224,6 +234,93 @@ export default function Block({ setShowBlocEditor }) {
         }
     
     }
+    const handleDragEndOld = (event: DragEndEvent, cellId: string) => {
+        const { active, over } = event;
+      
+        if (!active || !over || active.id === over.id) return;
+
+        const currentList = cellsCache.get({ noproxy: true })[cellId];
+        const oldIndex = currentList.findIndex((comp) => comp.props['data-id'] === active.id);
+        const newIndex = currentList.findIndex((comp) => comp.props['data-id'] === over.id);
+
+        if (oldIndex === -1 || newIndex === -1) return;
+
+        // 🔁 Обновляем состояние через setRender
+        render.set((prev) => {
+            const updated = [...prev];
+            const target = updated.find((c) => c.i === cellId);
+            if (target?.content) {
+                target.content = arrayMove(target.content, oldIndex, newIndex);
+            }
+
+            // ⚠️ Обновляем и cellsContent 
+            cellsCache.set((old) => {
+                old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
+                return old;
+            });
+
+            return updated;
+        });
+
+        if (cacheDrag.current) {
+            cacheDrag.current.classList.add('editor-selected');
+            const find = render.get({ noproxy: true }).find(el => el.i === cellId);
+
+            if (find && Array.isArray(find.content)) {
+                const findChild = find.content.find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
+                if (findChild) requestIdleCallback(() => info.select.content.set(findChild));
+            }
+        }
+    }
+    const handleDragStart = (event: DragStartEvent) => {
+        const elActivator = event.activatorEvent.target as HTMLElement;
+        const container = elActivator.closest('[ref-id]') as HTMLElement | null;
+        cacheDrag.current = container;
+
+        document.querySelectorAll('[ref-id]').forEach(el => {
+            el.classList.remove('editor-selected');
+        });
+    }
+    const handleDragEnd =(event: DragEndEvent)=> {
+        const { active, over } = event;
+        setActiveDragElement(null);
+        if(!active || !over) return;
+
+        const dragData = active.data?.current;
+        const dropMeta = over.data?.current;
+        
+
+        // перетаскивание внутри ячеек
+        if (dragData?.type === 'sortable' && dropMeta?.type === 'sortable') {
+            const cellId = dragData.cellId;
+            handleDragEndOld(event, cellId);
+            return;
+        }
+        // перетаскивание на слот
+        else if (dropMeta?.type === 'sortable') {
+            const slot = activeSlot.get({ noproxy: true });
+            const dataType = dragData.dataType;
+            
+            if(slot?.dataTypesAccepts && dataType && slot?.dataTypesAccepts?.includes(dataType) ) {
+                slot.onAdd(createComponentFromRegistry(dataType));
+            }
+        }
+        else if (over?.id) {
+            const dragged = active.data?.current?.element;
+            const type = active.data?.current?.type;
+            const accepts = over?.data?.current?.dataTypesAccepts;
+            console.log(accepts)
+            // добавление из галереи компонентов
+            if(dragged && type === 'element' && !accepts) {
+                curCell.set({ i: over.id });
+                const ref = document.querySelector(`[data-id="${over.id}"]`);
+                info.select.cell.set(ref);
+                addComponentToLayout(createComponentFromRegistry(active.id));
+            }
+        }
+
+        setActiveDragElement(null); // очистка
+    }
     useSafeAsyncEffect(async (isMounted) => {
         try {
             const data = await fetchFolders();
@@ -244,23 +341,43 @@ export default function Block({ setShowBlocEditor }) {
 
 
     return(
-        <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-            
-            <Tools
-                desserealize={desserealize}
-                useDump={dumpRender}
-                addComponentToLayout={addComponentToLayout}
-            />
-            <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-                <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
-                { mod.get() === 'slot' && <PropsEditor /> }
-                
-                <GridComponentEditor
+        <DndContext 
+            collisionDetection={pointerWithin}
+            sensors={sensors}
+            onDragStart={(event) => {
+                const dragged = event.active.data?.current?.element;
+                const dragData = event.active.data?.current;
+                console.log(dragData.type)
+
+                if(dragData.type === 'sortable') handleDragStart(event);
+                if (dragged) setActiveDragElement(dragged);
+            }}
+            onDragEnd={handleDragEnd}
+        >
+            <DragOverlay dropAnimation={null}>
+                {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
+            </DragOverlay>
+
+            <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
+                <Tools
                     desserealize={desserealize}
+                    useDump={dumpRender}
+                    addComponentToLayout={addComponentToLayout}
                 />
-                <GridTest/>
+                <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
+                    <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
+                    { mod.get() === 'slot' && <PropsEditor /> }
+                    
+                    { mod.get() === 'preview' 
+                        ? <GridTest />
+                        : <GridComponentEditor
+                            desserealize={desserealize}
+                        />
+                    }
+                    <GridTest />
+                </div>
             </div>
-        </div>
+        </DndContext>
     );
 }
 

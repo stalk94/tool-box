@@ -20,5 +20,9 @@ export default defineConfig({
             '@lib': path.resolve(__dirname, 'src'),
             '@system': path.resolve(__dirname, 'src/app'),
         }
+    },
+    define: {
+        'process.env.NODE_ENV': JSON.stringify('production'),
+        'process.env': '{}'
     }
 });

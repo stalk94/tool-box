@@ -89,3 +89,5 @@ export function Slot({ props, containerStyle, idParent, onChange }: SlotType) {
         </div>
     );
 }
+
+export function use

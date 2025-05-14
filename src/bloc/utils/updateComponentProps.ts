@@ -17,13 +17,12 @@ export function updateComponentProps({ component, data, rerender = true }: Param
     const renderState = useRenderState();
     const id = component?.props?.['data-id'];
     const cellId = context.currentCell.get()?.i;
-   
-    
+
     if (!id || !cellId) {
         console.warn('updateComponentProps: отсутствует data-id или data-cell');
         return;
     }
-
+    
     // 🧠 Обновляем данные в hookstate-кэше
     cellsContent.set((old) => {
         const index = old[cellId]?.findIndex((c) => c.id === id);

@@ -102,6 +102,7 @@ export default function TipTapSlotEditor({
         },
     });
     
+    
     React.useEffect(() => {
         if (editor && editor.isEmpty && !value?.trim() && initialInsert) {
             const chain = editor.chain().focus();

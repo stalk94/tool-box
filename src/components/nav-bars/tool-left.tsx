@@ -92,6 +92,8 @@ export default function SideBarAndToolPanel({ schemaNavBar, center, start, end, 
                         borderLeft: 'none',
                         boxShadow: "inset 3px 0 5px rgba(0, 0, 0, 0.15)",
                         overflowY: "auto",
+                        overflowX: 'hidden',
+                        ...props?.style,
                         ...theme.mixins?.scrollbar
                     }}
                 >

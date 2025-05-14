@@ -253,12 +253,15 @@ export default function BaseLeftSideBar({ collapsed, start, items, onChange, end
         ...theme.mixins.scrollbar
     }
     const merge = () => {
-        const startTransform = start.map((elem)=> {
-            elem.style = { backgroundColor: darken(theme.palette.toolNavBar.main, 0.1), padding:2 } 
-            return elem;
-        });
+        if(start) {
+            const startTransform = start?.map((elem)=> {
+                elem.style = { backgroundColor: darken(theme.palette.toolNavBar.main, 0.1), padding:2 } 
+                return elem;
+            });
 
-        return [...startTransform, ...items];
+            return [...startTransform, ...items];
+        }
+        else return items;
     }
 
     

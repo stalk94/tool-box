@@ -24,14 +24,21 @@ export default function Cell() {
                     display: 'flex',
                     flexDirection: 'column'
                 }}
-                style={{ justifyContent: 'flex-start', height: '100%' }}
+                style={{
+                    justifyContent: 'flex-start',
+                    height: '100%'
+                }}
                 elevation={8}
             >
                 <CardHeader
                     avatar={<StarBorder />}
                     title={
                         <span>
-                            <span style={{ fontSize: '1.5rem' }}>
+                            <span
+                                style={{
+                                    fontSize: '1.5rem'
+                                }}
+                            >
                                 <span
                                     style={{
                                         fontFamily:
@@ -45,7 +52,11 @@ export default function Cell() {
                     }
                     subheader={
                         <span>
-                            <span style={{ fontSize: '0.875rem' }}>
+                            <span
+                                style={{
+                                    fontSize: '0.875rem'
+                                }}
+                            >
                                 <span
                                     style={{
                                         fontFamily:
@@ -81,7 +92,11 @@ export default function Cell() {
                         overflow: 'auto'
                     }}
                 >
-                    <span style={{ fontSize: '0.975rem' }}>
+                    <span
+                        style={{
+                            fontSize: '0.975rem'
+                        }}
+                    >
                         <span
                             style={{
                                 fontFamily:
@@ -99,7 +114,11 @@ export default function Cell() {
                         mb: 0.5
                     }}
                 >
-                    <Box sx={{ p: 1 }}>
+                    <Box
+                        sx={{
+                            p: 1
+                        }}
+                    >
                         <Rating
                             defaultValue={2}
                             precision={1}
@@ -110,9 +129,15 @@ export default function Cell() {
                             }}
                         />
                     </Box>
-                    <Box sx={{ ml: 'auto' }}>
+                    <Box
+                        sx={{
+                            ml: 'auto'
+                        }}
+                    >
                         <Button
-                            sx={{ m: 0.5 }}
+                            sx={{
+                                m: 0.5
+                            }}
                             variant="outlined"
                             size={'medium'} // 'medium', 'small', 'large'
                             onClick={() => {

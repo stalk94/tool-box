@@ -4,10 +4,11 @@ import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
-import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent } from '@dnd-kit/core';
+import { DndContext, closestCenter, PointerSensor, useSensor, useSensors, DragEndEvent, DragStartEvent, useDroppable } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from './utils/editor';
+import { DroppableCell } from './Dragable';
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -15,16 +16,12 @@ const margin: [number, number] = [5, 5];
 
 
 export default function ({ desserealize }) {
-    const cacheDrag = React.useRef<HTMLDivElement>(null);
     const ctx = useHookstate(useEditorContext());
     const render = useHookstate(useRenderState());
     const containerRef = React.useRef(null);
     const curCell = useHookstate(ctx.currentCell);                // текушая выбранная ячейка
     const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
     const cellsCache = useHookstate(useCellsContent());                    // элементы в ячейках (dump из localStorage)
-    const sensors = useSensors(
-        useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
-    );
 
 
     const handleDragEnd = (event: DragEndEvent, cellId: string) => {
@@ -298,35 +295,31 @@ export default function ({ desserealize }) {
                                 background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
                             }}
                         >
-                            { EDITOR &&  
-                                <DndContext
-                                    sensors={sensors}
-                                    collisionDetection={closestCenter}
-                                    onDragEnd={(event) => handleDragEnd(event, layer.i)}
-                                    onDragStart={(event) => handleDragStart(event, layer)}
-                                >
+                            <DroppableCell key={layer.i} id={layer.i}>
+                                {EDITOR &&
                                     <SortableContext
                                         items={layer.content.map((cnt) => cnt.props['data-id'])}
                                         strategy={rectSortingStrategy}
                                     >
-                                    { Array.isArray(layer.content) &&
-                                        <>
-                                            { Array.isArray(layer.content) && layer.content.map((component) => (
-                                                <SortableItem 
-                                                    key={component.props['data-id']} 
-                                                    id={component.props['data-id']}
-                                                >
-                                                    { React.isValidElement(component) 
-                                                        ? component 
-                                                        : desserealize(component) 
-                                                    }
-                                                </SortableItem>
-                                            ))}
-                                        </>
-                                    }
+                                        {Array.isArray(layer.content) &&
+                                            <>
+                                                {Array.isArray(layer.content) && layer.content.map((component) => (
+                                                    <SortableItem
+                                                        key={component.props['data-id']}
+                                                        id={component.props['data-id']}
+                                                        cellId={layer.i}
+                                                    >
+                                                        {React.isValidElement(component)
+                                                            ? component
+                                                            : desserealize(component)
+                                                        }
+                                                    </SortableItem>
+                                                ))}
+                                            </>
+                                        }
                                     </SortableContext>
-                                </DndContext>
-                            }
+                                }
+                            </DroppableCell>
                             {/* ANCHOR - Вне редактора */}
                             { (!EDITOR && Array.isArray(layer.content)) && 
                                 layer.content.map((component, index) => 
@@ -342,8 +335,6 @@ export default function ({ desserealize }) {
         </div>
     );
 }
-
-
 
 /**
  *  React.useEffect(() => {

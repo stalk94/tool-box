@@ -13,7 +13,11 @@ export default function Cell() {
                 }}
             >
                 <span>
-                    <span style={{ fontSize: '1rem' }}>
+                    <span
+                        style={{
+                            fontSize: '1rem'
+                        }}
+                    >
                         <span
                             style={{
                                 fontFamily:
@@ -24,8 +28,16 @@ export default function Cell() {
                         </span>
                     </span>
                 </span>
-                <span style={{ color: 'rgba(226, 51, 51, 1)' }}>
-                    <span style={{ fontSize: '1rem' }}>
+                <span
+                    style={{
+                        color: 'rgba(226, 51, 51, 1)'
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: '1rem'
+                        }}
+                    >
                         <span
                             style={{
                                 fontFamily:

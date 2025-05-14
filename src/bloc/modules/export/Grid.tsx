@@ -1,5 +1,10 @@
+import { parse } from '@babel/parser';
+import traverse from '@babel/traverse';
+import generate from '@babel/generator';
+import type { File } from '@babel/types';
 import { LayoutCustom } from '../../type';
 import { exportLiteralToFile } from "../../utils/export";
+import { Component } from '../../type';
 
 
 export function mergeImports(importLines: string[]): string[] {
@@ -61,14 +66,44 @@ function objectArrayToJsLiteralWithoutContent(arr: object[], indent = 4): string
         const entries = Object.entries(obj)
             .filter(([key]) => key !== 'content') // ❌ исключаем `content`
             .map(([key, value]) => {
-                const valStr = typeof value === 'string'
-                    ? `"${value}"`
-                    : JSON.stringify(value, null, 0);
+                const valStr = JSON.stringify(value);
                 return `${space}${key}: ${valStr}`;
             }).join(',\n');
 
         return `${space}{\n${entries}\n${space}}`;
     }).join(',\n') + `\n]`;
+}
+// ANCHOR может в next js не срабатывать
+export function getComponentLiteral(code: string): string {
+    let ast: File;
+
+    try {
+        ast = parse(code, {
+            sourceType: 'module',
+            plugins: ['jsx', 'typescript']
+        });
+    } 
+    catch (err) {
+        console.error('Babel parse error:', err);
+        return code.trim(); // если код некорректный — вернём как есть
+    }
+
+    let found = false;
+    let jsxCode = '';
+
+    traverse(ast, {
+        ReturnStatement(path) {
+            const arg = path.node.argument;
+            if (arg) {
+                const output = generate(arg, { retainLines: false });
+                jsxCode = output.code;
+                found = true;
+                path.stop();
+            }
+        }
+    });
+
+    return found ? jsxCode.trim() : code.trim();
 }
 
 
@@ -102,13 +137,7 @@ export default function exportsGrid(
             body: bodyLines.join('\n') // остальная часть кода как строка
         };
     }
-    const getComponentLiteral = (code: string) => {
-        const match = code.match(/return\s*\(\s*([\s\S]*?)\s*\);/);
-        const extractedJSX = match?.[1]?.trim();
-
-        return extractedJSX ?? code;
-    }
-    const renderComponents = async(content: [], cell: LayoutCustom) => {
+    const renderComponents = async(content: Component[], cell: LayoutCustom) => {
         const imports: string[] = [];
         const bodys: string[] = [];
         const singletonsimports: string[] = [];
@@ -163,6 +192,7 @@ export default function exportsGrid(
 
         await Promise.all(
             render.map(async (layout) => {
+                if (!Array.isArray(layout.content)) return;
                 const content = layout.content;
                 const cellid = layout.i;
 
@@ -263,3 +293,12 @@ export default function exportsGrid(
     renderLiteralGrid();
 }
 
+
+/**
+ *  const getComponentLiteral = (code: string) => {
+        const match = code.match(/return\s*\(\s*([\s\S]*?)\s*\);/);
+        const extractedJSX = match?.[1]?.trim();
+
+        return extractedJSX ?? code;
+    }
+ */

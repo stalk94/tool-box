@@ -36,7 +36,6 @@ const propsButton = {
     disableRipple: [true, false], // Убрать ripple-эффект при клике
     disableFocusRipple: [true, false], // Убрать ripple при фокусе
 }
-
 const propsIconButton = {
     color: ['default', 'inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], // Цвет
     size: ['small', 'medium', 'large'], // Размер
@@ -53,7 +52,6 @@ const propsIconButton = {
     disableFocusRipple: [true, false], // Отключить ripple при фокусе
     disableRipple: [true, false], // Отключить ripple-эффект
 }
-
 const propsTypography = {
     variant: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'overline', 'button', 'srOnly'], // Типы текста
     align: ['left', 'center', 'right', 'justify'], // Выравнивание текста 'inherit', 
@@ -75,6 +73,12 @@ const propsTypography = {
         }
     }
 }
+const propsDivider = {
+    variant: ["inset", "fullWidth", "middle"],
+    color: ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'],
+    orientation: ["horizontal", "vertical"]
+}
+
 
 const propsImage = {
     src: 'string',
@@ -207,6 +211,25 @@ const propsInputSwitch = {
         }
     }
 }
+const propsAcordeon = {
+    styles: {
+        title: {
+            borderStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset', 'outset'],
+            borderColor: { type: 'color' },
+            background: { type: 'color' },
+            borderRadius: { type: 'slider', min: 0, max: 30, step: 1 },
+            color: { type: 'color' },
+            fontSize: { type: 'slider', min: 8, max: 48, step: 2 },
+            paddingLeft: { type: 'slider', min: 0, max: 30, step: 1 },
+        },
+        body: {
+            paddingTop: { type: 'slider', min: 0, max: 30, step: 1 },
+            paddingBottom: { type: 'slider', min: 0, max: 30, step: 1 },
+            paddingLeft: { type: 'slider', min: 0, max: 30, step: 1 },
+            paddingRight: { type: 'slider', min: 0, max: 30, step: 1 },
+        }
+    }
+}
 
 
 export default {
@@ -225,5 +248,7 @@ export default {
     ToggleButtons: propsInputToogle,
     CheckBox: propsInputCheck,
     Switch: propsInputSwitch,
-    Card: propsCard
+    Card: propsCard,
+    Accordion: propsAcordeon,
+    Divider: propsDivider
 }
