@@ -99,3 +99,6 @@
 .buttontable:hover {
     opacity: 0.5;
 }
+.json-viewer-copy-icon {
+  display: none !important;
+}

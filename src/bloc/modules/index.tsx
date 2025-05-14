@@ -15,9 +15,8 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
 import { HorizontalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
-import { DividerWrapper, LinearNavigationWrapper } from './any';
+import { DividerWrapper, AvatarWrapper, ChipWrapper} from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, HeaderWrapper, BreadcrumbsWrapper } from './complex';
-import { DataSourceTableProps } from './sources/table';
 import { sharedContext, sharedEmmiter } from './utils/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../utils/sanitize';
@@ -85,6 +84,7 @@ registerComponent({
     type: 'Image',
     component: ImageWrapper,
     defaultProps: {
+        fullWidth: true,
         src: '/placeholder.jpg',
         file: '',
         'data-source': 'src',
@@ -105,7 +105,6 @@ registerComponent({
         loop: false,
         poster: '',
         fullWidth: true,
-        width: '100%',
     },
     icon: VideoCameraFront,
     category: 'media',
@@ -115,6 +114,7 @@ registerComponent({
     type: 'IconButton',
     component: IconButtonWrapper,
     defaultProps: {
+        fullWidth: true,
         icon: 'Add',
         color: 'default',
     },
@@ -132,7 +132,6 @@ registerComponent({
         placeholder: 'ввод',
         divider: 'none',
         fullWidth: true,
-        width: '100%',
         leftIcon: 'none',
         styles: {} satisfies InputStyles,
         labelStyle: {
@@ -150,7 +149,6 @@ registerComponent({
         position: 'column',
         placeholder: 'ввод number',
         fullWidth: true,
-        width: '100%',
         styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
@@ -167,7 +165,6 @@ registerComponent({
         position: 'column',
         type: 'time',
         fullWidth: true,
-        width: '100%',
         styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
@@ -184,7 +181,6 @@ registerComponent({
         position: 'column',
         type: 'date',
         fullWidth: true,
-        width: '100%',
         styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
@@ -200,7 +196,6 @@ registerComponent({
         label: 'label',
         position: 'column',
         fullWidth: true,
-        width: '100%',
         leftIcon: 'none',
         rightIcon: 'none',
         labelStyle: {
@@ -217,7 +212,6 @@ registerComponent({
         label: 'label',
         position: 'column',
         fullWidth: true,
-        width: '100%',
         items: [
             { id: '1', label: 'test-1' },
             { id: '2', label: 'test-2' },
@@ -236,7 +230,6 @@ registerComponent({
         label: 'label',
         position: 'column',
         fullWidth: true,
-        width: '100%',
         labelStyle: {
             fontSize: 14,
         }
@@ -248,10 +241,9 @@ registerComponent({
     type: 'CheckBox',
     component: CheckBoxInputWrapper,
     defaultProps: {
+        fullWidth: true,
         label: 'label',
         position: 'column',
-        fullWidth: true,
-        width: '100%',
         labelStyle: {
             fontSize: 14,
         }
@@ -266,7 +258,6 @@ registerComponent({
         label: 'label',
         position: 'column',
         fullWidth: true,
-        width: '100%',
         items: [
             { id: '1', label: 'test-1' },
             { id: '2', label: 'test-2' },
@@ -285,7 +276,6 @@ registerComponent({
         label: 'label',
         position: 'column',
         fullWidth: true,
-        width: '100%',
         options: [
             { id: '1', label: 'пики' },
             { id: '2', label: 'стволы' },
@@ -304,7 +294,6 @@ registerComponent({
         label: 'label',
         position: 'column',
         fullWidth: true,
-        width: '100%',
         labelStyle: {
             fontSize: 14,
         }
@@ -396,6 +385,36 @@ registerComponent({
     category: 'misc',
 });
 registerComponent({
+    type: 'Avatar',
+    component: AvatarWrapper,
+    defaultProps: {
+        fullWidth: true,
+        sizes: 36,
+        src: 'https://mui.com/static/images/avatar/3.jpg',
+        file: '',
+        icon: '',
+        'data-source': 'src',
+        style: {}
+    },
+    icon: LinearScale,
+    category: 'misc',
+});
+registerComponent({
+    type: 'Chip',
+    component: ChipWrapper,
+    defaultProps: {
+        fullWidth: true,
+        variant: '',
+        size: 'small',
+        color: '',
+        icon: '',
+        label: 'chip',
+        style: {}
+    },
+    icon: LinearScale,
+    category: 'misc',
+});
+registerComponent({
     type: 'Card',
     component: CardWrapper,
     defaultProps: {
@@ -424,7 +443,6 @@ registerComponent({
     component: AccordionWrapper,
     defaultProps: {
         fullWidth: true,
-        width: '100%',
         activeIndexs: [],
         styles: {},
         items: [
@@ -442,7 +460,6 @@ registerComponent({
     component: TabsWrapper,
     defaultProps: {
         fullWidth: true,
-        width: '100%',
         slots: {
             0: [],
             1: [],
@@ -462,7 +479,6 @@ registerComponent({
     component: BottomNavWrapper,
     defaultProps: {
         fullWidth: true,
-        width: '100%',
         items: [
             {icon: 'Home'},
             {icon: 'Add'},

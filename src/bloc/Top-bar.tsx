@@ -16,7 +16,7 @@ export type ContentData = {
 const categories = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> },
-    { id: 'slot', label: <Input style={{fontSize: 24}} /> }
+    { id: 'preview', label: <Input style={{fontSize: 24}} /> }
 ];
 const Instrument = () => {
     const mod = useHookstate(useEditorContext().mod);

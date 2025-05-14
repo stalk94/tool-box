@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import * as htmlToImage from 'html-to-image';
-import { LayoutCustom, ComponentSerrialize, Component } from './type';
+import { LayoutCustom, ComponentSerrialize, Component, Events } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
@@ -20,6 +20,7 @@ import { useSafeAsync, useSafeAsyncEffect } from "./utils/usePopUp";
 import { db } from "./utils/export";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import GridTest from 'public/export/test/header/index.tsx';
+import GridTest2 from 'public/export/home/root/index';
 import "../style/edit.css";
 
 
@@ -33,7 +34,7 @@ if (!window.next) {
 }
 
 // ANCHOR - СИТЕМНЫЙ ЭММИТЕР
-if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter();
+if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter<Events>();
 
 
 
@@ -91,7 +92,7 @@ export default function Block({ setShowBlocEditor }) {
     const dumpRender = () => {
         const name = ctx.meta.name.get();
         const scope = ctx.meta.scope.get();
-        snapshotAndUpload(`${scope}-${name}`);
+        //snapshotAndUpload(`${scope}-${name}`);
         saveBlockToFile(scope, name);
     }
     const desserealize = (component: ComponentSerrialize) => {
@@ -364,23 +365,24 @@ export default function Block({ setShowBlocEditor }) {
                     useDump={dumpRender}
                     addComponentToLayout={addComponentToLayout}
                 />
+                
                 <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                     { mod.get() === 'slot' && <PropsEditor /> }
                     
                     { mod.get() === 'preview' 
-                        ? <GridTest />
+                        ? <GridTest2 />
                         : <GridComponentEditor
                             desserealize={desserealize}
                         />
                     }
-                    <GridTest />
+                    
                 </div>
             </div>
         </DndContext>
     );
 }
-
+//<GridTest />
 
 
 /**

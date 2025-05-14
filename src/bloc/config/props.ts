@@ -78,6 +78,10 @@ const propsDivider = {
     color: ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'],
     orientation: ["horizontal", "vertical"]
 }
+const propsChip = {
+    variant: ['filled', 'outlined'],
+
+}
 
 
 const propsImage = {
@@ -250,5 +254,6 @@ export default {
     Switch: propsInputSwitch,
     Card: propsCard,
     Accordion: propsAcordeon,
-    Divider: propsDivider
+    Divider: propsDivider,
+    Chip: propsChip
 }

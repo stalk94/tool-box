@@ -8,7 +8,7 @@ import useContextMenu from '@components/context-main';
 import { updateComponentProps } from './utils/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./utils/export";
-import { serializeJSX } from './utils/sanitize';
+import { serializeJSX, serrialize } from './utils/sanitize';
 import { LinktoolBar, SlotToolBar } from './modules/utils/Toolbar';
 
 
@@ -25,29 +25,30 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         id ,
         data: {
             type: 'sortable',
-            cellId
+            cellId,
+            element: children
         },
         disabled: !dragEnabled.get()        // ✅ глобальный флаг
     });
     
-   
+
+    if(children.props.width) console.log(children.props);
+    //console.log(EDITOR);
+
     const styleWrapper: React.CSSProperties = {
         position: 'relative',
         transform: CSS.Transform.toString(transform),
         transition,
-        //marginTop: 3,
         opacity: isDragging ? 0.5 : 1,
-        width: children.props.fullWidth ? (children.props.width ?? '100%') : 'fit-content',
-        height: 'fit-content',
-        display: 'inline-flex',
-        verticalAlign: 'top',
+        width: children.props.fullWidth ? '100%' : (children.props.width ?? 300),
+        display: 'flex',
         cursor: dragEnabled.get() ? 'grab' : 'default',
-        // для отладки
-        //paddingTop: 3,
-        //paddingBottom: 3,
+        alignItems: 'center',
         borderRight: '1px dotted #8580806b',
         transformOrigin: 'center',
-        
+        flexShrink: 0,
+        flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 100),
+        maxWidth: '100%',
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code)
@@ -156,6 +157,17 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
             onClick: (id)=> {
                 sharedEmmiter.emit('degidratation.'+id, {call: useDegidratationHandler})
             }
+        },
+        { 
+            label: <div style={{color:'#a8de82',fontSize:14}}>edit</div>, 
+            icon: <Edit sx={{color:'#a8de82',fontSize:18}} />, 
+            onClick: (id)=> EVENT.emit('jsonRender', {
+                call: (data)=> updateComponentProps({
+                    component: { props: children.props }, 
+                    data: {...data}
+                }),
+                data: serrialize(children, cellId).props
+            }), 
         },
         { 
             label: <div style={{color:'red',fontSize:14}}>Удалить</div>, 

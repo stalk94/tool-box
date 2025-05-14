@@ -40,7 +40,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
         
         const updated = layers.map((layer) => {
             if (!Array.isArray(layer.content)) return layer;
-
+            
             const i = layer.content.findIndex((c) => c?.props?.['data-id'] === id);
             if (i === -1) return layer;
 
@@ -56,6 +56,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
                     ...data,
                 });
 
+                console.log(updatedComponent)
                 infoState.select?.content?.set(updatedComponent);         // fix
                 layer.content[i] = updatedComponent;
             } 

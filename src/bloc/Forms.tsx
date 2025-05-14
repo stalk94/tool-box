@@ -8,15 +8,15 @@ import { sanitizeProps } from './utils/sanitize';
 import { debounce, max } from 'lodash';
 import { PropsForm, ProxyComponentName } from './type';
 import { merge } from 'lodash';
+import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/icons-material";
 
 
 // составляет индивидуальную схему пропсов
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
     const numberKeys = ['min', 'max', 'step', 'heightMedia'];
-    const switchKeys = ['fullWidth', 'fullHeight'];
+    const switchKeys = ['fullHeight'];
     //const fileKeys = [''];
-
     
     if(switchKeys.includes(propName)) {
         return {
@@ -62,17 +62,29 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
     else return fabrickUnical(propName, propValue, theme, typeContent);
 }
 const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<string, any>, theme: Theme) => {
-    const result = { schema: [], acSchema: [] };
+    const result = {
+        schema: [{
+            type: 'switch',
+            id: 'fullWidth',
+            label: 'fullWidth',
+            labelSx: { fontSize: '14px' },
+            value: props?.fullWidth
+        }], 
+        acSchema: []
+    };
+    const specific = ['Avatar'];
 
-    Object.keys(props).forEach((propsName) => {
+    
+    if(!specific.includes(typeComponent)) Object.keys(props).forEach((propsName) => {
         const value = props[propsName];
+        
 
         // проп массив либо обьект
         if (typeof value === 'object') {
             //console.log(propsName, value);
         }
         // проп является элементарным типом
-        else {
+        else if(propsName !== 'fullWidth') {
             const schema = useCreateSchemeProp(
                 typeComponent,
                 propsName,
@@ -83,7 +95,66 @@ const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<
             if (schema) result.schema.push(schema);
         }
     });
+    else {
+        //"circular" | "rounded" | "square"
+        result.schema.push({
+            type: 'number',
+            id: 'sizes',
+            value: props.sizes,
+            min: 24,
+            label: 'sizes',
+            labelSx: { fontSize: '14px' },
+            sx: { fontSize: 14 }
+        }, {
+            type: 'toggle',
+            id: 'variant',
+            items: [
+                { id: 'circular', label: <Circle/> },
+                { id: 'rounded', label: <CropSquare/> },
+                { id: 'square', label: <Square/> },
+            ],
+            label: 'variant',
+            value: props?.variant ?? 'circular',
+            labelSx: { fontSize: '14px' }
+        }, {
+            type: 'toggle',
+            id: 'data-source',
+            items: [
+                { id: 'src', label: <Source /> },
+                { id: 'icon', label: <Bookmark /> },
+                { id: 'children', label: <HMobiledata /> }
+            ],
+            label: 'data-source',
+            value: props['data-source'],
+            labelSx: { fontSize: '14px' }
+        });
 
+        result.schema.push({
+            type: 'text',
+            id: 'src',
+            multiline: true,
+            label: 'src',
+            labelSx: { fontSize: '14px' },
+            value: props.src,
+        });
+        result.schema.push({
+            type: 'file',
+            id: 'file',
+            label: 'upload',
+            labelSx: { fontSize: '14px' },
+            value: props.src,
+        });
+        result.schema.push({
+            type: 'text',
+            multiline: true,
+            id: 'children',
+            label: 'children',
+            labelSx: { fontSize: '14px' },
+            value: props.children,
+        });
+        result.schema.push(fabrickUnical('icon', props.icon, theme, 'Avatar'));
+    }
+    
     return result;
 }
 

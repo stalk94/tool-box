@@ -138,7 +138,7 @@
       "i": "cell-1746978863758",
       "x": 6,
       "y": 2,
-      "w": 3,
+      "w": 6,
       "h": 14,
       "content": [
         {
@@ -277,8 +277,8 @@
       "i": "cell-1747075557335",
       "x": 0,
       "y": 17,
-      "w": 12,
-      "h": 2,
+      "w": 4,
+      "h": 4,
       "content": [],
       "moved": false,
       "static": false
@@ -334,7 +334,59 @@
             "fullWidth": true,
             "width": "100%",
             "slots": {
-              "0": [],
+              "0": [
+                {
+                  "type": {},
+                  "key": null,
+                  "props": {
+                    "children": "Button",
+                    "variant": "outlined",
+                    "color": "primary",
+                    "fullWidth": true,
+                    "startIcon": "none",
+                    "endIcon": "none",
+                    "style": {},
+                    "data-id": 1747186371532,
+                    "data-type": "Button"
+                  },
+                  "_owner": null,
+                  "_store": {}
+                },
+                {
+                  "type": {},
+                  "key": null,
+                  "props": {
+                    "children": "Button",
+                    "variant": "outlined",
+                    "color": "primary",
+                    "fullWidth": true,
+                    "startIcon": "none",
+                    "endIcon": "none",
+                    "style": {},
+                    "data-id": 1747186391363,
+                    "data-type": "Button"
+                  },
+                  "_owner": null,
+                  "_store": {}
+                },
+                {
+                  "type": {},
+                  "key": null,
+                  "props": {
+                    "children": "Button",
+                    "variant": "outlined",
+                    "color": "primary",
+                    "fullWidth": true,
+                    "startIcon": "none",
+                    "endIcon": "none",
+                    "style": {},
+                    "data-id": 1747186396535,
+                    "data-type": "Button"
+                  },
+                  "_owner": null,
+                  "_store": {}
+                }
+              ],
               "1": [],
               "2": []
             },
@@ -350,6 +402,26 @@
           "_store": {}
         }
       ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1747215467159",
+      "x": 4,
+      "y": 17,
+      "w": 4,
+      "h": 4,
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1747215472947",
+      "x": 8,
+      "y": 17,
+      "w": 4,
+      "h": 4,
+      "content": [],
       "moved": false,
       "static": false
     }
@@ -587,9 +659,54 @@
             "justifyContent": "flex-start"
           }
         }
+      },
+      {
+        "id": 1747215424058,
+        "parent": "cell-1746978863758",
+        "props": {
+          "icon": "LocalOffer",
+          "color": "error",
+          "data-id": 1747215424058,
+          "data-type": "IconButton"
+        }
+      },
+      {
+        "id": 1747220357384,
+        "parent": "cell-1746978863758",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "success",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1747220357384,
+          "data-type": "Button"
+        }
       }
     ],
-    "cell-1747075557335": [],
+    "cell-1747075557335": [
+      {
+        "id": 1747215485706,
+        "parent": "cell-1747075557335",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод",
+          "divider": "none",
+          "fullWidth": true,
+          "width": "100%",
+          "leftIcon": "none",
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747215485706,
+          "data-type": "TextInput"
+        }
+      }
+    ],
     "cell-1747137570401": [
       {
         "id": 1747151749900,
@@ -694,16 +811,62 @@
           "data-type": "Tabs"
         }
       }
+    ],
+    "cell-1747215467159": [
+      {
+        "id": 1747215491159,
+        "parent": "cell-1747215467159",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод number",
+          "fullWidth": true,
+          "width": "100%",
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747215491159,
+          "data-type": "Number"
+        }
+      }
+    ],
+    "cell-1747215472947": [
+      {
+        "id": 1747215513919,
+        "parent": "cell-1747215472947",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "width": "100%",
+          "items": [
+            {
+              "id": "1",
+              "label": "test-1"
+            },
+            {
+              "id": "2",
+              "label": "test-2"
+            }
+          ],
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747215513919,
+          "data-type": "ToggleButtons"
+        }
+      }
     ]
   },
   "meta": {
     "scope": "test",
     "name": "header",
-    "updatedAt": 1747186561105,
+    "updatedAt": 1747220374642,
     "preview": "snapshots/test-header.png"
   },
   "size": {
     "width": 1200,
-    "height": 470
+    "height": 535
   }
 }

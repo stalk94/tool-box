@@ -292,7 +292,13 @@ export default function ({ desserealize }) {
                                 overflowX: 'hidden',
                                 overflowY: 'auto',
                                 border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
-                                background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)'
+                                background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
+                                height: '100%',
+                                display: 'inline-flex',
+                                width: '100%',
+                                flexWrap: 'wrap',
+                                alignItems: 'stretch',
+                                alignContent: 'flex-start'
                             }}
                         >
                             <DroppableCell key={layer.i} id={layer.i}>

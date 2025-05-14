@@ -43,6 +43,7 @@ export function DraggableToolItem({ id, type, dataType, element }) {
     );
 }
 export function DragItemCopyElement({ activeDragElement }) {
+    
     return(
         <div 
             style={{ 
@@ -103,6 +104,7 @@ export function DroppableCell({ id, children }) {
         },
     });
     
+    //const style
     React.useEffect(() => {
         activeSlotState.set(null);
     }, [isOver]);
@@ -112,7 +114,12 @@ export function DroppableCell({ id, children }) {
             ref={setNodeRef}
             style={{
                 border: isOver && '1px dashed lime',
-                height: '100%'
+                height: '100%',
+                display: 'inline-flex',
+                width: '100%',
+                flexWrap: 'wrap',
+                alignItems: 'stretch',
+                alignContent: 'flex-start'
             }}
         >
             { children }

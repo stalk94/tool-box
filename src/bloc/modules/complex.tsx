@@ -161,7 +161,6 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             slots
         );
 
-        console.log(code)
         call(code);
     }
     React.useEffect(() => {

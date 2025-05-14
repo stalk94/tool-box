@@ -41,7 +41,6 @@ export type SideBarAndToolPanelProps = {
  */
 export default function SideBarAndToolPanel({ schemaNavBar, center, start, end, children, onChangeNavigation, ...props }: SideBarAndToolPanelProps) {
     const theme = useTheme();
-    
 
     const useBackgroundColor =()=> {
         const mainColor = theme.palette.toolNavBar.main;
@@ -55,6 +54,7 @@ export default function SideBarAndToolPanel({ schemaNavBar, center, start, end, 
             return darken(bcgColor, 0.1);
         }
     }
+
 
     return(
         <Box component='div'

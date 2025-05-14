@@ -1,6 +1,26 @@
 import { Layout } from "react-grid-layout";
 import { RegistreTypeComponent } from './config/type';
 import React from 'react'
+import EventEmitter from "../app/emiter";
+
+
+export interface Events {
+    htmlRender: (data: { str: string; view:any })=> void
+    jsonRender: (data: { call: (newJson: any)=> void })=> void
+    leftBarChange: (data: any)=> void
+    onSelectCell: (cellId: string|number)=> void
+    // добавить новый layout grid (ячейку)
+    addCell: ()=> void
+}
+export interface EventsShared {
+    [key: string]: (data: any)=> void
+    //вызовет у всех компонентов в ячейках функцию рендера в литерал
+    degidratation: (data: { call: (code: string)=> void, data: any})=> void
+}
+declare global {
+    var EVENT: EventEmitter<Events>;
+    var sharedEmmiter: EventEmitter<EventsShared>;
+}
 
 
 // все компоненты исходные используемые в редакторе и вне

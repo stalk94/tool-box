@@ -240,6 +240,12 @@ export default function exportsGrid(
                         style={{
                             overflowX: 'hidden',
                             overflowY: 'auto',
+                            height: '100%',
+                            display: 'inline-flex',
+                            width: '100%',
+                            flexWrap: 'wrap',
+                            alignItems: 'stretch',
+                            alignContent: 'flex-start'
                         }}
                     >
                         { ${find.nameVar}() }

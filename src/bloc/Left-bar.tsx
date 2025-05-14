@@ -432,6 +432,7 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
         EVENT.on('leftBarChange', handler);
         return () => EVENT.off('leftBarChange', handler);
     }, []);
+   
 
     // Обработка навигации по разделам
     const changeNavigation =(item) => {
@@ -474,8 +475,11 @@ export default function ({ addComponentToLayout, useDump, desserealize }: LeftTo
     return (
         <LeftSideBarAndTool
             selected={currentToolPanel}
-            sx={{ height: '100%', overflow: 'hidden' }}
-            style={{overflow: 'hidden'}}
+            sx={{ height: '100%' }}
+            style={{
+                overflow: currentToolPanel === 'items' ? 'hidden' : 'auto',
+                overflowY: currentToolPanel === 'items' ? 'hidden' : 'auto' 
+            }}
             schemaNavBar={{ 
                 items: menuItems, 
                 end: endItems 

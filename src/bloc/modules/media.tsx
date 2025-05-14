@@ -23,6 +23,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         'data-source': source,
         sizes = '100vw',
         objectFit = 'cover',
+        fullWidth,
         style = {},
         ...otherProps
     } = props;

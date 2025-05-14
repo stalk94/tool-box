@@ -24,7 +24,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
             { width: '100%', ...style },
         );
 
-        formatJsx(code).then(call);
+        call(code);
     }
     React.useEffect(() => {
         const handler = (data) => degidratationRef.current(data.call);
@@ -85,7 +85,7 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
             otherProps
         );
 
-        formatJsx(code).then(call);
+        call(code);
     }
     React.useEffect(() => {
         const handler = (data) => degidratationRef.current(data.call);
@@ -97,8 +97,11 @@ export const TypographyWrapper = React.forwardRef((props: any, ref) => {
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
-
+    React.useEffect(() => {
+        if(children) setText(children);
+    }, [children]);
     
+
     return(
         <Typography
             ref={ref} 

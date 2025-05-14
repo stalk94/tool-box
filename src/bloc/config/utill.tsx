@@ -317,7 +317,7 @@ export const stylesFabricScheme = (type: RegistreTypeComponent, source: Record<s
 
 
 /**
- * ФАБРИКА КОНСТРУИРУЕТ ФОРМЫ ДЛЯ ПРОПСОВ
+ * ФАБРИКА КОНСТРУИРУЕТ ФОРМЫ ДЛЯ ПРОПСОВ основываясь на распостраненных именах пропсов
  * @param type 
  * @param defaultValue 
  * @param typeProps 
@@ -393,6 +393,7 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
             items: items
         }
     }
+    // индвивидуальные пропсы для типов
     else if(typeComponent && metaProps[typeComponent]?.[propName]) {
         const vars: [] | string = metaProps[typeComponent][propName];
         

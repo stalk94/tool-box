@@ -103,6 +103,25 @@ export function deserializeJSX(node: any, maps?: Record<string, any>): any {
     return node;
 }
 
+
+export const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
+    const rawProps = { ...component.props };
+    const type = rawProps['data-type'];
+    const id = rawProps['data-id'] ?? Date.now();
+
+    delete rawProps.ref;
+    const cleanedProps = serializeJSX(rawProps);
+
+    return {
+        id,
+        parent: cellId,
+        props: {
+            ...cleanedProps,
+            'data-id': id,
+            'data-type': type,
+        }
+    };
+}
 export const desserealize = (component: ComponentSerrialize, data?: Record<string, any>) => {
         const { id, props, functions, parent } = component;
         const type = props["data-type"];

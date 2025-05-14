@@ -24,7 +24,13 @@ export type EditorContextType = {
         width: number;
         height: number;
         breackpoint: string;
-    };
+    }
+    inspector: {
+        lastData: any
+        colapsed: boolean
+        isAbsolute: boolean
+        position: {x:number, y:number}
+    }
     currentCell?: string;
 }
 export type InfoStateType = {
@@ -84,6 +90,15 @@ export function useEditorContext(): State<EditorContextType> | null {
                 layout: [],
                 size: { width: 1000, height: 600, breackpoint: 'lg' },
                 currentCell: undefined,
+                inspector: {
+                    lastData: {},
+                    colapsed: false,
+                    isAbsolute: false,
+                    position: {
+                        x: window.innerWidth-400,
+                        y: 50
+                    }
+                },
             },
             localstored({ 
                 key: 'CONTEXT', 
@@ -134,10 +149,6 @@ export function useInfoState(): State<InfoStateType> | null {
                 panel: {
                     lastAddedType: '',
                 },
-            },
-            inspector: {
-                lastData: {},
-                task: [],
             },
             project: {},
             contentAllRefs: undefined,
