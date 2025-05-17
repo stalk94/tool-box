@@ -70,14 +70,11 @@ export type NestedContextStateType = {
     isEnable: boolean,
     currentData: SlotDataBus
 }
-export type StorageStateType = {
-    [key: string]: []
-}
+
 
 
 let contextState: State<EditorContextType> | null = null;
 let nestedContextState: State<EditorContextType> | null = null;
-let storageState: State<StorageStateType> | null = null;
 let renderStateInstance: State<LayoutCustom[]> | null = null;
 let cellsContentInstance: State<Record<string, ComponentSerrialize[]>> | null = null;
 let infoStateInstance: State<InfoStateType> | null = null;
@@ -180,16 +177,4 @@ export function useInfoState(): State<InfoStateType> | null {
     }
 
     return infoStateInstance;
-}
-
-
-
-export function useStorageContext(): State<StorageStateType> | null {
-    if (typeof window === 'undefined') return null;
-
-    if (!storageState) {
-        storageState = hookstate<StorageStateType>({});
-    }
-
-    return storageState;
 }

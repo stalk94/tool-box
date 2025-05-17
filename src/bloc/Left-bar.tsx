@@ -436,7 +436,6 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         if (item.id === 'component') setCurrentToolPanel('component');
         else if (item.id === 'project') setCurrentToolPanel('project');
         else if (item.id === 'styles') setCurrentToolPanel('styles');
-        else if (item.id === 'func') setCurrentToolPanel('func');
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') useDump();
         else if (item.id === 'export') handleExportGrid();

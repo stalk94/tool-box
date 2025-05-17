@@ -81,6 +81,7 @@ export default function ({ desserealize, layout, dataCell }: NestGridEditor) {
         info.select.content.set(null);
     }
     const consolidation = (layoutList: LayoutCustom[]) => {
+        console.log('consolidation')
         return layoutList.map((layer) => {
             const cache = cellsCache.get({ noproxy: true });
             const curCacheLayout = cache[layer.i];
@@ -99,14 +100,16 @@ export default function ({ desserealize, layout, dataCell }: NestGridEditor) {
         });
     }
     const handleChangeLayout = (layout) => {
-        ctx.layout.set((prev) =>
-            prev.map((cell) => {
-                const updated = layout.find((l) => l.i === cell.i);
-                return updated ? { ...cell, ...updated } : cell;
-            })
-        );
-        
-        render.set(consolidation(layout))
+        if(layout[0]) {
+            ctx.layout.set((prev) =>
+                prev.map((cell) => {
+                    const updated = layout.find((l) => l.i === cell.i);
+                    return updated ? { ...cell, ...updated } : cell;
+                })
+            );
+            
+            render.set(consolidation(layout));
+        }
     }
     const addNewCell = () => {
         const all = render.get({ noproxy: true });
@@ -196,7 +199,7 @@ export default function ({ desserealize, layout, dataCell }: NestGridEditor) {
             document.removeEventListener('keydown', handleDeleteKeyPress);
             EVENT.off('addCell', addNewCell);
         }
-    }, [layout]);
+    }, []);
     
     
     

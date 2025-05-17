@@ -33,6 +33,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
                 old[cellId][index].props[key] = value;
             });
         }
+        
         return old;
     });
 

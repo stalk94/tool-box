@@ -241,6 +241,8 @@ export default function Block({ setShowBlocEditor }) {
         const idSlot = nestedContext.currentData.idSlot.get();
         const findComponentSerrialize = findById(idComponent);
 
+        console.log('CHANGE CONTEXT:', editData);
+        
         if (findComponentSerrialize) updateComponentProps({
             component: findComponentSerrialize,
             data: {
@@ -346,9 +348,4 @@ export default function Block({ setShowBlocEditor }) {
         EVENT.on('addComponentToCell', call);
         return ()=> EVENT.off('addComponentToCel', call);
     }, []);
- */
-/**
- *   addComponentToLayout={(elem)=> {
-                    if(curCell.get()?.i) addComponentToCell(curCell.get().i, elem);
-                }}
  */

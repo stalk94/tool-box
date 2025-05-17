@@ -8,7 +8,6 @@ export const activeSlotState = hookstate(null);
 
 
 
-
 export function DraggableToolItem({ id, type, dataType, element }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id,
@@ -94,7 +93,7 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
     );
 }
 // data - данные сетки слота
-export function ContextSlot({ idParent, idSlot, nestedComponentsList, size, children, data }) {
+export function ContextSlot({ idParent, idSlot, nestedComponentsList, size, children, data }: ContextSlotProps) {
     
     return (
         <div

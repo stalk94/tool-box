@@ -22,8 +22,8 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
     const style = {
         color: '#00000000',
         '& .MuiSlider-thumb': {
-            width: '15px',
-            height: '15px',
+            width: '12px',
+            height: '12px',
             backgroundColor: theme.palette.slider.thumb,  // Цвет "пальца" ползунка
             border:`1px solid`,
             ...props?.styles?.thumb,
@@ -74,7 +74,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         if(value !== undefined) setCurValue(value)
     }, [value]);
 
-
+    
     if(!start && !end) return (
         <Box
             sx={{

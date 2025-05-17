@@ -95,6 +95,22 @@ export const components: ThemeOptions = {
                     backdropFilter: 'blur(14px)',
                 }),
             }
-        }
+        },
+        MuiSlider: {
+            styleOverrides: {
+                rail: {
+                    height: 1, // 👈 уменьшенная высота рельсы
+                    borderRadius: 2,
+                },
+                track: {
+                    height: 1, // 👈 чтобы совпадало с rail
+                },
+                thumb: {
+                    //marginTop: '-6px', // 👈 визуальное выравнивание по центру
+                    width: 10,
+                    height: 1
+                },
+            },
+        },
     }
 }

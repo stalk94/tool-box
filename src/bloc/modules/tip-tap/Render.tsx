@@ -1,5 +1,4 @@
 import React from 'react';
-import { useStorageContext } from '../../context';
 import { useHookstate } from '@hookstate/core';
 
 
@@ -59,7 +58,7 @@ function classNamesFromMarks(marks: any[] = []) {
 
 // ! store должен определятся динамически так как в продакшен другая система storages
 function LiveVariable({ name, rowIndex, db, autoIndex }: { name: string; rowIndex: number|'auto' }) {
-    const store = useHookstate(useStorageContext());
+    const store = {};
 
     
     return (
