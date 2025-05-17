@@ -143,11 +143,11 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                     </Select>
                     <span style={{marginRight:'10px', marginLeft:'7px',color:'gray'}}>⋮</span>
                     <NumberInput
-                        value={ctx.size.width.get()}
+                        value={ctx?.size?.width?.get()}
                         min={0}
                         step={5}
                         max={window.innerWidth}
-                        onChange={(v) => ctx.size.width.set(v)}
+                        onChange={(v) => ctx?.size?.width?.set(v)}
                         sx={{ 
                             maxWidth: '80px'
                         }}
@@ -156,8 +156,8 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                         ×
                     </Typography>
                     <NumberInput
-                        value={ctx.size.height.get()}
-                        onChange={(v) => ctx.size.height.set(v)}
+                        value={ctx?.size?.height?.get()}
+                        onChange={(v) => ctx?.size?.height?.set(v)}
                         min={0}
                         max={10000}
                         step={5}

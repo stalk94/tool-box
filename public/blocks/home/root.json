@@ -45,23 +45,6 @@
           "type": {},
           "key": null,
           "props": {
-            "children": "Button",
-            "variant": "outlined",
-            "color": "primary",
-            "fullWidth": true,
-            "startIcon": "none",
-            "endIcon": "none",
-            "style": {},
-            "data-id": 1747257380179,
-            "data-type": "Button"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
             "children": "Заголовокhh",
             "variant": "h5",
             "fullWidth": true,
@@ -116,27 +99,36 @@
           "type": {},
           "key": null,
           "props": {
+            "children": "Button",
+            "variant": "outlined",
+            "color": "primary",
             "fullWidth": true,
-            "showLabels": false,
-            "elevation": 1,
-            "labelSize": 16,
-            "iconSize": 24,
+            "startIcon": "none",
+            "endIcon": "none",
+            "style": {},
+            "data-id": 1747257380179,
+            "data-type": "Button"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "slots": {
+              "0": [],
+              "1": [],
+              "2": []
+            },
             "items": [
-              {
-                "icon": "Home",
-                "label": "home"
-              },
-              {
-                "icon": "Add",
-                "label": "add"
-              },
-              {
-                "icon": "Add",
-                "label": "test"
-              }
+              "one",
+              "two",
+              "three"
             ],
-            "data-id": 1747319597288,
-            "data-type": "BottomNav"
+            "data-id": 1747477815101,
+            "data-type": "Tabs"
           },
           "_owner": null,
           "_store": {}
@@ -404,33 +396,6 @@
         }
       },
       {
-        "id": 1747319597288,
-        "parent": "cell-1746527949939",
-        "props": {
-          "fullWidth": true,
-          "showLabels": false,
-          "elevation": 1,
-          "labelSize": 16,
-          "iconSize": 24,
-          "items": [
-            {
-              "icon": "Home",
-              "label": "home"
-            },
-            {
-              "icon": "Add",
-              "label": "add"
-            },
-            {
-              "icon": "Add",
-              "label": "test"
-            }
-          ],
-          "data-id": 1747319597288,
-          "data-type": "BottomNav"
-        }
-      },
-      {
         "id": 1747257380179,
         "parent": "cell-1746527949939",
         "props": {
@@ -443,6 +408,25 @@
           "style": {},
           "data-id": 1747257380179,
           "data-type": "Button"
+        }
+      },
+      {
+        "id": 1747477815101,
+        "parent": "cell-1746527949939",
+        "props": {
+          "fullWidth": true,
+          "slots": {
+            "0": [],
+            "1": [],
+            "2": []
+          },
+          "items": [
+            "one",
+            "two",
+            "three"
+          ],
+          "data-id": 1747477815101,
+          "data-type": "Tabs"
         }
       }
     ],
@@ -594,7 +578,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1747453924020,
+    "updatedAt": 1747477821925,
     "preview": "snapshots/home-root.png"
   },
   "size": {

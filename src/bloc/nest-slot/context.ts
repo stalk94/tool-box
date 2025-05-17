@@ -37,6 +37,7 @@ export type EditorContextType = {
     },
 }
 export type InfoStateType = {
+    componentMap: Record<string, any>
     container: {
         width: number;
         height: number;
@@ -61,7 +62,13 @@ export type InfoStateType = {
         lastData: any;
         task: any[];
     };
-    project: Record<string, any>;
+    project?: {
+        content: Record<string, ComponentSerrialize[]>
+        size: {
+            width: number
+            height: number
+        }
+    };
     contentAllRefs?: any;
     activeEditorTipTop: Editor
 }

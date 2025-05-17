@@ -32,7 +32,7 @@ export default function ({ desserealize, layout, dataCell }: NestGridEditor) {
     const curCell = useHookstate(ctx.currentCell);                          // текушая выбранная ячейка
     const info = useHookstate(useInfoState());                              // данные по выделенным обьектам
     const cellsCache = useHookstate(useCellsContent());                     // элементы в ячейках
-
+    
 
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         //console.log(cellId, componentIndex);

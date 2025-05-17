@@ -22,8 +22,8 @@ export default function InspectorPanel ({ data, onClose }) {
     
     const styleAbs = {
         position: 'fixed',
-        top: state.position.y.get(),
-        left: state.position.x.get(),
+        top: state?.position?.y?.get() ?? 0,
+        left: state?.position?.x?.get() ?? 0,
         zIndex: 1500,
         width: width,
         maxHeight: '30vh',
@@ -80,13 +80,13 @@ export default function InspectorPanel ({ data, onClose }) {
             }, 200);
         }
 
-        if (!state.colapsed.value) {
-            state.position.set({ x: window.innerWidth - 60, y: 50 });
+        if (!state?.colapsed?.value) {
+            state?.position?.set({ x: window.innerWidth - 60, y: 50 });
         }
         else {
-            state.position.set({ x: window.innerWidth - 400, y: 50 });
+            state?.position?.set({ x: window.innerWidth - 400, y: 50 });
         }
-    }, [state.colapsed.get()]);
+    }, [state?.colapsed?.get()]);
     React.useEffect(()=> {
         const handle =({str, view})=> {
             formatJsx(str).then(console.log);
@@ -108,7 +108,7 @@ export default function InspectorPanel ({ data, onClose }) {
             state.isAbsolute.set(true);
         }
         
-        state.lastData.set({})
+        state?.lastData?.set({})
         EVENT.on('htmlRender', handle);
         EVENT.on('jsonRender', handleJson);
         return ()=> {
@@ -118,7 +118,7 @@ export default function InspectorPanel ({ data, onClose }) {
     }, []);
    
     
-    if(!state.colapsed.get() && state.isAbsolute.get()) return (
+    if(!state?.colapsed?.get() && state?.isAbsolute?.get()) return (
         <div 
             onMouseDown={onMouseDown} 
             style={{
@@ -139,7 +139,7 @@ export default function InspectorPanel ({ data, onClose }) {
     );
     else return (
         <Paper 
-            sx={state.isAbsolute.value ? styleAbs : style }
+            sx={state?.isAbsolute?.value ? styleAbs : style }
         >
             <Box
                 onMouseDown={onMouseDown}
@@ -155,7 +155,7 @@ export default function InspectorPanel ({ data, onClose }) {
             >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
                     <IconButton sx={{ml:1}} size="small" onClick={() => state.isAbsolute.set(o => !o)}>
-                        {state.isAbsolute.value
+                        {state?.isAbsolute?.value
                             ? <AiOutlinePushpin style={{ color: '#aaa', fontSize:14 }} />
                             : <IoMove style={{ color: '#aaa', fontSize:12 }} />
                         }
@@ -163,7 +163,7 @@ export default function InspectorPanel ({ data, onClose }) {
                 </Box>
                 <Box>
                     <IconButton size="small" onClick={() => state.colapsed.set((collapsed)=> !collapsed)}>
-                        {!state.colapsed.get()
+                        {!state?.colapsed?.get()
                             ? <ExpandMore sx={{ color: '#aaa', fontSize:14 }} />
                             : <ExpandLess sx={{ color: '#aaa', fontSize:14 }} />
                         }
@@ -175,7 +175,7 @@ export default function InspectorPanel ({ data, onClose }) {
             </Box>
 
             
-            {state.colapsed.get() && (
+            {state?.colapsed?.get() && (
                 <>
                     <div ref={renderRef}/>
                     { mod === 'json' &&
@@ -186,7 +186,7 @@ export default function InspectorPanel ({ data, onClose }) {
                                 lineHeight: 1.4,
                                 textAlign: 'left',
                             }}
-                            value={state.lastData.get()}
+                            value={state?.lastData?.get()}
                             editable
                             onChange={(p, oldVal, newVal) => {
                                 state.lastData.set((old) => {

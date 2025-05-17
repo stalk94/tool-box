@@ -1,5 +1,5 @@
 import React from 'react';
-import { ComponentRegister } from '../../type';
+import { ComponentRegister, ProxyComponentName } from '../../type';
 
 
 const internalComponentMap: Record<string, React.FC<any>> = {};
@@ -21,7 +21,7 @@ export function registerComponent(def: ComponentRegister) {
 
 
 /** неоюходимо только для левой tool панели */
-export const componentsRegistry = registry;
-export const componentMap = internalComponentMap;
+export const componentsRegistry: Record<ProxyComponentName, Omit<ComponentRegister, 'component' | 'defaultProps'>> = registry;
+export const componentMap: Record<ProxyComponentName, React.FC<any>> = internalComponentMap;
 /** необходимо только в createComponents */
 export const componentDefaultsProps = defaultPropsMap;

@@ -14,7 +14,7 @@ import { updateComponentProps } from '../utils/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
 import render, { exportedTabs, exportedBottomNav } from './export/Acordeon';
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
-import { DropSlot } from '../Dragable';
+import { DropSlot, ContextSlot } from '../Dragable';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 
 
@@ -361,6 +361,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const storage = React.useMemo(() => useCtxBufer(dataId, value), [dataId]);
+    const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
     degidratationRef.current = (call) => {
         const code = exportedTabs(
@@ -381,21 +382,6 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
-    //! надо внедрять в слоты свои методы работы
-    const onUpdateSlot = (newProps) => {
-        const updateSlots = { ...slots };
-
-        Object.keys(updateSlots).map((i) => {
-            const findIndex = updateSlots[i].findIndex((elem) => elem.props['data-id'] === newProps['data-id']);
-            if (findIndex !== -1) updateSlots[i][findIndex] = newProps;
-            console.log(updateSlots[i][findIndex])
-        });
-
-        updateComponentProps({
-            component: { props },
-            data: { slots: updateSlots },
-        });
-    }
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         emiter('onChange', newValue);
         storage(newValue);
@@ -422,7 +408,6 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             component: { props },
             data: { slots: updatedSlots },
         });
-        
     }
     const parse = () => {
         if (items) return items.map((item, index) => {
@@ -481,20 +466,20 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                     />
                 )}
             </Tabs>
-            <DropSlot 
-                id={dataId} 
-                dataTypesAccepts={['Text', 'Button']}
-                onAdd={handleAddComponentToSlot}
+            <ContextSlot
+                idParent={dataId} 
+                idSlot={value}
+                // slots[value] - список 
+                size={{width: container.width, height:container.height}}
+                data={undefined}
+                nestedComponentsList={{
+                    Button: true,
+                    Typography: true
+                }}
             >
-                <div style={{ height:'100%' }}>
-                    { slots[value] && 
-                        slots[value].map((elem, index)=>
-                            <span key={index}>
-                                { desserealize(elem) }
-                            </span>
-                    )}
-                </div>
-            </DropSlot>
+                {/* GRID RENDER */}
+                
+            </ContextSlot>
         </div>
     );
 });

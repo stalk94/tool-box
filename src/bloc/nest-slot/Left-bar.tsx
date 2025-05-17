@@ -14,14 +14,11 @@ import { updateComponentProps } from './shim';
 import Forms from '../Forms';
 import Inspector from '../Inspector';
 import { componentGroups, componentAtom } from '../config/category';
-import { LeftToolPanelProps } from '../type';
+import { ComponentSerrialize, ProxyComponentName } from '../type';
 import { useKeyboardListener } from '../utils/hooks';
 import { db } from "../utils/export";
 import { DraggableToolItem } from './Dragable';
-
-// ! надо shims
-import { componentMap, componentsRegistry } from "./modules/utils/registry";
-import exportGrid from './modules/export/Grid';
+import { componentsRegistry } from "../modules/utils/registry";
 
 
 
@@ -90,11 +87,12 @@ const useAtoms =(category, setCategory, desserealize)=> {
         )
     };
 }
-const useElements = (currentTool, setCurrentTool) => {
+const useElements = (currentTool, setCurrentTool, componentMap) => {
     const categories = Object.entries(componentGroups);
+
     const itemsInCurrentCategory = Object.entries(componentMap).filter(([type]) => {
         const meta = componentsRegistry[type] as any; // или прокинуть icon/category отдельно
-
+     
         const category = meta?.category ?? 'misc';
         return category === currentTool;
     });
@@ -116,7 +114,7 @@ const useElements = (currentTool, setCurrentTool) => {
         ),
         children: (
             <>
-                {itemsInCurrentCategory.map(([type, config]) => {
+                {itemsInCurrentCategory.map(([type, config]: [ProxyComponentName, any]) => {
                     const Icon = componentsRegistry[type].icon ?? Settings;
 
                     return (
@@ -173,17 +171,22 @@ const useStylesEditor = (elem, onChange, curSub, setSub) => {
 
 
 // левая панель редактора
-export default function ({ useDump, desserealize }: LeftToolPanelProps) {
-    const mod = useHookstate(useEditorContext().mod);
+export default function (
+    { desserealize, onChange, componentMap }: 
+    {
+        componentMap: Record<ProxyComponentName, boolean>
+        desserealize: (component: ComponentSerrialize) => void, 
+        onChange: (data: any)=> void 
+    }
+) {
+    const ctx = useHookstate(useEditorContext());
     const info = useHookstate(useInfoState());
-    const render = useHookstate(useRenderState());
-    const meta = useHookstate(useEditorContext().meta);
     const select = info.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'component' | 'atoms' | 'styles'>('component');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
     const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
-
+    
    
     const menuItems = [
         { id: 'component', label: 'Библиотека', icon: <Extension /> },
@@ -193,15 +196,8 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         { id: 'styles', label: 'Настройки', icon: <Palette /> },
         { divider: true },
     ];
-    const endItems = [
-    ];
+    const endItems = [];
 
-    //! НУЖЕН ШИМ ЛИБО ПОСТОЯННАЯ РЕАЛИЗАЦИЯ
-    const handleExportGrid = () => exportGrid(
-        render.get({ noproxy: true }),
-        meta.scope.get({ noproxy: true }),
-        meta.name.get({ noproxy: true })
-    );
     useKeyboardListener((key)=> {
         if(key === '1') setCurrentTool('block');
         else if(key === '2') setCurrentTool('interactive');
@@ -222,14 +218,23 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         return () => EVENT.off('leftBarChange', handler);
     }, []);
    
-
+    
     // Обработка навигации по разделам
     const changeNavigation =(item) => {
         if (item.id === 'component') setCurrentToolPanel('component');
         else if (item.id === 'styles') setCurrentToolPanel('styles');
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
-        else if (item.id === 'save') useDump();
-        else if (item.id === 'export') handleExportGrid();
+        else if (item.id === 'save') {
+            const cellsContent = useCellsContent();
+
+            onChange({
+                content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
+                size: {
+                    width: ctx.size.width.get({ noproxy: true }),
+                    height: ctx.size.height.get({ noproxy: true })
+                }
+            });
+        };
     };
     const useComponentUpdateFromEditorForm = (newDataProps) => {
         const selectComponent = select.content.get({ noproxy: true });
@@ -245,7 +250,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
             start: ( <RenderProjectTopPanel /> ),
             children: ( <RenderListProject currentCat={'all'}/> ) 
         }),
-        component: () => useElements(currentTool, setCurrentTool),
+        component: () => useElements(currentTool, setCurrentTool, componentMap),
         styles: () => useStylesEditor(select.content, useComponentUpdateFromEditorForm, curSubpanel, setSubPanel),
         atoms: () => useAtoms(currentAtom, setCurrentAtom, desserealize)
     }
@@ -284,3 +289,13 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         </LeftSideBarAndTool>
     );
 }
+
+
+/**
+ *  end={
+                <Inspector
+                    data={globalThis.sharedContext.get()}
+                    onClose={console.log}
+                />
+            }
+ */

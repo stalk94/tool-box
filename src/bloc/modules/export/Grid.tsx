@@ -153,6 +153,7 @@ export default function exportsGrid(
                 const id = component.props['data-id'];
                 const type = component.props['data-type'];
 
+                // ANCHOR - вызов дегидратации у всех компонентов
                 sharedEmmiter.emit('degidratation.' + id, {
                     call: (code: string) => {
                         const result = splitImportsAndBody(code);

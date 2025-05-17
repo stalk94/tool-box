@@ -18,7 +18,7 @@ import { createBlockToFile, fetchFolders } from "./utils/export";
 import { componentMap, componentsRegistry } from "./modules/utils/registry";
 import { usePopUpName, useSafeAsyncEffect } from './utils/usePopUp';
 import { getUniqueBlockName } from "./utils/editor";
-import { LeftToolPanelProps } from './type';
+import { LeftToolPanelProps, ProxyComponentName } from './type';
 import { useKeyboardListener } from './utils/hooks';
 import { db } from "./utils/export";
 import exportGrid from './modules/export/Grid';
@@ -50,7 +50,7 @@ const RenderListProject = ({ currentCat }) => {
         return sorted[sorted.length - 1][0];
     }
     const getAllBlockFromScope = () => {
-        const currentScope = project?.get({ noproxy: true })?.[meta.scope.get()];
+        const currentScope = project.get({ noproxy: true })?.[meta.scope.get()];
         return currentScope ?? [];
     }
     const getKeyNameSize = (name: string) => {
@@ -162,7 +162,7 @@ const RenderProjectTopPanel = () => {
     const context = useHookstate(useEditorContext());
     const info = useHookstate(useInfoState());
     const { popover, handleOpen, trigger } = usePopUpName();
-    const [value, setValue] = React.useState(context.meta.scope.get());
+    const [value, setValue] = React.useState(context?.meta?.scope?.get());
 
 
     const handleChangeScope = (newScope: string) => {
@@ -196,6 +196,10 @@ const RenderProjectTopPanel = () => {
             console.error('❌ Ошибка при создании блока:', err);
         }
     }, [trigger]);
+    React.useEffect(()=> {
+
+    }, []);
+
 
 
     return(
@@ -225,7 +229,7 @@ const RenderProjectTopPanel = () => {
     );
 }
 function AtomsRenderer({ category, setCategory, desserealize }) {
-    const [blankComponents, setBlankComponents] = React.useState<JSX.Element[]>([]);
+    const [blankComponents, setBlankComponents] = React.useState<React.JSX.Element[]>([]);
 
     React.useEffect(() => {
         if (category === 'blank') {
@@ -316,7 +320,7 @@ const useElements = (currentTool, setCurrentTool) => {
         ),
         children: (
             <>
-                {itemsInCurrentCategory.map(([type, config]) => {
+                {itemsInCurrentCategory.map(([type, config]: [ProxyComponentName, any]) => {
                     const Icon = componentsRegistry[type].icon ?? Settings;
 
                     return (

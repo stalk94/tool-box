@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, Component, Events } from '../type';
+import { LayoutCustom, ComponentSerrialize, Component, Events, ProxyComponentName } from '../type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
@@ -14,7 +14,7 @@ import { ToolBarInfo } from './Top-bar';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 
-
+// формат дочерних данных от верхней сетки
 type Data = {
     content: Record<string, ComponentSerrialize[]>
     size: {
@@ -23,14 +23,15 @@ type Data = {
     }
 }
 type NestApp = { 
-    useBackToEditorBase: ()=> void
+    useBackToEditorBase: (data: Data)=> void
     data: Data
+    nestedComponentsList: Record<ProxyComponentName, {}>      //! это список
     onChange: (newDataGrid: Data)=> void 
 }
 
 
 // это редактор блоков сетки
-export default function Block({ useBackToEditorBase, data, onChange }: NestApp) {
+export default function Block({ useBackToEditorBase, data, nestedComponentsList, onChange }: NestApp) {
     globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
     const cacheDrag = React.useRef<HTMLDivElement>(null);
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
@@ -46,17 +47,6 @@ export default function Block({ useBackToEditorBase, data, onChange }: NestApp) 
     );
    
     
-    const dumpRender = () => {
-        const cellsContent = useCellsContent();
-
-        onChange({
-            content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
-            size: {
-                width: ctx.size.width.get({ noproxy: true }),
-                height: ctx.size.height.get({ noproxy: true })
-            }
-        });
-    }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, parent } = component;
         const type = props["data-type"];
@@ -211,7 +201,10 @@ export default function Block({ useBackToEditorBase, data, onChange }: NestApp) 
                 info.select.cell.set(ref);
 
                 if(curCell.get()?.i) {
-                    addComponentToCell(curCell.get().i, createComponentFromRegistry(active.id));
+                    addComponentToCell(
+                        curCell.get()?.i, 
+                        createComponentFromRegistry(active.id)
+                    );
                 }
             }
         }
@@ -243,9 +236,10 @@ export default function Block({ useBackToEditorBase, data, onChange }: NestApp) 
             </DragOverlay>
 
             <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                <LeftToolBar
-                    desserealize={desserealize}
-                    useDump={dumpRender}
+                <LeftToolBar 
+                    componentMap={nestedComponentsList}
+                    desserealize={desserealize} 
+                    onChange={onChange}
                 />
                 
                 <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
@@ -253,7 +247,7 @@ export default function Block({ useBackToEditorBase, data, onChange }: NestApp) 
                     <GridComponentEditor
                         desserealize={desserealize}
                         layout={[]}
-                        dataCell={}
+                        dataCell={data}
                     />
                     
                 </div>

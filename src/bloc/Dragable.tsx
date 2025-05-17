@@ -1,7 +1,9 @@
 import React from 'react';
 import { useDraggable, useDroppable, Modifier } from '@dnd-kit/core';
-import { DropSlotProps } from './type';
+import { DropSlotProps, ContextSlotProps } from './type';
 import { hookstate } from '@hookstate/core';
+import { IconButton } from '@mui/material';
+import { Add } from '@mui/icons-material';
 export const activeSlotState = hookstate(null);
 
 
@@ -87,6 +89,37 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
                 zIndex: 9999
             }}
         >
+            { children }
+        </div>
+    );
+}
+// data - данные сетки слота
+export function ContextSlot({ idParent, idSlot, nestedComponentsList, size, children, data }) {
+    
+    return (
+        <div
+            style={{
+                border: '1px dashed #4caf50',
+                minHeight: 60,
+                height: '100%',
+                transition: 'background 0.15s',
+                inset: 0,
+                zIndex: 9999
+            }}
+        >
+            <IconButton
+                onClick={()=> EVENT.emit('addGridContext', {
+                    nestedComponentsList,
+                    data: {
+                        content: data ?? {},
+                        size,
+                    },
+                    idParent, 
+                    idSlot
+                })}
+            >
+                <Add />
+            </IconButton>
             { children }
         </div>
     );

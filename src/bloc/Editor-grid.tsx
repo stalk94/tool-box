@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutCustom, Component } from './type';
+import { LayoutCustom, BlocData } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
@@ -62,7 +62,7 @@ export default function ({ desserealize }) {
         if (!cellId) return;
       
         const index = renderData.find((layer) => layer.i === cellId)
-          ?.content?.findIndex((c) => c.props?.['data-id'] === id);
+            ?.content?.findIndex((c) => c.props?.['data-id'] === id);
       
         if (index === -1 || index === undefined) return;
       
@@ -88,8 +88,8 @@ export default function ({ desserealize }) {
         });
     }
     const handleChangeLayout = (layout) => {
-        ctx.layout.set((prev) =>
-            prev.map((cell) => {
+        ctx?.layout?.set((prev) =>
+            prev?.map((cell) => {
                 const updated = layout.find((l) => l.i === cell.i);
                 return updated ? { ...cell, ...updated } : cell;
             })
@@ -169,10 +169,10 @@ export default function ({ desserealize }) {
         }
     }, []);
     React.useEffect(() => {
-        const meta = ctx.meta.get({ noproxy: true });
+        const meta = ctx?.meta?.get({ noproxy: true });
         // данные назначаются при старте из fetch
-        const currentScope = info.project.get({ noproxy: true })?.[meta.scope];
-        const found = currentScope?.find((obj) => obj.name === meta.name);
+        const currentScope = info?.project?.get?.({ noproxy: true })?.[meta?.scope];
+        const found: BlocData = currentScope?.find((obj) => obj.name === meta?.name);
         
        
         if (!found?.data) return;

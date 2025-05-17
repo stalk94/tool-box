@@ -36,7 +36,6 @@ import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-caro
 //////////////////////////////////////////////////////////////////////
 globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
-globalThis.degidratationBuffer = {};
 ///////////////////////////////////////////////////////////////////////
 
 
@@ -461,6 +460,7 @@ registerComponent({
     component: TabsWrapper,
     defaultProps: {
         fullWidth: true,
+        // ! ВСЕГДА ОБЬЕКТ 
         slots: {
             0: [],
             1: [],

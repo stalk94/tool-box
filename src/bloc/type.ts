@@ -3,6 +3,7 @@ import { Layout } from "react-grid-layout";
 import { RegistreTypeComponent } from './config/type';
 import React from 'react'
 import EventEmitter from "../app/emiter";
+import { number } from 'prop-types';
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -31,11 +32,7 @@ declare global {
 //                    COMPONENTS
 //////////////////////////////////////////////////////////////////////////
 export type ProxyComponentName = RegistreTypeComponent;
-export type ComponentRegisterNestMetaData = {
-    NEST?: {
-        listSupportsTypes
-    } 
-}
+
 
 export type ComponentRegister = {
     type: string;
@@ -80,16 +77,9 @@ export type ComponentSerrialize = {
 //////////////////////////////////////////////////////////////////////////////
 //                        
 //////////////////////////////////////////////////////////////////////////////
-export type DraggbleElementProps = {
-    component: Component
-    index: number
-    cellId: number
-    useStop: (component: any, data: {x: number, y: number})=> void
-    useDelete: (cellId: string | number, componentIndex: number)=> void
-}
 export type LayoutCustom = Layout & {
     /** id рендер элемента */
-    content?: string | Component[]
+    content?: Component[]
 }
 export type GridEditorProps = {
     setLayout: (old: Layout[])=> void
@@ -108,12 +98,70 @@ export type LeftToolPanelProps = {
 }
 
 
+/////////////////////////////////////////////////////////////////////////////
+//          Data Formats
+/////////////////////////////////////////////////////////////////////////////
+export type BlocData = {
+    name: string
+    data: {
+        content: Record<string, ComponentSerrialize[]>
+        layout: LayoutCustom[]
+        meta: {
+            scope: string
+            name: string
+            updatedAt: number
+        }
+
+        size: {
+            width: number
+            height: number
+        }
+    }
+}
+export type ScopeData = {
+    name: string 
+    data: BlocData[]
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 //           DROP-DRAG ZONE              
 //////////////////////////////////////////////////////////////////////////////
+export type DraggbleElementProps = {
+    component: Component
+    index: number
+    cellId: number
+    useStop: (component: any, data: {x: number, y: number})=> void
+    useDelete: (cellId: string | number, componentIndex: number)=> void
+}
 export type DropSlotProps = { 
     id: string
     dataTypesAccepts: ProxyComponentName[]
     children: React.ReactNode
     onAdd: (component: Component)=> void
+}
+export type ContextSlotProps = {
+    nestedComponentsList: Record<ProxyComponentName, true>
+    data: Record<string, ComponentSerrialize[]>
+    size: {
+        width: number
+        height: number
+    }
+    idParent: number
+    idSlot: number | string
+}
+
+// вложенный контекст
+export type DataNested = { 
+    content: Record<string, ComponentSerrialize[]>,
+    size: { 
+        width: number, 
+        height: number 
+    } 
+}
+export type SlotDataBus = {
+    nestedComponentsList: Record<ProxyComponentName, true>
+    data: DataNested
+    idParent: number
+    idSlot: number | string
 }

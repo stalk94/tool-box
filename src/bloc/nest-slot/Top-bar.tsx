@@ -13,7 +13,11 @@ export type ContentData = {
     id: number 
     type: 'Button' | 'IconButton' | 'Typography'
 }
-const categories = [
+type Category = {
+    id: 'block' | 'grid'
+    label: React.JSX.Element
+}
+const categories: Category[] = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> }
 ];
@@ -95,14 +99,21 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                             borderRadius: '4px',
                         }}
                         onClick={() => {
-                            globalThis.EDITOR = false;
-                            setShowBlocEditor(false);
+                            const cellsContent = useCellsContent();  //? хм
+
+                            setShowBlocEditor({
+                                content: cellsContent.get({ noproxy: true }),
+                                size: {
+                                    width: ctx.size.width.get({ noproxy: true }),
+                                    height: ctx.size.height.get({ noproxy: true })
+                                }
+                            });
                         }}
                     >
                         <DynamicFeed sx={{ color: 'white', mt: 0.7 }} />
                     </button>
                 }
-                { categories.map((elem, i)=> 
+                { categories.map((elem: typeof categories[number], i)=> 
                     <button key={i}
                         style={{
                             cursor: 'pointer',

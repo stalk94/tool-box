@@ -1,6 +1,6 @@
 import { hookstate, State } from '@hookstate/core';
 import { localstored } from '@hookstate/localstored';
-import { ComponentSerrialize, LayoutCustom, ProxyComponentName, Component } from './type';
+import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ScopeData } from './type';
 import { Editor } from '@tiptap/react';
 
 
@@ -39,12 +39,12 @@ export type EditorContextType = {
 }
 export type InfoStateType = {
     container: {
-        width: number;
-        height: number;
+        width: number
+        height: number
     }
     select: {
         cell?: string;
-        content?: Component;
+        content?: Component
         slot: {
             id: string
             props?: Record<string, any>
@@ -59,12 +59,16 @@ export type InfoStateType = {
         };
     }
     inspector: {
-        lastData: any;
+        lastData: any
         task: any[];
     };
-    project: Record<string, any>;
+    project: Record<string, ScopeData>
     contentAllRefs?: any;
     activeEditorTipTop: Editor
+}
+export type NestedContextStateType = {
+    isEnable: boolean,
+    currentData: SlotDataBus
 }
 export type StorageStateType = {
     [key: string]: []
@@ -72,6 +76,7 @@ export type StorageStateType = {
 
 
 let contextState: State<EditorContextType> | null = null;
+let nestedContextState: State<EditorContextType> | null = null;
 let storageState: State<StorageStateType> | null = null;
 let renderStateInstance: State<LayoutCustom[]> | null = null;
 let cellsContentInstance: State<Record<string, ComponentSerrialize[]>> | null = null;
@@ -113,6 +118,20 @@ export function useEditorContext(): State<EditorContextType> | null {
     }
 
     return contextState;
+}
+
+export function useNestedContext(): State<NestedContextStateType> | null {
+    if (typeof window === 'undefined') return null;
+
+    if (!nestedContextState) {
+        nestedContextState = hookstate<NestedContextStateType>(
+            {
+                isEnable: false
+            }
+        );
+    }
+
+    return nestedContextState;
 }
 
 export function useRenderState(): State<LayoutCustom[]> | null {
@@ -162,6 +181,8 @@ export function useInfoState(): State<InfoStateType> | null {
 
     return infoStateInstance;
 }
+
+
 
 export function useStorageContext(): State<StorageStateType> | null {
     if (typeof window === 'undefined') return null;

@@ -1,10 +1,10 @@
 'use client'
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, Component, Events } from './type';
+import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
+import { useEditorContext, useRenderState, useCellsContent, useInfoState, useNestedContext } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
 import { createComponentFromRegistry } from './utils/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
@@ -16,6 +16,8 @@ import { serializeJSX } from './utils/sanitize';
 import EventEmitter from "../app/emiter";
 import {  useSafeAsyncEffect } from "./utils/usePopUp";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
+import { updateComponentProps } from './utils/updateComponentProps';
+import NestedContext from './nest-slot/App';
 import GridTest from 'public/export/test/header/index.tsx';
 import GridTest2 from 'public/export/home/root/index';
 import "../style/edit.css";
@@ -39,7 +41,9 @@ if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter<Events>();
 
 // это редактор блоков сетки
 export default function Block({ setShowBlocEditor }) {
-    globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
+    globalThis.ZOOM = 1;   
+    const [enableContext, setEnable] = React.useState(false);
+    const nestedContext = useHookstate(useNestedContext());                                    
     const cacheDrag = React.useRef<HTMLDivElement>(null);
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
     const ctx = useHookstate(useEditorContext());
@@ -67,7 +71,6 @@ export default function Block({ setShowBlocEditor }) {
         
         const Component = componentMap[type];
         Component.displayName = type;
-        console.log(componentsRegistry[type])
         //Component.parent = parent;
     
         if (!Component) {
@@ -222,11 +225,37 @@ export default function Block({ setShowBlocEditor }) {
 
         setActiveDragElement(null); // очистка
     }
+    const findById = (idToFind: number): ComponentSerrialize | undefined => {
+        const rawCache = cellsCache.get({ noproxy: true });
+
+        for (const layerKey in rawCache) {
+            const list = rawCache[layerKey];
+            const found = list.find((obj) => obj.id === idToFind);
+            if (found) return found;
+        }
+
+        return undefined;
+    }
+    const handleChangeNestedContext = (editData: DataNested) => {
+        const idComponent = nestedContext.currentData.idParent.get();
+        const idSlot = nestedContext.currentData.idSlot.get();
+        const findComponentSerrialize = findById(idComponent);
+
+        if (findComponentSerrialize) updateComponentProps({
+            component: findComponentSerrialize,
+            data: {
+                slots: {
+                    ...findComponentSerrialize.props?.slots,
+                    [idSlot]: editData
+                }
+            },
+            rerender: false
+        });
+    }
     useSafeAsyncEffect(async (isMounted) => {
         try {
             const data = await fetchFolders();
             
-
             if (isMounted() && data) {
                 info.project.set(data);
                 ctx.dragEnabled.set(true);
@@ -236,44 +265,71 @@ export default function Block({ setShowBlocEditor }) {
             console.error("fetchFolders error:", e);
         }
     }, []);
+    React.useEffect(()=> {
+        // нажат переход к вложенной сетке слота компонента
+        EVENT.on('addGridContext', (data: SlotDataBus)=> {
+            console.log('ADD GRID CONTEXT: ', data);
+
+            nestedContext.set({
+                isEnable: true,
+                currentData: data
+            });
+            setTimeout(()=> setEnable(true), 100);
+        });
+    }, []);
     
 
 
     return(
-        <DndContext 
-            collisionDetection={pointerWithin}
-            sensors={sensors}
-            onDragStart={(event) => {
-                const dragged = event.active.data?.current?.element;
-                const dragData = event.active.data?.current;
-
-                if(dragData.type === 'sortable') handleDragStart(event);
-                if (dragged) setActiveDragElement(dragged);
-            }}
-            onDragEnd={handleDragEnd}
-        >
-            <DragOverlay dropAnimation={null}>
-                {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
-            </DragOverlay>
-
-            <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
-                <LeftToolBar
-                    desserealize={desserealize}
-                    useDump={dumpRender}
+        <>
+            { enableContext &&
+                <NestedContext
+                    useBackToEditorBase={(editData)=> {
+                        handleChangeNestedContext(editData);
+                        setEnable(false)
+                    }}
+                    nestedComponentsList={nestedContext.currentData.nestedComponentsList.get({noproxy: true})}
+                    data={nestedContext.currentData.data.get({noproxy: true})}
+                    onChange={handleChangeNestedContext}
                 />
-                
-                <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />         
-                    { mod.get() === 'preview' 
-                        ? <GridTest2 />
-                        : <GridComponentEditor
+            }
+            { !enableContext && 
+                <DndContext
+                    collisionDetection={pointerWithin}
+                    sensors={sensors}
+                    onDragStart={(event) => {
+                        const dragged = event.active.data?.current?.element;
+                        const dragData = event.active.data?.current;
+
+                        if (dragData.type === 'sortable') handleDragStart(event);
+                        if (dragged) setActiveDragElement(dragged);
+                    }}
+                    onDragEnd={handleDragEnd}
+                >
+                    <DragOverlay dropAnimation={null}>
+                        {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
+                    </DragOverlay>
+
+                    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'row' }}>
+                        <LeftToolBar
                             desserealize={desserealize}
+                            useDump={dumpRender}
                         />
-                    }
-                    
-                </div>
-            </div>
-        </DndContext>
+
+                        <div style={{ width: '80%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
+                            {mod.get() === 'preview'
+                                ? <GridTest2 />
+                                : <GridComponentEditor
+                                    desserealize={desserealize}
+                                />
+                            }
+
+                        </div>
+                    </div>
+                </DndContext>
+            }
+        </>
     );
 }
 
