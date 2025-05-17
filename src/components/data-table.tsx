@@ -222,7 +222,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
     }, [header, footer, value]);
     
     
-    return (
+    if(!props?.noStyled) return (
         <StyledTableWrapper 
             as="span"
             theme={mergeStyle()} 
@@ -241,5 +241,19 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 { children }
             </DataTable>
         </StyledTableWrapper>
+    );
+    else return (
+        <DataTable
+            ref={tableRef}
+            value={value}
+            scrollable={true}
+            scrollHeight={scrollHeight}
+            style={{ height: '100%', width: '100%', flexGrow: 1, ...style }}
+            header={header}
+            footer={footer}
+            {...props}
+        >
+            {children}
+        </DataTable>
     );
 }

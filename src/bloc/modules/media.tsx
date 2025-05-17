@@ -1,4 +1,5 @@
 import React from 'react';
+import { JSONContent } from '@tiptap/react';
 import Imgix from 'react-imgix';
 import { useComponentSizeWithSiblings } from './utils/hooks';
 import { HorizontalCarousel, PromoBanner, Card, Header, MediaImage } from '../../index';
@@ -10,8 +11,45 @@ import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/materia
 import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/BaseCard';
 
+type ImageWrapperProps = HTMLImageElement & {
+    'data-id': number
+    'data-type': 'Image'
+    'data-source': 'src' | string
+    fullWidth: boolean
+    src: string
+    alt?: string
+    style: React.CSSProperties
+}
+type VideoWrapperProps = HTMLVideoElement & {
+    'data-id': number
+    'data-type': 'Video'
+    fullWidth: boolean
+    src: string
+    style: React.CSSProperties
+}
+type CardWrapperProps = {
+    'data-id': number
+    'data-type': 'Card'
+    index?: number
+    fullWidth: boolean
+    fullHeight: boolean
+    style: React.CSSProperties
+    elevation?: number
+    src: string
+    heightMedia: string | number
+    // ??
+    slots: {
+        title?: JSONContent
+        subheader?: JSONContent
+        text?: JSONContent
+    }
+    path: string
+    max?: number
+    size?: "small" | "medium" | "large"
+}
 
-export const ImageWrapper = React.forwardRef((props: any, ref) => {
+
+export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [imgSrc, setImgSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
@@ -20,8 +58,6 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         file,
         alt = '',
         'data-source': source,
-        sizes = '100vw',
-        objectFit = 'cover',
         fullWidth,
         style = {},
         ...otherProps
@@ -99,7 +135,7 @@ export const ImageWrapper = React.forwardRef((props: any, ref) => {
         />
     );
 });
-export const VideoWrapper = React.forwardRef((props: any, ref) => {
+export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [videoSrc, setVideoSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
@@ -323,7 +359,7 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
-export const CardWrapper = React.forwardRef((props: any, ref) => {
+export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const lastFileRef = React.useRef<number | null>(null);
     const {

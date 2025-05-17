@@ -1,5 +1,6 @@
 import React from 'react';
-import { Typography, Select, MenuItem, Divider } from '@mui/material';
+import { JSONContent } from '@tiptap/react';
+import { Typography, TypographyProps } from '@mui/material';
 import { useHookstate } from '@hookstate/core';
 import { updateComponentProps } from '../utils/updateComponentProps';
 import { useInfoState, useEditorContext } from "../context";
@@ -8,9 +9,28 @@ import TipTapSlotEditor from './tip-tap';
 import { exportText, exportTypography, formatJsx } from './export/Text';
 
 
-export const TextWrapper = React.forwardRef((props: any, ref) => {
+type TextWrapperProps = {
+    'data-id': number
+    'data-type': 'Text'
+    fullWidth: boolean
+    children: JSONContent
+    style: React.CSSProperties
+}
+type TypographyWrapperProps = TypographyProps & {
+    'data-id': number
+    'data-type': 'Typography'
+    fullWidth: boolean
+    children: string
+    styles?: {
+        text: React.CSSProperties
+    }
+}
+
+
+
+export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
-    const { children, 'data-id': dataId, style, ...otherProps } = props;
+    const { children, 'data-id': dataId, style, fullWidth, ...otherProps } = props;
    
     const onChange = useDebounced((data) => {
         updateComponentProps({
@@ -60,8 +80,7 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
-
-export const TypographyWrapper = React.forwardRef((props: any, ref) => {
+export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const { children, 'data-id': dataId, styles, style, fullWidth, ...otherProps } = props;
     const [text, setText] = React.useState(children);

@@ -16,6 +16,7 @@ export interface Events {
     onSelectCell: (cellId: string|number)=> void
     // добавить новый layout grid (ячейку)
     addCell: ()=> void
+    addGridContext: (data: SlotDataBus)=> void
 }
 export interface EventsShared {
     [key: string]: (data: any)=> void

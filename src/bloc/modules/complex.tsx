@@ -4,7 +4,6 @@ import { Accordion, AccordionProps, HoverPopover } from '../../index';
 import { icons, iconsList } from '@components/tools/icons';
 import { Box, Tabs, Button, Tab, BottomNavigation, BottomNavigationAction, Paper, TabsProps, Typography } from '@mui/material';
 import { Component, ComponentProps } from '../type';
-import { deserializeJSX, desserealize } from '../utils/sanitize';
 import { triggerFlyFromComponent } from './utils/anim';
 import { useEvent, useCtxBufer } from './utils/shared';
 import DataTable, { DataSourceTableProps } from './sources/storage';
@@ -12,14 +11,16 @@ import { useComponentSizeWithSiblings } from './utils/hooks';
 import { AppBar, Start, LinearNavigation, MobailBurger, Breadcrumbs, ToggleInput } from '../../index';
 import { updateComponentProps } from '../utils/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
-import render, { exportedTabs, exportedBottomNav } from './export/Acordeon';
+import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/Acordeon';
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
 import { DropSlot, ContextSlot } from '../Dragable';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 
 
+
 type BottomNavWrapperProps = {
     'data-id': number
+    'data-type': 'BottomNav'
     showLabels: boolean
     style: React.CSSProperties
     fullWidth: boolean
@@ -35,21 +36,54 @@ type BottomNavWrapperProps = {
     }[]
 
 }
+type BreadcrumbsWrapperProps = {
+    'data-id': number
+    'data-type': 'Breadcrumbs'
+    fullWidth: boolean
+    style: React.CSSProperties
+    pathname: string
+    separator: string
+}
 type AccordionWrapperProps = AccordionProps & ComponentProps & {
+    'data-id': number
+    'data-type': 'Accordion'
+    fullWidth: boolean
+    slots: []
     styles: {
         title: React.CSSProperties,
         body: React.CSSProperties
     }
 }
 type TabsWrapperProps = TabsProps & {
+    'data-id': number
+    'data-type': 'Tabs'
     items: string[]
     fullWidth?: boolean
-    'data-id': number | string
     slots: [Component[]]
 }
-type TableSourcesProps = DataSourceTableProps & ComponentProps;
+type TableSourcesProps = DataSourceTableProps & ComponentProps & {
+    'data-type': 'DataTable'
+    fullWidth: boolean
+    style: React.CSSProperties
+    styles: {
+        body: React.CSSProperties & {
+            background: string
+            borderColor: string
+            textColor: string
+        }
+        header: React.CSSProperties & {
+            background: string
+        }
+        thead: React.CSSProperties & {
+            background: string
+            textColor: string
+        }
+    }
+}
 type HeaderWrapperProps = {
     'data-id': string | number
+    'data-type': 'AppBar'
+    fullWidth: boolean
     /** стиль базового блока AppBar */
     style: React.CSSProperties
     /** стили слотов: leftLogo, LinearNavigation */
@@ -66,10 +100,11 @@ type HeaderWrapperProps = {
     elevation: number
 }
 
-
+// todo: сделать виртуализацию и рендер вложенного контекста
 export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, style, items, styles, activeIndexs, fullWidth, ...otherProps } = props;
+    const { 'data-id': dataId, style, items, styles, activeIndexs, slots, fullWidth, ...otherProps } = props;
+    const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
     const handleChange = (index: number, data: string) => {
         const copy = [...items];
@@ -84,10 +119,6 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         }
     }
     const parse = () => {
-        const maps = {
-            Box: Box
-        }
-
         return items.map((item, index) => {
             const text = item.title?.props?.children ?? item.title;
 
@@ -116,14 +147,30 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
                     {text}
                 </div>
             );
+            const SlotContent = () => (
+                <ContextSlot
+                    idParent={dataId}
+                    idSlot={index}
+                    size={{ width: container.width, height: container.height/4 }}
+                    data={slots && slots[index]}
+                    //! додавить
+                    nestedComponentsList={{
+                        Button: true,
+                        Typography: true
+                    }}
+                >
+                    {/* GRID RENDER */}
+
+                </ContextSlot>
+            );
 
             return ({
                 title: <EditComponent />,
-                content: deserializeJSX(item.content, maps),
-            })
+                content: <SlotContent />,
+            });
         });
     }
-    const parsedItems = React.useMemo(() => parse(), [items]);
+    const parsedItems = React.useMemo(() => parse(), [items, slots]);
 
     degidratationRef.current = (call) => {
         const code = render(
@@ -164,196 +211,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         </div>
     );
 });
-export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref) => {
-    const [data, setData] = React.useState([
-        { test: 1, name: 'xro' },
-        { test: 3, name: 'xro2' },
-        { test: 5, name: 'xro33' },
-    ]);
-    const degidratationRef = React.useRef<(call) => void>(() => { });
-    const lastFileRef = React.useRef<number | null>(null);
-    const {
-        'data-id': dataId,
-        style,
-        header,
-        footer,
-        sourceType,
-        source,
-        fullWidth,
-        file,
-        ...otherProps
-    } = props;
-    const { width, height } = useComponentSizeWithSiblings(dataId);
-
-    const handleUpload = (file: File) => {
-        const ext = file.name.split('.').pop()?.toLowerCase();
-
-        const handleJSONImport = (file: File) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                try {
-                    const json = JSON.parse(reader.result as string);
-                    if (Array.isArray(json)) setData(json);
-                    else alert('Ожидается массив объектов в JSON');
-                } 
-                catch (err) { alert('Ошибка чтения JSON'); }
-            }
-            reader.readAsText(file);
-        }
-        const handleCSVImport = (file: File) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const text = reader.result as string;
-                const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-
-                if (lines.length === 0) return;
-
-                const headers = lines[0].split(',');
-                const parsedData = lines.slice(1).map(line => {
-                    const values = line.split(',');
-                    const row: Record<string, any> = {};
-                    headers.forEach((h, i) => {
-                        row[h] = values[i];
-                    });
-                    return row;
-                });
-
-                setData(parsedData);
-            };
-            reader.readAsText(file);
-        }
-        const handleExcelImport = (file: File) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target!.result as ArrayBuffer);
-                const workbook = XLSX.read(data, { type: 'array' });
-
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const parsedData = XLSX.utils.sheet_to_json(worksheet);
-
-                setData(parsedData);
-            }
-            reader.readAsArrayBuffer(file);
-        }
-
-        if (ext === 'json') {
-            handleJSONImport(file);
-        } else if (ext === 'csv') {
-            handleCSVImport(file);
-        } else if (ext === 'xlsx' || ext === 'xls') {
-            handleExcelImport(file);
-        } else {
-            alert('Неподдерживаемый формат');
-        }
-    }
-    React.useEffect(() => {
-        if (file instanceof File) {
-            const id = file.lastModified;
-
-            if (id !== lastFileRef.current) {
-                lastFileRef.current = id;
-                handleUpload(file);
-            }
-        }
-    }, [file]);
-    const handleAddRow = () => {
-        setData((old)=> {
-            const copyData = { ...old[0] };
-
-            Object.keys(copyData).map((key) => {
-                copyData[key] = '';
-            });
-
-            return [...old, copyData];
-        });
-    }
-    const handleAddField = () => {
-        const newField = prompt('Название нового поля');
-        if (!newField || data[0][newField]) return;
-        
-        const updated = data.map((row) => ({
-            ...row,
-            [newField]: '',
-        }));
-        if (updated.length === 0) updated.push({ [newField]: '' })
-        setData([...updated]);
-
-        console.log(updated);
-    }
-    
-
-    return (
-        <div
-            ref={ref}
-            data-id={dataId}
-            data-type='DataTable'
-            style={{ ...style, width: '100%' }}
-            onClick={(e)=> {
-                console.log(e.target)
-            }}
-        >
-             <DataTable
-                style={{
-                    maxHeight: '100%',
-                    overflowX: 'auto'
-                }}
-                header={
-                    <div style={{ fontSize: 12, color: 'gray', height: 30, display: 'flex', flexDirection: 'row', padding: 3 }}>
-                        <div className='buttontable' 
-                            style={{ marginLeft: 10, cursor: 'pointer', color: 'silver' }} 
-                            onClick={handleAddField}
-                        >
-                            <AddBox sx={{ fontSize: 24 }} />
-                        </div>
-                        <div className='buttontable' 
-                            style={{ marginLeft: 15, cursor: 'pointer', color: 'silver' }} 
-                            onClick={handleAddRow}
-                        >
-                            <PlaylistAdd sx={{ fontSize: 26 }} />
-                        </div>
-                    </div>
-                }
-                footer={
-                    <div style={{display:'flex',marginLeft:'auto'}}>
-                        <Button 
-                            variant='outlined'
-                            color='navigation'
-                            size='small' 
-                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
-                        >
-                            csv
-                        </Button>
-                        <Button 
-                            variant='outlined'
-                            color='navigation'
-                            size='small' 
-                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
-                        >
-                            xslx
-                        </Button>
-                        <Button 
-                            variant='outlined'
-                            color='navigation'
-                            size='small' 
-                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
-                        >
-                            json
-                        </Button>
-                    </div>
-                }
-                onChange={setData}
-                style={{width: '100%', maxHeight: height}}
-                source={data}
-                sourceType='json'
-                { ...otherProps }
-            />
-        </div>
-    );
-});
-
-
-
+// todo: сделать виртуализацию и рендер вложенного контекста
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
     const degidratationRef = React.useRef<(call) => void>(() => { });
@@ -397,17 +255,6 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 data: { items: [...items] }
             });
         }
-    }
-    const handleAddComponentToSlot = (component: Component) => {
-        const updatedSlots = {...slots}; // копируем массив
-
-        if (!updatedSlots[value]) updatedSlots[value] = [component];
-        else updatedSlots[value] = [...updatedSlots[value], component];
-        
-        updateComponentProps({
-            component: { props },
-            data: { slots: updatedSlots },
-        });
     }
     const parse = () => {
         if (items) return items.map((item, index) => {
@@ -469,9 +316,8 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             <ContextSlot
                 idParent={dataId} 
                 idSlot={value}
-                // slots[value] - список 
                 size={{width: container.width, height:container.height}}
-                data={undefined}
+                data={slots[value]}
                 nestedComponentsList={{
                     Button: true,
                     Typography: true
@@ -483,6 +329,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
         </div>
     );
 });
+
 export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
     const degidratationRef = React.useRef<(call) => void>(() => { });
@@ -677,6 +524,233 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
     );
 });
 
+export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref) => {
+    const [data, setData] = React.useState([
+        { test: 1, name: 'никалай' },
+        { test: 3, name: 'степан' },
+        { test: 5, name: 'олег' },
+    ]);
+    const degidratationRef = React.useRef<(call) => void>(() => { });
+    const lastFileRef = React.useRef<number | null>(null);
+    const {
+        'data-id': dataId,
+        style,
+        header,
+        footer,
+        sourceType,
+        source,
+        fullWidth,
+        fontSizeHead,
+        file,
+        styles,
+        ...otherProps
+    } = props;
+    const { width, height } = useComponentSizeWithSiblings(dataId);
+
+
+    degidratationRef.current = (call) => {
+        const inferColumns = (data: any[]) => {
+            const result = [];
+            const first = data[0];
+
+            Object.keys(first).map((key) => {
+                if (key.length > 0 && key !== 'id') result.push({
+                    field: key,
+                    header: key.toUpperCase(),
+                })
+            });
+
+            return result;
+        }
+
+        const code = exportedTable(
+            data,
+            inferColumns(data),
+            fontSizeHead,
+            {...style, display: 'block', width: '100%'},
+            styles,
+            otherProps
+        );
+
+        call(code);
+    }
+    const handleUpload = (file: File) => {
+        const ext = file.name.split('.').pop()?.toLowerCase();
+
+        const handleJSONImport = (file: File) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const json = JSON.parse(reader.result as string);
+                    if (Array.isArray(json)) setData(json);
+                    else alert('Ожидается массив объектов в JSON');
+                } 
+                catch (err) { alert('Ошибка чтения JSON'); }
+            }
+            reader.readAsText(file);
+        }
+        const handleCSVImport = (file: File) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const text = reader.result as string;
+                const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+                if (lines.length === 0) return;
+
+                const headers = lines[0].split(',');
+                const parsedData = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    const row: Record<string, any> = {};
+                    headers.forEach((h, i) => {
+                        row[h] = values[i];
+                    });
+                    return row;
+                });
+
+                setData(parsedData);
+            };
+            reader.readAsText(file);
+        }
+        const handleExcelImport = (file: File) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target!.result as ArrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const parsedData = XLSX.utils.sheet_to_json(worksheet);
+
+                setData(parsedData);
+            }
+            reader.readAsArrayBuffer(file);
+        }
+
+        if (ext === 'json') {
+            handleJSONImport(file);
+        } else if (ext === 'csv') {
+            handleCSVImport(file);
+        } else if (ext === 'xlsx' || ext === 'xls') {
+            handleExcelImport(file);
+        } else {
+            alert('Неподдерживаемый формат');
+        }
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+    React.useEffect(() => {
+        if (file instanceof File) {
+            const id = file.lastModified;
+
+            if (id !== lastFileRef.current) {
+                lastFileRef.current = id;
+                handleUpload(file);
+            }
+        }
+    }, [file]);
+    const handleAddRow = () => {
+        setData((old)=> {
+            const copyData = { ...old[0] };
+
+            Object.keys(copyData).map((key) => {
+                copyData[key] = '';
+            });
+
+            return [...old, copyData];
+        });
+    }
+    const handleAddField = () => {
+        const newField = prompt('Название нового поля');
+        if (!newField || data[0][newField]) return;
+        
+        const updated = data.map((row) => ({
+            ...row,
+            [newField]: '',
+        }));
+        if (updated.length === 0) updated.push({ [newField]: '' })
+        setData([...updated]);
+
+        console.log(updated);
+    }
+    
+
+    return (
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type='DataTable'
+            style={{ ...style, width: '100%' }}
+            fontSizeHead={fontSizeHead}
+            onClick={(e)=> {
+                console.log(e.target)
+            }}
+        >
+             <DataTable
+                style={{
+                    maxHeight: '100%',
+                    overflowX: 'auto'
+                }}
+                header={
+                    <div style={{ fontSize: 12, color: 'gray', height: 30, display: 'flex', flexDirection: 'row', padding: 3 }}>
+                        <div className='buttontable' 
+                            style={{ marginLeft: 10, cursor: 'pointer', color: 'silver' }} 
+                            onClick={handleAddField}
+                        >
+                            <AddBox sx={{ fontSize: 24 }} />
+                        </div>
+                        <div className='buttontable' 
+                            style={{ marginLeft: 15, cursor: 'pointer', color: 'silver' }} 
+                            onClick={handleAddRow}
+                        >
+                            <PlaylistAdd sx={{ fontSize: 26 }} />
+                        </div>
+                    </div>
+                }
+                footer={
+                    <div style={{display:'flex',marginLeft:'auto'}}>
+                        <Button 
+                            variant='outlined'
+                            color='navigation'
+                            size='small' 
+                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
+                        >
+                            csv
+                        </Button>
+                        <Button 
+                            variant='outlined'
+                            color='navigation'
+                            size='small' 
+                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
+                        >
+                            xslx
+                        </Button>
+                        <Button 
+                            variant='outlined'
+                            color='navigation'
+                            size='small' 
+                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
+                        >
+                            json
+                        </Button>
+                    </div>
+                }
+                onChange={setData}
+                style={{width: '100%', maxHeight: height}}
+                source={data}
+                sourceType='json'
+                { ...otherProps }
+            />
+        </div>
+    );
+});
 
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState("");
@@ -822,7 +896,7 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
         />
     );
 });
-export const BreadcrumbsWrapper = React.forwardRef((props: any, ref) => {
+export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const [linkStyleState, setState] = React.useState({});
     const {

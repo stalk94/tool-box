@@ -98,15 +98,14 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, size, chil
     return (
         <div
             style={{
-                border: '1px dashed #4caf50',
-                minHeight: 60,
-                height: '100%',
+                border: '1px dashed #4b9ec85a',
                 transition: 'background 0.15s',
                 inset: 0,
-                zIndex: 9999
+                zIndex: 9999,
+                display: 'flex'
             }}
         >
-            <IconButton
+            <IconButton sx={{ margin:'auto' }}
                 onClick={()=> EVENT.emit('addGridContext', {
                     nestedComponentsList,
                     data: {

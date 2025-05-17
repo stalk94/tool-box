@@ -17,6 +17,7 @@ type AvatarWrapperProps = AvatarProps & ComponentProps & {
 }
 
 
+
 export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const { 'data-id': dataId, children, fullWidth, orientation, variant, ...otherProps } = props;
@@ -68,7 +69,6 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
         </Divider>
     );
 });
-
 export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const { 'data-id': dataId, fullWidth, avatar, label, icon, ...otherProps } = props;
@@ -149,8 +149,6 @@ export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {
         />
     );
 });
-
-// EVENT.emit('htmlRender', {str: str});
 export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const lastFileRef = React.useRef<number | null>(null);

@@ -246,23 +246,79 @@ export function exportedBottomNav(
 }
 
 export function exportedTable(
-   
+    data: {[key:string]: any}[],
+    columns: {field: string}[],
+    fontSizeHead: string,
+    style: React.CSSProperties,
+    styles: {},
+    otherProps: any
 ) {
     const toObjectLiteral = (obj) => {
         return Object.entries(obj || {})
+            .filter(([, value]) => value !== undefined)
             .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
             .join(', ');
+    }
+    const renderColumnsLiteral = () => {
+        return `\n${columns.map((col, index) => (
+            `<Column 
+                    sortable
+                    key={"${col.field}"} 
+                    field={"${col.field}"} 
+                    header={
+                        <div 
+                            style={{ 
+                                whiteSpace: 'normal',
+                                wordBreak: 'break-word', 
+                                textAlign: 'center' 
+                            }}
+                        >
+                            ${col.field}
+                        </div>
+                    }
+                    body={(rowData, colProps) => 
+                        <span
+                            style={{ cursor: 'pointer', fontSize:'12px' }}
+                            //onClick={()=> handleClick(col.field, colProps.rowIndex)}
+                        >
+                            { rowData["${col.field}"] }
+                        </span>
+                    }
+                />
+            `
+        )).join(',\n')}\n`;
+    }
+    const renderDataLiteral = () => {
+        return `[\n${data.map((item, index) => (
+            `{ ${toObjectLiteral(item)}  }`
+        )).join(',\n')}\n]`;
     }
 
 
     return (`
         import React from 'react';
-        import { Accordion } from '@lib/index';
+        import { DataTable } from '@lib/index';
+        import { Column } from 'primereact/column';
+        import styled, { css } from 'styled-components';
+
         
 
-        export default function () {
+        export default function DataTableWrap() {
+            const data = ${renderDataLiteral};
+
+
             return (
-                
+                <DataTable
+                    style={{ ${toObjectLiteral(style)} }}
+                    styles={{ ${toObjectLiteral(styles)} }}
+                    value={data}
+                    fontSizeHead={"${fontSizeHead ?? '14px'}"}
+                    emptyMessage='empty data'
+                    footer={ undefined }
+                    ${ toJSXProps(otherProps) }
+                >
+                    ${ renderColumnsLiteral() }
+                </DataTable>
             );
         }
     `);

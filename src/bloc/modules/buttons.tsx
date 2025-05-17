@@ -1,12 +1,29 @@
  import React from 'react';
-import { Badge, Button, IconButton } from '@mui/material';
+import { Badge, Button, IconButton, ButtonProps, IconButtonProps } from '@mui/material';
 import { iconsList } from '../../components/tools/icons';
 import { Settings } from '@mui/icons-material';
 import { exportedMuiButton, exportedMuiIconButton } from './export/Buttons';
 
+type IconButtonWrapperProps = IconButtonProps & {
+    'data-id': number
+    'data-type': 'IconButton'
+    fullWidth: boolean
+    icon: string
+    style: React.CSSProperties
+}
+type ButtonWrapperProps = ButtonProps & {
+    'data-id': number
+    'data-type': 'Button'
+    fullWidth: boolean
+    style: React.CSSProperties
+    startIcon: string
+    endIcon: string
+    children: string
+}
 
 
-export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
+
+export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 'data-id': dataId, icon, children, fullWidth, style, ...otherProps } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : Settings;
@@ -44,9 +61,9 @@ export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
         </IconButton>
     );
 });
-export const ButtonWrapper = React.forwardRef((props: any, ref) => {
+export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
-    const { startIcon, endIcon, children, style, 'data-subs': subs, 'data-id': dataId, ...otherProps } = props;
+    const { startIcon, endIcon, children, style, 'data-id': dataId, ...otherProps } = props;
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
     
@@ -90,4 +107,3 @@ export const ButtonWrapper = React.forwardRef((props: any, ref) => {
         </Button>
     );
 });
-
