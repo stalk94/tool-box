@@ -1,6 +1,67 @@
-import { Avatar, Button, Typography } from '@mui/material';
+import {
+    Avatar,
+    BottomNavigation,
+    BottomNavigationAction,
+    Button,
+    Paper,
+    Typography
+} from '@mui/material';
 import { DateInput, TextInput } from '@lib/index';
+import { Add, Home } from '@mui/icons-material';
 import React from 'react';
+
+export function BottomNavigationWrap() {
+    const [curent, setCurent] = React.useState(0);
+    const items = [
+        { id: 'BottomNavigation-0', icon: <Home />, label: 'home' },
+        { id: 'BottomNavigation-1', icon: <Add />, label: 'add' },
+        { id: 'BottomNavigation-2', icon: <Add />, label: 'test' }
+    ];
+
+    const handleChange = (e: React.SyntheticEvent, newValue: number) => {
+        setCurent(newValue);
+    };
+
+    return (
+        <Paper
+            style={{
+                width: '100%',
+                position: 'sticky',
+                bottom: 0,
+                border: '1px'
+            }}
+            elevation={1}
+            data-type="BottomNav"
+        >
+            <BottomNavigation
+                style={{}}
+                showLabels={false}
+                value={curent}
+                onChange={handleChange}
+            >
+                {items &&
+                    items.map((elem, index: number) => (
+                        <BottomNavigationAction
+                            key={index}
+                            label={
+                                false && (
+                                    <span style={{ fontSize: 16 }}>
+                                        {elem.label}
+                                    </span>
+                                )
+                            }
+                            icon={elem.icon ? elem.icon : undefined}
+                            sx={{
+                                '& .MuiSvgIcon-root': {
+                                    fontSize: 24
+                                }
+                            }}
+                        />
+                    ))}
+            </BottomNavigation>
+        </Paper>
+    );
+}
 
 export default function Cell() {
     return (
@@ -23,7 +84,7 @@ export default function Cell() {
                 endIcon={undefined}
                 style={{}}
                 variant="outlined"
-                color="primary"
+                color="error"
                 data-type="Button"
                 onClick={() =>
                     sharedEmmiter.emit('event', {
@@ -40,7 +101,7 @@ export default function Cell() {
                 endIcon={undefined}
                 style={{}}
                 variant="outlined"
-                color="primary"
+                color="success"
                 fullWidth
                 data-type="Button"
                 onClick={() =>
@@ -74,6 +135,27 @@ export default function Cell() {
                     display: 'block'
                 }}
             >
+                <DateInput
+                    left={undefined}
+                    style={{
+                        fontSize: 14
+                    }}
+                    onChange={v => console.log(v)}
+                    styles={{}}
+                    label="label"
+                    position="column"
+                    type="time"
+                    styles={{}}
+                    data-type="Time"
+                />
+            </div>
+
+            <div
+                style={{
+                    width: '100%',
+                    display: 'block'
+                }}
+            >
                 <TextInput
                     left={undefined}
                     style={{
@@ -89,26 +171,7 @@ export default function Cell() {
                 />
             </div>
 
-            <div
-                style={{
-                    width: '100%',
-                    display: 'block'
-                }}
-            >
-                <DateInput
-                    left={undefined}
-                    style={{
-                        fontSize: 14
-                    }}
-                    onChange={v => console.log(v)}
-                    styles={{}}
-                    label="label"
-                    position="column"
-                    type="time"
-                    styles={{}}
-                    data-type="Time"
-                />
-            </div>
+            <BottomNavigationWrap />
         </>
     );
 }

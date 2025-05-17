@@ -9,7 +9,9 @@ type Params = {
 }
 
 
-/** Запись свойств в компонент и список */
+///////////////////////////////////////////////////////////////////////////////////
+// ВАЖНАЯ ФУНКЦИЯ ЖИЗНЕННОГО ЦИКЛА
+///////////////////////////////////////////////////////////////////////////////////
 export function updateComponentProps({ component, data, rerender = true }: Params) {
     const context = useEditorContext();
     const cellsContent = useCellsContent();
@@ -42,8 +44,13 @@ export function updateComponentProps({ component, data, rerender = true }: Param
             if (!Array.isArray(layer.content)) return layer;
             
             const i = layer.content.findIndex((c) => c?.props?.['data-id'] === id);
-            if (i === -1) return layer;
 
+            if (i === -1) return layer;
+            //! возможно слотовой
+            else {
+               
+            }
+            
             const current = layer.content[i];
             if (!current) {
                 console.warn('updateComponentProps: компонент не найден в render');

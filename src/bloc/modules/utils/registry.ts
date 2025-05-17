@@ -1,20 +1,12 @@
 import React from 'react';
-
-type ComponentDefinition = {
-    type: string;
-    component: React.FC<any>;
-    defaultProps?: Record<string, any>;
-    icon?: React.FC;
-    category?: 'block' | 'interactive' | 'media' | 'complex' | 'misc';
-    description?: string;
-}
+import { ComponentRegister } from '../../type';
 
 
 const internalComponentMap: Record<string, React.FC<any>> = {};
 const defaultPropsMap: Record<string, Record<string, any>> = {};
-const registry: Record<string, Omit<ComponentDefinition, 'component' | 'defaultProps'>> = {};
+const registry: Record<string, Omit<ComponentRegister, 'component' | 'defaultProps'>> = {};
 
-export function registerComponent(def: ComponentDefinition) {
+export function registerComponent(def: ComponentRegister) {
     internalComponentMap[def.type] = def.component;
     defaultPropsMap[def.type] = def.defaultProps ?? {};
     
@@ -27,7 +19,9 @@ export function registerComponent(def: ComponentDefinition) {
     };
 }
 
-// Экспортируем доступ
-export const componentRegistry = registry;
+
+/** неоюходимо только для левой tool панели */
+export const componentsRegistry = registry;
 export const componentMap = internalComponentMap;
-export const componentDefaults = defaultPropsMap;
+/** необходимо только в createComponents */
+export const componentDefaultsProps = defaultPropsMap;

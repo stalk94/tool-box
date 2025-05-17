@@ -1,7 +1,6 @@
 import React from 'react';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataTable, DataTableProps } from '../../../index';
-import { useStorageContext, useInfoState, useEditorContext } from '../../context';
 import { Column, ColumnBodyOptions } from 'primereact/column';
 import { useHookstate } from '@hookstate/core';
 import { db } from "../../utils/export";
@@ -9,17 +8,19 @@ import { TextInput, NumberInput, PasswordInput, LoginInput,
     DateInput, SliderInput, ToggleInput, SwitchInput, CheckBoxInput,
     SelectInput, AutoCompleteInput, FileInput
 } from '../../../index';
-import { Add, AddBox, PlaylistAdd } from '@mui/icons-material';
-import { Box, IconButton } from '@mui/material';
+import * as XLSX from 'xlsx';
+import { saveAs } from 'file-saver';
+import { loadTableData } from './providers';
 
 
-export type DataSourceTableProps = {
+export type DataSourceTableProps = DataTableProps & {
     dataId: string | number
     style?: React.CSSProperties
-    refreshInterval?: number;           // интервал в миллисекундах
     header?: null       // пока отключен
     footer?: null       // пока отключен
-    dbKey: string 
+    sourceType?: 'json' | 'google' | 'json-url' | 'db'
+    refreshInterval?: number;           // интервал в миллисекундах
+    source: string                      // URL или JSON-строка или key db (data.users.user)
     // клик по row
     onSelect: (data: Record<string, any>)=> void
 }
@@ -30,13 +31,10 @@ type ColumnData = {
 
 
 
-export default function StorageDataTable({ style, dbKey, refreshInterval, ...props }: DataSourceTableProps) {
+export default function StorageDataTable({ style, refreshInterval, dataId, sourceType, source, onChange, footer, ...props }: DataSourceTableProps) {
     const [data, setData] = React.useState([]);
-    const [editing, setEditing] = React.useState<boolean>(true);            // false - режим связывания переменной на конкретный index
     const [columns, setColumns] = React.useState<ColumnData[]>([]);         // схема колонок
     const [loading, setLoading] = React.useState(false);
-    const loadStorages = useHookstate(useStorageContext());
-    const activeEditor = useHookstate(useInfoState().activeEditorTipTop);
     
 
     // генератор схемы колонок из data, если нет схемы
@@ -45,7 +43,7 @@ export default function StorageDataTable({ style, dbKey, refreshInterval, ...pro
         const first = data[0];
 
         Object.keys(first).map((key) => {
-            if(key.length > 0 && key!=='id') result.push({
+            if(key.length > 0 && key !== 'id') result.push({
                 field: key,
                 header: key.toUpperCase(),
             })
@@ -53,39 +51,68 @@ export default function StorageDataTable({ style, dbKey, refreshInterval, ...pro
 
         return result;
     }
-    const handleClick =(name: string, rowIndex: number|'auto')=> {
-        if(activeEditor.value) {
-            activeEditor.value.chain().focus().insertContent({
-                type: 'variable',
-                attrs: {
-                    name: name,
-                    rowIndex: rowIndex,
-                    db: dbKey
-                }
-            }).run();
+    const handleClick =(field: string, rowIndex: number | 'auto')=> {
+        console.log(field, rowIndex);
+    }
+    const exportCSV = () => {
+        const escapeCSV = (value: any) => {
+            const str = String(value ?? '');
+            if (str.includes(',') || str.includes('"') || str.includes('\n')) {
+                return `"${str.replace(/"/g, '""')}"`; // оборачиваем в кавычки и экранируем кавычки внутри
+            }
+            return str;
         }
-    }
-    const handleAddRow = () => {
-        // создаём объект со всеми ключами из схемы и пустыми значениями
-        const newRow = columns.reduce((acc, col) => {
-            acc[col.field] = '';
-            return acc;
-        }, { id: data.length });
+        const headers = columns.map(col => escapeCSV(col.field)).join(',');
+        const rows = data.map(row =>
+            columns.map(col => escapeCSV(row[col.field])).join(',')
+        );
+        const csvContent = [headers, ...rows].join('\n');
 
-        const updated = [...data, newRow];
-        setData(updated);
-        db.set(`STORAGES.${dbKey}`, updated);
+        const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'table.csv';
+        a.click();
+        URL.revokeObjectURL(url);
     }
-    // props.onLoad && props.onLoad();
+    const exportExcel = () => {
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1');
+
+        const excelBuffer = XLSX.write(workbook, {
+            bookType: 'xlsx',
+            type: 'array',
+        });
+
+        const blob = new Blob([excelBuffer], {
+            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        });
+
+        saveAs(blob, 'data.xlsx');
+    }
+    const exportJSON = () => {
+        const json = JSON.stringify(data, null, 2);
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.json';
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
     const load = React.useCallback(async () => {
         setLoading(true);
-        const rows = await db.get(`STORAGES.${dbKey}`);
-        if(rows) setData(rows.map((row, i) => ({ id: i, ...row })));
+        const loadData = await loadTableData(sourceType, source);
 
+        if(sourceType === 'google' || sourceType === 'db' || sourceType === 'json') {
+            setData(loadData);
+        }
+        
         setLoading(false);
-       
-    }, [dbKey]);
-
+    }, [sourceType, source]);
     React.useEffect(()=> {
         load(); // первичная загрузка
 
@@ -96,14 +123,13 @@ export default function StorageDataTable({ style, dbKey, refreshInterval, ...pro
         }, refreshInterval);
 
         return () => clearInterval(id);
-    }, [dbKey]);
+    }, [dataId, source]);
     React.useEffect(()=> {
-        if (data.length > 0 && columns.length === 0) {
+        if (data.length > 0) {
             const inferred = inferColumns(data);
             setColumns(inferred);
         }
     }, [data]);
-
 
     const textEditor = (options) => {
         return (
@@ -114,6 +140,7 @@ export default function StorageDataTable({ style, dbKey, refreshInterval, ...pro
                     boxShadow: 'none',
                     background: 'none',
                     color: 'orange',
+                    maxWidth: 100,
                     textAlign: 'center',
                 }}
                 value={options.value}
@@ -121,74 +148,87 @@ export default function StorageDataTable({ style, dbKey, refreshInterval, ...pro
            />
         );
     }
-    const handleAddField = () => {
-        const newField = prompt('Название нового поля');
-        if (!newField) return;
+    const copy =()=> {
+        const list = {
+            xslx: exportExcel,
+            csv: exportCSV,
+            json: exportJSON
+        }
 
-        const updated = data.map((row) => ({
-            ...row,
-            [newField]: '',
-        }));
-        if(updated.length === 0) updated.push({[newField]: ''})
-
-        setData(updated);
-        setColumns(inferColumns(updated));
-
-        console.log(updated)
-        db.set(`STORAGES.${dbKey}`, updated);
+        if(footer) {
+            const copy = footer.props.children.map((elem)=> {
+                const clone = React.cloneElement(elem, {
+                    onClick: ()=> list[clone.props.children]()
+                });
+          
+                return clone;
+            });
+            
+            return React.cloneElement(footer, {
+                children: copy
+            });
+            
+        }
     }
     
 
     return(
         <DataTable
-            editMode={editing ? 'cell' : undefined}
+            editMode={'cell'}
             dataKey="id"
-            style={{ ...style, width: props.width, height: props.height, display: 'block' }}
+            style={{ ...style, display: 'block' }}
             value={data}
-            fontSizeHead='10px'
-            onRowEditInit={(e) => console.log('INIT EDIT ROW: ', e.index)}
-            header={
-                <div style={{ fontSize: 12, color: 'gray',height:23, display:'flex',flexDirection:'row',padding:3 }}>
-                    <div className='buttontable' style={{marginLeft:10,cursor:'pointer',color:'silver'}} onClick={handleAddField}>
-                        <AddBox sx={{fontSize:18}} />
-                    </div>
-                    <div className='buttontable' style={{marginLeft:15,cursor:'pointer',color:'silver'}} onClick={handleAddRow}>
-                        <PlaylistAdd sx={{ fontSize: 22 }} />
-                    </div>
-                </div>
-            }
+            fontSizeHead='14px'
             emptyMessage='empty'
+            footer={copy()}
+            { ...props }
         >
-            { columns.map((col) => (
+            <Column
+                key="actions"
+                body={(rowData, colProps) => (
+                    <button
+                        style={{
+                            background: 'transparent',
+                            border: 'none',
+                            color: 'red',
+                            cursor: 'pointer',
+                            fontWeight: 'bold',
+                        }}
+                        onClick={() => {
+                            const updated = data.filter((_, idx) => idx !== colProps.rowIndex);
+                            setData(updated);
+                            onChange(updated);
+                        }}
+                    >
+                        ×
+                    </button>
+                )}
+                style={{ width: '30px', textAlign: 'center' }}
+            />
+            { columns.map((col, i) => (
                 <Column 
                     //sortable
                     editor={textEditor}
                     key={col.field} 
                     field={col.field} 
                     header={
-                        <Box display="flex" alignItems="center" justifyContent="space-between">
-                            <span>{col.field}</span>
-                            <div className='buttontable' style={{marginLeft:10,cursor:'pointer',color:'silver'}} 
-                                onClick={()=> handleClick(col.field, 'auto')}
-                            >
-                                <Add sx={{ fontSize: 16 }} />
-                            </div>
-                        </Box>
-                      }
+                        <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }}>
+                            { col.field }
+                        </div>
+                    }
                     onCellEditComplete = {(e) => {
                         const updated = [...data];
                         updated[e.rowIndex][e.field] = e.newValue;
                         setData(updated);
-                        db.set(`STORAGES.${dbKey}`, updated);
+                        onChange(updated);
                     }}
                     body={(rowData, colProps) => {
-
                         return (
                             <span
                                 style={{ cursor: 'pointer', fontSize:'12px' }}
                                 onClick={()=> handleClick(col.field, colProps.rowIndex)}
                             >
-                                {rowData[col.field]}
+                                { rowData[col.field] }
                             </span>
                         );
                     }}

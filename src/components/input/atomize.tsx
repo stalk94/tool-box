@@ -145,9 +145,10 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
             sx={{
                 //backgroundColor: '#00000000',
                 background: useBackgroundColor(),
-                minHeight: '42px',
+                minHeight: '30px',
                 minWidth: '160px',
                 borderRadius: 1,
+                height: props?.style?.height ?? 36,
                 ...props.sx,
                 opacity: props.disabled && 0.4,
                 border: useBorderColor(),

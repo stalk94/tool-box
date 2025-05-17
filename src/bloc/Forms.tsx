@@ -14,8 +14,8 @@ import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/
 // составляет индивидуальную схему пропсов
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
-    const numberKeys = ['min', 'max', 'step', 'heightMedia'];
-    const switchKeys = ['fullHeight'];
+    const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
+    const switchKeys = ['fullHeight', 'showLabels'];
     //const fileKeys = [''];
     
     if(switchKeys.includes(propName)) {
@@ -28,10 +28,12 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
         }
     }
     else if (propName === 'data-source') {
+        propValue === 'table'
         return {
             type: 'file',
             id: 'file',
             label: 'upload',
+            accept: propValue === 'table' && ".json,.csv,.xlsx,.xls",
             labelSx: { fontSize: '14px' },
             value: propValue,
         };
@@ -43,8 +45,8 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             value: propValue,
             label: propName,
             labelSx: { fontSize: '14px' },
-            max: propName==='heightMedia' && 500,
-            step: propName==='heightMedia' && 20,
+            max: propName==='elevation' ? 12 : propName==='heightMedia' && 500,
+            step: propName==='elevation' ? 1 : propName==='heightMedia' && 20,
             sx: { fontSize: 14 }
         }
     }
@@ -344,92 +346,3 @@ export default function({ type, elemLink, onChange }: PropsForm) {
         </motion.div>
     );
 }
-
-
-/**
- * const schema: Schema[] = [];
-
-    if (typeContent === 'Typography') {
-        const children = fabrickPropsScheme(typeContent, propsElem.children, 'children');
-        const color = fabrickPropsScheme(typeContent, propsElem.color, 'color');
-        const variant = fabrickPropsScheme(typeContent, propsElem.variant, 'variant');
-        const display = fabrickPropsScheme(typeContent, propsElem.display, 'display');
-        const align = fabrickPropsScheme(typeContent, propsElem.align, 'align');
-        color.items = getColors(theme);
-
-        schema.push(
-            children as Schema<'text'>,
-            color as Schema<'toggle'>,
-            variant as Schema<'select'>,
-            display as Schema<'toggle'>,
-            align as Schema<'toggle'>
-        );
-    }
-    else if (typeContent === 'Button') {
-        const children = fabrickPropsScheme(typeContent, propsElem.children, 'children');
-        const color = fabrickPropsScheme(typeContent, propsElem.color, 'color');
-        const variant = fabrickPropsScheme(typeContent, propsElem.variant, 'variant');
-        const fullWidth = fabrickPropsScheme(typeContent, propsElem.fullWidth, 'fullWidth');
-        //const type = fabrickPropsScheme(typeContent, propsElem.type, 'type');
-        const size = fabrickPropsScheme(typeContent, propsElem.size, 'size');
-        const startIcon = fabrickPropsScheme(typeContent, propsElem.startIcon, 'startIcon');
-        const endIcon = fabrickPropsScheme(typeContent, propsElem.endIcon, 'endIcon');
-        color.items = getColors(theme);
-
-        schema.push(
-            children as Schema<'text'>,
-            //type as Schema<'toggle'>,
-            fullWidth as Schema<'switch'>,
-            variant as Schema<'select'>,
-            size as Schema<'toggle'>,
-            color as Schema<'toggle'>,
-            startIcon as Schema<'toggle'>,
-            endIcon as Schema<'toggle'>,
-        );
-    }
-    else if (typeContent === 'IconButton') {
-        const color = fabrickPropsScheme(typeContent, propsElem.color, 'color');
-        const size = fabrickPropsScheme(typeContent, propsElem.size, 'size');
-        const icon = fabrickPropsScheme(typeContent, propsElem.icon, 'icon');
-        color.items = getColors(theme);
-
-        schema.push(
-            color as Schema<'toggle'>,
-            size as Schema<'toggle'>,
-            icon as Schema<'toggle'>,
-        );
-    }
-    else if (typeContent === 'Image') {
-        const src = fabrickPropsScheme(typeContent, propsElem.src, 'src');
-        const alt = fabrickPropsScheme(typeContent, propsElem.alt, 'alt');
-        const sizes = fabrickPropsScheme(typeContent, propsElem.sizes ?? '100vw', 'sizes');
-    
-        schema.push(
-            src as Schema<'text'>,
-            alt as Schema<'text'>,
-            sizes as Schema<'text'>
-        );
-    
-        const imgixParams = {
-            id: 'imgixParams',
-            type: 'text',
-            multiline: true,
-            label: 'imgixParams',
-            value: JSON.stringify(propsElem.imgixParams ?? {}, null, 2),
-            labelSx: { fontSize: '14px' },
-            sx: { fontSize: 12 },
-        };
-    
-        schema.push(imgixParams as Schema<'text'>);
-    }
-    else if (typeContent === 'TextInput') {
-        const left = fabrickPropsScheme(typeContent, propsElem.leftIcon, 'icon');
-        const label = fabrickPropsScheme(typeContent, propsElem.label, 'children');
-        const placeholder = fabrickPropsScheme(typeContent, propsElem.label, 'children');
-        const position = fabrickPropsScheme(typeContent, propsElem.position, 'labelPosition');
-        const fullWidth = fabrickPropsScheme(typeContent, propsElem.fullWidth, 'fullWidth');
-        
-    }
-    
-    return schema;
- */

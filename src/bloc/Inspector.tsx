@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import { Paper, IconButton, Box, Typography, Button } from '@mui/material';
 import { Close, DragIndicator, ExpandMore, ExpandLess, Code, } from '@mui/icons-material';
 import { JsonViewer } from '@textea/json-viewer';
-import { TbJson } from "react-icons/tb";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { AiOutlinePushpin } from "react-icons/ai";
 import { IoMove } from "react-icons/io5";
 import { useHookstate } from "@hookstate/core";
 import { formatJsx } from './modules/export/utils';
+
+
 
 export default function InspectorPanel ({ data, onClose }) {
     const refEditor = React.useRef({data: {}, call: (editObject)=> console.log(editObject)});
@@ -212,19 +213,3 @@ export default function InspectorPanel ({ data, onClose }) {
         </Paper>
     );
 }
-
-
-
-/**
- *   React.useEffect(()=> {
-        sharedEmmiter.onAny((key, value)=> {
-            inspector.task.set((prew)=> {
-                prew.push({
-                    component: key,
-                    ...value,
-                });
-                return prew;
-            });
-        });
-    }, []);
- */

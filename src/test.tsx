@@ -1,3 +1,5 @@
+import 'primereact/resources/primereact.min.css'; 
+import 'primeicons/primeicons.css';   
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
@@ -29,21 +31,19 @@ const App = () => {
 
     
     return(
-        <ErrorBoundary>
-            <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-                <CssBaseline />
-                <BrowserRouter>
-                    <Routes>
-                        <Route path="/" element={
-                            <Editor 
-                             
-                            />
-                        } />
-                        <Route path="*" element={<Navigate to='/' replace />} />
-                    </Routes>
-                </BrowserRouter>
-            </ThemeProvider>
-        </ErrorBoundary>
+        <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
+            <CssBaseline />
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/" element={
+                        <Editor
+
+                        />
+                    } />
+                    <Route path="*" element={<Navigate to='/' replace />} />
+                </Routes>
+            </BrowserRouter>
+        </ThemeProvider>
     );
 }
 

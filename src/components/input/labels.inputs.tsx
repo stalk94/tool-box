@@ -10,7 +10,7 @@ import ColorPicker, { ColorPickerProps } from './color';
 import DatePickerCustom, { DateTimeInputProps } from './date';
 import Select, { BaseSelectProps } from './select';
 import Autocomplete, { AutoCompleteProps } from './autocomplete';
-import { Box } from '@mui/material';
+import { Box, ToggleButtonOwnProps } from '@mui/material';
 import { Label } from './atomize';
 import { SxProps, Theme } from '@mui/system';
 import FileLoader, { FileLoaderProps, FileLoaderCombo, ComboLoader } from './file-loader';
@@ -49,6 +49,7 @@ export type LabelTextProps = {
     position?: 'left' | 'right' | 'column'
     labelSx?: SxProps
 }
+
 
 
 function wrapWithLabel<P>(
@@ -174,6 +175,7 @@ export function LabelAutocomplete(props: LabelTextProps & AutoCompleteProps) {
 export function LabelSlider(props: LabelTextProps & CustomSliderProps) {
     return wrapWithLabel('slider', props.label, props.position, <Slider {...props} />, props);
 }
+
 
 export function LabelToogler(props: LabelTextProps & TooglerInputProps) {
     return wrapWithLabel('toggle', props.label, props.position, <TooglerInput {...props} />, props);

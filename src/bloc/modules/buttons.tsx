@@ -1,4 +1,4 @@
-import React from 'react';
+ import React from 'react';
 import { Badge, Button, IconButton } from '@mui/material';
 import { iconsList } from '../../components/tools/icons';
 import { Settings } from '@mui/icons-material';
@@ -44,8 +44,6 @@ export const IconButtonWrapper = React.forwardRef((props: any, ref) => {
         </IconButton>
     );
 });
-
-
 export const ButtonWrapper = React.forwardRef((props: any, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const { startIcon, endIcon, children, style, 'data-subs': subs, 'data-id': dataId, ...otherProps } = props;
@@ -91,3 +89,4 @@ export const ButtonWrapper = React.forwardRef((props: any, ref) => {
         </Button>
     );
 });
+

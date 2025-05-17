@@ -59,7 +59,7 @@ export const validatePhone = (phone: string) => {
 export const validateEmail = (email: string) => {
     let helperText;
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    const result = emailRegex.test(email);
+    const result = emailRegex.test(email ?? '');
     if (!result) helperText = 'Неверный формат email';
 
     return {
@@ -67,4 +67,15 @@ export const validateEmail = (email: string) => {
         helperText
     }
 
+}
+
+// Проверка валидности принятия соглашения
+export const validateConfirm = (isChecked: boolean) => {
+    let helperText;
+    if (!isChecked) helperText = 'Надо принять пользовательское соглашение';
+
+    return {
+        result: isChecked,
+        helperText
+    }
 }

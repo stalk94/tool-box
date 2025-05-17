@@ -1,11 +1,13 @@
 import React from 'react';
-import { LabelLogin, LabelPassword, LabelEmail, LabelPhone, LabelSelect } from '../input/labels.inputs';
-import { Button, ButtonProps, CircularProgress, SxProps } from '@mui/material';
-import { Person, Key, Tag, AlternateEmail } from '@mui/icons-material';
-import { validateEmail, validateLogin, validatePass, validatePhone } from './validator-defolt';
+import { LabelLogin, LabelPassword, LabelEmail, LabelPhone } from '../input/labels.inputs';
+import { ChekBoxAgrement } from '../input/input.any';
+import { Button, ButtonProps, CircularProgress, SxProps, FormHelperText } from '@mui/material';
+import { Person, Key, Tag, AlternateEmail, Label } from '@mui/icons-material';
+import { validateEmail, validateLogin, validatePass, validatePhone, validateConfirm } from './validator-defolt';
 
 
-export type TypeSchema = 'password' | 'password2' | 'login' | 'email' | 'phone' | 'select';
+export type TypeSchema = 'login' | 'password' | 'email' | 'phone' | 'confirm';
+type TypeSchemaHandlerValid = TypeSchema | 'password2';
 export type ValidatorCustom =(value: any)=> {
     result: boolean
     helperText?: string
@@ -22,7 +24,7 @@ export type BaseFormProps = {
     onRegistration: (outScheme: Record<string, string|number>)=> void  
     button?: ButtonProps
     /** Кастомные валидаторы */
-    validators?: Record<'password' | 'login' | 'email' | 'phone', ValidatorCustom>
+    validators?: Record<'password' | 'login' | 'email' | 'phone' | string, ValidatorCustom>
 }
 
 
@@ -30,7 +32,7 @@ export type BaseFormProps = {
 export default function RegistrationForm({ scheme, loading, onRegistration, button, validators }: BaseFormProps) {
     const ref = React.useRef<Record<TypeSchema, boolean|string>>({});
     const [isValid, setIsValid] = React.useState(true);
-    const [state, setState] = React.useState<Record<TypeSchema, any>>({});
+    const [state, setState] = React.useState<Record<TypeSchemaHandlerValid, any>>({});
     
 
     // совпадение пароля в confirm password форме
@@ -51,13 +53,15 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
             }
         }
     }
-    const handlerValidate =(type: TypeSchema, value: string)=> {
+    const handlerValidate =(type: TypeSchemaHandlerValid, value: string | boolean | string[])=> {
         let result: {result: boolean, helperText?: string} = {result: true};
-
-        if(type === 'login') result = validators[type]?.(value) ?? validateLogin(value);
-        else if(type === 'password') result = validators[type]?.(value) ?? validatePass(value);
-        else if(type === 'email') result = validators[type]?.(value) ?? validateEmail(value);
-        else if(type === 'phone') result = validators[type]?.(value) ?? validatePhone(value);
+        
+        if(type === 'login') result = validators?.[type]?.(value) ?? validateLogin(value);
+        else if(type === 'password') result = validators?.[type]?.(value) ?? validatePass(value);
+        else if(type === 'password2') result = validateConfirmPass(value[0], value[1]);
+        else if(type === 'email') result = validators?.[type]?.(value) ?? validateEmail(value);
+        else if(type === 'phone') result = validators?.[type]?.(value) ?? validatePhone(value);
+        else if(type === 'confirm') result = validators?.[type]?.(value) ?? validateConfirm(value);
 
         if(ref.current) {
             if(result.result && ref.current[type]) delete ref.current[type];
@@ -70,9 +74,6 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
     const getScheme =(type: TypeSchema)=> {
         const find = scheme.find((elem)=> elem.type === type);
         return find;
-    }
-    const handlerClickRegistartation =()=> {
-        onRegistration(state);
     }
     const useChangeValue =(name: string, value: any)=> {
         setState((old) => ({ ...old, [name]: value }));
@@ -87,6 +88,14 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
 
         setState(shab);
     }
+    const validatorsRender = React.useMemo(() => ({
+        login: () => handlerValidate('login', state.login),
+        password: () => handlerValidate('password', state.password),
+        password2: () => handlerValidate('password2', [state.password, state.password2]),
+        email: () => handlerValidate('email', state.email),
+        phone: () => handlerValidate('phone', state.phone),
+        confirm: () => handlerValidate('confirm', state.confirm),
+    }), [state]);
 
     React.useEffect(()=> {
         useTransform(scheme);
@@ -96,14 +105,12 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
                 const result = Object.values(ref.current).find((elem)=> elem);
                 setIsValid(!Boolean(result));
             }
-            //console.log(ref.current)
-        }, 500);
+        }, 300);
 
-        return ()=> {
-            clearInterval(timer);
-        }
-    }, []);
 
+        return ()=>  clearInterval(timer);
+    }, [scheme]);
+    
 
     return (
         <React.Fragment>
@@ -113,7 +120,6 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
                 if (!element) return null;
 
                 const commonProps = {
-                    key: index,
                     position: 'column',     // ANCHOR - надо доработать
                     disabled: loading,
                     label: element.label,
@@ -122,20 +128,14 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
                     sx: element.sx,
                     onChange: (val: any) => useChangeValue(keyName, val),
                 };
-                const validators = {
-                    login: () => handlerValidate('login', state.login),
-                    password: () => handlerValidate('password', state.password),
-                    password2: () => validateConfirmPass(state.password, state.password2),
-                    email: () => handlerValidate('email', state.email),
-                    phone: () => handlerValidate('phone', state.phone),
-                };
 
-                const componentMap: Record<string, JSX.Element> = {
-                    login: <LabelLogin {...commonProps} left={<Person />} useVerify={validators[type]} />,
-                    password: <LabelPassword {...commonProps} left={<Key />} useVerify={validators[type]} />,
-                    password2: <LabelPassword {...commonProps} left={<Key />} useVerify={validators[type]} />,
-                    email: <LabelEmail {...commonProps} left={<AlternateEmail />} useVerify={validators[type]} />,
-                    phone: <LabelPhone {...commonProps} left={<Tag />} useVerify={validators[type]} />,
+                const componentMap: Record<string, React.JSX.Element> = {
+                    login: <LabelLogin key={index} {...commonProps} left={<Person />} useVerify={validatorsRender[type]} />,
+                    password: <LabelPassword key={index} {...commonProps} left={<Key />} useVerify={validatorsRender[type]} />,
+                    password2: <LabelPassword key={index} {...commonProps} left={<Key />} useVerify={validatorsRender[type]} />,
+                    email: <LabelEmail key={index} {...commonProps} left={<AlternateEmail />} useVerify={validatorsRender[type]} />,
+                    phone: <LabelPhone key={index} {...commonProps} left={<Tag />} useVerify={validatorsRender[type]} />,
+                    confirm: <ChekBoxAgrement key={index} {...commonProps} useVerify={validatorsRender[type]} />
                 };
 
                 return componentMap[keyName] ?? null;
@@ -146,7 +146,7 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
                 variant='outlined'
                 color='success'
                 disabled={!isValid || loading} 
-                onClick={handlerClickRegistartation}
+                onClick={()=> onRegistration && onRegistration(state)}
                 startIcon={loading ? <CircularProgress size={24} color="inherit" /> : null}
                 { ...button }
             />

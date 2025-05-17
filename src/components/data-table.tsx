@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, ComponentProps } from 'react';
 import { alpha, darken, Theme } from "@mui/material/styles";
 import { DataTable, DataTableValueArray } from "primereact/datatable";
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { useTheme } from '@mui/material';
 
 
@@ -31,7 +31,6 @@ const StyledTableWrapper = styled.div<{
     theme: TableStyles; 
     fontSizeHead: string;
 }>`
-    height: 100%;
     display: flex;
     flex-direction: column;
 
@@ -76,8 +75,9 @@ const StyledTableWrapper = styled.div<{
         border-color: ${({ theme })=> alpha(theme.body.borderColor, 0.1)};
         background: ${({ theme })=> alpha(theme.header.background, 0.1)};
         color: ${({ theme })=> theme.body.textColor };
+        display: flex;
         font-size: 16px;
-        padding: 12px 16px;
+        padding: 6px 8px;
     }
     // панель фильтры и сортировка
     .p-datatable-thead > tr > th {
@@ -93,13 +93,17 @@ const StyledTableWrapper = styled.div<{
     }
     // нечетные row 
     .p-datatable-tbody > tr:nth-child(even) {
-        //background: ${({ theme })=> theme.palette.background.card};
+        background: ${({ theme })=> theme.body.background };
     }
     // стили row текста 
     .p-datatable-tbody > tr {
         color: ${({ theme })=> theme.body.textColor };
         font-size: 16px;
         transition: background 0.2s ease-in-out;
+    }
+    // подсвет всей строки при наведении
+    .p-datatable-tbody > tr:hover {
+        //background: #3a3c52;
     }
     // при наведении на row
     .p-datatable-tbody > tr > td:hover {
@@ -123,7 +127,7 @@ const StyledTableWrapper = styled.div<{
  * добавляет автоматическую подстройку высоты контейнера,       
  * сохраняя оригинальное API компонента.
  */
-export default function DataTableCustom({ value, children, header, footer, fontSizeHead, styles, ...props }: DataTablePropsWrapper) {
+export default function DataTableCustom({ value, children, header, footer, fontSizeHead, styles, style, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
@@ -188,7 +192,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 const container = tableRef.current.getElement();
                 const bodyArea = tableRef.current.getTable().parentElement;
                 const parent = container.parentElement;     // родитель
-                
+        
                 const headerElement = container.querySelector('.p-datatable-header');
                 const footerElement = container.querySelector('.p-datatable-footer');
 
@@ -196,13 +200,12 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 const containerHeight = container?.offsetHeight || 0;
                 const headerHeight = headerElement?.offsetHeight || 0;
                 const footerHeight = footerElement?.offsetHeight || 0;
-                //console.log(parentHeight);
+                
 
                 // Вычисляем высоту прокручиваемой области
                 const calculatedScrollHeight = containerHeight - headerHeight - footerHeight;
                 
                 setScrollHeight(`${Math.max(calculatedScrollHeight, 50)}px`);
-                //console.log(getBound(container))
                 setHeight(getBound(container));
             }
         };
@@ -221,6 +224,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
     
     return (
         <StyledTableWrapper 
+            as="span"
             theme={mergeStyle()} 
             fontSizeHead={fontSizeHead}
         >
@@ -229,7 +233,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 value={value}
                 scrollable={true}
                 scrollHeight={scrollHeight}
-                style={{ height: '100%', flexGrow: 1, maxHeight: `${height}px` }}
+                style={{ height: '100%', width: '100%', flexGrow: 1, ...style }}
                 header={header}
                 footer={footer}
                 {...props}

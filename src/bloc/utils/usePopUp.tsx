@@ -17,31 +17,6 @@ type UsePopUpCustom = {
 }
 
 
-export function useSafeAsync(
-    callback: (isMounted: () => boolean) => void | Promise<void>,
-    deps: React.DependencyList = []
-) {
-    const isMountedRef = React.useRef(false);
-
-    React.useEffect(() => {
-        isMountedRef.current = true;
-
-        const run = async () => {
-            try {
-                await callback(() => isMountedRef.current);
-            } 
-            catch (e) {
-                console.error('❌ useSafeAsync error:', e);
-            }
-        };
-
-        run();
-
-        return () => {
-            isMountedRef.current = false;
-        };
-    }, deps);
-}
 export function useSafeAsyncEffect(
     callback: (isMounted: () => boolean) => void | Promise<void>,
     deps: React.DependencyList = []

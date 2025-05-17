@@ -86,7 +86,7 @@ export function renderJsonToLiteral(children: any, indent = 4): string {
             .map(child => renderJsonToLiteral(child, indent))
             .join('\n');
     }
-
+    console.log(isReactElement(children))
 
     if (isReactElement(children)) {
         const type = getTypeNameFromReactComponent(children);

@@ -2,7 +2,7 @@ import React from 'react';
 import useResizeObserver from '@react-hook/resize-observer';
 import { Editor } from 'slate';
 
-type Size = { width: number; height: number };
+type Size = { width: number; height: number, container: DOMRect };
 
 
 export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
@@ -60,7 +60,7 @@ export const withResetOnRightClick = (
 };
 
 export const useComponentSizeWithSiblings = (componentId: string): Size => {
-    const [size, setSize] = React.useState<Size>({ width: 100, height: 100 });
+    const [size, setSize] = React.useState<Size>({ width: 100, height: 100, container:{} });
     const containerRef = React.useRef<HTMLElement | null>(null);
     const componentRef = React.useRef<HTMLElement | null>(null);
 
@@ -88,6 +88,7 @@ export const useComponentSizeWithSiblings = (componentId: string): Size => {
         const containerRect = container.getBoundingClientRect();
 
         setSize({
+            container: containerRect,
             width: Math.max(0, (containerRect.width - usedWidth) / globalThis.ZOOM),
             height: Math.max(0, (containerRect.height - usedHeight - 5) / globalThis.ZOOM),
         });
@@ -101,7 +102,7 @@ export const useComponentSizeWithSiblings = (componentId: string): Size => {
         const tryFind = () => {
             const current = document.querySelector(`[data-id="${componentId}"]`) as HTMLElement | null;
             const container = current?.closest('.react-grid-item') as HTMLElement | null;
-
+            
             if (current && container) {
                 componentRef.current = current;
                 containerRef.current = container;

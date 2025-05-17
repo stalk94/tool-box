@@ -8,9 +8,7 @@
       "h": 32,
       "content": [
         {
-          "type": {
-            "parent": "cell-1746527949939"
-          },
+          "type": {},
           "key": null,
           "props": {
             "fullWidth": true,
@@ -27,9 +25,7 @@
           "_store": {}
         },
         {
-          "type": {
-            "parent": "cell-1746527949939"
-          },
+          "type": {},
           "key": null,
           "props": {
             "children": "Button",
@@ -46,9 +42,7 @@
           "_store": {}
         },
         {
-          "type": {
-            "parent": "cell-1746527949939"
-          },
+          "type": {},
           "key": null,
           "props": {
             "children": "Button",
@@ -65,9 +59,7 @@
           "_store": {}
         },
         {
-          "type": {
-            "parent": "cell-1746527949939"
-          },
+          "type": {},
           "key": null,
           "props": {
             "children": "Заголовокhh",
@@ -83,9 +75,25 @@
           "_store": {}
         },
         {
-          "type": {
-            "parent": "cell-1746527949939"
+          "type": {},
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "type": "time",
+            "fullWidth": true,
+            "styles": {},
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1747257390790,
+            "data-type": "Time"
           },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
           "key": null,
           "props": {
             "label": "label",
@@ -105,21 +113,30 @@
           "_store": {}
         },
         {
-          "type": {
-            "parent": "cell-1746527949939"
-          },
+          "type": {},
           "key": null,
           "props": {
-            "label": "label",
-            "position": "column",
-            "type": "time",
             "fullWidth": true,
-            "styles": {},
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1747257390790,
-            "data-type": "Time"
+            "showLabels": false,
+            "elevation": 1,
+            "labelSize": 16,
+            "iconSize": 24,
+            "items": [
+              {
+                "icon": "Home",
+                "label": "home"
+              },
+              {
+                "icon": "Add",
+                "label": "add"
+              },
+              {
+                "icon": "Add",
+                "label": "test"
+              }
+            ],
+            "data-id": 1747319597288,
+            "data-type": "BottomNav"
           },
           "_owner": null,
           "_store": {}
@@ -136,9 +153,7 @@
       "h": 11,
       "content": [
         {
-          "type": {
-            "parent": "cell-1747227523825"
-          },
+          "type": {},
           "key": null,
           "props": {
             "fullWidth": true,
@@ -161,24 +176,21 @@
       "x": 8,
       "y": 0,
       "w": 4,
-      "h": 5,
+      "h": 17,
       "content": [
         {
-          "type": {
-            "parent": "cell-1747227526997"
-          },
+          "type": {},
           "key": null,
           "props": {
-            "src": "",
-            "file": "",
-            "data-source": "src",
-            "autoplay": false,
-            "controls": true,
-            "loop": false,
-            "poster": "",
+            "children": "Button",
+            "variant": "outlined",
+            "color": "error",
             "fullWidth": true,
-            "data-id": 1747257401131,
-            "data-type": "Video"
+            "startIcon": "none",
+            "endIcon": "none",
+            "style": {},
+            "data-id": 1747448022712,
+            "data-type": "Button"
           },
           "_owner": null,
           "_store": {}
@@ -193,7 +205,120 @@
       "y": 11,
       "w": 3,
       "h": 21,
-      "content": [],
+      "content": [
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "activeIndexs": [],
+            "styles": {},
+            "items": [
+              {
+                "title": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "ml": 1.5
+                    },
+                    "children": "・test-1"
+                  }
+                },
+                "content": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "m": 3
+                    },
+                    "children": "content"
+                  }
+                }
+              },
+              {
+                "title": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "ml": 1.5
+                    },
+                    "children": [
+                      "・test-",
+                      1
+                    ]
+                  }
+                },
+                "content": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "m": 3
+                    },
+                    "children": "content"
+                  }
+                }
+              },
+              {
+                "title": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "ml": 1.5
+                    },
+                    "children": [
+                      "・test-",
+                      2
+                    ]
+                  }
+                },
+                "content": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "m": 3
+                    },
+                    "children": "content"
+                  }
+                }
+              },
+              {
+                "title": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "ml": 1.5
+                    },
+                    "children": [
+                      "・test-",
+                      3
+                    ]
+                  }
+                },
+                "content": {
+                  "$$jsx": true,
+                  "type": "Box",
+                  "props": {
+                    "sx": {
+                      "m": 3
+                    },
+                    "children": "content"
+                  }
+                }
+              }
+            ],
+            "data-id": 1747259887959,
+            "data-type": "Accordion"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
       "moved": false,
       "static": false
     }
@@ -231,21 +356,6 @@
         }
       },
       {
-        "id": 1747257380179,
-        "parent": "cell-1746527949939",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "primary",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1747257380179,
-          "data-type": "Button"
-        }
-      },
-      {
         "id": 1747257381802,
         "parent": "cell-1746527949939",
         "props": {
@@ -257,6 +367,22 @@
           },
           "data-id": 1747257381802,
           "data-type": "Typography"
+        }
+      },
+      {
+        "id": 1747257390790,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "type": "time",
+          "fullWidth": true,
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747257390790,
+          "data-type": "Time"
         }
       },
       {
@@ -278,19 +404,45 @@
         }
       },
       {
-        "id": 1747257390790,
+        "id": 1747319597288,
         "parent": "cell-1746527949939",
         "props": {
-          "label": "label",
-          "position": "column",
-          "type": "time",
           "fullWidth": true,
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1747257390790,
-          "data-type": "Time"
+          "showLabels": false,
+          "elevation": 1,
+          "labelSize": 16,
+          "iconSize": 24,
+          "items": [
+            {
+              "icon": "Home",
+              "label": "home"
+            },
+            {
+              "icon": "Add",
+              "label": "add"
+            },
+            {
+              "icon": "Add",
+              "label": "test"
+            }
+          ],
+          "data-id": 1747319597288,
+          "data-type": "BottomNav"
+        }
+      },
+      {
+        "id": 1747257380179,
+        "parent": "cell-1746527949939",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1747257380179,
+          "data-type": "Button"
         }
       }
     ],
@@ -311,32 +463,142 @@
     ],
     "cell-1747227526997": [
       {
-        "id": 1747257401131,
+        "id": 1747448022712,
         "parent": "cell-1747227526997",
         "props": {
-          "src": "",
-          "file": "",
-          "data-source": "src",
-          "autoplay": false,
-          "controls": true,
-          "loop": false,
-          "poster": "",
+          "children": "Button",
+          "variant": "outlined",
+          "color": "error",
           "fullWidth": true,
-          "data-id": 1747257401131,
-          "data-type": "Video"
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1747448022712,
+          "data-type": "Button"
         }
       }
     ],
-    "cell-1747227527273": []
+    "cell-1747227527273": [
+      {
+        "id": 1747259887959,
+        "parent": "cell-1747227527273",
+        "props": {
+          "fullWidth": true,
+          "activeIndexs": [],
+          "styles": {},
+          "items": [
+            {
+              "title": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "ml": 1.5
+                  },
+                  "children": "・test-1"
+                }
+              },
+              "content": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "m": 3
+                  },
+                  "children": "content"
+                }
+              }
+            },
+            {
+              "title": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "ml": 1.5
+                  },
+                  "children": [
+                    "・test-",
+                    1
+                  ]
+                }
+              },
+              "content": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "m": 3
+                  },
+                  "children": "content"
+                }
+              }
+            },
+            {
+              "title": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "ml": 1.5
+                  },
+                  "children": [
+                    "・test-",
+                    2
+                  ]
+                }
+              },
+              "content": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "m": 3
+                  },
+                  "children": "content"
+                }
+              }
+            },
+            {
+              "title": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "ml": 1.5
+                  },
+                  "children": [
+                    "・test-",
+                    3
+                  ]
+                }
+              },
+              "content": {
+                "$$jsx": true,
+                "type": "Box",
+                "props": {
+                  "sx": {
+                    "m": 3
+                  },
+                  "children": "content"
+                }
+              }
+            }
+          ],
+          "data-id": 1747259887959,
+          "data-type": "Accordion"
+        }
+      }
+    ]
   },
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1747259340222,
+    "updatedAt": 1747453924020,
     "preview": "snapshots/home-root.png"
   },
   "size": {
-    "width": 1005,
-    "height": 800
+    "width": 1200,
+    "height": 815
   }
 }

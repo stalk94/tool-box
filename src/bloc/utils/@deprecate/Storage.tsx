@@ -1,7 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Paper, IconButton, Box, Typography } from '@mui/material';
 import { Close, DragIndicator, ExpandMore, ExpandLess } from '@mui/icons-material';
-import { Form } from '../index';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import StorageTable from './modules/sources/storage';

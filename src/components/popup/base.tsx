@@ -4,7 +4,7 @@ import Menu from '../menu';
 
 
 
-type CustomMenuProps = {
+export type CustomMenuProps = {
     children: ReactNode
     items: NavLinkItem[]
     /** ❔ слушатель срабатываюший при закрытии/открытии панели */

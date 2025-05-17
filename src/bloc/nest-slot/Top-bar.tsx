@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
-import { Component, LayoutCustom } from './type';
+import { Component, LayoutCustom } from '../type';
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
 import { GrStorage } from "react-icons/gr";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
@@ -15,8 +15,7 @@ export type ContentData = {
 }
 const categories = [
     { id: 'block', label: <TouchApp/> },
-    { id: 'grid', label: <ViewComfy/> },
-    { id: 'preview', label: <Input style={{fontSize: 24}} /> }
+    { id: 'grid', label: <ViewComfy/> }
 ];
 const Instrument = () => {
     const mod = useHookstate(useEditorContext().mod);
@@ -177,48 +176,3 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         </Paper>
     );
 }
-
-
-
-/**
- * <Box>
-                <MenuPoup 
-                    anchorEl={open} 
-                    keepMounted 
-                    PaperProps={{
-                        style: {
-                            width: '40%'
-                        },
-                    }}
-                    open={Boolean(open)} 
-                    onClose={()=> setOpen()}
-                    sx={{mt: 1}}
-                >
-                    <Box sx={{p:2, display:'flex', justifyContent:'center'}}>
-                        { select.content.get({ noproxy: true }) }
-                    </Box>
-                </MenuPoup>
-                { currentContentData &&
-                    <Button 
-                        color='navigation'
-                        onClick={(e)=> setOpen(e.currentTarget)} 
-                        sx={{fontSize:'12px',textDecoration:'underline'}}
-                    >
-                        { currentContentData.type }
-                    </Button>
-                }
-            </Box>
-            <Box sx={{ml:'auto'}}>
-                <SelectButton
-                    variant="outlined"
-                    color='inherit'
-                    sx={{color: '#bababa69', background:'#0000001a',fontSize:12}}
-                    value={{ id: 'home', label: 'Компоновшик', icon: <Extension /> }}
-                    items={[
-                        { id: 'home', label: 'Компоновшик', icon: <Extension /> },
-                        { id: 'grid', label: 'Сетка' }
-                    ]}
-                    onChange={(v)=> context.mod.set(v.id)}
-                />
-            </Box>
- */

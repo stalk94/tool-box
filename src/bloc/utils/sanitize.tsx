@@ -103,7 +103,7 @@ export function deserializeJSX(node: any, maps?: Record<string, any>): any {
     return node;
 }
 
-
+// используется для json редактора
 export const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
     const rawProps = { ...component.props };
     const type = rawProps['data-type'];
@@ -123,23 +123,26 @@ export const serrialize = (component: Component, cellId: string): ComponentSerri
     };
 }
 export const desserealize = (component: ComponentSerrialize, data?: Record<string, any>) => {
-        const { id, props, functions, parent } = component;
+    if(component) {
+        const { props, parent } = component;
         const type = props["data-type"];
         //console.log(component)
         const Component = componentMap[type];
         Component.displayName = type;
         Component.parent = parent;
         
-    
+
+
         if (!Component) {
             console.warn(`Компонент типа "${type}" не найден в реестре`);
             return null;
         }
-        
+
         return (
             <Component
-                { ...props }
-                { ...data }
+                {...props}
+                {...data}
             />
         );
+    }
 }

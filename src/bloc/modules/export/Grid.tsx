@@ -73,6 +73,29 @@ function objectArrayToJsLiteralWithoutContent(arr: object[], indent = 4): string
         return `${space}{\n${entries}\n${space}}`;
     }).join(',\n') + `\n]`;
 }
+// разделка на импорт и jsx тело
+export const splitImportsAndBody = (code: string) => {
+    const lines = code.trim().split('\n');
+
+    const importLines: string[] = [];
+    const bodyLines: string[] = [];
+    let inImports = true;
+
+    for (const line of lines) {
+        if (inImports && line.trim().startsWith('import')) {
+            importLines.push(line.trim());
+        }
+        else {
+            inImports = false;
+            bodyLines.push(line);
+        }
+    }
+
+    return {
+        imports: importLines, // массив строк
+        body: bodyLines.join('\n') // остальная часть кода как строка
+    };
+}
 // ANCHOR может в next js не срабатывать
 export function getComponentLiteral(code: string): string {
     let ast: File;
@@ -107,6 +130,7 @@ export function getComponentLiteral(code: string): string {
 }
 
 
+//! 'этот фундамент надо превратить в дом'
 export default function exportsGrid(
     render: LayoutCustom[],
     scope: string,
@@ -114,34 +138,15 @@ export default function exportsGrid(
     style?: React.CSSProperties,
 ) {
     const singleList = ['Breadcrumbs', 'AppBar'];
+    const individualList = ['Tabs', 'BottomNav'];
     
-    const splitImportsAndBody =(code: string)=> {
-        const lines = code.trim().split('\n');
-
-        const importLines: string[] = [];
-        const bodyLines: string[] = [];
-        let inImports = true;
-
-        for (const line of lines) {
-            if (inImports && line.trim().startsWith('import')) {
-                importLines.push(line.trim());
-            } 
-            else {
-                inImports = false;
-                bodyLines.push(line);
-            }
-        }
-
-        return {
-            imports: importLines, // массив строк
-            body: bodyLines.join('\n') // остальная часть кода как строка
-        };
-    }
     const renderComponents = async(content: Component[], cell: LayoutCustom) => {
         const imports: string[] = [];
-        const bodys: string[] = [];
+        const bodysInOrder: string[] = [];
         const singletonsimports: string[] = [];
         const singletonsbody: string[] = [];
+        const individualFunctions: string[] = [];
+        let individualCounter = 0;
 
         await Promise.all(content.map((component) => {
             return new Promise<void>((resolve) => {
@@ -156,9 +161,28 @@ export default function exportsGrid(
                             singletonsbody.push(result.body);
                             singletonsimports.push(...result.imports);
                         } 
+                        else if (individualList.includes(type)) {
+                            const match = result.body.match(/export\s+default\s+function\s+([a-zA-Z0-9_$]+)\s*\(/);
+
+                            if (match) {
+                                const baseName = match[1];
+                                const funcName = (content.filter(c => c.props['data-type'] === type).length === 1)
+                                    ? baseName
+                                    : baseName + individualCounter++;
+
+                                // заменяем export default → export function ...
+                                const funcCode = result.body.replace(
+                                    /export\s+default\s+function\s+([a-zA-Z0-9_$]+)\s*\(/,
+                                    `export function ${funcName}(`
+                                );
+
+                                individualFunctions.push(funcCode);
+                                bodysInOrder.push(`<${funcName} />`);
+                                imports.push(...result.imports);
+                            }
+                        }
                         else {
-                            console.log(result.body)
-                            bodys.push(getComponentLiteral(result.body));
+                            bodysInOrder.push(getComponentLiteral(result.body));
                             imports.push(...result.imports);
                         }
                         resolve(); // обязательно!
@@ -174,13 +198,15 @@ export default function exportsGrid(
                 imports: mergeImports(singletonsimports),
                 body: singletonsbody,
             } : undefined,
-            cells: bodys.length > 0 ? `
+            cells: bodysInOrder.length > 0 ? `
                 ${unicalImportsArray.join('\n')}
+
+                ${individualFunctions.join('\n\n')}
 
                 export default function Cell() {
                     return(
                         <>
-                            ${bodys.join('\n\n')}
+                            ${bodysInOrder.join('\n\n')}
                         </>
                     );
                 }

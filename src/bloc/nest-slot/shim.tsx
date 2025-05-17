@@ -1,45 +1,83 @@
 import React from 'react';
 import { Box, IconButton, Paper } from '@mui/material';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../../context";
 import { useHookstate } from '@hookstate/core';
-import { updateComponentProps } from '../../utils/updateComponentProps';
 import { Power, LinkOff, Add, Remove } from '@mui/icons-material';
-import { serializeJSX } from '../../utils/sanitize';
+import { serializeJSX } from '../utils/sanitize';
+import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 
 
+export function updateComponentProps({ component, data, rerender = true }: Params) {
+    const context = useEditorContext();
+    const cellsContent = useCellsContent();
+    const infoState = useInfoState();
+    const renderState = useRenderState();
+    const id = component?.props?.['data-id'];
+    const cellId = context.currentCell.get()?.i;
 
-export type ToolbarOption = {
-    icon: React.ReactNode;
-    action: () => void;
-    tooltip?: string;
+    if (!id || !cellId) {
+        console.warn('updateComponentProps: отсутствует data-id или data-cell');
+        return;
+    }
+    
+    // 🧠 Обновляем данные в hookstate-кэше
+    cellsContent.set((old) => {
+        const index = old[cellId]?.findIndex((c) => c.id === id);
+        if (index !== -1) {
+            Object.entries(data).forEach(([key, value]) => {
+                old[cellId][index].props[key] = value;
+            });
+        }
+        return old;
+    });
+
+    // 🔁 Обновляем визуальный рендер через context.render
+    if (rerender) renderState.set((layers) => {
+        console.log('update props: ', component, data);
+        
+        const updated = layers.map((layer) => {
+            if (!Array.isArray(layer.content)) return layer;
+            
+            const i = layer.content.findIndex((c) => c?.props?.['data-id'] === id);
+
+            if (i === -1) return layer;
+            //! возможно слотовой
+            else {
+               
+            }
+            
+            const current = layer.content[i];
+            if (!current) {
+                console.warn('updateComponentProps: компонент не найден в render');
+                return layer;
+            }
+
+            try {
+                const updatedComponent = React.cloneElement(current, {
+                    ...current.props,
+                    ...data,
+                });
+
+                console.log(updatedComponent)
+                infoState.select?.content?.set(updatedComponent);         // fix
+                layer.content[i] = updatedComponent;
+            } 
+            catch (e) {
+                console.error('❌ Ошибка при клонировании компонента:', e, current);
+            }
+
+            return layer;
+        });
+
+        return [...updated];
+    });
 }
-export type ContextualToolbarProps = {
-    options: ToolbarOption[];
-    align?: 'top' | 'bottom';
-    offsetY?: number;
-    visible?: boolean;
-    position?: 'center' | 'left' | 'right';
-}
-export function useToolbar(id: number, onVisibleChange?: (v: boolean)=> void, alwaysVisible = false) {
-    const infoState = useHookstate(useInfoState());
-    const cellsContent = useHookstate(useCellsContent());
-    const context = useHookstate(useEditorContext());
-    const selected = infoState.select.content;
-    const [visible, setVisible] = React.useState(false);
 
 
-    React.useEffect(() => {
-        const isSelected = selected.get({noproxy:true})?.props?.['data-id'] === id;
-        const show = alwaysVisible || isSelected;
-        setVisible(show);
-        onVisibleChange?.(show);
-    }, [selected, id, alwaysVisible]);
 
 
-    return { visible, selected, context, cellsContent };
-}
-
-
+////////////////////////////////////////////////////////////
+//  shim add slot
+////////////////////////////////////////////////////////////
 const ContextualToolbar: React.FC<ContextualToolbarProps> = ({
     options,
     align = 'top',
@@ -100,64 +138,6 @@ const ContextualToolbar: React.FC<ContextualToolbarProps> = ({
         </Box>
     );
 }
-
-export const LinktoolBar =({dataId, subs, onChange})=> {
-    const [isThisSelect, setSelectThis] = React.useState(false);
-    const ctx = useHookstate(useEditorContext());
-    const info = useHookstate(useInfoState());
-    const selectContent = info.select.content;
-
-    const create = () => {
-        const selectedProps = selectContent.get({noproxy: true})?.props
-        const selectedSubs: string[] = selectedProps?.['data-subs'] ?? [];
-        const options = [];
-
-        if(isThisSelect) {
-            // инфо панель выбранного
-        }
-        else {
-           
-            // текуший выбранный подписан на события 
-            if(selectedSubs?.includes?.(String(dataId))) {
-                options.push({
-                    action: ()=> updateComponentProps({
-                        component: { props: selectedProps },
-                        data: { ['data-subs']: selectedSubs.filter(id => id !== String(dataId)) }
-                    }),
-                    icon: <LinkOff sx={{color:'red'}}/>
-                });
-            }
-            else options.push({
-                action: () => updateComponentProps({
-                    component: { props: selectedProps },
-                    data: { ['data-subs']: [...selectedSubs, String(dataId)] }
-                }),
-                icon: <Power sx={{ color: 'green' }} />
-            });
-        }
-
-        return options;
-    }
-    React.useEffect(()=> {
-        const cur = selectContent.get({noproxy: true});
-
-        if(cur) {
-            const selectDataId = cur?.props['data-id'];
-            if(selectDataId === dataId) setSelectThis(true);
-            else setSelectThis(false);
-        }
-    }, [selectContent])
-
-
-    return(
-        <ContextualToolbar
-            visible={true}
-            options={create()}
-            sx={{width: 80, height: 30}}
-        />
-    );
-}
-
 export const SlotToolBar =({ dataId, type, item })=> {
     const [isThisSelect, setSelectThis] = React.useState(false);
     const info = useHookstate(useInfoState());
@@ -224,7 +204,3 @@ export const SlotToolBar =({ dataId, type, item })=> {
         />
     );
 }
-
-
-
-export default ContextualToolbar;

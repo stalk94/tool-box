@@ -49,3 +49,9 @@ export type { AlertManagerProps } from './components/alert';
 export { default as Flag } from './components/tools/flag';
 // кнопка с поведением выпадаюшего списка
 export { default as SelectButton } from './components/popup/select.button';
+
+// выпадаюшее меню при наведении на элемент с кастомным содержимым
+export { default as HoverPopover } from './components/popup/HoverPopover';
+export type { HoverPopoverProps } from './components/popup/HoverPopover';
+
+export { default as DomInspector } from './components/tools/inspector';

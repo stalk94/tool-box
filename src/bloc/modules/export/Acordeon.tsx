@@ -1,6 +1,6 @@
-import { jsxJsonToString, formatJsx, renderComponentSsr, renderComponentSsrPrerender } from './utils';
-import { htmlToJsx } from './Text';
+import { jsxJsonToString, formatJsx, renderJsonToLiteral, renderComponentSsr, renderComponentSsrPrerender } from './utils';
 import { Component, ComponentProps } from '../../type';
+import { splitImportsAndBody, getComponentLiteral, mergeImports } from './Grid';
 
 
 export function toJSXProps(obj: Record<string, any>): string {
@@ -78,8 +78,6 @@ export default function exported(
         }
     `);
 }
-
-
 export function exportedTabs(
     items: string[],
     textColor: "inherit" | "secondary" | "primary" | undefined,
@@ -98,23 +96,62 @@ export function exportedTabs(
             />
         `)) : [''];
     }
+    const renderSlots =()=> {
+        const dslots = {};
+        const imports = [];
 
+
+        Object.values(slots).map((slot, index) => {
+            dslots[index] = [];
+
+
+            slot.map(elem => {
+                const id = elem.props['data-id'];
+
+                sharedEmmiter.emit('degidratation.' + id, {
+                    call: (code: string) => {
+                        const data = splitImportsAndBody(code);
+                        imports.push(...data.imports);
+                        dslots[index].push(getComponentLiteral(data.body));
+                    }
+                });
+            })
+        })
+        
+
+        const slotLiteralEntries = Object.entries(dslots).map(([key, bodys]) => {
+            const jsx = bodys.length > 0 ? `<>${bodys.join('\n\n')}</>` : `<></>`;
+            return `"${key}": ${jsx}`;
+        });
+
+        const slotsLiteral = `{\n${slotLiteralEntries.join(',\n')}\n}`;
+
+        return {
+            slots: slotsLiteral,
+            imports: mergeImports(imports).join('\n')
+        }
+    }
+
+    const result = renderSlots();
+    
 
     return (`
         import React from 'react';
         import { Tabs, Tab } from '@mui/material';
-        
+        ${result.imports}
 
         export default function TabNavigation() {
+            const [curent, setCurent] = React.useState(0);
+            const slots = ${result.slots}
 
             return (
                 <div
                     style={{ width: '100%', display: 'block' }}
                 >
                     <Tabs
-                        value={0}
+                        value={curent}
                         onChange={(event: React.SyntheticEvent, newValue: number) => {
-                            console.log(newValue)
+                            setCurent(newValue);
                         }}
                         variant="scrollable"
                         scrollButtons={true}
@@ -124,12 +161,89 @@ export function exportedTabs(
                     >
                         ${renderTab().join('\n')}
                     </Tabs>
+                    <div style={{ height: 'fit-content' }}>
+                        { slots[curent] }
+                    </div>
                 </div>
             );
         }
     `);
 }
+// individual
+export function exportedBottomNav(
+    items: {label:string, icon:string,id?:string}[],
+    style: React.CSSProperties,
+    labelStyle: React.CSSProperties,
+    iconStyle: React.CSSProperties,
+    showLabels: boolean,
+    otherProps: any
+) {
+    const iconsName = []; 
+    const toObjectLiteral = (obj) => {
+        return Object.entries(obj || {})
+            .filter(([, value]) => value !== undefined)
+            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+            .join(', ');
+    }
+    const renderItemsLiteral = () => {
+        return `[\n${items.map((item, index) => (
+            `  { id: '${item.id ?? 'BottomNavigation-'+index}', icon: <${item.icon} />, label: '${item.label}' }`
+        )).join(',\n')}\n]`;
+    }
+    
 
+    return (`
+        import React from 'react';
+        import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
+        import { ${items.map((elem, index)=> elem.icon).join(', ')} } from '@mui/icons-material';
+       
+
+        export default function BottomNavigationWrap() {
+            const [curent, setCurent] = React.useState(0);
+            const items = ${renderItemsLiteral()};
+
+            const handleChange = (e: React.SyntheticEvent, newValue: number) => {
+                setCurent(newValue);
+            }
+
+            return (
+                <Paper
+                    style={{
+                        width: '100%', 
+                        position: 'sticky',
+                        bottom: 0, 
+                        border: '1px'
+                    }}
+                    ${ toJSXProps(otherProps) }
+                >
+                    <BottomNavigation
+                        style={{ ${toObjectLiteral(style)} }}
+                        showLabels={${JSON.stringify(showLabels)}}
+                        value={curent}
+                        onChange={handleChange}
+                    >
+                        { items && items.map((elem, index: number) =>
+                            <BottomNavigationAction
+                                key={index}
+                                label={ ${JSON.stringify(showLabels)} && 
+                                    <span style={{ ${toObjectLiteral(labelStyle)} }}>
+                                        { elem.label }
+                                    </span>
+                                }
+                                icon={elem.icon ? elem.icon : undefined}
+                                sx={{ 
+                                    '& .MuiSvgIcon-root': {
+                                        ${toObjectLiteral(iconStyle)}
+                                    } 
+                                    }}
+                            />
+                        )}
+                    </BottomNavigation>
+                </Paper>
+            );
+        }
+    `);
+}
 
 export function exportedTable(
    

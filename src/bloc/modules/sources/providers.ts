@@ -45,10 +45,11 @@ export async function fetchJson(source: string) {
     }
 }
 
-export async function loadTableData(sourceType: 'json' | 'google' | 'json-url' | 'db', source: string): Promise<any[]> {
+export async function loadTableData(sourceType: 'json' | 'google' | 'json-url' | 'db', source: string|object): Promise<any[]> {
     try {
         if (sourceType === 'json') {
-            return JSON.parse(source);
+            if(typeof source === 'string') return JSON.parse(source);
+            else return source;
         }
         if (sourceType === 'json-url') {
             return await fetchJson(source);

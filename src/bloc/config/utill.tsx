@@ -332,7 +332,7 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
         )
     });
 
-
+   
     if (propName === 'color') {
         return {
             type: 'toggle',
@@ -395,7 +395,7 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
     }
     // индвивидуальные пропсы для типов
     else if(typeComponent && metaProps[typeComponent]?.[propName]) {
-        const vars: [] | string = metaProps[typeComponent][propName];
+        const vars = metaProps[typeComponent][propName];
         
         if(vars === 'string') {
 
@@ -422,6 +422,34 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
 
             if(type==='select') result.onlyId = true;
             return result;
+        }
+        else if (typeof vars === 'object' && vars !== null) {
+            const data = { ...vars };
+
+            if (vars.type === 'slider') {
+                if (!propValue) propValue = 0;
+                else propValue = +propValue;
+            }
+            else if (vars?.type === 'toggle') {
+                data.items = vars.items.map((elem) => ({
+                    id: elem.id,
+                    label: (
+                        <span style={{ fontSize: '10px', whiteSpace: 'nowrap', color: 'gray' }}>
+                            { elem.label }
+                        </span>
+                    )
+                }));
+            }
+
+            return({
+                ...data,
+                id: propName,
+                label: propName,
+                value: propValue,
+                labelSx: {
+                    fontSize: '12px',
+                },
+            });
         }
     }
 }

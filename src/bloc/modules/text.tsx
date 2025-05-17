@@ -11,7 +11,7 @@ import { exportText, exportTypography, formatJsx } from './export/Text';
 export const TextWrapper = React.forwardRef((props: any, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const { children, 'data-id': dataId, style, ...otherProps } = props;
-
+   
     const onChange = useDebounced((data) => {
         updateComponentProps({
             component: { props: props },
@@ -60,7 +60,6 @@ export const TextWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
-
 
 export const TypographyWrapper = React.forwardRef((props: any, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});

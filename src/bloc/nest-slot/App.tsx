@@ -1,49 +1,40 @@
-'use client'
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, Component, Events } from './type';
+import { LayoutCustom, ComponentSerrialize, Component, Events } from '../type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
-import { createComponentFromRegistry } from './utils/createComponentRegistry';
+import { createComponentFromRegistry } from '../utils/createComponentRegistry';
+import { componentMap, componentsRegistry } from '../modules/utils/registry';
+import { serializeJSX } from '../utils/sanitize';
+
+import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { ToolBarInfo } from './Top-bar';
-import { componentMap, componentsRegistry } from './modules/utils/registry';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
-import { saveBlockToFile, fetchFolders } from "./utils/export";
-import { serializeJSX } from './utils/sanitize';
-import EventEmitter from "../app/emiter";
-import {  useSafeAsyncEffect } from "./utils/usePopUp";
-import { DragItemCopyElement, activeSlotState } from './Dragable';
-import GridTest from 'public/export/test/header/index.tsx';
-import GridTest2 from 'public/export/home/root/index';
-import "../style/edit.css";
 
 
-
-
-if (!window.next) {
-    import('./modules/index').then((mod) => {
-        console.log('Модуль подгружен:', mod);
-    })
-    .catch((err) => {
-        console.error('❌ Ошибка при загрузке модуля:', err);
-    });
+type Data = {
+    content: Record<string, ComponentSerrialize[]>
+    size: {
+        width: number
+        height: number
+    }
 }
-
-// ANCHOR - СИТЕМНЫЙ ЭММИТЕР
-if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter<Events>();
-
+type NestApp = { 
+    useBackToEditorBase: ()=> void
+    data: Data
+    onChange: (newDataGrid: Data)=> void 
+}
 
 
 // это редактор блоков сетки
-export default function Block({ setShowBlocEditor }) {
+export default function Block({ useBackToEditorBase, data, onChange }: NestApp) {
     globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
     const cacheDrag = React.useRef<HTMLDivElement>(null);
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
     const ctx = useHookstate(useEditorContext());
-    const mod = useHookstate(ctx.mod);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(useRenderState());
     const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
@@ -54,12 +45,17 @@ export default function Block({ setShowBlocEditor }) {
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
    
-
+    
     const dumpRender = () => {
-        const name = ctx.meta.name.get();
-        const scope = ctx.meta.scope.get();
-        //snapshotAndUpload(`${scope}-${name}`);
-        saveBlockToFile(scope, name);
+        const cellsContent = useCellsContent();
+
+        onChange({
+            content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
+            size: {
+                width: ctx.size.width.get({ noproxy: true }),
+                height: ctx.size.height.get({ noproxy: true })
+            }
+        });
     }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, parent } = component;
@@ -222,20 +218,10 @@ export default function Block({ setShowBlocEditor }) {
 
         setActiveDragElement(null); // очистка
     }
-    useSafeAsyncEffect(async (isMounted) => {
-        try {
-            const data = await fetchFolders();
-            
-
-            if (isMounted() && data) {
-                info.project.set(data);
-                ctx.dragEnabled.set(true);
-            }
-        }
-        catch (e) {
-            console.error("fetchFolders error:", e);
-        }
-    }, []);
+    React.useEffect(()=> {
+        info.project.set(data);
+        ctx.dragEnabled.set(true);
+    }, [data]);
     
 
 
@@ -263,36 +249,15 @@ export default function Block({ setShowBlocEditor }) {
                 />
                 
                 <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
-                    <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />         
-                    { mod.get() === 'preview' 
-                        ? <GridTest2 />
-                        : <GridComponentEditor
-                            desserealize={desserealize}
-                        />
-                    }
+                    <ToolBarInfo setShowBlocEditor={useBackToEditorBase} />         
+                    <GridComponentEditor
+                        desserealize={desserealize}
+                        layout={[]}
+                        dataCell={}
+                    />
                     
                 </div>
             </div>
         </DndContext>
     );
 }
-
-
-
-/**
- *   React.useEffect(()=> {
-        const call =(data)=> {
-            const cell = curCell.get();
-            addComponentToCell(cell.i, data);
-        }
-
-        // ! data bus, вставка компонента в тек. выделенную ячейку
-        EVENT.on('addComponentToCell', call);
-        return ()=> EVENT.off('addComponentToCel', call);
-    }, []);
- */
-/**
- *   addComponentToLayout={(elem)=> {
-                    if(curCell.get()?.i) addComponentToCell(curCell.get().i, elem);
-                }}
- */

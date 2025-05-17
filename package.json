@@ -91,10 +91,12 @@
     "@tiptap/react": "^2.12.0",
     "@tiptap/starter-kit": "^2.12.0",
     "better-sqlite3": "^11.9.1",
+    "file-saver": "^2.0.5",
     "html-to-image": "^1.11.13",
     "html2canvas": "^1.4.1",
     "idb-keyval": "^6.2.1",
     "install": "^0.13.0",
+    "leva": "^0.10.0",
     "lodash": "^4.17.21",
     "mongoose": "^8.14.2",
     "mysql2": "^3.14.1",
@@ -115,6 +117,7 @@
     "slate-react": "^0.112.1",
     "slick-carousel": "^1.8.1",
     "vite-plugin-dts": "^4.5.3",
-    "write-file-atomic": "^6.0.0"
+    "write-file-atomic": "^6.0.0",
+    "xlsx": "^0.18.5"
   }
 }

@@ -193,7 +193,7 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
         navigator.clipboard.writeText(inputValue);
     }
 
-    const trigger = (
+    const renderTriggerBox = (
         <Box
             onClick={(e) => {
                 variant === 'popup'
@@ -201,8 +201,8 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
                     : !props.disabled && setModalOpen(true);
             }}
             sx={{
-                width: 30,
-                height: 30,
+                width: props?.style?.height ?? 28,
+                height: props?.style?.height ?? 26,
                 borderRadius: 1,
                 background: inputValue,
                 cursor: 'pointer',
@@ -223,7 +223,7 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
 
     return (
         <InputPaper {...props}>
-            { trigger }
+            { renderTriggerBox }
 
             <InputBaseCustom
                 {...props}

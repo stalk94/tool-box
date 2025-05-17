@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDraggable, useDroppable, Modifier } from '@dnd-kit/core';
-import { DropSlotProps } from './type';
+import { DropSlotProps } from '../type';
 import { hookstate } from '@hookstate/core';
 export const activeSlotState = hookstate(null);
 

@@ -3,13 +3,12 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from '@hookstate/core';
-import { Component } from './type';
+import { Component } from '../type';
 import useContextMenu from '@components/context-main';
-import { updateComponentProps } from './utils/updateComponentProps';
+import { updateComponentProps, SlotToolBar } from './shim';
 import { Delete, Edit, Star } from '@mui/icons-material';
-import { db } from "./utils/export";
-import { serializeJSX, serrialize } from './utils/sanitize';
-import { LinktoolBar, SlotToolBar } from './modules/utils/Toolbar';
+import { serrialize } from '../utils/sanitize';
+
 
 
 
@@ -46,9 +45,6 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         flexShrink: 0,
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 100),
         maxWidth: '100%',
-    }
-    const useDegidratationHandler = (code: string) => {
-        console.log(code)
     }
     const iseDeleteComponent = (ids: number) => {
         const removeComponentFromCell = (cellId: string, componentIndex: number) => {
@@ -90,38 +86,10 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         removeComponentFromCell(cellId, index);
         selectContent.set(null);
     }
-    // добавление в колекцию сохраненных
-    const useAddToCollection = (ids: number) => {
-        const serialize =()=> {
-            const rawProps = { ...children.props };
-            const type = rawProps['data-type'];
-            const id = rawProps['data-id'];
-
-            delete rawProps.ref;
-            const cleanedProps = serializeJSX(rawProps);
-            console.log(cleanedProps)
-
-            return {
-                id,
-                props: {
-                    ...cleanedProps,
-                    'data-id': id,
-                    'data-type': type,
-                }
-            };
-        }
-
-        const name = prompt('Введите key name для компонента (не менее 3х символов)');
-        if(name && name.length > 3) db.set(`blank.${name}`, serialize());
-    }
     const handleClick = (target: HTMLDivElement) => {
         requestIdleCallback(()=> {
             target.classList.add('editor-selected');
             selectContent.set(children);
-
-            EVENT.emit('leftBarChange', {
-                currentToolPanel: 'component'
-            })
         });
         
         document.querySelectorAll('[ref-id]').forEach(el => {
@@ -131,12 +99,6 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
 
     
     const { menu, handleOpen } = useContextMenu([
-        { 
-            label: <div style={{color:'gold',fontSize:14}}>В заготовки</div>, 
-            icon: <Star sx={{color:'gold',fontSize:18}} />, 
-            onClick: (id)=> useAddToCollection(id), 
-            showIf: (type)=> type==='Card' 
-        },
         { 
             label: <div style={{color:'gold',fontSize:14}}>export code</div>, 
             icon: <Star sx={{color:'gold',fontSize:18}} />, 
@@ -183,14 +145,6 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                     handleClick(e.currentTarget);
                 }}
             >
-                { context.mod.get() === 'link' &&
-                    <LinktoolBar 
-                        dataId={children.props['data-id']}
-                        subs={children.props['data-subs'] ?? []}
-                        onChange={(data)=> updateComponentProps({component:children, data})}
-                    />
-                }
-               
                 <SlotToolBar
                     dataId={children.props['data-id']}
                     type={children.props['data-type']}

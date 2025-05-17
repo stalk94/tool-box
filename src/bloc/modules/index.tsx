@@ -1,6 +1,6 @@
 import React from 'react';
 import { registerComponent } from './utils/registry';
-import { ButtonWrapper, IconButtonWrapper } from './buttons';
+import { ButtonWrapper, IconButtonWrapper, SliderWrapper } from './buttons';
 import { TypographyWrapper, TextWrapper } from './text';
 import { ImageWrapper } from './media';
 import { 
@@ -55,6 +55,7 @@ registerComponent({
     icon: Settings,
     category: 'interactive',
 });
+
 
 registerComponent({
     type: 'Typography',
@@ -479,41 +480,35 @@ registerComponent({
     component: BottomNavWrapper,
     defaultProps: {
         fullWidth: true,
+        showLabels: false,
+        elevation: 1,
+        labelSize: 16,
+        iconSize: 24,
         items: [
-            {icon: 'Home'},
-            {icon: 'Add'},
-            {icon: 'Settings'},
-            {icon: 'Close'},
-            {icon: 'Menu'}
+            {icon: 'Home', label: 'home'},
+            {icon: 'Add', label: 'add'},
+            {icon: 'Add', label: 'test'}
         ]
     },
     icon: Repartition,
     category: 'complex',
 });
 registerComponent({
-    type: 'Breadcrumbs',
-    component: BreadcrumbsWrapper,
-    defaultProps: {
-        fullWidth: true,
-        pathname: 'test/room/any',
-        style: {}
-    },
-    icon: Repartition,
-    category: 'complex',
-});
-
-// data table
-registerComponent({
     type: 'DataTable',
     component: DataTableWrapper,
     defaultProps: {
+        fullWidth: true,
         sourceType: 'google',
+        'data-source': 'table',
+        file: '',
         source: '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE',
         refreshInterval: 25000
     },
     icon: BackupTable,
-    category: 'complex',
+    category: 'block',
 });
+
+
 registerComponent({
     type: 'AppBar',
     component: HeaderWrapper,
@@ -529,6 +524,17 @@ registerComponent({
         slots: {
             
         }
+    },
+    icon: Repartition,
+    category: 'block',
+});
+registerComponent({
+    type: 'Breadcrumbs',
+    component: BreadcrumbsWrapper,
+    defaultProps: {
+        fullWidth: true,
+        pathname: 'test/room/any',
+        style: {}
     },
     icon: Repartition,
     category: 'block',

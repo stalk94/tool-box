@@ -4,7 +4,7 @@ import { LuBlocks } from "react-icons/lu";
 import { MdOutlineWidgets } from "react-icons/md";
 
 
-// * final
+// список категорий компонентов
 export const componentGroups = {
     block: {
         label: 'Базовые блоки',

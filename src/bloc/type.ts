@@ -1,9 +1,13 @@
+import { desserealize } from './utils/sanitize';
 import { Layout } from "react-grid-layout";
 import { RegistreTypeComponent } from './config/type';
 import React from 'react'
 import EventEmitter from "../app/emiter";
 
 
+//////////////////////////////////////////////////////////////////////////
+//                  GLOBAL DECLARE
+//////////////////////////////////////////////////////////////////////////
 export interface Events {
     htmlRender: (data: { str: string; view:any })=> void
     jsonRender: (data: { call: (newJson: any)=> void })=> void
@@ -23,24 +27,25 @@ declare global {
 }
 
 
-// все компоненты исходные используемые в редакторе и вне
+//////////////////////////////////////////////////////////////////////////
+//                    COMPONENTS
+//////////////////////////////////////////////////////////////////////////
 export type ProxyComponentName = RegistreTypeComponent;
-export type DataEmiters = 'onChange' | 'onClick' | 'onSelect';
-
-// ---------------- styles  -----------------
-export type InputStyles = {
-    form?: {
-        borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
-        borderColor?: string | 'none'
-        background?: string | 'none'
-    }
-    placeholder?: React.CSSProperties
-    label?: React.CSSProperties
-    icon?: React.CSSProperties
+export type ComponentRegisterNestMetaData = {
+    NEST?: {
+        listSupportsTypes
+    } 
 }
 
-
-//------------------------------------------
+export type ComponentRegister = {
+    type: string;
+    component: React.FC<any>;
+    defaultProps?: Record<string, any>;
+    icon?: React.FC;
+    category?: 'block' | 'interactive' | 'media' | 'complex' | 'misc';
+    description?: string;
+    nest?: ComponentRegisterNestMetaData 
+}
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
@@ -53,34 +58,28 @@ export type ComponentProps = {
     styles?: InputStyles | any
     [key: string]: any
 }
-/** 
- * Компонент в редакторе (в ячейках)
- * все дочерние компоненты установленные редактором 
- */
 export type Component = React.ReactElement & {
     props: ComponentProps
+    onUpdate?: (newProps: any)=> void
+    /** данные из прототипа компонента (регистра) */
     type: {
-        functions?: {}
         parent?: string
     }
     _store?: {
         index: number
     }
 }
-/** серриализованный вид */
 export type ComponentSerrialize = {
     id: number
     /** id ячейки */
     parent: string
-    functions?: {
-        [key: string]: string
-    }
     props: ComponentProps
 }
 
 
-
-
+//////////////////////////////////////////////////////////////////////////////
+//                        
+//////////////////////////////////////////////////////////////////////////////
 export type DraggbleElementProps = {
     component: Component
     index: number
@@ -104,6 +103,17 @@ export type PropsForm = {
     onChange: (data: Record<string, any>)=> void
 }
 export type LeftToolPanelProps = {
-    addComponentToLayout: (elem: React.ReactNode) => void
     useDump: () => void
+    desserealize: (component: ComponentSerrialize) => void
+}
+
+
+//////////////////////////////////////////////////////////////////////////////
+//           DROP-DRAG ZONE              
+//////////////////////////////////////////////////////////////////////////////
+export type DropSlotProps = { 
+    id: string
+    dataTypesAccepts: ProxyComponentName[]
+    children: React.ReactNode
+    onAdd: (component: Component)=> void
 }

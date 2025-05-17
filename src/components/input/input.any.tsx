@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton, Divider, FormHelperText, InputBaseProps, Box, FormControlLabel, styled, alpha } from '@mui/material';
+import { IconButton, Divider, FormHelperText, InputBaseProps, Box, FormControlLabel, styled, alpha, Link } from '@mui/material';
 import { Phone, FileCopy, AlternateEmail } from '@mui/icons-material';
 import ToggleButton, { ToggleButtonProps, ToggleButtonOwnProps } from '@mui/material/ToggleButton';
 import ToggleButtonGroup, { ToggleButtonGroupProps } from '@mui/material/ToggleButtonGroup';
@@ -49,11 +49,21 @@ export type TooglerInputProps = ToggleButtonGroupProps & {
 }
 export type CheckBoxInputProps = CheckboxProps & {
     value?: boolean
+    label?: React.ReactNode
     onChange?: (value: boolean)=> void
 }
 export type SwitchInputProps = SwitchProps & { 
     value?: boolean, 
     onChange: (v:boolean)=> void 
+}
+export type ChekBoxAgrementProps = CheckBoxInputProps & {
+    useVerify?: (value: string)=> {
+        result: boolean,
+        helperText?: string 
+    }
+    linkUrl?: React.ReactElement
+    agrement?: string
+    helperText?: string
 }
 
 
@@ -75,6 +85,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
         return valid;
     }
     const handleChange =(newValue: string)=> {
+        console.log(newValue)
         setIsValid(useHookVerify(newValue));
         setEmailValue(newValue);
         onChange(newValue); // Передаем значение родителю
@@ -198,7 +209,6 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
 }
 
 
-
 //! доработать темизацию (groop button)
 export function TooglerInput({ items, value, label, onChange, ...props }: TooglerInputProps) {
     const theme = useTheme();
@@ -245,7 +255,7 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
                     sx={{ 
                         flex: 1,
                         border: `1px solid ${theme.palette.input.border}`,
-                        height: 40,
+                        height: props?.style?.height ?? 36,
                         ...props?.styles?.button,
                         "&.Mui-selected": {
                             //backgroundColor: "red", // Цвет фона выделенной кнопки
@@ -264,7 +274,7 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
         </ToggleButtonGroup>
     );
 }
-export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps) {
+export function CheckBoxInput({ value, onChange, label, ...props }: CheckBoxInputProps) {
     const theme = useTheme();
     //const [curentValue, setCurent] = React.useState(value ?? false);
     
@@ -306,7 +316,7 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
                     }}
                 />
             }
-            label={props.label}
+            label={label}
             labelPlacement="end"
             sx={{ 
                 gap: 2, 
@@ -321,6 +331,40 @@ export function CheckBoxInput({ value, onChange, ...props }: CheckBoxInputProps)
         />
     );
 }
+export const ChekBoxAgrement =({ useVerify, onChange, helperText, ...props}: ChekBoxAgrementProps)=> {
+    const [customHelper, setCustomHelper] = React.useState<string>();
+    const [isValid, setIsValid] = React.useState(true);
+
+    const useHookVerify =(newValue: string)=> {
+        let valid = true;
+
+        if(useVerify) {
+            const res = useVerify(newValue);
+            valid = res.result;
+            setCustomHelper(res.helperText);
+        }
+
+        return valid;
+    }
+
+    return(
+        <React.Fragment>
+            <CheckBoxInput 
+                onChange={(newValue)=> {
+                    setIsValid(useHookVerify(newValue));
+                    onChange && onChange(newValue);
+                }}
+                { ...props}
+            />
+            {!isValid && (
+                <FormHelperText error={true} style={{ marginTop: '4px' }}>
+                    *{customHelper || (helperText ?? 'надо принять пользовательское соглашение')}
+                </FormHelperText>
+            )}
+        </React.Fragment>
+    )
+}
+
 export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
     const theme = useTheme();
     //const [curvalue, setCur] = React.useState(value);

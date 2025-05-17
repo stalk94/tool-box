@@ -8,7 +8,6 @@ import { updateComponentProps } from '../utils/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
 import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/material';
 import TipTapSlotEditor from './tip-tap';
-import { simpleCardFooter } from './atoms';
 import renderCart, { renderImage, renderVideo } from './export/BaseCard';
 
 
@@ -291,7 +290,6 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
-
 export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     const {
         items,
@@ -325,7 +323,6 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
-
 export const CardWrapper = React.forwardRef((props: any, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const lastFileRef = React.useRef<number | null>(null);
@@ -414,9 +411,39 @@ export const CardWrapper = React.forwardRef((props: any, ref) => {
                 style={{...style, height: '100%'}}
                 elevation={8}
                 footer={
-                    simpleCardFooter[slots?.footer?.name ?? 'shop']?.render({
-                        path: 'CARD'
-                    })
+                    <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', mb: 0.5 }}>
+                        <Box sx={{ p: 1 }}>
+                            <Rating
+                                defaultValue={2}
+                                precision={1}
+                                size={props.size ?? 'medium'}
+                                max={props.max ?? 5}
+                                onChange={(e, v) => {
+                                    fetch('/api/component/card', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ rating: v, path: props.path })
+                                    })
+                                }}
+                            />
+                        </Box>
+                        <Box sx={{ ml: 'auto' }}>
+                            <Button
+                                sx={{ m: 0.5 }}
+                                variant='outlined'
+                                size={props?.size}
+                                onClick={() => {
+                                    fetch('/api/component/card', {
+                                        method: 'POST',
+                                        headers: { 'Content-Type': 'application/json' },
+                                        body: JSON.stringify({ addCart: props.index, path: props.path })
+                                    })
+                                }}
+                            >
+                                add to cart
+                            </Button>
+                        </Box>
+                    </Box>
                 }
             >
                 <Header

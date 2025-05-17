@@ -82,6 +82,12 @@ const propsChip = {
     variant: ['filled', 'outlined'],
 
 }
+const propsBottomNav = {
+    showLabels: [true, false],
+    elevation: { type: 'slider', min: 0, max: 12, step: 1 },
+    labelSize: { type: 'slider', min: 8, max: 48, step: 1 },
+    iconSize: { type: 'slider', min: 8, max: 48, step: 1 },
+}
 
 
 const propsImage = {
@@ -255,5 +261,6 @@ export default {
     Card: propsCard,
     Accordion: propsAcordeon,
     Divider: propsDivider,
-    Chip: propsChip
+    Chip: propsChip,
+    BottomNav: propsBottomNav
 }

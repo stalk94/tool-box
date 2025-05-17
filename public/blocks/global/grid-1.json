@@ -14,14 +14,18 @@
   "content": {
     "cell-1746709723197": [
       {
-        "id": 1746709731925,
+        "id": 1747449271018,
         "parent": "cell-1746709723197",
         "props": {
-          "sourceType": "google",
-          "source": "14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE",
-          "refreshInterval": 25000,
-          "data-id": 1746709731925,
-          "data-type": "DataTable"
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1747449271018,
+          "data-type": "Button"
         }
       }
     ]
@@ -29,7 +33,7 @@
   "meta": {
     "scope": "global",
     "name": "grid-1",
-    "updatedAt": 1746709742318,
+    "updatedAt": 1747449273205,
     "preview": "snapshots/global-grid-1.png"
   },
   "size": {

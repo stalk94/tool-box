@@ -1,20 +1,31 @@
 import React from "react";
-import { LayoutCustom, Component } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
+import { LayoutCustom, ComponentSerrialize } from '../type';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
-import { hookstate, useHookstate } from "@hookstate/core";
+import { useHookstate } from "@hookstate/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
-import { canPlace, findFreeSpot } from './utils/editor';
+import { canPlace, findFreeSpot } from '../utils/editor';
 import { DroppableCell } from './Dragable';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
+type NestGridEditor = { 
+    desserealize: (component: ComponentSerrialize)=> void
+    layout?: LayoutCustom[]
+    dataCell: {
+        content: Record<string, ComponentSerrialize[]>
+        size: {
+            width: number 
+            height: number 
+        }
+    }
+}
 
 
-export default function ({ desserealize }) {
+export default function ({ desserealize, layout, dataCell }: NestGridEditor) {
     const ctx = useHookstate(useEditorContext());
     const render = useHookstate(useRenderState());
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
@@ -169,35 +180,23 @@ export default function ({ desserealize }) {
         }
     }, []);
     React.useEffect(() => {
-        const meta = ctx.meta.get({ noproxy: true });
-        // данные назначаются при старте из fetch
-        const currentScope = info.project.get({ noproxy: true })?.[meta.scope];
-        const found = currentScope?.find((obj) => obj.name === meta.name);
-        
-       
-        if (!found?.data) return;
-        
-        if (found.data.content) cellsCache.set(found.data.content);
-        if (found.data.layout) {
-            ctx.layout.set(found.data.layout);
-            render.set(consolidation(found.data.layout));
+        if (dataCell.content) cellsCache.set(dataCell.content);
+
+        if (dataCell.size) {
+            ctx.size.set((old) => ({ ...old, ...dataCell.size }));
         }
-        if (found.data.size) {
-            ctx.size.set((old) => ({ ...old, ...found.data.size }));
-        }
-    }, [ctx.meta.name, info.project]);
+    }, [dataCell]);
     React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
 
-        const layout = ctx.layout.get({noproxy:true});
         render.set(consolidation(layout ?? []));
 
         return () => {
             document.removeEventListener('keydown', handleDeleteKeyPress);
             EVENT.off('addCell', addNewCell);
         }
-    }, []);
+    }, [layout]);
     
     
     
@@ -278,15 +277,6 @@ export default function ({ desserealize }) {
                                     </SortableContext>
                                 }
                             </DroppableCell>
-                            
-                            {/* ANCHOR - Вне редактора */}
-                            { (!EDITOR && Array.isArray(layer.content)) && 
-                                layer.content.map((component, index) => 
-                                    <React.Fragment key={index}>
-                                        { React.isValidElement(component) ? component : desserealize(component) }
-                                    </React.Fragment>
-                                )
-                            }
                         </div>
                     );
                 })}
@@ -294,83 +284,3 @@ export default function ({ desserealize }) {
         </div>
     );
 }
-
-
-
-
-/**
- *  React.useEffect(() => {
-        const cur = render.get({ noproxy: true });
-
-        if (cur && cur[0]) {
-            console.log('layouts: ', cur);
-
-            // Обновляем максимальное количество колонок
-            const resizeObserver = new ResizeObserver(() => {
-                if (gridContainerRef.current) {
-                    const parentHeight = gridContainerRef.current.clientHeight; // Получаем высоту родительского контейнера
-                    const containerWidth = gridContainerRef.current.offsetWidth;
-
-                    info.container.height.set(parentHeight);
-                    info.container.width.set(containerWidth);
-
-                    // Рассчитываем количество строк, исходя из переданной схемы
-                    const maxY = Math.max(...cur.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
-                    const rows = maxY; // Количество строк = максимальное значение y + 1
-
-                    const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
-                    const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
-                    //setRowHeight(availableHeight / rows); // Вычисляем высоту строки
-                }
-            });
-
-            if (gridContainerRef.current) {
-                resizeObserver.observe(gridContainerRef.current);
-            }
-
-            return () => {
-                resizeObserver.disconnect();
-            }
-        }
-    }, [render]);
- */
-/**
- * React.useEffect(() => {
-        console.log('consolidation');
-        const meta = ctx.meta.get();
-        const currentScope = info.project?.get({ noproxy: true })?.[meta.scope];
-        const find = currentScope?.find((obj) => obj.name === meta.name);
-
-        if (find?.data) {
-            if (find.data?.content) {
-                cellsCache.set(find.data.content);
-            }
-            if (find.data?.layout) {
-                ctx.layout.set(find.data.layout);
-                const result = consolidation(find.data.layout);
-                render.set(result);
-            }
-            if (find.data.size) ctx.size.set((old)=> ({ ...old, ...find.data.size }));
-        }
-    }, [ctx.meta.name, info.project]);
- */
-
-
-/**
- *  if(!ctx.layout.get()[0]) {
-            const parse = JSON.parse(cache);
-            const curName = Object.keys(parse).pop();
-            ctx.layout.set(parse[curName]);
-            const result = consolidation(parse[curName])
-            render.set(result)
-        }
- */
-/**
- *   React.useEffect(() => {
-        const cur = layoutCellEditor.get({ noproxy: true });
-
-        if (cur[0]) render.set((prev)=> {
-            return cur.map((l) => l.name = l.content)
-        });
-    }, [layoutCellEditor]);
- */
