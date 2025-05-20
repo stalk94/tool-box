@@ -26,6 +26,11 @@ export function formatJsx(code: string): Promise<string> {
         arrowParens: 'avoid',          // скобки у стрелочных функций
     });
 }
+export const toObjectLiteral = (obj) => {
+    return Object.entries(obj || {})
+        .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+        .join(', ');
+}
 function debugComponentTree(node: React.ReactElement) {
     console.log('type:', node.type);
     console.log('type.name:', node.type?.name);

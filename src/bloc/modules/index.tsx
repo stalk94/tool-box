@@ -7,14 +7,14 @@ import {
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
     ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt,
-    VideoCameraFront, AccountBox, Label, Subtitles
+    VideoCameraFront, AccountBox, Label, Subtitles, StarsOutlined
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
 import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
-import { DividerWrapper, AvatarWrapper, ChipWrapper} from './any';
+import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper } from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, HeaderWrapper, BreadcrumbsWrapper } from './complex';
 import { sharedContext, sharedEmmiter } from './helpers/shared';
 import { Box } from '@mui/material';
@@ -360,6 +360,20 @@ registerComponent({
 
 
 // any
+registerComponent({
+    type: 'Rating',
+    component: RatingWrapper,
+    defaultProps: {
+        fullWidth: true,
+        size: 'medium',
+        iconName: 'none',
+        apiPath: 'api/test',
+        colors: '#ff3d47',
+        precision: 1
+    },
+    icon: StarsOutlined,
+    category: 'misc',
+});
 registerComponent({
     type: 'Divider',
     component: DividerWrapper,

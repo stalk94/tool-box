@@ -1,17 +1,24 @@
 import React from 'react';
-import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps } from '@mui/material';
+import { lighten } from '@mui/system';
+import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps, Rating, RatingProps } from '@mui/material';
 import { List, ListItem, ListItemText, ListItemAvatar, ListItemButton } from '@mui/material';
 import { uploadFile } from 'src/app/plugins';
 import { iconsList } from '../../components/tools/icons';
+import { fill, empty } from '../../components/tools/icons-rating';
 import { ComponentProps } from '../type';
 import { deserializeJSX } from '../helpers/sanitize';
 import { updateComponentProps } from '../helpers/updateComponentProps';
-import { renderComponentSsr, renderComponentSsrPrerender } from './export/utils';
+import { renderComponentSsr, toObjectLiteral } from './export/utils';
 import { toJSXProps } from './export/Inputs';
 
 
 type DividerWrapperProps = DividerProps & ComponentProps;
 type ChipWrapperProps = ChipProps & ComponentProps;
+type RatingWrapperProps = RatingProps & ComponentProps & {
+    iconName: 'Star' | ' Favorite' | 'ThumbUp' | 'Cafe' | 'Brain' | 'Fire' | 'none'
+    apiPath?: string
+    color?: string
+}
 type AvatarWrapperProps = AvatarProps & ComponentProps & {
     'data-source' : 'src' | 'icon' | 'children'
 }
@@ -246,4 +253,100 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
         />
     );
 });
+export const RatingWrapper = React.forwardRef((props: RatingWrapperProps, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => { });
+    const { 'data-id': dataId, iconName, apiPath, colors='#ff3d47', fullWidth, style, ...otherProps } = props;
 
+    const IconFill = iconName && fill[iconName] ? iconsList[iconName] : undefined;
+    const IconEmpty = iconName && empty[iconName] ? empty[iconName] : undefined;
+
+    degidratationRef.current = (call) => {
+        const icf = IconFill ? `icon={${renderComponentSsr(<IconFill fontSize="inherit" />)}}` : '';
+        const ice = IconEmpty ? `emptyIcon={${renderComponentSsr(<IconEmpty fontSize="inherit" />)}}` : '';
+        const handler = (apiPath 
+            ? `
+                fetch('${apiPath}', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ rating: value })
+                });
+            `
+            : `
+                console.log(value);
+            `
+        );
+        const styleLiteral = toObjectLiteral({
+            ...style,
+            width: fullWidth ? "100%" : "fit-content"
+        });
+        
+
+        const code = (`
+            import React from 'react';
+            import { Rating } from '@mui/material';
+
+            export default function RatingWrap() {
+                return(
+                    <div style={{ ${styleLiteral} }}>
+                        <Rating
+                            sx={{
+                                '& .MuiRating-iconFilled': {
+                                    color: "${lighten(colors, 0.2)}",
+                                },
+                                '& .MuiRating-iconHover': {
+                                    color: "${colors}",
+                                }
+                            }}
+                            onChange={(e, value) => {
+                                ${handler}
+                            }}
+                            ${icf}
+                            ${ice}
+                            ${ toJSXProps(otherProps) }
+                        />
+                    </div>
+                );
+            }
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+
+
+    return (
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type='Rating'
+            style={{ 
+                ...style,
+                width: fullWidth ? "100%" : "fit-content"
+            }}
+        >
+            <Rating
+                icon={IconFill && <IconFill fontSize="inherit" />}
+                emptyIcon={IconEmpty && <IconEmpty fontSize="inherit" />}
+                sx={{
+                    '& .MuiRating-iconFilled': {
+                        color: lighten(colors, 0.2),
+                    },
+                    '& .MuiRating-iconHover': {
+                        color: colors,
+                    }
+                }}
+                onChange={(e, v) => console.log('RATING: ', v)}
+                { ...otherProps }
+            />
+        </div>
+    );
+});
