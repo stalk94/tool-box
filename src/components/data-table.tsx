@@ -3,6 +3,7 @@ import { alpha, darken, Theme } from "@mui/material/styles";
 import { DataTable, DataTableValueArray } from "primereact/datatable";
 import styled, { css } from 'styled-components';
 import { useTheme } from '@mui/material';
+import { debounce } from './hooks/debounce';
 
 
 export type TableStyles = {
@@ -130,6 +131,7 @@ const StyledTableWrapper = styled.div<{
 export default function DataTableCustom({ value, children, header, footer, fontSizeHead, styles, style, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);
+    const observerRef = useRef(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
     const [height, setHeight] = useState<number>();
     
@@ -210,14 +212,18 @@ export default function DataTableCustom({ value, children, header, footer, fontS
             }
         };
 
-        const resizeObserver = new ResizeObserver(updateHeight);
-        if(tableRef.current) {
-            const container = tableRef.current?.getElement();
-            resizeObserver.observe(container);
+        const debouncedUpdateHeight = debounce(updateHeight, 1000);
+        const observer = new ResizeObserver(debouncedUpdateHeight);
+        observerRef.current = observer;
+
+        if (tableRef.current) {
+            const container = tableRef.current.getElement();
+            if (container) observer.observe(container);
         }
 
-        return ()=> {
-            resizeObserver.disconnect();
+        return () => {
+            observerRef.current?.disconnect();
+            observerRef.current = null;
         }
     }, [header, footer, value]);
     

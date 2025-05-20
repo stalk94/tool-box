@@ -1,6 +1,7 @@
 import React from 'react';
 import { Component, ComponentSerrialize } from '../type';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../context";
+import { getComponentById } from './editor';
 
 type Params = {
     component: Component;
@@ -73,6 +74,32 @@ export function updateComponentProps({ component, data, rerender = true }: Param
             }
 
             return layer;
+        });
+
+        return [...updated];
+    });
+}
+
+export function updateCelltProps({ data, rerender = true }: Params) {
+    const context = useEditorContext();
+    const infoState = useInfoState();
+    const renderState = useRenderState();
+    const cellId = context.currentCell.get()?.i;
+
+    if (!cellId) {
+        console.warn('updateCellProps: отсутствует data-cell');
+        return;
+    }
+    
+    // 🔁 Обновляем визуальный рендер через context.render
+    if (rerender) renderState.set((layers) => {
+        const updated = layers.map((layer) => {
+            if (!layer.i !== cellId) return layer;
+
+            const newLayerProps = { ...layer.props, ...data }
+            console.log(newLayerProps);
+
+            return { ...layer, props: newLayerProps };
         });
 
         return [...updated];

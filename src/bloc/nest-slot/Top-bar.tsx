@@ -2,10 +2,10 @@ import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { Component, LayoutCustom } from '../type';
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
-import { GrStorage } from "react-icons/gr";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import NumberInput from "src/components/input/number";
+import { serializeJSX } from '../utils/sanitize';
 
 
 
@@ -50,11 +50,11 @@ const Instrument = () => {
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = ({ setShowBlocEditor }) => {
     const ctx = useHookstate(useEditorContext());
+    const cellsContent = useHookstate(useCellsContent());
     const [bound, setBound] = React.useState<DOMRect>();
     const info = useHookstate(useInfoState());
 
     
-
     const handleChangeBreackpoint = (bp: 'lg'|'md'|'sm'|'xs') => {
         const breakpoints = { lg: 1200, md: 960, sm: 600, xs: 460 };
         const width = breakpoints[bp] ?? 1200;
@@ -99,10 +99,9 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                             borderRadius: '4px',
                         }}
                         onClick={() => {
-                            const cellsContent = useCellsContent();  //? хм
-
                             setShowBlocEditor({
                                 content: cellsContent.get({ noproxy: true }),
+                                layout: ctx.layout.get({ noproxy: true }),
                                 size: {
                                     width: ctx.size.width.get({ noproxy: true }),
                                     height: ctx.size.height.get({ noproxy: true })
@@ -152,16 +151,9 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                         ))}
                     </Select>
                     <span style={{marginRight:'10px', marginLeft:'7px',color:'gray'}}>⋮</span>
-                    <NumberInput
-                        value={ctx.size.width.get()}
-                        min={0}
-                        step={5}
-                        max={window.innerWidth}
-                        onChange={(v) => ctx.size.width.set(v)}
-                        sx={{ 
-                            maxWidth: '80px'
-                        }}
-                    />
+                    <Typography variant="subtitle1" sx={{ mx:1.5,color:'gray' }}>
+                        { ctx.size.width.get() }
+                    </Typography>
                     <Typography variant="subtitle1" sx={{ mx:1.5,color:'gray' }}>
                         ×
                     </Typography>

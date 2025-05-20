@@ -6,22 +6,25 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { hookstate, useHookstate } from "@hookstate/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
-import { canPlace, findFreeSpot } from './utils/editor';
+import { findFreeSpot, stackHorizont, stackVertical } from './utils/editor';
 import { DroppableCell } from './Dragable';
+import Container from '@mui/material/Container';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
 
 
+
 export default function ({ desserealize }) {
+    const rowHeight = 20;
     const ctx = useHookstate(useEditorContext());
     const render = useHookstate(useRenderState());
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
     const curCell = useHookstate(ctx.currentCell);                          // текушая выбранная ячейка
     const info = useHookstate(useInfoState());                              // данные по выделенным обьектам
     const cellsCache = useHookstate(useCellsContent());                     // элементы в ячейках
-
+    
 
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         //console.log(cellId, componentIndex);
@@ -81,7 +84,12 @@ export default function ({ desserealize }) {
                     const result = desserealize(content);
                     if (result) resultsLayer.push(result);
                 });
+
                 layer.content = resultsLayer;
+                if(!layer.props) layer.props = {
+                    style: {},
+                    classNames: ''
+                }
             }
 
             return layer;
@@ -97,6 +105,37 @@ export default function ({ desserealize }) {
         
         render.set(consolidation(layout))
     }
+    const delCellData = (idCell: string) => {
+        render.set((prev) => prev.filter((cell) => cell.i !== idCell));
+        ctx.layout.set((prev) => prev.filter((cell) => cell.i !== idCell));
+
+        // Удаляем содержимое из кэша
+        cellsCache.set((old) => {
+            delete old[idCell];
+            return old;
+        });
+    }
+    const addCellData = (cells: any[], clean?: 'all'|string) => {
+        if(clean === 'all') render.get().map((cell)=> delCellData(cell.i));
+        else if(clean && clean !== 'all') delCellData(clean);
+
+        cells.map((cell, index)=> {
+            cell.i = cell.i ?? `cell-${Date.now()+index}`;
+
+            render.set((prev) => [
+                ...prev,
+                cell
+            ]);
+            ctx.layout.set((prev) => [
+                ...prev,
+                cell
+            ]);
+            cellsCache.set((old) => {
+                old[cell.i] = [];
+                return old;
+            });
+        });
+    }
     const addNewCell = () => {
         const all = render.get({ noproxy: true });
         const defaultW = 3;
@@ -107,38 +146,21 @@ export default function ({ desserealize }) {
             console.warn('⛔ Нет свободного места');
             return;
         }
-
-        const newId = `cell-${Date.now()}`;
-
-        render.set((prev) => [
-            ...prev,
-            {
-                i: newId,
-                x: spot.x,
-                y: spot.y,
-                w: defaultW,
-                h: defaultH,
-                content: []
-            }
-        ]);
-        ctx.layout.set((prev) => [
-            ...prev,
-            {
-                i: newId,
-                x: spot.x,
-                y: spot.y,
-                w: defaultW,
-                h: defaultH,
-                content: []
-            }
-        ]);
-
-        cellsCache.set((old) => {
-            old[newId] = [];
-            return old;
-        });
+        addCellData([{
+            i: `cell-${Date.now()}`,
+            x: spot.x,
+            y: spot.y,
+            w: defaultW,
+            h: defaultH,
+            props: {
+                classNames: '',
+                style: {}
+            },
+            content: []
+        }]);
     }
 
+    // ctx.size.height.get();
     React.useEffect(() => {
         const cur = render.get({ noproxy: true });
         
@@ -202,22 +224,29 @@ export default function ({ desserealize }) {
     
     
     return (
-        <div 
+        <Container 
+            sx={{
+                height: ctx.size.height?.get()+10 ?? '99%', 
+                overflowY: 'hidden'
+            }}
+        >
+        <div
             style={{ 
-                margin: 5,
+                margin: 1,
                 maxWidth: ctx.size.width?.get() ?? '100%', 
-                height: ctx.size.height?.get() ?? '100%',
-                border: '1px dashed #fbfbfa26'
+                height: '99%',
+                border: '1px dashed #fbfbfa26',
+                overflowY: 'auto',
             }}
             ref={gridContainerRef}
         >
             <ResponsiveGridLayout
-                style={{ background: '#222222' }}
+                style={{ background: '#222222', height: ctx.size.height?.get()-10 ?? '99%', }}
                 className="GRID-EDITOR"
                 layouts={{ lg: render.get({noproxy:true}) }}                // Схема сетки
                 breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
                 cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
-                rowHeight={20}
+                rowHeight={rowHeight}
                 compactType={null}                                          // Отключение автоматической компоновки
                 preventCollision={true}
                 isDraggable={ctx.mod.get()==='grid' && true}                // Отключить перетаскивание
@@ -234,13 +263,15 @@ export default function ({ desserealize }) {
                                     EVENT.emit('leftBarChange', {currentToolPanel: 'component'});
                                 }
                                 
-                                curCell.set({ i: layer.i });
+                                curCell.set({ props: layer?.props, i: layer.i });
                                 info.select.cell.set(e.currentTarget);
                                 EVENT.emit('onSelectCell', layer.i);
                             }}
                             data-id={layer.i} 
                             key={layer.i}
+                            className={layer?.props?.classNames}
                             style={{
+                                ...layer?.props?.style,
                                 overflowX: 'hidden',
                                 overflowY: 'auto',
                                 border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
@@ -292,6 +323,7 @@ export default function ({ desserealize }) {
                 })}
             </ResponsiveGridLayout>
         </div>
+        </Container>
     );
 }
 

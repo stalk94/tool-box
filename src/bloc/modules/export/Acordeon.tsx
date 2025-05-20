@@ -1,8 +1,32 @@
+import React from 'react';
 import { jsxJsonToString, formatJsx, renderJsonToLiteral, renderComponentSsr, renderComponentSsrPrerender } from './utils';
-import { Component, ComponentProps } from '../../type';
-import { splitImportsAndBody, getComponentLiteral, mergeImports } from './Grid';
+import { Component, DataNested } from '../../type';
+import { createRoot } from 'react-dom/client'
+import { exportLiteralToFile } from "../../utils/export";
+import MiniRender from '../../nest-slot/MiniRender';
 
 
+export async function useRender(layout: LayoutCustom[], size): Promise<string> {
+    const container = document.createElement('div'); // НЕ добавляем в DOM
+    const root = createRoot(container);
+
+    const result = await new Promise<string>((resolve) => {
+        root.render(
+            <MiniRender
+                layouts={layout}
+                size={size}
+                onReadyLiteral={(code) => {
+                    resolve(code);
+                }}
+            />
+        );
+    });
+
+
+    root.unmount();
+
+    return result;
+}
 export function toJSXProps(obj: Record<string, any>): string {
     return Object.entries(obj || {})
         .map(([key, value]) => {
@@ -22,6 +46,7 @@ export function toJSXProps(obj: Record<string, any>): string {
 
 
 export default function exported(
+    meta: { scope: string, name: string },
     activeIndexs: number[],
     styles: {title: React.CSSProperties, body: React.CSSProperties},
     items: {
@@ -30,6 +55,7 @@ export default function exported(
         /** тело аккордеона */
         content: React.ReactNode
     }[],
+    slots: Record<string, DataNested>,
     style: React.CSSProperties
 ) {
     const toObjectLiteral = (obj) => {
@@ -37,26 +63,74 @@ export default function exported(
             .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
             .join(', ');
     }
-    const jsxItems = items.map(({ title, content }) => {
+    const renderSlotsLinks =()=> {
+        const result = {
+            imports: [],
+            bodys: []
+        }
+
+        Object.values(slots).map((data, idSlot)=> {
+            if(data.layout) {
+                const name = `SlotGrid_${idSlot}`;
+                result.bodys.push(`<${name} />`);
+                result.imports.push(`import ${name} from './acordeonSlots/${name}';`);
+            }
+            else {
+                result.bodys.push(`<div>not content</div>`);
+            }
+        });
+
+        return {
+            body: `[\n${result.bodys.join(',\n')}\n];`,
+            imports: `${result.imports.join('\n')}`
+        }
+    }
+    // acordeonSlots/SlotGrid_0
+    const renderSlots = async()=> {
+        const ls = Object.values(slots).map(data => ({
+            size: data.size,
+            layout: data.layout
+        }));
+        
+        ls.map(async(elem, index)=> {
+            if(elem.layout) {
+                exportLiteralToFile(
+                    [meta.scope, `${meta.name}/acordeonSlots`], 
+                    `SlotGrid_${index}`,
+                    await useRender(elem.layout, elem.size)
+                );
+            }
+        });
+    }
+    const render =()=> {
+        const ls = Object.values(slots).map(data => ({
+            size: data.size,
+            layout: data.layout
+        }));
+
+        return items.map(({ title, content }, index) => {
+            const slotData = ls[index]?.layout;
             const titleStr = typeof title === 'string'
                 ? JSON.stringify(title)
                 : jsxJsonToString(title);
 
-            const contentStr = typeof content === 'string'
-                ? JSON.stringify(content)
-                : jsxJsonToString(content);
+            
+            return `{
+                title: ${titleStr},
+                content: ${slotData ? `<SlotGrid_${index}/>` : `<div>not content</div>`}
+            }`;
+        });
+    }
 
-        return `{
-            title: ${titleStr},
-            content: ${contentStr}
-        }`;
-    });
-    
-    
+    const prerender = renderSlotsLinks();
+    renderSlots()
+
+
     return (`
         import React from 'react';
         import { Chip, Box, Button } from '@mui/material';
         import { Accordion } from '@lib/index';
+        ${prerender.imports}
         
 
         export default function AcordionWrap() {
@@ -70,7 +144,7 @@ export default function exported(
                         tabStyle={{ ${toObjectLiteral(styles?.body)} }}
                         headerStyle={{ ${toObjectLiteral(styles?.title)} }}
                         items={[
-                            ${jsxItems.join(',\n')}
+                            ${render().join(',\n')}
                         ]}
                     />
                 </div>
@@ -79,15 +153,11 @@ export default function exported(
     `);
 }
 export function exportedTabs(
+    meta: { scope: string, name: string },
     items: string[],
     textColor: "inherit" | "secondary" | "primary" | undefined,
-    slots: [Component[]]
+    slots: Record<string, DataNested>
 ) {
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
     const renderTab =()=> {
         return items ? items.map((elem, index) => (`
             <Tab
@@ -96,53 +166,59 @@ export function exportedTabs(
             />
         `)) : [''];
     }
-    const renderSlots =()=> {
-        const dslots = {};
-        const imports = [];
+    const renderSlotsLinks =()=> {
+        const result = {
+            imports: [],
+            bodys: []
+        }
 
-
-        Object.values(slots).map((slot, index) => {
-            dslots[index] = [];
-
-
-            slot.map(elem => {
-                const id = elem.props['data-id'];
-
-                sharedEmmiter.emit('degidratation.' + id, {
-                    call: (code: string) => {
-                        const data = splitImportsAndBody(code);
-                        imports.push(...data.imports);
-                        dslots[index].push(getComponentLiteral(data.body));
-                    }
-                });
-            })
-        })
-        
-
-        const slotLiteralEntries = Object.entries(dslots).map(([key, bodys]) => {
-            const jsx = bodys.length > 0 ? `<>${bodys.join('\n\n')}</>` : `<></>`;
-            return `"${key}": ${jsx}`;
+        Object.values(slots).map((data, idSlot)=> {
+            if(data.layout) {
+                const name = items[idSlot] ?? `TabsSlotGrid_${idSlot}`;
+                result.bodys.push(`<${name} />`);
+                result.imports.push(`import ${name} from './tabsSlots/${name}';`);
+            }
+            else {
+                result.bodys.push(`<div>not content</div>`);
+            }
         });
 
-        const slotsLiteral = `{\n${slotLiteralEntries.join(',\n')}\n}`;
-
         return {
-            slots: slotsLiteral,
-            imports: mergeImports(imports).join('\n')
+            body: `[\n${result.bodys.join(',\n')}\n];`,
+            imports: `${result.imports.join('\n')}`
         }
     }
+    // tabsSlots/TabsSlotGrid_0
+    const renderSlots = async()=> {
+        const ls = Object.values(slots).map(data=> ({
+            size: data.size,
+            layout: data.layout
+        }));
+        
+        ls.map(async(elem, index)=> {
+            if(elem.layout) {
+                exportLiteralToFile(
+                    [meta.scope, `${meta.name}/tabsSlots`], 
+                    items[index] ?? `TabsSlotGrid_${index}`,
+                    await useRender(elem.layout, elem.size)
+                );
+            }
+        });
+    }
 
-    const result = renderSlots();
+    const prerender = renderSlotsLinks();
+    renderSlots();
     
 
     return (`
         import React from 'react';
         import { Tabs, Tab } from '@mui/material';
-        ${result.imports}
+        ${prerender.imports}
+        
 
         export default function TabNavigation() {
             const [curent, setCurent] = React.useState(0);
-            const slots = ${result.slots}
+            const slots = ${prerender.body}
 
             return (
                 <div
@@ -161,7 +237,7 @@ export function exportedTabs(
                     >
                         ${renderTab().join('\n')}
                     </Tabs>
-                    <div style={{ height: 'fit-content' }}>
+                    <div>
                         { slots[curent] }
                     </div>
                 </div>

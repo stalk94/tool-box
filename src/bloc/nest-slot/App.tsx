@@ -1,5 +1,5 @@
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, Component, Events, ProxyComponentName } from '../type';
+import { NestedContext, ComponentSerrialize, Component, LayoutCustom } from '../type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
@@ -14,24 +14,11 @@ import { ToolBarInfo } from './Top-bar';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 
-// формат дочерних данных от верхней сетки
-type Data = {
-    content: Record<string, ComponentSerrialize[]>
-    size: {
-        width: number
-        height: number
-    }
-}
-type NestApp = { 
-    useBackToEditorBase: (data: Data)=> void
-    data: Data
-    nestedComponentsList: Record<ProxyComponentName, {}>      //! это список
-    onChange: (newDataGrid: Data)=> void 
-}
+
 
 
 // это редактор блоков сетки
-export default function Block({ useBackToEditorBase, data, nestedComponentsList, onChange }: NestApp) {
+export default function Block({ useBackToEditorBase, data, nestedComponentsList, onChange }: NestedContext) {
     globalThis.ZOOM = 1;                                                // в редакторе блоков зум отключаем
     const cacheDrag = React.useRef<HTMLDivElement>(null);
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
@@ -53,8 +40,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         
         const Component = componentMap[type];
         Component.displayName = type;
-        console.log(componentsRegistry[type])
-        //Component.parent = parent;
+
     
         if (!Component) {
             console.warn(`Компонент типа "${type}" не найден в реестре`);
@@ -64,9 +50,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         return (
             <Component
                 { ...props }
-                ref={(el) => {
-                    if (el) refs.current[id] = el;
-                }}
             />
         );
     }
@@ -109,12 +92,21 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
                 cell.content.push(clone);
 
                 cellsCache.set((old)=> {
+                    const findIndex = ctx.layout.get({noproxy: true}).findIndex((el)=> el.i === cellId);
+                    if(findIndex !== -1) {
+                        ctx.layout.set((old)=> {
+                            old[findIndex].content?.push(component);
+                            return old;
+                        });
+                    }
+                    
                     if(!old[cellId]) old[cellId] = [serialized];
                     else old[cellId].push(serialized);
         
                     return old;
                 });
             }
+
             return updatedRender;
         });
     }
@@ -138,6 +130,14 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             }
 
             // ⚠️ Обновляем и cellsContent 
+            ctx.layout.set((old) => {
+                return old.map((lay)=> {
+                    if(lay.i === cellId) {
+                        lay.content = arrayMove(lay.content, oldIndex, newIndex);
+                    }
+                    return lay;
+                });
+            });
             cellsCache.set((old) => {
                 old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
                 return old;
@@ -180,7 +180,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             handleDragEndOld(event, cellId);
             return;
         }
-        // перетаскивание на слот
+        //! @deprecate перетаскивание на слот
         else if (dropMeta?.type === 'sortable') {
             const slot = activeSlot.get({ noproxy: true });
             const dataType = dragData.dataType;
@@ -211,10 +211,14 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
 
         setActiveDragElement(null); // очистка
     }
-    React.useEffect(()=> {
+
+    React.useLayoutEffect(()=> {
         info.project.set(data);
         ctx.dragEnabled.set(true);
-    }, [data]);
+    }, []);
+    React.useEffect(()=> {
+
+    }, []);
     
 
 
@@ -246,7 +250,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
                     <ToolBarInfo setShowBlocEditor={useBackToEditorBase} />         
                     <GridComponentEditor
                         desserealize={desserealize}
-                        layout={[]}
                         dataCell={data}
                     />
                     

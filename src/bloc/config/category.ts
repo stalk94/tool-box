@@ -1,5 +1,6 @@
 import { iconsList } from '../../components/tools/icons';
 import { ViewModule, TouchApp, Photo, Layers, Widgets } from '@mui/icons-material';
+import { Paper } from '@mui/material';
 import { LuBlocks } from "react-icons/lu";
 import { MdOutlineWidgets } from "react-icons/md";
 

@@ -3,7 +3,7 @@ import * as XLSX from 'xlsx';
 import { Accordion, AccordionProps, HoverPopover } from '../../index';
 import { icons, iconsList } from '@components/tools/icons';
 import { Box, Tabs, Button, Tab, BottomNavigation, BottomNavigationAction, Paper, TabsProps, Typography } from '@mui/material';
-import { Component, ComponentProps } from '../type';
+import { ComponentProps, DataNested } from '../type';
 import { triggerFlyFromComponent } from './utils/anim';
 import { useEvent, useCtxBufer } from './utils/shared';
 import DataTable, { DataSourceTableProps } from './sources/storage';
@@ -15,7 +15,7 @@ import render, { exportedTabs, exportedBottomNav, exportedTable } from './export
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
 import { DropSlot, ContextSlot } from '../Dragable';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
-
+import { useEditorContext } from "../context";
 
 
 type BottomNavWrapperProps = {
@@ -48,9 +48,9 @@ type AccordionWrapperProps = AccordionProps & ComponentProps & {
     'data-id': number
     'data-type': 'Accordion'
     fullWidth: boolean
-    slots: []
+    slots: Record<string, DataNested>
     styles: {
-        title: React.CSSProperties,
+        title: React.CSSProperties
         body: React.CSSProperties
     }
 }
@@ -59,7 +59,7 @@ type TabsWrapperProps = TabsProps & {
     'data-type': 'Tabs'
     items: string[]
     fullWidth?: boolean
-    slots: [Component[]]
+    slots: Record<string, DataNested>
 }
 type TableSourcesProps = DataSourceTableProps & ComponentProps & {
     'data-type': 'DataTable'
@@ -100,7 +100,7 @@ type HeaderWrapperProps = {
     elevation: number
 }
 
-// todo: сделать виртуализацию и рендер вложенного контекста
+
 export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const { 'data-id': dataId, style, items, styles, activeIndexs, slots, fullWidth, ...otherProps } = props;
@@ -149,19 +149,20 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             );
             const SlotContent = () => (
                 <ContextSlot
-                    idParent={dataId}
+                    idParent={dataId} 
                     idSlot={index}
-                    size={{ width: container.width, height: container.height/4 }}
-                    data={slots && slots[index]}
-                    //! додавить
+                    data={{
+                        ...slots[index],
+                        size: {
+                            width: container.width, 
+                            height:container.height/4
+                        }
+                    }}
                     nestedComponentsList={{
                         Button: true,
                         Typography: true
                     }}
-                >
-                    {/* GRID RENDER */}
-
-                </ContextSlot>
+                />
             );
 
             return ({
@@ -170,13 +171,15 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             });
         });
     }
-    const parsedItems = React.useMemo(() => parse(), [items, slots]);
+    const parsedItems = React.useMemo(() => parse(), [props, width]);
 
     degidratationRef.current = (call) => {
         const code = render(
+            useEditorContext().meta.get({noproxy:true}),
             activeIndexs,
             styles,
             items,
+            slots,
             { ...style, width: '100%', display: 'block' }
         );
 
@@ -211,18 +214,18 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         </div>
     );
 });
-// todo: сделать виртуализацию и рендер вложенного контекста
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
     const degidratationRef = React.useRef<(call) => void>(() => { });
+    const containerRef = React.useRef(null);
     const { 'data-id': dataId, style, items, slots, fullWidth, textColor, ...otherProps } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, value), [dataId]);
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
     degidratationRef.current = (call) => {
         const code = exportedTabs(
+            useEditorContext().meta.get({noproxy:true}),
             items,
             textColor,
             slots
@@ -242,7 +245,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     }, []);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         emiter('onChange', newValue);
-        storage(newValue);
+        //storage(newValue);
         setValue(newValue);
         triggerFlyFromComponent(String(dataId));
     }
@@ -293,7 +296,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             ref={ref}
             data-id={dataId}
             data-type='Tabs'
-            style={{ ...style, width: '100%', display: 'block', height: '100%' }}
+            style={{ ...style, width: '100%', display: 'block' }}
             {...otherProps}
         >
             <Tabs
@@ -313,22 +316,26 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                     />
                 )}
             </Tabs>
+            {/* Слоты */}
             <ContextSlot
                 idParent={dataId} 
                 idSlot={value}
-                size={{width: container.width, height:container.height}}
-                data={slots[value]}
+                data={{
+                    ...slots[value],
+                    size: {
+                        width: container.width, 
+                        height:container.height
+                    }
+                }}
                 nestedComponentsList={{
                     Button: true,
                     Typography: true
                 }}
-            >
-                {/* GRID RENDER */}
-                
-            </ContextSlot>
+            />
         </div>
     );
 });
+
 
 export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
@@ -751,6 +758,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
         </div>
     );
 });
+
 
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState("");

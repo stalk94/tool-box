@@ -61,9 +61,11 @@ export type InfoStateType = {
     inspector: {
         lastData: any;
         task: any[];
-    };
+    }
+    /** начальные данные, они могут изменится */
     project?: {
         content: Record<string, ComponentSerrialize[]>
+        layout: LayoutCustom[]
         size: {
             width: number
             height: number

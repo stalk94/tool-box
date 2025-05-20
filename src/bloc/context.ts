@@ -31,7 +31,7 @@ export type EditorContextType = {
         isAbsolute: boolean
         position: {x:number, y:number}
     }
-    currentCell?: string;
+    currentCell?: LayoutCustom
     curentNestedContext?: {
         parentComponentId: number | string
         

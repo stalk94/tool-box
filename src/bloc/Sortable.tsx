@@ -120,7 +120,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
             selectContent.set(children);
 
             EVENT.emit('leftBarChange', {
-                currentToolPanel: 'component'
+                currentToolPanel: 'styles'
             })
         });
         

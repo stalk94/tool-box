@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
+import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested, DataNestedSlot } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
@@ -236,11 +236,10 @@ export default function Block({ setShowBlocEditor }) {
 
         return undefined;
     }
-    const handleChangeNestedContext = (editData: DataNested) => {
+    const handleChangeNestedContext = (editData: DataNestedSlot) => {
         const idComponent = nestedContext.currentData.idParent.get();
         const idSlot = nestedContext.currentData.idSlot.get();
         const findComponentSerrialize = findById(idComponent);
-
         console.log('CHANGE CONTEXT:', editData);
         
         if (findComponentSerrialize) updateComponentProps({
@@ -248,10 +247,10 @@ export default function Block({ setShowBlocEditor }) {
             data: {
                 slots: {
                     ...findComponentSerrialize.props?.slots,
-                    [idSlot]: editData
+                    [idSlot]: {...editData}
                 }
             },
-            rerender: false
+            rerender: true
         });
     }
     useSafeAsyncEffect(async (isMounted) => {
@@ -312,13 +311,13 @@ export default function Block({ setShowBlocEditor }) {
                         {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
                     </DragOverlay>
 
-                    <div style={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'row' }}>
+                    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row' }}>
                         <LeftToolBar
                             desserealize={desserealize}
                             useDump={dumpRender}
                         />
 
-                        <div style={{ width: '80%', height: '100%', display: 'flex', flexDirection: 'column' }}>
+                        <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                             <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                             {mod.get() === 'preview'
                                 ? <GridTest2 />

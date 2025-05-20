@@ -130,12 +130,10 @@ export function getComponentLiteral(code: string): string {
 }
 
 
-//! 'этот фундамент надо превратить в дом'
 export default function exportsGrid(
     render: LayoutCustom[],
     scope: string,
     name: string,
-    isSlot?: boolean,
     style?: React.CSSProperties,
 ) {
     const singleList = ['Breadcrumbs', 'AppBar'];
@@ -154,7 +152,6 @@ export default function exportsGrid(
                 const id = component.props['data-id'];
                 const type = component.props['data-type'];
 
-                // ANCHOR - вызов дегидратации у всех компонентов
                 sharedEmmiter.emit('degidratation.' + id, {
                     call: (code: string) => {
                         const result = splitImportsAndBody(code);
@@ -221,9 +218,9 @@ export default function exportsGrid(
         await Promise.all(
             render.map(async (layout) => {
                 if (!Array.isArray(layout.content)) return;
-
                 const content = layout.content;
                 const cellid = layout.i;
+
                 const result = await renderComponents(content, layout);
 
                 if (result.cells) {
@@ -326,8 +323,6 @@ export default function exportsGrid(
    
     renderLiteralGrid();
 }
-
-
 
 
 /**

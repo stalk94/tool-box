@@ -47,10 +47,11 @@ const Instrument = () => {
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = ({ setShowBlocEditor }) => {
     const ctx = useHookstate(useEditorContext());
+    const ref = React.useRef<HTMLDivElement>(null);
+    const [width, setWidth] = React.useState('100%');
     const [bound, setBound] = React.useState<DOMRect>();
     const info = useHookstate(useInfoState());
 
-    
 
     const handleChangeBreackpoint = (bp: 'lg'|'md'|'sm'|'xs') => {
         const breakpoints = { lg: 1200, md: 960, sm: 600, xs: 460 };
@@ -58,6 +59,15 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         ctx.size.breackpoint.set(bp);
         ctx.size.width.set(width);
     }
+    React.useEffect(() => {
+        if (!ref.current) return;
+        const i = setInterval(()=> {
+            const bound = ref.current.getBoundingClientRect();
+            if(window.innerWidth - bound.x !== width) setWidth(window.innerWidth - bound.x);
+        }, 400);
+
+        return () => clearInterval(i);
+    }, []);
     React.useEffect(()=> {
         const value = info.select.cell.get({noproxy:true});
 
@@ -69,11 +79,14 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
 
 
     return (
-        <Paper elevation={2}
+        <Paper 
+            component='div'
+            ref={ref}
+            elevation={2}
             sx={{
                 height:'5%', 
                 minHeight: 44,
-                width:'99%', 
+                width: width, 
                 background:'rgb(58, 58, 58)',
                 border: '1px solid #cdcbcb36',
                 display: 'flex',
@@ -133,7 +146,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                         value={ctx?.size?.breackpoint?.get() ?? 'lg'}
                         onChange={(e) => handleChangeBreackpoint(e.target.value)}
                         displayEmpty
-                        sx={{ fontSize: 14, height: 36, color: '#ccc', background: 'rgba(255, 255, 255, 0.05)'}}
+                        sx={{ fontSize: 14, height: 30, color: '#ccc', background: 'rgba(255, 255, 255, 0.05)'}}
                     >
                         { ['lg', 'md', 'sm', 'xs'].map((br) => (
                             <MenuItem key={br} value={br} >
@@ -145,11 +158,12 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                     <NumberInput
                         value={ctx?.size?.width?.get()}
                         min={0}
-                        step={5}
+                        step={20}
                         max={window.innerWidth}
                         onChange={(v) => ctx?.size?.width?.set(v)}
                         sx={{ 
-                            maxWidth: '80px'
+                            maxWidth: '80px',
+                            height: 32,
                         }}
                     />
                     <Typography variant="subtitle1" sx={{ mx:1.5,color:'gray' }}>
@@ -160,11 +174,11 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                         onChange={(v) => ctx?.size?.height?.set(v)}
                         min={0}
                         max={10000}
-                        step={5}
+                        step={20}
                         sx={{ 
-                            width: '18%',
                             mr: 3, 
-                            width: '70px'
+                            width: '70px',
+                            height: 32,
                         }}
                     />
                 </Box>

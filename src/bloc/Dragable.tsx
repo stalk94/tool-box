@@ -4,6 +4,7 @@ import { DropSlotProps, ContextSlotProps } from './type';
 import { hookstate } from '@hookstate/core';
 import { IconButton } from '@mui/material';
 import { Add } from '@mui/icons-material';
+import MiniRender from './nest-slot/MiniRender';
 export const activeSlotState = hookstate(null);
 
 
@@ -93,8 +94,14 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
     );
 }
 // data - данные сетки слота
-export function ContextSlot({ idParent, idSlot, nestedComponentsList, size, children, data }: ContextSlotProps) {
-    
+export function ContextSlot({ idParent, idSlot, nestedComponentsList, children, data }: ContextSlotProps) {
+    const handle = () => EVENT.emit('addGridContext', {
+        nestedComponentsList,
+        data: data ?? {},
+        idParent,
+        idSlot
+    });
+
     return (
         <div
             style={{
@@ -105,20 +112,21 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, size, chil
                 display: 'flex'
             }}
         >
-            <IconButton sx={{ margin:'auto' }}
-                onClick={()=> EVENT.emit('addGridContext', {
-                    nestedComponentsList,
-                    data: {
-                        content: data ?? {},
-                        size,
-                    },
-                    idParent, 
-                    idSlot
-                })}
-            >
-                <Add />
-            </IconButton>
-            { children }
+            {!data.layout &&
+                <IconButton sx={{ margin:'auto' }}
+                    onClick={handle}
+                >
+                    <Add />
+                </IconButton>
+            }
+
+            {data.layout &&  
+                <MiniRender
+                    onClick={handle}
+                    size={data.size}
+                    layouts={data.layout}
+                />
+            }
         </div>
     );
 }

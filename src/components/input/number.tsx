@@ -88,4 +88,4 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
             </IconButton>
         </InputPaper>
     );
-  }
+}

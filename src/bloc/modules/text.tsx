@@ -119,6 +119,7 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
         if(children) setText(children);
     }, [children]);
     
+    
 
     return(
         <Typography

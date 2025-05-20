@@ -1,6 +1,7 @@
 import { Box, Button, Chip } from '@mui/material';
 import { Accordion } from '@lib/index';
 import React from 'react';
+import SlotGrid_1 from './acordeonSlots/SlotGrid_1';
 
 export default function Cell() {
     return (
@@ -17,24 +18,8 @@ export default function Cell() {
                     headerStyle={{}}
                     items={[
                         {
-                            title: (
-                                <Box
-                                    sx={{
-                                        ml: 1.5
-                                    }}
-                                >
-                                    ・test-1
-                                </Box>
-                            ),
-                            content: (
-                                <Box
-                                    sx={{
-                                        m: 3
-                                    }}
-                                >
-                                    content
-                                </Box>
-                            )
+                            title: '・test-1',
+                            content: <div>not content</div>
                         },
                         {
                             title: (
@@ -46,55 +31,7 @@ export default function Cell() {
                                     ・test-1
                                 </Box>
                             ),
-                            content: (
-                                <Box
-                                    sx={{
-                                        m: 3
-                                    }}
-                                >
-                                    content
-                                </Box>
-                            )
-                        },
-                        {
-                            title: (
-                                <Box
-                                    sx={{
-                                        ml: 1.5
-                                    }}
-                                >
-                                    ・test-2
-                                </Box>
-                            ),
-                            content: (
-                                <Box
-                                    sx={{
-                                        m: 3
-                                    }}
-                                >
-                                    content
-                                </Box>
-                            )
-                        },
-                        {
-                            title: (
-                                <Box
-                                    sx={{
-                                        ml: 1.5
-                                    }}
-                                >
-                                    ・test-3
-                                </Box>
-                            ),
-                            content: (
-                                <Box
-                                    sx={{
-                                        m: 3
-                                    }}
-                                >
-                                    content
-                                </Box>
-                            )
+                            content: <SlotGrid_1 />
                         }
                     ]}
                 />

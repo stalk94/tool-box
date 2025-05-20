@@ -1,6 +1,7 @@
 import React from "react";
-import { Button, IconButton, Box, Popover, Typography, Divider, Select, MenuItem } from "@mui/material";
-import { BorderStyle, ColorLens, FormatColorText, More, Widgets } from '@mui/icons-material';
+import { AVAILABLE_CLASSNAMES } from './config/props';
+import { Button, IconButton, Box, Popover, Typography, Divider, Select, MenuItem, Chip, Stack, FormControlLabel } from "@mui/material";
+import { BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets } from '@mui/icons-material';
 import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
     RadioButtonUnchecked, RadioButtonChecked, Add, Code
@@ -10,7 +11,7 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
-import { updateComponentProps } from './utils/updateComponentProps';
+import { updateComponentProps, updateCelltProps } from './utils/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
 import { componentGroups, componentAtom } from './config/category';
@@ -21,9 +22,10 @@ import { getUniqueBlockName } from "./utils/editor";
 import { LeftToolPanelProps, ProxyComponentName } from './type';
 import { useKeyboardListener } from './utils/hooks';
 import { db } from "./utils/export";
+import { SiHomepage } from "react-icons/si";
 import exportGrid from './modules/export/Grid';
 import { DraggableToolItem } from './Dragable';
-
+import { ToggleChip } from './utils/createComponentRegistry';
 
 const RenderListProject = ({ currentCat }) => {
     const context = useHookstate(useEditorContext());
@@ -374,17 +376,82 @@ const useStylesEditor = (elem, onChange, curSub, setSub) => {
         )
     };
 }
+const useCell = (cell, curSub, setSub) => {
+    const props = cell?.get({ noProxy: true })?.props ?? {};
+    const classNameStr = props.classNames || '';
+    const classList = classNameStr.split(/\s+/).filter(Boolean);
+
+    const toggleClass = (cls: string) => {
+        const newList = classList.includes(cls)
+            ? classList.filter(c => c !== cls)
+            : [...classList, cls];
+
+        updateCelltProps({
+            ...props,
+            classNames: newList.join(' ')
+        });
+    }
+    const fabrick = (key, value) => {
+        if (key === 'classNames') {
+            return (
+                <Stack direction="row" flexWrap="wrap" gap={1} py={1}>
+                    {AVAILABLE_CLASSNAMES.map((cls) => (
+                        <ToggleChip
+                            key={cls}
+                            label={cls}
+                            value={classList.includes(cls)}
+                            onChange={() => toggleClass(cls)}
+                        />
+                    ))}
+                </Stack>
+            );
+        }
+
+        return null;
+    }
+
+
+    return {
+        start: (
+            <TooglerInput
+                value={curSub}
+                disabled={!cell}
+                onChange={setSub}
+                sx={{ px: 0.2 }}
+                items={[
+                    { label: <More sx={{ fontSize: 18 }} />, id: 'props' },
+                    { label: <ColorLens sx={{ fontSize: 18 }} />, id: 'style' },
+                    { label: <BorderStyle sx={{ fontSize: 18 }} />, id: 'flex' },
+                ]}
+            />
+        ),
+        children: (
+            <>
+                {curSub === 'props' &&
+                    Object.entries(cell.get({ noProxy: true })?.props).map(([propsName, value])=> {
+                        if(propsName !== 'style') return(
+                            <span key={propsName}>
+                                { fabrick(propsName, value) }
+                            </span>
+                        );
+                    })
+                }
+            </>
+        )
+    };
+}
 
 
 // левая панель редактора
 export default function ({ useDump, desserealize }: LeftToolPanelProps) {
-    const mod = useHookstate(useEditorContext().mod);
+    const currentCell = useHookstate(useEditorContext().currentCell);
     const info = useHookstate(useInfoState());
     const render = useHookstate(useRenderState());
     const meta = useHookstate(useEditorContext().meta);
     const select = info.select;
+    const [curCellPanel, setCurCellPanel] = React.useState<'props' | 'style' | 'flex'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles'>('project');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'cell'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
     const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
 
@@ -398,6 +465,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         { divider: true },
         { id: 'styles', label: 'Настройки', icon: <Palette /> },
         { divider: true },
+        { id: 'cell', label: 'cell', icon: <SiHomepage size={20} style={{margin: 5}} /> }
     ];
     const endItems = [
         { id: 'save', label: 'Сохранить', icon: <Save /> },
@@ -438,8 +506,9 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         else if (item.id === 'styles') setCurrentToolPanel('styles');
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') useDump();
+        else if (item.id === 'cell') setCurrentToolPanel('cell');
         else if (item.id === 'export') handleExportGrid();
-    };
+    }
     const useComponentUpdateFromEditorForm = (newDataProps) => {
         const selectComponent = select.content.get({ noproxy: true });
         if (selectComponent) updateComponentProps({ 
@@ -447,7 +516,6 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
             data: newDataProps 
         });
     }
-   
 
     const panelRenderers = {
         project: () => ({
@@ -456,7 +524,8 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         }),
         component: () => useElements(currentTool, setCurrentTool),
         styles: () => useStylesEditor(select.content, useComponentUpdateFromEditorForm, curSubpanel, setSubPanel),
-        atoms: () => useAtoms(currentAtom, setCurrentAtom, desserealize)
+        atoms: () => useAtoms(currentAtom, setCurrentAtom, desserealize),
+        cell: ()=> useCell(currentCell, curCellPanel, setCurCellPanel)
     }
     const { start, children } = panelRenderers[currentToolPanel]
         ? panelRenderers[currentToolPanel]()

@@ -1,65 +1,34 @@
-import {
-    Avatar,
-    BottomNavigation,
-    BottomNavigationAction,
-    Button,
-    Paper,
-    Typography
-} from '@mui/material';
+import { Avatar, Button, Tab, Tabs, Typography } from '@mui/material';
 import { DateInput, TextInput } from '@lib/index';
-import { Add, Home } from '@mui/icons-material';
 import React from 'react';
+import ONE2 from './tabsSlots/ONE2';
+import TWO1 from './tabsSlots/TWO1';
 
-export function BottomNavigationWrap() {
+export function TabNavigation() {
     const [curent, setCurent] = React.useState(0);
-    const items = [
-        { id: 'BottomNavigation-0', icon: <Home />, label: 'home' },
-        { id: 'BottomNavigation-1', icon: <Add />, label: 'add' },
-        { id: 'BottomNavigation-2', icon: <Add />, label: 'test' }
-    ];
-
-    const handleChange = (e: React.SyntheticEvent, newValue: number) => {
-        setCurent(newValue);
-    };
+    const slots = [<ONE2 />, <TWO1 />, <div>not content</div>];
 
     return (
-        <Paper
-            style={{
-                width: '100%',
-                position: 'sticky',
-                bottom: 0,
-                border: '1px'
-            }}
-            elevation={1}
-            data-type="BottomNav"
-        >
-            <BottomNavigation
-                style={{}}
-                showLabels={false}
+        <div style={{ width: '100%', display: 'block' }}>
+            <Tabs
                 value={curent}
-                onChange={handleChange}
+                onChange={(event: React.SyntheticEvent, newValue: number) => {
+                    setCurent(newValue);
+                }}
+                variant="scrollable"
+                scrollButtons={true}
+                allowScrollButtonsMobile={true}
+                textColor={undefined}
+                aria-label="tabs"
             >
-                {items &&
-                    items.map((elem, index: number) => (
-                        <BottomNavigationAction
-                            key={index}
-                            label={
-                                false && (
-                                    <span style={{ fontSize: 16 }}>
-                                        {elem.label}
-                                    </span>
-                                )
-                            }
-                            icon={elem.icon ? elem.icon : undefined}
-                            sx={{
-                                '& .MuiSvgIcon-root': {
-                                    fontSize: 24
-                                }
-                            }}
-                        />
-                    ))}
-            </BottomNavigation>
-        </Paper>
+                <Tab key={0} label={'ONE2'} />
+
+                <Tab key={1} label={'TWO1'} />
+
+                <Tab key={2} label={'three'} />
+            </Tabs>
+            <div>{slots[curent]}</div>
+        </div>
     );
 }
 
@@ -84,29 +53,11 @@ export default function Cell() {
                 endIcon={undefined}
                 style={{}}
                 variant="outlined"
-                color="error"
+                color="primary"
                 data-type="Button"
                 onClick={() =>
                     sharedEmmiter.emit('event', {
                         id: 1747254467189,
-                        type: 'click'
-                    })
-                }
-            >
-                Button
-            </Button>
-
-            <Button
-                startIcon={undefined}
-                endIcon={undefined}
-                style={{}}
-                variant="outlined"
-                color="success"
-                fullWidth
-                data-type="Button"
-                onClick={() =>
-                    sharedEmmiter.emit('event', {
-                        id: 1747257380179,
                         type: 'click'
                     })
                 }
@@ -171,7 +122,25 @@ export default function Cell() {
                 />
             </div>
 
-            <BottomNavigationWrap />
+            <Button
+                startIcon={undefined}
+                endIcon={undefined}
+                style={{}}
+                variant="outlined"
+                color="primary"
+                fullWidth
+                data-type="Button"
+                onClick={() =>
+                    sharedEmmiter.emit('event', {
+                        id: 1747257380179,
+                        type: 'click'
+                    })
+                }
+            >
+                Button
+            </Button>
+
+            <TabNavigation />
         </>
     );
 }

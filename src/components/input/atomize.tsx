@@ -148,7 +148,7 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
                 minHeight: '30px',
                 minWidth: '160px',
                 borderRadius: 1,
-                height: props?.style?.height ?? 36,
+                height: !props?.multiline && (props?.style?.height ?? 36),
                 ...props.sx,
                 opacity: props.disabled && 0.4,
                 border: useBorderColor(),

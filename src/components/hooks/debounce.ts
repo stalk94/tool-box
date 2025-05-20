@@ -32,3 +32,12 @@ export function useDebounced<T extends (...args: any[]) => void>(
         }, delay);
     }) as T;
 }
+
+
+export function debounce<T extends (...args: any[]) => void>(fn: T, delay = 100): T {
+    let timer: ReturnType<typeof setTimeout>;
+    return function (this: any, ...args: any[]) {
+        clearTimeout(timer);
+        timer = setTimeout(() => fn.apply(this, args), delay);
+    } as T;
+}

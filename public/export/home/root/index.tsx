@@ -29,7 +29,8 @@ export default function RenderGrid() {
                         isDraggable: undefined,
                         isResizable: undefined,
                         resizeHandles: undefined,
-                        isBounded: undefined
+                        isBounded: undefined,
+                        props: { style: {}, classNames: '' }
                     },
                     {
                         w: 3,
@@ -46,7 +47,8 @@ export default function RenderGrid() {
                         isDraggable: undefined,
                         isResizable: undefined,
                         resizeHandles: undefined,
-                        isBounded: undefined
+                        isBounded: undefined,
+                        props: { style: {}, classNames: '' }
                     },
                     {
                         w: 4,
@@ -63,7 +65,8 @@ export default function RenderGrid() {
                         isDraggable: undefined,
                         isResizable: undefined,
                         resizeHandles: undefined,
-                        isBounded: undefined
+                        isBounded: undefined,
+                        props: { style: {}, classNames: '' }
                     },
                     {
                         w: 3,
@@ -80,7 +83,8 @@ export default function RenderGrid() {
                         isDraggable: undefined,
                         isResizable: undefined,
                         resizeHandles: undefined,
-                        isBounded: undefined
+                        isBounded: undefined,
+                        props: { style: {}, classNames: '' }
                     }
                 ]
             }}

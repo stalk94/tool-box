@@ -79,8 +79,13 @@ export type ComponentSerrialize = {
 //                        
 //////////////////////////////////////////////////////////////////////////////
 export type LayoutCustom = Layout & {
-    /** id рендер элемента */
+    /** массив компонентов */
     content?: Component[]
+    /** стилизация ячейки */
+    props?: {
+        style?: React.CSSProperties
+        classNames?: string
+    }
 }
 export type GridEditorProps = {
     setLayout: (old: Layout[])=> void
@@ -92,6 +97,7 @@ export type PropsForm = {
     elemLink: any
     type: 'props'|'styles'|'flex'|'text'
     onChange: (data: Record<string, any>)=> void
+    isCell?: boolean
 }
 export type LeftToolPanelProps = {
     useDump: () => void
@@ -112,7 +118,6 @@ export type BlocData = {
             name: string
             updatedAt: number
         }
-
         size: {
             width: number
             height: number
@@ -122,6 +127,25 @@ export type BlocData = {
 export type ScopeData = {
     name: string 
     data: BlocData[]
+}
+/////////////////////////////////////////////////////////////////////////////
+//          вложенный контекст (+ виртуализация)
+////////////////////////////////////////////////////////////////////////////
+export type DataNested = { 
+    content: Record<string, ComponentSerrialize[]>
+    layout: LayoutCustom[]
+    size: { 
+        width: number
+        height: number 
+    } 
+}
+export type NestedContext = { 
+    useBackToEditorBase: (data: DataNested)=> void
+    data: DataNested
+    nestedComponentsList: Record<ProxyComponentName, {}>        //! это список render components доступных
+    onChange: (newDataGrid: DataNested)=> void 
+    headles?: boolean                                           // only headles render mod
+    onReadyLiteral?: (code: string) => void                     // only headles render mod
 }
 
 
@@ -143,23 +167,12 @@ export type DropSlotProps = {
 }
 export type ContextSlotProps = {
     nestedComponentsList: Record<ProxyComponentName, true>
-    data: Record<string, ComponentSerrialize[]>
-    size: {
-        width: number
-        height: number
-    }
+    data: DataNested
     idParent: number
     idSlot: number | string
 }
 
-// вложенный контекст
-export type DataNested = { 
-    content: Record<string, ComponentSerrialize[]>,
-    size: { 
-        width: number, 
-        height: number 
-    } 
-}
+
 export type SlotDataBus = {
     nestedComponentsList: Record<ProxyComponentName, true>
     data: DataNested

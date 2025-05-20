@@ -7,8 +7,7 @@ import {
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
     ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt,
-    VideoCameraFront,
-    Height
+    VideoCameraFront, AccountBox, Label, Subtitles
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
@@ -396,7 +395,7 @@ registerComponent({
         'data-source': 'src',
         style: {}
     },
-    icon: LinearScale,
+    icon: AccountBox,
     category: 'misc',
 });
 registerComponent({
@@ -411,7 +410,7 @@ registerComponent({
         label: 'chip',
         style: {}
     },
-    icon: LinearScale,
+    icon: Label,
     category: 'misc',
 });
 registerComponent({
@@ -432,7 +431,7 @@ registerComponent({
             image: undefined
         }
     },
-    icon: LinearScale,
+    icon: Subtitles,
     category: 'media',
 });
 
@@ -445,9 +444,12 @@ registerComponent({
         fullWidth: true,
         activeIndexs: [],
         styles: {},
+        slots: {
+            0: {}
+        },
         items: [
             {
-                title: serializeJSX(<Box sx={{ml: 1.5}}>・test-1</Box>),
+                title: serializeJSX(<Box sx={{ml: 1.5}}>・title-0</Box>),
                 content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
             }
         ]
@@ -462,9 +464,9 @@ registerComponent({
         fullWidth: true,
         // ! ВСЕГДА ОБЬЕКТ 
         slots: {
-            0: [],
-            1: [],
-            2: []
+            0: {},
+            1: {},
+            2: {}
         },
         items: [
             'one',

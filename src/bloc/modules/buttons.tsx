@@ -86,7 +86,6 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
         sharedEmmiter.on('degidratation.'+dataId, handler);
 
         return () => {
-            console.log('BUTTON DEGSHARED ONMOUNTED');
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.'+dataId, handler);
         }

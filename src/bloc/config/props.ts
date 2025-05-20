@@ -8,6 +8,8 @@ globalThis.FONT_OPTIONS = [
     'Inter',
     'Montserrat',
 ];
+// классы для ячеек
+export const AVAILABLE_CLASSNAMES = ['rounded'];
 
 
 /**
