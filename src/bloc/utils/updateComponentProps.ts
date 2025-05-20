@@ -80,7 +80,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
     });
 }
 
-export function updateCelltProps({ data, rerender = true }: Params) {
+export function updateCelltProps(data) {
     const context = useEditorContext();
     const infoState = useInfoState();
     const renderState = useRenderState();
@@ -92,16 +92,16 @@ export function updateCelltProps({ data, rerender = true }: Params) {
     }
     
     // 🔁 Обновляем визуальный рендер через context.render
-    if (rerender) renderState.set((layers) => {
+    renderState.set((layers) => {
         const updated = layers.map((layer) => {
-            if (!layer.i !== cellId) return layer;
-
+            if (layer.i !== cellId) return layer;
+           
             const newLayerProps = { ...layer.props, ...data }
-            console.log(newLayerProps);
 
             return { ...layer, props: newLayerProps };
         });
 
+        context.layout.set(updated);
         return [...updated];
     });
 }

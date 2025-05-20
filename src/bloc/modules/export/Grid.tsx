@@ -137,7 +137,7 @@ export default function exportsGrid(
     style?: React.CSSProperties,
 ) {
     const singleList = ['Breadcrumbs', 'AppBar'];
-    const individualList = ['Tabs', 'BottomNav'];
+    const individualList = ['Tabs', 'BottomNav', 'DataTable'];
     
     const renderComponents = async(content: Component[], cell: LayoutCustom) => {
         const imports: string[] = [];
@@ -252,11 +252,12 @@ export default function exportsGrid(
             }
         });
         
-
         let imports = ``;
         let cells = ``;
+
         render.map((layout, index) => {
             const find = paths.find((elem)=> elem.cellId === layout.i);
+
             if(find) {
                 imports = imports+'\n'+find.import;
                 cells = cells + '\n' + `
@@ -286,7 +287,6 @@ export default function exportsGrid(
     }
     const renderLiteralGrid = async()=> {
         const result = await renderLiteralLayouts();
-        const layersLiteral = objectArrayToJsLiteralWithoutContent(render);
         
 
         const literal = (`
@@ -301,7 +301,7 @@ export default function exportsGrid(
                     <ResponsiveGridLayout
                         style={{ }}
                         className="GRID-EDITOR"
-                        layouts={{ lg: ${layersLiteral} }}                                          
+                        layouts={{ lg: ${objectArrayToJsLiteralWithoutContent(render)} }}                                          
                         breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
                         cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
                         rowHeight={20}
@@ -323,6 +323,8 @@ export default function exportsGrid(
    
     renderLiteralGrid();
 }
+
+
 
 
 /**

@@ -255,6 +255,7 @@ export default function ({ desserealize }) {
                 onLayoutChange={handleChangeLayout}
             >
                 { render.get({ noproxy: true }).map((layer) => {
+                    
                     return(
                         <div 
                             onClick={(e) => {

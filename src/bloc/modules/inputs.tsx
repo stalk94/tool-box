@@ -52,7 +52,6 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
 
     degidratationRef.current = (call) => {
@@ -77,7 +76,7 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
-
+    
 
     return (
         <div 
@@ -91,7 +90,6 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 styles={styles}
@@ -117,7 +115,6 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
 
     degidratationRef.current = (call) => {
         const code = render(
@@ -155,7 +152,6 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 styles={styles}
@@ -180,7 +176,6 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
    
     degidratationRef.current = (call) => {
         const code = render(
@@ -217,7 +212,6 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 {...otherProps}
@@ -242,7 +236,6 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
     const RightIcon = rightIcon && iconsList[rightIcon] ? iconsList[rightIcon] : null;
 
@@ -282,7 +275,6 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                 end={RightIcon ? <RightIcon/> : null}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 {...otherProps}
@@ -307,7 +299,6 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
  
     degidratationRef.current = (call) => {
         const code = render(
@@ -345,7 +336,6 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     setState(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
@@ -370,7 +360,6 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     
     degidratationRef.current = (call) => {
         const code = render(
@@ -406,7 +395,6 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 {...otherProps}
@@ -430,7 +418,6 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
    
     degidratationRef.current = (call) => {
         const code = render(
@@ -466,7 +453,6 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 {...otherProps}
@@ -491,7 +477,6 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
   
     degidratationRef.current = (call) => {
         const code = render(
@@ -527,7 +512,6 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                 labelSx={labelStyle}
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 styles={styles}
@@ -553,7 +537,6 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     
     degidratationRef.current = (call) => {
         const code = render(
@@ -591,7 +574,6 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
                 placeholder='выбери из двух стульев'
                 onChange={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 {...otherProps}
@@ -616,7 +598,6 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-    const storage = React.useMemo(() => useCtxBufer(dataId, otherProps.value), [dataId]);
     
     degidratationRef.current = (call) => {
         const code = render(
@@ -653,7 +634,6 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                 labelSx={labelStyle}
                 onUpload={(v)=> {
                     emiter('onChange', v);
-                    storage(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                 }}
                 styles={styles}

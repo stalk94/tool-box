@@ -58,7 +58,7 @@ export default function exported(
                 >
                     <${rendertype}
                         left={ ${rendericon()} }
-                        style={{ ${toObjectLiteral(labelStyle)} }}
+                        labelSx={{ ${toObjectLiteral(labelStyle)} }}
                         onChange={(v)=> console.log(v)}
                         styles={{ ${toObjectLiteral(styles)} }}
                         ${ toJSXProps(otherProps) }
@@ -100,7 +100,7 @@ export function sliderRender(
                     <SliderInput
                         start={${rendericon(startIconName)}}
                         end={${rendericon(endIconName)}}
-                        style={{ ${toObjectLiteral(labelStyle)} }}
+                        labelSx={{ ${toObjectLiteral(labelStyle)} }}
                         onChange={(v)=> console.log(v)}
                         ${ toJSXProps(otherProps) }
                     />

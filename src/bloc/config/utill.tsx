@@ -102,10 +102,10 @@ export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) 
                 type: 'number',
                 label: key,
                 value: parseStyleValue(sourceStyle[key]).number ?? 0,
-                unit: 'px',
-                max: 30,
+                unit: '%',
+                max: 100,
                 min: -30,
-                step: 2,
+                step: 1,
                 labelSx: {
                     fontSize: '12px',
                 },

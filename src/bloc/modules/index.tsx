@@ -449,7 +449,7 @@ registerComponent({
         },
         items: [
             {
-                title: serializeJSX(<Box sx={{ml: 1.5}}>・title-0</Box>),
+                title: '・title-0',
                 content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
             }
         ]

@@ -112,9 +112,8 @@ export default function exported(
             const slotData = ls[index]?.layout;
             const titleStr = typeof title === 'string'
                 ? JSON.stringify(title)
-                : jsxJsonToString(title);
+                : title.props.children;
 
-            
             return `{
                 title: ${titleStr},
                 content: ${slotData ? `<SlotGrid_${index}/>` : `<div>not content</div>`}
@@ -124,7 +123,7 @@ export default function exported(
 
     const prerender = renderSlotsLinks();
     renderSlots()
-
+    
 
     return (`
         import React from 'react';
@@ -362,13 +361,9 @@ export function exportedTable(
                     }
                 />
             `
-        )).join(',\n')}\n`;
+        )).join('\n')}\n`;
     }
-    const renderDataLiteral = () => {
-        return `[\n${data.map((item, index) => (
-            `{ ${toObjectLiteral(item)}  }`
-        )).join(',\n')}\n]`;
-    }
+    const renderDataLiteral = () => `[\n${data.map(item => `  { ${toObjectLiteral(item)} }`).join(',\n')}\n]`;
 
 
     return (`
@@ -378,23 +373,24 @@ export function exportedTable(
         import styled, { css } from 'styled-components';
 
         
-
         export default function DataTableWrap() {
-            const data = ${renderDataLiteral};
+            const data = ${renderDataLiteral()};
 
 
             return (
-                <DataTable
-                    style={{ ${toObjectLiteral(style)} }}
-                    styles={{ ${toObjectLiteral(styles)} }}
-                    value={data}
-                    fontSizeHead={"${fontSizeHead ?? '14px'}"}
-                    emptyMessage='empty data'
-                    footer={ undefined }
-                    ${ toJSXProps(otherProps) }
-                >
-                    ${ renderColumnsLiteral() }
-                </DataTable>
+                <div style={{ ${toObjectLiteral(style)} }}>
+                    <DataTable
+                        style={{ ${toObjectLiteral(style)} }}
+                        styles={{ ${toObjectLiteral(styles)} }}
+                        value={data ?? []}
+                        fontSizeHead={"${fontSizeHead ?? '14px'}"}
+                        emptyMessage='empty data'
+                        footer={ undefined }
+                        ${ toJSXProps(otherProps) }
+                    >
+                        ${ renderColumnsLiteral() }
+                    </DataTable>
+                </div>
             );
         }
     `);

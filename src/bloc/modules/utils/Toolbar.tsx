@@ -172,7 +172,7 @@ export const SlotToolBar =({ dataId, type, item })=> {
                 label: 'test'
             }
             else return {
-                title: serializeJSX(<Box sx={{ ml: 1.5 }}>・test-{selectedProps.items.length}</Box>),
+                title: `・title-${selectedProps.items.length}`,
                 content: serializeJSX(<Box sx={{ m: 3 }}>content</Box>)
             }
         }

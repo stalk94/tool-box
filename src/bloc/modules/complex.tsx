@@ -217,7 +217,6 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const containerRef = React.useRef(null);
     const { 'data-id': dataId, style, items, slots, fullWidth, textColor, ...otherProps } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
@@ -318,13 +317,13 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             </Tabs>
             {/* Слоты */}
             <ContextSlot
-                idParent={dataId} 
+                idParent={dataId}
                 idSlot={value}
                 data={{
                     ...slots[value],
                     size: {
-                        width: container.width, 
-                        height:container.height
+                        width: container.width,
+                        height: container.height
                     }
                 }}
                 nestedComponentsList={{
@@ -578,7 +577,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
             styles,
             otherProps
         );
-
+        console.log(code)
         call(code);
     }
     const handleUpload = (file: File) => {

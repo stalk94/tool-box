@@ -25,7 +25,7 @@ import { db } from "./utils/export";
 import { SiHomepage } from "react-icons/si";
 import exportGrid from './modules/export/Grid';
 import { DraggableToolItem } from './Dragable';
-import { ToggleChip } from './utils/createComponentRegistry';
+
 
 const RenderListProject = ({ currentCat }) => {
     const context = useHookstate(useEditorContext());
@@ -377,40 +377,6 @@ const useStylesEditor = (elem, onChange, curSub, setSub) => {
     };
 }
 const useCell = (cell, curSub, setSub) => {
-    const props = cell?.get({ noProxy: true })?.props ?? {};
-    const classNameStr = props.classNames || '';
-    const classList = classNameStr.split(/\s+/).filter(Boolean);
-
-    const toggleClass = (cls: string) => {
-        const newList = classList.includes(cls)
-            ? classList.filter(c => c !== cls)
-            : [...classList, cls];
-
-        updateCelltProps({
-            ...props,
-            classNames: newList.join(' ')
-        });
-    }
-    const fabrick = (key, value) => {
-        if (key === 'classNames') {
-            return (
-                <Stack direction="row" flexWrap="wrap" gap={1} py={1}>
-                    {AVAILABLE_CLASSNAMES.map((cls) => (
-                        <ToggleChip
-                            key={cls}
-                            label={cls}
-                            value={classList.includes(cls)}
-                            onChange={() => toggleClass(cls)}
-                        />
-                    ))}
-                </Stack>
-            );
-        }
-
-        return null;
-    }
-
-
     return {
         start: (
             <TooglerInput
@@ -431,7 +397,7 @@ const useCell = (cell, curSub, setSub) => {
                     Object.entries(cell.get({ noProxy: true })?.props).map(([propsName, value])=> {
                         if(propsName !== 'style') return(
                             <span key={propsName}>
-                                { fabrick(propsName, value) }
+                                
                             </span>
                         );
                     })

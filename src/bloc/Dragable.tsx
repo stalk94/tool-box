@@ -39,7 +39,7 @@ export function DraggableToolItem({ id, type, dataType, element }) {
     );
 }
 export function DragItemCopyElement({ activeDragElement }) {
-    
+   
     return(
         <div 
             style={{ 
@@ -107,9 +107,8 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, children, 
             style={{
                 border: '1px dashed #4b9ec85a',
                 transition: 'background 0.15s',
-                inset: 0,
-                zIndex: 9999,
-                display: 'flex'
+                display: 'flex',
+                width: '100%',
             }}
         >
             {!data.layout &&

@@ -94,15 +94,14 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
 
     return (
         <Button
-            ref={ref}
             data-type="Button"
             variant="outlined"
             startIcon={StartIcon ? <StartIcon /> : undefined}
             endIcon={EndIcon ? <EndIcon /> : undefined}
             style={style}
-            { ...otherProps }
+            {...otherProps}
         >
-            { children }
+            {children}
         </Button>
     );
 });

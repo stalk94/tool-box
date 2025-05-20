@@ -179,6 +179,7 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
 
             export default function AvatarWrap() {
                 return(
+                    <div style={{${fullWidth ? 'width: "100%"' : 'width: "fit-content"'}}}>
                     <Avatar
                         sx={{ 
                             width: ${sizes}, 
@@ -190,6 +191,7 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
                     >
                         ${ child }
                     </Avatar>
+                    </div>
                 );
             }
         `);

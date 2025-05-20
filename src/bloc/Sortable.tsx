@@ -163,7 +163,6 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
     ]);
     
     
-
     return (
         <React.Fragment>
             <div
@@ -183,14 +182,6 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                     handleClick(e.currentTarget);
                 }}
             >
-                { context.mod.get() === 'link' &&
-                    <LinktoolBar 
-                        dataId={children.props['data-id']}
-                        subs={children.props['data-subs'] ?? []}
-                        onChange={(data)=> updateComponentProps({component:children, data})}
-                    />
-                }
-               
                 <SlotToolBar
                     dataId={children.props['data-id']}
                     type={children.props['data-type']}
@@ -203,3 +194,15 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         </React.Fragment>
     );
 }
+
+
+
+/**
+ *         { context.mod.get() === 'link' &&
+                    <LinktoolBar 
+                        dataId={children.props['data-id']}
+                        subs={children.props['data-subs'] ?? []}
+                        onChange={(data)=> updateComponentProps({component:children, data})}
+                    />
+                }
+ */

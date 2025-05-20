@@ -16,27 +16,3 @@ export function createComponentFromRegistry(type: string): Component {
   
     return <Component {...props} />;
 }
-
-
-export function ToggleChip({ label, value, onChange }: { label: string }) {
-    const [active, setActive] = React.useState(false);
-
-    React.useEffect(()=> {
-        if(value) setActive(true);
-        else setActive(false);
-    }, [value]);
-
-    return (
-        <Chip
-            label={label}
-            onClick={() => {
-                setActive(prev => {
-                    if(!prev) onChange(value);
-                    return !prev;
-                });
-            }}
-            color={active ? 'primary' : 'default'}
-            variant={active ? 'filled' : 'outlined'}
-        />
-    );
-}
