@@ -78,7 +78,7 @@ export function TypographyWrap() {
             variant="h5"
             data-type="Typography"
         >
-            Заголовокmm
+            Заголовок
         </Typography>
     );
 }

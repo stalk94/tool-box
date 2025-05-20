@@ -1,6 +1,6 @@
 import React from 'react';
-import { registerComponent } from './utils/registry';
-import { ButtonWrapper, IconButtonWrapper, SliderWrapper } from './buttons';
+import { registerComponent } from './helpers/registry';
+import { ButtonWrapper, IconButtonWrapper } from './buttons';
 import { TypographyWrapper, TextWrapper } from './text';
 import { ImageWrapper } from './media';
 import { 
@@ -13,14 +13,13 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
-import { HorizontalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
+import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
 import { DividerWrapper, AvatarWrapper, ChipWrapper} from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, HeaderWrapper, BreadcrumbsWrapper } from './complex';
-import { sharedContext, sharedEmmiter } from './utils/shared';
+import { sharedContext, sharedEmmiter } from './helpers/shared';
 import { Box } from '@mui/material';
-import { serializeJSX } from '../utils/sanitize';
+import { serializeJSX } from '../helpers/sanitize';
 import { InputStyles } from '../type';
-import { MediaCarouselCustom, MediaCarouselVertical } from './sources/media-carousel';
 
 
 
@@ -307,15 +306,41 @@ registerComponent({
     component: HorizontalCarouselWrapper,
     defaultProps: {
         fullWidth: true,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplayDelay: 4000,
+        loop: false,
         width: '100%',
-        style: {a:1},
         items: [
-            <img
-                src='https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'
-
-            />,
-            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/600/600' alt="Slide 1" /> ,
-            <img style={{ width: '100%', height: 'auto' }} src='https://picsum.photos/300/300' alt="Slide 1" /> 
+            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
+            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { type: 'image', src: 'https://picsum.photos/seed/1/300/400' },
+            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
+            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { type: 'image', src: 'https://picsum.photos/seed/1/800/400' },
+        ]
+    },
+    icon: ViewCarousel,
+    category: 'media',
+});
+registerComponent({
+    type: 'VerticalCarousel',
+    component: VerticalCarouselWrapper,
+    defaultProps: {
+        fullWidth: true,
+        slidesToShow: 3,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplayDelay: 4000,
+        loop: false,
+        items: [
+            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
+            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { type: 'image', src: 'https://picsum.photos/seed/1/300/400' },
+            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
+            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
+            { type: 'image', src: 'https://picsum.photos/seed/1/800/400' },
         ]
     },
     icon: ViewCarousel,
@@ -331,44 +356,7 @@ registerComponent({
     icon: ViewCarousel,
     category: 'media',
 });
-registerComponent({
-    type: 'MediaCarousel',
-    component: MediaCarouselCustom,
-    defaultProps: {
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplayDelay: 4000,
-        loop: false,
-        items: [
-            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
-            { type: 'image', src: 'https://picsum.photos/seed/2/600/400' },
-            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-            { type: 'image', src: 'https://picsum.photos/seed/3/600/400' },
-        ]
-    },
-    icon: ViewCarousel,
-    category: 'media',
-});
-registerComponent({
-    type: 'CarouselVertical',
-    component: MediaCarouselVertical,
-    defaultProps: {
-        slidesToShow: 3,
-        slidesToScroll: 1,
-        autoplay: true,
-        autoplayDelay: 4000,
-        loop: false,
-        items: [
-            { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
-            { type: 'image', src: 'https://picsum.photos/seed/2/600/400' },
-            { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-            { type: 'image', src: 'https://picsum.photos/seed/3/600/400' },
-        ]
-    },
-    icon: ViewCarousel,
-    category: 'media',
-});
+
 
 
 // any

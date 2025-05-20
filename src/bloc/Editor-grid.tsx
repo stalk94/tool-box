@@ -6,7 +6,7 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { hookstate, useHookstate } from "@hookstate/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
-import { findFreeSpot, stackHorizont, stackVertical } from './utils/editor';
+import { findFreeSpot, stackHorizont, stackVertical } from './helpers/editor';
 import { DroppableCell } from './Dragable';
 import Container from '@mui/material/Container';
 

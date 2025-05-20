@@ -2,7 +2,7 @@ import React from 'react';
 import { jsxJsonToString, formatJsx, renderJsonToLiteral, renderComponentSsr, renderComponentSsrPrerender } from './utils';
 import { Component, DataNested } from '../../type';
 import { createRoot } from 'react-dom/client'
-import { exportLiteralToFile } from "../../utils/export";
+import { exportLiteralToFile } from "../../helpers/export";
 import MiniRender from '../../nest-slot/MiniRender';
 
 

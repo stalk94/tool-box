@@ -2,7 +2,7 @@ import React from 'react';
 import { JSONContent } from '@tiptap/react';
 import { Typography, TypographyProps } from '@mui/material';
 import { useHookstate } from '@hookstate/core';
-import { updateComponentProps } from '../utils/updateComponentProps';
+import { updateComponentProps } from '../helpers/updateComponentProps';
 import { useInfoState, useEditorContext } from "../context";
 import { useDebounced } from 'src/components/hooks/debounce';
 import TipTapSlotEditor from './tip-tap';

@@ -15,22 +15,17 @@ export default function Cell() {
                 <Accordion
                     activeIndexs={[]}
                     tabStyle={{}}
-                    headerStyle={{}}
+                    headerStyle={{
+                        fontSize: '12',
+                        paddingLeft: '7'
+                    }}
                     items={[
                         {
-                            title: '・test-1',
+                            title: '・title-0',
                             content: <div>not content</div>
                         },
                         {
-                            title: (
-                                <Box
-                                    sx={{
-                                        ml: 1.5
-                                    }}
-                                >
-                                    ・test-1
-                                </Box>
-                            ),
+                            title: '・title-1',
                             content: <SlotGrid_1 />
                         }
                     ]}

@@ -1,11 +1,25 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useMotionValue, animate } from 'framer-motion';
-import { useComponentSizeWithSiblings } from '../utils/hooks';
 import { ChevronLeft, ChevronRight, ExpandLess, ExpandMore } from '@mui/icons-material';
 
+type SourceIremType = {
+    type: 'image' | 'video' | 'content'
+    src?: string | React.ReactElement
+    style?: React.CSSProperties 
+}
+export type CarouselProps = {
+    width?: number 
+    height?: number
+    loop?: boolean
+    autoplay?: boolean
+    slidesToScroll?: number
+    autoplayDelay?: number
+    slidesToShow?: number
+    items: SourceIremType[]
+}
 
 
-export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
+export const CarouselHorizontal = ({ height, ...props }: CarouselProps) => {
     const pointer = useRef({ startX: 0, dragging: false });
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -18,12 +32,8 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
         loop = false,
         slidesToShow = 3,
         slidesToScroll = 1,
-        'data-id': dataId,
-        style = {},
         ...otherProps
     } = props;
-
-    const { width, height } = useComponentSizeWithSiblings(dataId);
     
     
     const goTo = (index: number) => {
@@ -61,9 +71,45 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
 
         if (Math.abs(delta) > slideWidth / 4) {
             goTo(currentIndex + (delta < 0 ? slidesToScroll : -slidesToScroll));
-        } else {
+        } 
+        else {
             goTo(currentIndex);
         }
+    }
+    const renderItem = (item: SourceIremType) => {
+        if (item.type === 'image') return(
+            <img 
+                src={item.src} 
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    height: height ?? '100%'
+                }} 
+            />
+        );
+        else if (item.type === 'video') return(
+            <video 
+                src={item.src} 
+                controls 
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    height: height ?? '100%', 
+                    objectFit: 'cover',
+                }} 
+            />
+        );
+        else return(
+            <div
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    height: height ?? '100%', 
+                }} 
+            >
+                { item.src }
+            </div>
+        );
     }
 
     useEffect(() => {
@@ -74,11 +120,12 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
                 setSlideWidth(perSlide);
                 animate(x, -currentIndex * perSlide, { type: 'spring', stiffness: 250 });
             }
-        };
+        }
+
         update();
         window.addEventListener('resize', update);
         return () => window.removeEventListener('resize', update);
-    }, [currentIndex, width, slidesToShow]);
+    }, [currentIndex, slidesToShow]);
     useEffect(() => {
         if (!autoplay || items.length <= slidesToShow) return;
 
@@ -97,20 +144,8 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
 
 
     return (
-        <div
-            ref={ref}
-            data-id={dataId}
-            data-type="MediaCarousel"
-            style={{
-                overflow: 'hidden',
-                width: '100%',
-                height: height,
-                position: 'relative',
-                ...style,
-            }}
-            {...otherProps}
-        >
-            {items.length > slidesToShow && (
+        <>
+            { items.length > slidesToShow && (
                 <>
                     <button className="carousel-button left" onClick={() => goTo(currentIndex - slidesToScroll)}>
                         <ChevronLeft fontSize="inherit" />
@@ -145,15 +180,13 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
                                 flex: `0 0 ${100 / slidesToShow}%`,
                                 maxWidth: `${100 / slidesToShow}%`,
                                 padding: 4,
-                                boxSizing: 'border-box'
+                                boxSizing: 'border-box',
+                                userSelect: 'none',
+                                justifyContent: 'center',
+                                alignItems: 'center',
                             }}
                         >
-                            {item.type === 'image' && (
-                                <img src={item.src} style={{ width: '100%', height: height,}} />
-                            )}
-                            {item.type === 'video' && (
-                                <video src={item.src} controls style={{ width: '100%', height: height, }} />
-                            )}
+                            { renderItem(item) }
                         </div>
                     ))}
                 </motion.div>
@@ -192,13 +225,16 @@ export const MediaCarouselCustom = React.forwardRef((props: any, ref) => {
                     }
                 `}
             </style>
-        </div>
+        </>
     );
-});
+}
 
-export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
+
+
+export const CarouselVertical = ({ height, ...props }: CarouselProps) => {
     const pointer = useRef({ startY: 0, dragging: false });
     const containerRef = useRef<HTMLDivElement>(null);
+    const [calculateHeightSlide, setHeight] = useState(height ?? 300);
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slideHeight, setSlideHeight] = useState(0);
     const y = useMotionValue(0);
@@ -209,14 +245,9 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
         loop = false,
         slidesToShow = 3,
         slidesToScroll = 1,
-        'data-id': dataId,
-        style = {},
         ...otherProps
     } = props;
-
     
-    const size = useComponentSizeWithSiblings(dataId);
-
 
     const goTo = (index: number) => {
         let safeIndex = index;
@@ -225,10 +256,12 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
             const maxSafe = Math.max(0, items.length - slidesToShow);
             if (safeIndex > maxSafe) {
                 safeIndex = 0;
-            } else {
+            } 
+            else {
                 safeIndex = Math.max(0, Math.min(safeIndex, maxSafe));
             }
-        } else {
+        } 
+        else {
             safeIndex = (index + items.length) % items.length;
         }
 
@@ -250,24 +283,75 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
 
         if (Math.abs(delta) > slideHeight / 4) {
             goTo(currentIndex + (delta < 0 ? slidesToScroll : -slidesToScroll));
-        } else {
+        } 
+        else {
             goTo(currentIndex);
         }
     }
+    const renderItem = (item: SourceIremType) => {
+        if (item.type === 'image') return(
+            <img 
+                src={item.src} 
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    paddingTop: 4,
+                    paddingBottom: 4,
+                    height: calculateHeightSlide, 
+                    //height: '100%',
+                }} 
+            />
+        );
+        else if (item.type === 'video') return(
+            <video 
+                src={item.src} 
+                controls 
+                style={{ 
+                    objectFit: 'cover',
+                    ...item?.style,
+                    width: '100%', 
+                    height: calculateHeightSlide, 
+                    margin: 'auto', 
+                    paddingTop: 4,
+                    paddingBottom: 4,
+                }} 
+            />
+        );
+        else return(
+            <div
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    paddingTop: 4,
+                    paddingBottom: 4,
+                    //height: calculateHeightSlide - 4, 
+                }} 
+            >
+                { item.src }
+            </div>
+        );
+    }
 
+    useEffect(() => {
+        if(height) {
+            setHeight(height / slidesToShow);
+        }
+    }, [height]);
     useEffect(() => {
         const update = () => {
             if (containerRef.current) {
                 const fullHeight = containerRef.current.offsetHeight;
                 const perSlide = fullHeight / slidesToShow;
+                //setHeight(fullHeight);
                 setSlideHeight(perSlide);
                 animate(y, -currentIndex * perSlide, { type: 'spring', stiffness: 250 });
             }
-        };
+        }
+
         update();
         window.addEventListener('resize', update);
         return () => window.removeEventListener('resize', update);
-    }, [currentIndex, size, slidesToShow]);
+    }, [currentIndex, height, slidesToShow]);
     useEffect(() => {
         if (!autoplay || items.length <= slidesToShow) return;
 
@@ -286,21 +370,7 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
 
 
     return (
-        <div
-            ref={ref}
-            data-id={dataId}
-            data-type="CarouselVertical"
-            style={{
-                overflow: 'hidden',
-                width: size.width,
-                height: size.height,
-                position: 'relative',
-                display: 'flex',
-                justifyContent: 'center',
-                ...style,
-            }}
-            {...otherProps}
-        >
+        <>
             {items.length > slidesToShow && (
                 <>
                     <button className="vcarousel-button top" onClick={() => goTo(currentIndex - slidesToScroll)}>
@@ -323,30 +393,28 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
             >
                 <motion.div
                     style={{
-                        display: 'flex',
-                        flexDirection: 'column',
+                        //display: 'flex',
+                        //flexDirection: 'column',
                         y,
                         cursor: 'grab',
                         userSelect: 'none',
+                        justifyContent: 'center',
+                        alignItems: 'center',
                     }}
                 >
-                    {items.map((item, i) => (
+                    { items.map((item, i) => (
                         <div
                             key={i}
                             style={{
                                 flex: `0 0 ${100 / slidesToShow}%`,
-                                maxHeight: (size.height / slidesToShow),
-                                paddingTop: 4,
-                                paddingBottom: 4,
-                                boxSizing: 'border-box'
+                                maxHeight: calculateHeightSlide,
+                                boxSizing: 'border-box',
+                                display: 'flex',           
+                                justifyContent: 'center',
+                                alignItems: 'center',
                             }}
                         >
-                            {item.type === 'image' && (
-                                <img src={item.src} style={{ width: '100%', height: size.height / slidesToShow-4 }} />
-                            )}
-                            {item.type === 'video' && (
-                                <video src={item.src} controls style={{ width: '100%', height: size.height / slidesToShow -4}} />
-                            )}
+                            { renderItem(item) }
                         </div>
                     ))}
                 </motion.div>
@@ -382,6 +450,6 @@ export const MediaCarouselVertical = React.forwardRef((props: any, ref) => {
                     }
                 `}
             </style>
-        </div>
+        </>
     );
-});
+}

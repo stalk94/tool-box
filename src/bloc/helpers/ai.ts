@@ -1,4 +1,4 @@
-import { ComponentProps, InputStyles } from './../type';
+import { ComponentProps } from '../type';
 
 type GenerateComponent = {
     [key: string] : any

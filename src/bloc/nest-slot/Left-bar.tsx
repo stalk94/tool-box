@@ -15,10 +15,10 @@ import Forms from '../Forms';
 import Inspector from '../Inspector';
 import { componentGroups, componentAtom } from '../config/category';
 import { ComponentSerrialize, ProxyComponentName } from '../type';
-import { useKeyboardListener } from '../utils/hooks';
-import { db } from "../utils/export";
+import { useKeyboardListener } from '../helpers/hooks';
+import { db } from "../helpers/export";
 import { DraggableToolItem } from './Dragable';
-import { componentsRegistry } from "../modules/utils/registry";
+import { componentsRegistry } from "../modules/helpers/registry";
 
 
 

@@ -7,7 +7,7 @@ import { Component } from '../type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps, SlotToolBar } from './shim';
 import { Delete, Edit, Star } from '@mui/icons-material';
-import { serrialize } from '../utils/sanitize';
+import { serrialize } from '../helpers/sanitize';
 
 
 

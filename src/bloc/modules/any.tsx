@@ -4,8 +4,8 @@ import { List, ListItem, ListItemText, ListItemAvatar, ListItemButton } from '@m
 import { uploadFile } from 'src/app/plugins';
 import { iconsList } from '../../components/tools/icons';
 import { ComponentProps } from '../type';
-import { deserializeJSX } from '../utils/sanitize';
-import { updateComponentProps } from '../utils/updateComponentProps';
+import { deserializeJSX } from '../helpers/sanitize';
+import { updateComponentProps } from '../helpers/updateComponentProps';
 import { renderComponentSsr, renderComponentSsrPrerender } from './export/utils';
 import { toJSXProps } from './export/Inputs';
 

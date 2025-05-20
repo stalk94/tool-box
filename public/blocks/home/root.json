@@ -99,6 +99,136 @@
           "type": {},
           "key": null,
           "props": {
+            "fullHeight": false,
+            "width": "100%",
+            "heightMedia": 200,
+            "src": "",
+            "file": "",
+            "data-source": "",
+            "slots": {
+              "text": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "0.975rem"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические возможности"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "subheader": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "textStyle",
+                            "attrs": {
+                              "color": null
+                            }
+                          },
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "0.875rem"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "style"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "title": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "marks": [
+                          {
+                            "type": "textStyle",
+                            "attrs": {
+                              "color": "rgba(99, 196, 153, 1)"
+                            }
+                          },
+                          {
+                            "type": "italic"
+                          },
+                          {
+                            "type": "fontSize",
+                            "attrs": {
+                              "size": "1.5rem"
+                            }
+                          },
+                          {
+                            "type": "fontFamily",
+                            "attrs": {
+                              "family": "Roboto Condensed\", Arial, sans-serif"
+                            }
+                          }
+                        ],
+                        "text": "Detail"
+                      }
+                    ]
+                  }
+                ]
+              }
+            },
+            "data-id": 1747711865990,
+            "data-type": "Card",
+            "style": {
+              "marginLeft": "13%",
+              "marginRight": "10%"
+            }
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
             "children": "Button",
             "variant": "outlined",
             "color": "primary",
@@ -108,241 +238,6 @@
             "style": {},
             "data-id": 1747257380179,
             "data-type": "Button"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "slots": {
-              "0": {
-                "content": {
-                  "cell-1747679527090": [
-                    {
-                      "id": 1747679530434,
-                      "parent": "cell-1747679527090",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747679530434,
-                        "data-type": "Button"
-                      }
-                    },
-                    {
-                      "id": 1747680370700,
-                      "parent": "cell-1747679527090",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "success",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747680370700,
-                        "data-type": "Button"
-                      }
-                    },
-                    {
-                      "id": 1747683899363,
-                      "parent": "cell-1747679527090",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "error",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747683899363,
-                        "data-type": "Button"
-                      }
-                    },
-                    {
-                      "id": 1747697270574,
-                      "parent": "cell-1747679527090",
-                      "props": {
-                        "children": "Заголовок",
-                        "variant": "h5",
-                        "fullWidth": true,
-                        "style": {
-                          "display": "flex"
-                        },
-                        "data-id": 1747697270574,
-                        "data-type": "Typography"
-                      }
-                    }
-                  ]
-                },
-                "layout": [
-                  {
-                    "i": "cell-1747679527090",
-                    "x": 0,
-                    "y": 0,
-                    "w": 12,
-                    "h": 10,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Button",
-                          "variant": "outlined",
-                          "color": "primary",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747679530434,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      },
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Button",
-                          "variant": "outlined",
-                          "color": "success",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747680370700,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      },
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Button",
-                          "variant": "outlined",
-                          "color": "error",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747683899363,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      },
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Заголовок",
-                          "variant": "h5",
-                          "fullWidth": true,
-                          "style": {
-                            "display": "flex"
-                          },
-                          "data-id": 1747697270574,
-                          "data-type": "Typography"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      }
-                    ],
-                    "moved": false,
-                    "static": false
-                  }
-                ],
-                "size": {
-                  "width": 434,
-                  "height": 795
-                }
-              },
-              "1": {
-                "content": {
-                  "cell-1747697305804": [
-                    {
-                      "id": 1747697309184,
-                      "parent": "cell-1747697305804",
-                      "props": {
-                        "children": "Button2",
-                        "variant": "outlined",
-                        "color": "warning",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747697309184,
-                        "data-type": "Button"
-                      }
-                    }
-                  ]
-                },
-                "layout": [
-                  {
-                    "i": "cell-1747697305804",
-                    "x": 0,
-                    "y": 0,
-                    "w": 12,
-                    "h": 9,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [
-                      {
-                        "type": {},
-                        "key": null,
-                        "props": {
-                          "children": "Button2",
-                          "variant": "outlined",
-                          "color": "warning",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747697309184,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      }
-                    ],
-                    "moved": false,
-                    "static": false
-                  }
-                ],
-                "size": {
-                  "width": 434,
-                  "height": 795
-                }
-              },
-              "2": []
-            },
-            "items": [
-              "ONE2",
-              "TWO1",
-              "three"
-            ],
-            "data-id": 1747678231303,
-            "data-type": "Tabs"
           },
           "_owner": null,
           "_store": {}
@@ -390,21 +285,20 @@
       "x": 8,
       "y": 0,
       "w": 4,
-      "h": 17,
+      "h": 11,
       "content": [
         {
           "type": {},
           "key": null,
           "props": {
-            "children": "Button",
-            "variant": "outlined",
-            "color": "error",
             "fullWidth": true,
-            "startIcon": "none",
-            "endIcon": "none",
-            "style": {},
-            "data-id": 1747448022712,
-            "data-type": "Button"
+            "sourceType": "google",
+            "data-source": "table",
+            "file": "",
+            "source": "14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE",
+            "refreshInterval": 25000,
+            "data-id": 1747704765265,
+            "data-type": "DataTable"
           },
           "_owner": null,
           "_store": {}
@@ -429,113 +323,39 @@
           "key": null,
           "props": {
             "fullWidth": true,
-            "activeIndexs": [],
-            "styles": {},
-            "slots": {
-              "0": {},
-              "1": {
-                "content": {
-                  "cell-1747685773586": [
-                    {
-                      "id": 1747685781041,
-                      "parent": "cell-1747685773586",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747685781041,
-                        "data-type": "Button"
-                      }
-                    }
-                  ]
-                },
-                "layout": [
-                  {
-                    "i": "cell-1747685773586",
-                    "x": 0,
-                    "y": 0,
-                    "w": 12,
-                    "h": 4,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Button",
-                          "variant": "outlined",
-                          "color": "primary",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747685781041,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      }
-                    ],
-                    "moved": false,
-                    "static": false
-                  }
-                ],
-                "size": {
-                  "width": 259,
-                  "height": 130
-                }
-              }
-            },
+            "slidesToShow": 3,
+            "slidesToScroll": 1,
+            "autoplay": true,
+            "autoplayDelay": 4000,
+            "loop": false,
             "items": [
               {
-                "title": "・test-1",
-                "content": {
-                  "$$jsx": true,
-                  "type": "Box",
-                  "props": {
-                    "sx": {
-                      "m": 3
-                    },
-                    "children": "content"
-                  }
-                }
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
               },
               {
-                "title": {
-                  "$$jsx": true,
-                  "type": "Box",
-                  "props": {
-                    "sx": {
-                      "ml": 1.5
-                    },
-                    "children": [
-                      "・test-",
-                      1
-                    ]
-                  }
-                },
-                "content": {
-                  "$$jsx": true,
-                  "type": "Box",
-                  "props": {
-                    "sx": {
-                      "m": 3
-                    },
-                    "children": "content"
-                  }
-                }
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/300/400"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
+              },
+              {
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/800/400"
               }
             ],
-            "data-id": 1747685736203,
-            "data-type": "Accordion"
+            "data-id": 1747753800232,
+            "data-type": "VerticalCarousel"
           },
           "_owner": null,
           "_store": {}
@@ -547,6 +367,108 @@
         "style": {},
         "classNames": ""
       }
+    },
+    {
+      "i": "cell-1747750856603",
+      "x": 8,
+      "y": 11,
+      "w": 4,
+      "h": 9,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "slidesToShow": 3,
+            "slidesToScroll": 1,
+            "autoplay": true,
+            "autoplayDelay": 4000,
+            "loop": false,
+            "width": "100%",
+            "items": [
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
+              },
+              {
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/300/400"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/600/400"
+              },
+              {
+                "type": "video",
+                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              },
+              {
+                "type": "image",
+                "src": "https://picsum.photos/seed/1/800/400"
+              }
+            ],
+            "data-id": 1747753796861,
+            "data-type": "HorizontCarousel"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "children": "Button",
+            "variant": "outlined",
+            "color": "primary",
+            "fullWidth": true,
+            "startIcon": "none",
+            "endIcon": "none",
+            "style": {},
+            "data-id": 1747754289477,
+            "data-type": "Button"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1747755864668",
+      "x": 8,
+      "y": 20,
+      "w": 4,
+      "h": 12,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "width": "100%",
+            "data-id": 1747755876384,
+            "data-type": "PromoBanner"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false
     }
   ],
   "content": {
@@ -630,6 +552,134 @@
         }
       },
       {
+        "id": 1747711865990,
+        "parent": "cell-1746527949939",
+        "props": {
+          "fullHeight": false,
+          "width": "100%",
+          "heightMedia": 200,
+          "src": "",
+          "file": "",
+          "data-source": "",
+          "slots": {
+            "text": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "0.975rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические возможности"
+                    }
+                  ]
+                }
+              ]
+            },
+            "subheader": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "0.875rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "style"
+                    }
+                  ]
+                }
+              ]
+            },
+            "title": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": "rgba(99, 196, 153, 1)"
+                          }
+                        },
+                        {
+                          "type": "italic"
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "1.5rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "Detail"
+                    }
+                  ]
+                }
+              ]
+            }
+          },
+          "data-id": 1747711865990,
+          "data-type": "Card",
+          "style": {
+            "marginLeft": "13%",
+            "marginRight": "10%"
+          }
+        }
+      },
+      {
         "id": 1747257380179,
         "parent": "cell-1746527949939",
         "props": {
@@ -642,239 +692,6 @@
           "style": {},
           "data-id": 1747257380179,
           "data-type": "Button"
-        }
-      },
-      {
-        "id": 1747678231303,
-        "parent": "cell-1746527949939",
-        "props": {
-          "fullWidth": true,
-          "slots": {
-            "0": {
-              "content": {
-                "cell-1747679527090": [
-                  {
-                    "id": 1747679530434,
-                    "parent": "cell-1747679527090",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "primary",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747679530434,
-                      "data-type": "Button"
-                    }
-                  },
-                  {
-                    "id": 1747680370700,
-                    "parent": "cell-1747679527090",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "success",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747680370700,
-                      "data-type": "Button"
-                    }
-                  },
-                  {
-                    "id": 1747683899363,
-                    "parent": "cell-1747679527090",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "error",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747683899363,
-                      "data-type": "Button"
-                    }
-                  },
-                  {
-                    "id": 1747697270574,
-                    "parent": "cell-1747679527090",
-                    "props": {
-                      "children": "Заголовок",
-                      "variant": "h5",
-                      "fullWidth": true,
-                      "style": {
-                        "display": "flex"
-                      },
-                      "data-id": 1747697270574,
-                      "data-type": "Typography"
-                    }
-                  }
-                ]
-              },
-              "layout": [
-                {
-                  "i": "cell-1747679527090",
-                  "x": 0,
-                  "y": 0,
-                  "w": 12,
-                  "h": 10,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747679530434,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    },
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "success",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747680370700,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    },
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "error",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747683899363,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    },
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Заголовок",
-                        "variant": "h5",
-                        "fullWidth": true,
-                        "style": {
-                          "display": "flex"
-                        },
-                        "data-id": 1747697270574,
-                        "data-type": "Typography"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    }
-                  ],
-                  "moved": false,
-                  "static": false
-                }
-              ],
-              "size": {
-                "width": 434,
-                "height": 795
-              }
-            },
-            "1": {
-              "content": {
-                "cell-1747697305804": [
-                  {
-                    "id": 1747697309184,
-                    "parent": "cell-1747697305804",
-                    "props": {
-                      "children": "Button2",
-                      "variant": "outlined",
-                      "color": "warning",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747697309184,
-                      "data-type": "Button"
-                    }
-                  }
-                ]
-              },
-              "layout": [
-                {
-                  "i": "cell-1747697305804",
-                  "x": 0,
-                  "y": 0,
-                  "w": 12,
-                  "h": 9,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [
-                    {
-                      "type": {},
-                      "key": null,
-                      "props": {
-                        "children": "Button2",
-                        "variant": "outlined",
-                        "color": "warning",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747697309184,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    }
-                  ],
-                  "moved": false,
-                  "static": false
-                }
-              ],
-              "size": {
-                "width": 434,
-                "height": 795
-              }
-            },
-            "2": []
-          },
-          "items": [
-            "ONE2",
-            "TWO1",
-            "three"
-          ],
-          "data-id": 1747678231303,
-          "data-type": "Tabs"
         }
       }
     ],
@@ -895,134 +712,215 @@
     ],
     "cell-1747227526997": [
       {
-        "id": 1747448022712,
+        "id": 1747704765265,
         "parent": "cell-1747227526997",
         "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "error",
           "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1747448022712,
-          "data-type": "Button"
+          "sourceType": "google",
+          "data-source": "table",
+          "file": "",
+          "source": "14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE",
+          "refreshInterval": 25000,
+          "data-id": 1747704765265,
+          "data-type": "DataTable"
         }
       }
     ],
     "cell-1747227527273": [
       {
-        "id": 1747685736203,
+        "id": 1747753800232,
         "parent": "cell-1747227527273",
         "props": {
           "fullWidth": true,
-          "activeIndexs": [],
-          "styles": {},
+          "slidesToShow": 3,
+          "slidesToScroll": 1,
+          "autoplay": true,
+          "autoplayDelay": 4000,
+          "loop": false,
+          "items": [
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/300/400"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/800/400"
+            }
+          ],
+          "data-id": 1747753800232,
+          "data-type": "VerticalCarousel"
+        }
+      }
+    ],
+    "cell-1747711822034": [
+      {
+        "id": 1747711830027,
+        "parent": "cell-1747711822034",
+        "props": {
+          "fullHeight": true,
+          "width": "100%",
+          "heightMedia": "auto",
+          "src": "",
+          "file": "",
+          "data-source": "",
           "slots": {
-            "0": {},
-            "1": {
-              "content": {
-                "cell-1747685773586": [
-                  {
-                    "id": 1747685781041,
-                    "parent": "cell-1747685773586",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "primary",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747685781041,
-                      "data-type": "Button"
-                    }
-                  }
-                ]
-              },
-              "layout": [
+            "subheader": {
+              "type": "doc",
+              "content": [
                 {
-                  "i": "cell-1747685773586",
-                  "x": 0,
-                  "y": 0,
-                  "w": 12,
-                  "h": 4,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
                   },
                   "content": [
                     {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747685781041,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "textStyle",
+                          "attrs": {
+                            "color": null
+                          }
+                        },
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "0.875rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "subheader"
                     }
-                  ],
-                  "moved": false,
-                  "static": false
-                }
-              ],
-              "size": {
-                "width": 259,
-                "height": 130
-              }
-            }
-          },
-          "items": [
-            {
-              "title": "・test-1",
-              "content": {
-                "$$jsx": true,
-                "type": "Box",
-                "props": {
-                  "sx": {
-                    "m": 3
-                  },
-                  "children": "content"
-                }
-              }
-            },
-            {
-              "title": {
-                "$$jsx": true,
-                "type": "Box",
-                "props": {
-                  "sx": {
-                    "ml": 1.5
-                  },
-                  "children": [
-                    "・test-",
-                    1
                   ]
                 }
-              },
-              "content": {
-                "$$jsx": true,
-                "type": "Box",
-                "props": {
-                  "sx": {
-                    "m": 3
+              ]
+            },
+            "text": {
+              "type": "doc",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
                   },
-                  "children": "content"
+                  "content": [
+                    {
+                      "type": "text",
+                      "marks": [
+                        {
+                          "type": "fontSize",
+                          "attrs": {
+                            "size": "0.975rem"
+                          }
+                        },
+                        {
+                          "type": "fontFamily",
+                          "attrs": {
+                            "family": "Roboto Condensed\", Arial, sans-serif"
+                          }
+                        }
+                      ],
+                      "text": "В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические возможности"
+                    }
+                  ]
                 }
-              }
+              ]
+            }
+          },
+          "data-id": 1747711830027,
+          "data-type": "Card"
+        }
+      }
+    ],
+    "cell-1747750856603": [
+      {
+        "id": 1747753796861,
+        "parent": "cell-1747750856603",
+        "props": {
+          "fullWidth": true,
+          "slidesToShow": 3,
+          "slidesToScroll": 1,
+          "autoplay": true,
+          "autoplayDelay": 4000,
+          "loop": false,
+          "width": "100%",
+          "items": [
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/300/400"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/600/400"
+            },
+            {
+              "type": "video",
+              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+            },
+            {
+              "type": "image",
+              "src": "https://picsum.photos/seed/1/800/400"
             }
           ],
-          "data-id": 1747685736203,
-          "data-type": "Accordion"
+          "data-id": 1747753796861,
+          "data-type": "HorizontCarousel"
+        }
+      },
+      {
+        "id": 1747754289477,
+        "parent": "cell-1747750856603",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1747754289477,
+          "data-type": "Button"
+        }
+      }
+    ],
+    "cell-1747755864668": [
+      {
+        "id": 1747755876384,
+        "parent": "cell-1747755864668",
+        "props": {
+          "fullWidth": true,
+          "width": "100%",
+          "data-id": 1747755876384,
+          "data-type": "PromoBanner"
         }
       }
     ]
@@ -1030,7 +928,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1747697331638,
+    "updatedAt": 1747756123215,
     "preview": "snapshots/home-root.png"
   },
   "size": {

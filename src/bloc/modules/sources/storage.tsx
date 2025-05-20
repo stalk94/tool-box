@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { DataTable, DataTableProps } from '../../../index';
 import { Column, ColumnBodyOptions } from 'primereact/column';
 import { useHookstate } from '@hookstate/core';
-import { db } from "../../utils/export";
+import { db } from "../../helpers/export";
 import { TextInput, NumberInput, PasswordInput, LoginInput, 
     DateInput, SliderInput, ToggleInput, SwitchInput, CheckBoxInput,
     SelectInput, AutoCompleteInput, FileInput

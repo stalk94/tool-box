@@ -3,7 +3,7 @@ import { mergeImports } from '../modules/export/Grid';
 import { Box, IconButton, Paper } from '@mui/material';
 import { useHookstate } from '@hookstate/core';
 import { Power, LinkOff, Add, Remove } from '@mui/icons-material';
-import { serializeJSX } from '../utils/sanitize';
+import { serializeJSX } from '../helpers/sanitize';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 
 

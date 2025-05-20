@@ -99,12 +99,12 @@ export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) 
         if(key === 'margin') {
             const arr = ['marginTop', 'marginLeft', 'marginRight', 'marginBottom'].map((key)=> ({
                 id: key,
-                type: 'number',
+                type: 'slider',
                 label: key,
                 value: parseStyleValue(sourceStyle[key]).number ?? 0,
                 unit: '%',
                 max: 100,
-                min: -30,
+                min: 0,
                 step: 1,
                 labelSx: {
                     fontSize: '12px',

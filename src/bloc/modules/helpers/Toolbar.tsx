@@ -2,9 +2,9 @@ import React from 'react';
 import { Box, IconButton, Paper } from '@mui/material';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../../context";
 import { useHookstate } from '@hookstate/core';
-import { updateComponentProps } from '../../utils/updateComponentProps';
+import { updateComponentProps } from '../../helpers/updateComponentProps';
 import { Power, LinkOff, Add, Remove } from '@mui/icons-material';
-import { serializeJSX } from '../../utils/sanitize';
+import { serializeJSX } from '../../helpers/sanitize';
 
 
 

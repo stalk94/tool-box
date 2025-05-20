@@ -4,12 +4,12 @@ import { Accordion, AccordionProps, HoverPopover } from '../../index';
 import { icons, iconsList } from '@components/tools/icons';
 import { Box, Tabs, Button, Tab, BottomNavigation, BottomNavigationAction, Paper, TabsProps, Typography } from '@mui/material';
 import { ComponentProps, DataNested } from '../type';
-import { triggerFlyFromComponent } from './utils/anim';
-import { useEvent, useCtxBufer } from './utils/shared';
+import { triggerFlyFromComponent } from './helpers/anim';
+import { useEvent, useCtxBufer } from './helpers/shared';
 import DataTable, { DataSourceTableProps } from './sources/storage';
-import { useComponentSizeWithSiblings } from './utils/hooks';
+import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { AppBar, Start, LinearNavigation, MobailBurger, Breadcrumbs, ToggleInput } from '../../index';
-import { updateComponentProps } from '../utils/updateComponentProps';
+import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
 import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/Acordeon';
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
@@ -535,6 +535,8 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
         { test: 1, name: 'никалай' },
         { test: 3, name: 'степан' },
         { test: 5, name: 'олег' },
+        { test: 3, name: 'гриша' },
+        { test: 5, name: 'вася' },
     ]);
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const lastFileRef = React.useRef<number | null>(null);
@@ -695,9 +697,6 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
             data-type='DataTable'
             style={{ ...style, width: '100%' }}
             fontSizeHead={fontSizeHead}
-            onClick={(e)=> {
-                console.log(e.target)
-            }}
         >
              <DataTable
                 style={{

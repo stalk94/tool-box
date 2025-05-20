@@ -1,7 +1,5 @@
-import { Settings } from '@mui/icons-material';
-import { Box } from '@mui/material';
 import React from 'react';
-import { componentMap } from '../modules/utils/registry';
+import { componentMap } from '../modules/helpers/registry';
 
 
 export function sanitizeProps<T extends Record<string, any>>(props: T): T {

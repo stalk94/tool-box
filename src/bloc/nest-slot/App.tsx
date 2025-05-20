@@ -5,9 +5,9 @@ import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStr
 import "react-grid-layout/css/styles.css";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
-import { createComponentFromRegistry } from '../utils/createComponentRegistry';
-import { componentMap, componentsRegistry } from '../modules/utils/registry';
-import { serializeJSX } from '../utils/sanitize';
+import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
+import { componentMap, componentsRegistry } from '../modules/helpers/registry';
+import { serializeJSX } from '../helpers/sanitize';
 
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { ToolBarInfo } from './Top-bar';

@@ -1,9 +1,8 @@
-import { desserealize } from './utils/sanitize';
 import { Layout } from "react-grid-layout";
 import { RegistreTypeComponent } from './config/type';
 import React from 'react'
 import EventEmitter from "../app/emiter";
-import { number } from 'prop-types';
+
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -33,7 +32,6 @@ declare global {
 //                    COMPONENTS
 //////////////////////////////////////////////////////////////////////////
 export type ProxyComponentName = RegistreTypeComponent;
-
 
 export type ComponentRegister = {
     type: string;
@@ -147,6 +145,18 @@ export type NestedContext = {
     headles?: boolean                                           // only headles render mod
     onReadyLiteral?: (code: string) => void                     // only headles render mod
 }
+export type SlotDataBus = {
+    nestedComponentsList: Record<ProxyComponentName, true>
+    data: DataNested
+    idParent: number
+    idSlot: number | string
+}
+export type ContextSlotProps = {
+    nestedComponentsList: Record<ProxyComponentName, true>
+    data: DataNested
+    idParent: number
+    idSlot: number | string
+}
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -164,18 +174,4 @@ export type DropSlotProps = {
     dataTypesAccepts: ProxyComponentName[]
     children: React.ReactNode
     onAdd: (component: Component)=> void
-}
-export type ContextSlotProps = {
-    nestedComponentsList: Record<ProxyComponentName, true>
-    data: DataNested
-    idParent: number
-    idSlot: number | string
-}
-
-
-export type SlotDataBus = {
-    nestedComponentsList: Record<ProxyComponentName, true>
-    data: DataNested
-    idParent: number
-    idSlot: number | string
 }

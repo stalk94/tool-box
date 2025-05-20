@@ -6,8 +6,8 @@ import {
 } from "@mui/icons-material";
 import { useEditor } from './context';
 import LeftSideBarAndTool from '@components/nav-bars/tool-left'
-import { usePopUpName } from '@bloc/utils/usePopUp';
-import { getUniqueBlockName } from "@bloc/utils/editor";
+import { usePopUpName } from '@bloc/helpers/usePopUp';
+import { getUniqueBlockName } from "@bloc/helpers/editor";
 import { BREAKPOINT_WIDTH } from '../../types/page';
 
 

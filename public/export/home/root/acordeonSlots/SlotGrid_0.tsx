@@ -1,24 +1,28 @@
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import React from 'react';
-import { Typography } from '@mui/material';
+import { Button } from '@mui/material';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-export function TypographyWrap() {
+export function ButtonWrap() {
     return (
-        <Typography
-            sx={{
-                width: '100%',
-                display: 'block',
-                textAlign: 'center',
-                fontSize: 'undefinedpx'
-            }}
-            style={{ display: 'flex', justifyContent: 'center' }}
-            variant="subtitle1"
-            data-type="Typography"
+        <Button
+            startIcon={undefined}
+            endIcon={undefined}
+            style={{}}
+            variant="outlined"
+            color="primary"
+            fullWidth
+            data-type="Button"
+            onClick={() =>
+                sharedEmmiter.emit('event', {
+                    id: 1747702327451,
+                    type: 'click'
+                })
+            }
         >
-            Заголовок
-        </Typography>
+            Button
+        </Button>
     );
 }
 
@@ -29,11 +33,11 @@ export default function RenderGrid() {
             layouts={{
                 lg: [
                     {
-                        i: 'cell-1747706281576',
+                        i: 'cell-1747702325637',
                         x: 0,
                         y: 0,
                         w: 12,
-                        h: 5,
+                        h: 2,
                         props: {
                             classNames: '',
                             style: {}
@@ -53,7 +57,7 @@ export default function RenderGrid() {
             margin={[5, 5]}
         >
             <div
-                key="cell-1747706281576"
+                key="cell-1747702325637"
                 style={{
                     overflowX: 'hidden',
                     overflowY: 'auto',
@@ -65,7 +69,7 @@ export default function RenderGrid() {
                     alignContent: 'flex-start'
                 }}
             >
-                <TypographyWrap />
+                <ButtonWrap />
             </div>
         </ResponsiveGridLayout>
     );

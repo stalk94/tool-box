@@ -1,5 +1,4 @@
 import React from "react";
-import { AVAILABLE_CLASSNAMES } from './config/props';
 import { Button, IconButton, Box, Popover, Typography, Divider, Select, MenuItem, Chip, Stack, FormControlLabel } from "@mui/material";
 import { BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets } from '@mui/icons-material';
 import {
@@ -11,17 +10,17 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { useHookstate } from "@hookstate/core";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
-import { updateComponentProps, updateCelltProps } from './utils/updateComponentProps';
+import { updateComponentProps, updateCelltProps } from './helpers/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
 import { componentGroups, componentAtom } from './config/category';
-import { createBlockToFile, fetchFolders } from "./utils/export";
-import { componentMap, componentsRegistry } from "./modules/utils/registry";
-import { usePopUpName, useSafeAsyncEffect } from './utils/usePopUp';
-import { getUniqueBlockName } from "./utils/editor";
+import { createBlockToFile, fetchFolders } from "./helpers/export";
+import { componentMap, componentsRegistry } from "./modules/helpers/registry";
+import { usePopUpName, useSafeAsyncEffect } from './helpers/usePopUp';
+import { getUniqueBlockName } from "./helpers/editor";
 import { LeftToolPanelProps, ProxyComponentName } from './type';
-import { useKeyboardListener } from './utils/hooks';
-import { db } from "./utils/export";
+import { useKeyboardListener } from './helpers/hooks';
+import { db } from "./helpers/export";
 import { SiHomepage } from "react-icons/si";
 import exportGrid from './modules/export/Grid';
 import { DraggableToolItem } from './Dragable';

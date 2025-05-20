@@ -1,5 +1,5 @@
 import React from 'react';
-import { componentMap } from './modules/utils/registry';
+import { componentMap } from './modules/helpers/registry';
 import { LayoutCustom, ComponentSerrialize, Component } from './type';
 import './modules/index';               // окружение воссоздатся
 

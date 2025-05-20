@@ -1,52 +1,40 @@
-import { Avatar, Button, Tab, Tabs, Typography } from '@mui/material';
+import {
+    Avatar,
+    Box,
+    Button,
+    Card,
+    CardActions,
+    CardHeader,
+    CardMedia,
+    Chip,
+    Rating,
+    Typography
+} from '@mui/material';
 import { DateInput, TextInput } from '@lib/index';
+import { StarBorder } from '@mui/icons-material';
 import React from 'react';
-import ONE2 from './tabsSlots/ONE2';
-import TWO1 from './tabsSlots/TWO1';
-
-export function TabNavigation() {
-    const [curent, setCurent] = React.useState(0);
-    const slots = [<ONE2 />, <TWO1 />, <div>not content</div>];
-
-    return (
-        <div style={{ width: '100%', display: 'block' }}>
-            <Tabs
-                value={curent}
-                onChange={(event: React.SyntheticEvent, newValue: number) => {
-                    setCurent(newValue);
-                }}
-                variant="scrollable"
-                scrollButtons={true}
-                allowScrollButtonsMobile={true}
-                textColor={undefined}
-                aria-label="tabs"
-            >
-                <Tab key={0} label={'ONE2'} />
-
-                <Tab key={1} label={'TWO1'} />
-
-                <Tab key={2} label={'three'} />
-            </Tabs>
-            <div>{slots[curent]}</div>
-        </div>
-    );
-}
 
 export default function Cell() {
     return (
         <>
-            <Avatar
-                sx={{
-                    width: 65,
-                    height: 65,
-                    bgColor: 'gray'
+            <div
+                style={{
+                    width: '100%'
                 }}
-                src={'https://mui.com/static/images/avatar/3.jpg'}
-                style={{}}
-                data-type="Avatar"
             >
-                undefined
-            </Avatar>
+                <Avatar
+                    sx={{
+                        width: 65,
+                        height: 65,
+                        bgColor: 'gray'
+                    }}
+                    src={'https://mui.com/static/images/avatar/3.jpg'}
+                    style={{}}
+                    data-type="Avatar"
+                >
+                    undefined
+                </Avatar>
+            </div>
 
             <Button
                 startIcon={undefined}
@@ -88,7 +76,7 @@ export default function Cell() {
             >
                 <DateInput
                     left={undefined}
-                    style={{
+                    labelSx={{
                         fontSize: 14
                     }}
                     onChange={v => console.log(v)}
@@ -109,7 +97,7 @@ export default function Cell() {
             >
                 <TextInput
                     left={undefined}
-                    style={{
+                    labelSx={{
                         fontSize: 14
                     }}
                     onChange={v => console.log(v)}
@@ -121,6 +109,151 @@ export default function Cell() {
                     data-type="TextInput"
                 />
             </div>
+
+            <Card
+                component="div"
+                sx={{
+                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                    borderRadius: '5px',
+                    border: '1px solid',
+                    borderColor: 'rgba(255, 255, 255, 0.15)',
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
+                style={{
+                    marginLeft: '10%',
+                    marginRight: '10%',
+                    height: false
+                }}
+                elevation={8}
+            >
+                <CardHeader
+                    avatar={<StarBorder />}
+                    title={
+                        <span
+                            style={{
+                                color: 'rgba(99, 196, 153, 1)'
+                            }}
+                        >
+                            <em>
+                                <span
+                                    style={{
+                                        fontSize: '1.5rem'
+                                    }}
+                                >
+                                    <span
+                                        style={{
+                                            fontFamily:
+                                                'Roboto Condensed", Arial, sans-serif'
+                                        }}
+                                    >
+                                        Detail
+                                    </span>
+                                </span>
+                            </em>
+                        </span>
+                    }
+                    subheader={
+                        <span>
+                            <span
+                                style={{
+                                    fontSize: '0.875rem'
+                                }}
+                            >
+                                <span
+                                    style={{
+                                        fontFamily:
+                                            'Roboto Condensed", Arial, sans-serif'
+                                    }}
+                                >
+                                    style
+                                </span>
+                            </span>
+                        </span>
+                    }
+                    action={
+                        <Chip
+                            icon={<StarBorder />}
+                            size="small" // "small", "medium"
+                            label="new"
+                        />
+                    }
+                />
+
+                <CardMedia
+                    component="img"
+                    src={'/placeholder.jpg'}
+                    height={'200'}
+                    alt={'image'}
+                />
+
+                <div
+                    style={{
+                        marginTop: '3%',
+                        marginLeft: 8,
+                        marginBottom: 'auto',
+                        overflow: 'auto'
+                    }}
+                >
+                    <span
+                        style={{
+                            fontSize: '0.975rem'
+                        }}
+                    >
+                        <span
+                            style={{
+                                fontFamily:
+                                    'Roboto Condensed", Arial, sans-serif'
+                            }}
+                        >
+                            В зависимости от того, что вы хотите построить,
+                            представления узлов работают немного по-разному и
+                            могут иметь свои очень специфические возможности
+                        </span>
+                    </span>
+                </div>
+
+                <CardActions
+                    sx={{
+                        width: '100%',
+                        mb: 0.5
+                    }}
+                >
+                    <Box
+                        sx={{
+                            p: 1
+                        }}
+                    >
+                        <Rating
+                            defaultValue={2}
+                            precision={1}
+                            size={'medium'} // 'medium', 'small', 'large'
+                            max={5}
+                            onChange={(e, v) => {
+                                console.log(v);
+                            }}
+                        />
+                    </Box>
+                    <Box
+                        sx={{
+                            ml: 'auto'
+                        }}
+                    >
+                        <Button
+                            sx={{
+                                m: 0.5
+                            }}
+                            variant="outlined"
+                            size={'medium'} // 'medium', 'small', 'large'
+                            onClick={() => {
+                                console.log('click');
+                            }}
+                        >
+                            add to cart
+                        </Button>
+                    </Box>
+                </CardActions>
+            </Card>
 
             <Button
                 startIcon={undefined}
@@ -139,8 +272,6 @@ export default function Cell() {
             >
                 Button
             </Button>
-
-            <TabNavigation />
         </>
     );
 }

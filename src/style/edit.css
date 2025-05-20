@@ -102,3 +102,7 @@
 .json-viewer-copy-icon {
   display: none !important;
 }
+
+.rounded {
+  background: rgb(84, 84, 84) !important;
+}

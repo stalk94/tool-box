@@ -5,11 +5,11 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { useHookstate } from '@hookstate/core';
 import { Component } from './type';
 import useContextMenu from '@components/context-main';
-import { updateComponentProps } from './utils/updateComponentProps';
+import { updateComponentProps } from './helpers/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
-import { db } from "./utils/export";
-import { serializeJSX, serrialize } from './utils/sanitize';
-import { LinktoolBar, SlotToolBar } from './modules/utils/Toolbar';
+import { db } from "./helpers/export";
+import { serializeJSX, serrialize } from './helpers/sanitize';
+import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
 
 
 

@@ -5,8 +5,8 @@ import { TextInput, NumberInput, PasswordInput, LoginInput,
 } from '../../index';
 import { TextInputProps, NumberInputProps } from '../../index';
 import { SxProps } from '@mui/material';
-import { useEvent, useCtxBufer } from './utils/shared';
-import { triggerFlyFromComponent } from './utils/anim';
+import { useEvent, useCtxBufer } from './helpers/shared';
+import { triggerFlyFromComponent } from './helpers/anim';
 import { iconsList } from '../../components/tools/icons';
 import render, { sliderRender } from './export/Inputs';
 

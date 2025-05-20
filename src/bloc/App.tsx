@@ -1,22 +1,22 @@
 'use client'
 import React from "react";
-import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested, DataNestedSlot } from './type';
+import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState, useNestedContext } from "./context";
 import { hookstate, useHookstate } from "@hookstate/core";
-import { createComponentFromRegistry } from './utils/createComponentRegistry';
+import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
-import { componentMap, componentsRegistry } from './modules/utils/registry';
+import { componentMap, componentsRegistry } from './modules/helpers/registry';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
-import { saveBlockToFile, fetchFolders } from "./utils/export";
-import { serializeJSX } from './utils/sanitize';
+import { saveBlockToFile, fetchFolders } from "./helpers/export";
+import { serializeJSX } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
-import {  useSafeAsyncEffect } from "./utils/usePopUp";
+import {  useSafeAsyncEffect } from "./helpers/usePopUp";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
-import { updateComponentProps } from './utils/updateComponentProps';
+import { updateComponentProps } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import GridTest from 'public/export/test/header/index.tsx';
 import GridTest2 from 'public/export/home/root/index';
@@ -236,7 +236,7 @@ export default function Block({ setShowBlocEditor }) {
 
         return undefined;
     }
-    const handleChangeNestedContext = (editData: DataNestedSlot) => {
+    const handleChangeNestedContext = (editData: DataNested) => {
         const idComponent = nestedContext.currentData.idParent.get();
         const idSlot = nestedContext.currentData.idSlot.get();
         const findComponentSerrialize = findById(idComponent);

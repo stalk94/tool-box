@@ -2,7 +2,7 @@ import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { LayoutCustom, ComponentSerrialize } from '../type';
-import { desserealize } from '../utils/sanitize';
+import { desserealize } from '../helpers/sanitize';
 import { Input } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 import { generateRenderGridFileSafe } from './shim';
@@ -10,6 +10,12 @@ import { generateRenderGridFileSafe } from './shim';
 
 type MiniRenderSlotProps = {
     layouts: LayoutCustom[]
+    size: {
+        width: number 
+        height: number 
+    }
+    onClick: ()=> void
+    onReadyLiteral: (code: string)=> void
 }
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];

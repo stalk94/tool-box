@@ -4,7 +4,7 @@ import { Form, Schema, AccordionForm, AccordionScnema } from '../index';
 import { useTheme, Theme } from "@mui/material";
 import { fabrickUnical, fabrickStyleScheme, stylesFabricScheme } from './config/utill';
 import { motion } from 'framer-motion';
-import { sanitizeProps } from './utils/sanitize';
+import { sanitizeProps } from './helpers/sanitize';
 import { debounce, max } from 'lodash';
 import { PropsForm, ProxyComponentName } from './type';
 import { merge } from 'lodash';

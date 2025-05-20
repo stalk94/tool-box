@@ -1,16 +1,22 @@
 import React from 'react';
 import { JSONContent } from '@tiptap/react';
 import Imgix from 'react-imgix';
-import { useComponentSizeWithSiblings } from './utils/hooks';
-import { HorizontalCarousel, PromoBanner, Card, Header, MediaImage } from '../../index';
-import Tollbar, { useToolbar } from './utils/Toolbar';
+import { useComponentSizeWithSiblings } from './helpers/hooks';
+import { CarouselHorizontal, PromoBanner, Card, Header, MediaImage, CarouselVertical, CarouselProps } from '../../index';
+import Tollbar, { useToolbar } from './helpers/Toolbar';
 import { StarBorder, Settings } from '@mui/icons-material';
-import { updateComponentProps } from '../utils/updateComponentProps';
+import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
 import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/material';
 import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/BaseCard';
 
+type CarouselWrapperProps = CarouselProps & {
+    'data-id': number
+    fullWidth: boolean
+    'data-type': 'HorizontCarousel' | 'VerticalCarousel'
+    style?: React.CSSProperties
+}
 type ImageWrapperProps = HTMLImageElement & {
     'data-id': number
     'data-type': 'Image'
@@ -249,79 +255,54 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
 });
 
 
-
-export const HorizontalCarouselWrapper = React.forwardRef((props: any, ref) => {
-    const {
-        items,
-        fullWidth,
-        autoplay = true,
-        slidesToShow = 3,
-        style = {}, 
-        ...otherProps
-    } = props;
-
-    const componentId = props['data-id'];
-    const { visible, context } = useToolbar(componentId);
-    const { width, height } = useComponentSizeWithSiblings(componentId);
-    
-
-    const createImgx = (src: string) => {
-        return(
-            <Imgix
-                data-type="Image"
-                src={src ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
-                sizes={'100vw'}
-                imgixParams={{}}
-                htmlAttributes={{
-                    width: width,
-                    height: height
-                }}
-            />
-        );
-    }
-    // дегидратор
-    const parseItems = () => {
-        const result = [];
-
-        items.map((elem, index)=> {
-            if(elem.type === 'img') {
-                if(elem.props.src) result.push(
-                    createImgx(elem.props.src)
-                );
-            }
-        });
-
-        return result;
-    }
+export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
+    const { items, fullWidth, 'data-id': dataId, style = {}, ...otherProps } = props;
+    const { width, height } = useComponentSizeWithSiblings(dataId);
     
 
     return (
         <div
             ref={ref}
             data-type="HorizontCarousel"
-            data-id={componentId}
+            data-id={dataId}
             style={{
-                width,
+                width: '100%',
                 display: 'block',
                 overflow: 'hidden',
                 position: 'relative',
             }}
-            {...otherProps}
         >
-            <Tollbar 
-                visible={visible}
-                offsetY={0}
-                options={[
-                    { icon: <Settings/>,  },
-                ]}
+            <CarouselHorizontal
+                items={items}
+                { ...otherProps }
             />
-            <HorizontalCarousel
-                items={parseItems() ?? []}
-                height={height-8}
-                settings={{
-                    autoplay,
-                    slidesToShow
-                }}
+        </div>
+    );
+});
+export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
+    const { 'data-id': dataId, fullWidth, items, ...otherProps } = props;
+    const { width, height } = useComponentSizeWithSiblings(dataId);
+    
+    
+    return(
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type="VerticalCarousel"
+            style={{
+                height: height,
+                width: '100%',
+                display: 'block',
+                overflow: 'hidden',
+                position: 'relative',
+            }}
+        >
+            <CarouselVertical
+                items={items}
+                height={height}         // она будет поделена на slidesToShow (3 default)
+                { ...otherProps }
             />
         </div>
     );
@@ -335,9 +316,8 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
     } = props;
 
     const componentId = props['data-id'];
-    const { visible, context } = useToolbar(componentId);
     const { width, height } = useComponentSizeWithSiblings(componentId);
-    console.log(width, height)
+    
 
     return (
         <div
@@ -348,7 +328,6 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
                 display: 'block',
                 overflow: 'hidden',
                 position: 'relative',
-                height: height - 8
             }}
             { ...otherProps }
         >
@@ -359,6 +338,8 @@ export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
         </div>
     );
 });
+
+
 export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const lastFileRef = React.useRef<number | null>(null);
@@ -554,3 +535,45 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
         </div>
     );
 });
+
+
+
+
+/**
+ *  const createImgx = (src: string) => {
+        return(
+            <Imgix
+                data-type="Image"
+                src={src ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
+                sizes={'100vw'}
+                imgixParams={{}}
+                htmlAttributes={{
+                    width: width,
+                    height: height
+                }}
+            />
+        );
+    }
+    // дегидратор
+    const parseItems = () => {
+        const result = [];
+
+        items.map((elem, index)=> {
+            if(elem.type === 'img') {
+                if(elem.props.src) result.push(
+                    createImgx(elem.props.src)
+                );
+            }
+        });
+
+        return result;
+    }
+ * <HorizontalCarousel
+                items={parseItems() ?? []}
+                height={height-8}
+                settings={{
+                    autoplay,
+                    slidesToShow
+                }}
+            />
+ */

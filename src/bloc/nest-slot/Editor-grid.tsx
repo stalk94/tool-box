@@ -6,7 +6,7 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 import { useHookstate } from "@hookstate/core";
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
-import { canPlace, findFreeSpot } from '../utils/editor';
+import { canPlace, findFreeSpot } from '../helpers/editor';
 import { DroppableCell } from './Dragable';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);

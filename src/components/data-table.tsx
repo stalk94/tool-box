@@ -26,15 +26,11 @@ export type DataTablePropsWrapper = ComponentProps<typeof DataTable> & {
 }
 
 
-
-// todo: стилизировать через тему
 const StyledTableWrapper = styled.div<{ 
     theme: TableStyles; 
     fontSizeHead: string;
 }>`
-    display: flex;
-    flex-direction: column;
-
+    height: 100%;
     // прокрутка
     ::-webkit-scrollbar-track {
         background-color:#2a2a2b85;
@@ -54,7 +50,6 @@ const StyledTableWrapper = styled.div<{
         width: 7px;
     }
 
-
     .p-datatable {
         background: ${({ theme })=> theme.body.background };
         border-radius: 5px;
@@ -63,6 +58,7 @@ const StyledTableWrapper = styled.div<{
         border: 1px solid;
         border-color: ${({ theme })=> theme.body.borderColor };
         width: 100%;
+        font-family: 'Roboto';
     }
     .p-datatable-header {
         background: ${({ theme })=> alpha(theme.header.background, 0.1)};
@@ -87,10 +83,11 @@ const StyledTableWrapper = styled.div<{
         font-weight: bold;
         padding: 1.5%;
         text-align: left;
-        box-shadow: 0 4px 3px rgba(0, 0, 0, 0.08) inset, 0 3px 4px rgba(0, 0, 0, 0.06);
+        box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.15);
         backdrop-filter: blur(10px);
         font-size:  ${({ fontSizeHead }) => fontSizeHead || '14px'};
         white-space: nowrap;
+        min-width: 60px;
     }
     // нечетные row 
     .p-datatable-tbody > tr:nth-child(even) {
@@ -119,6 +116,66 @@ const StyledTableWrapper = styled.div<{
     .p-datatable-tbody > tr.p-highlight {
         background: #574b90 !important;
     }
+    // блок пагинации
+    .p-paginator {
+        box-shadow: 0 -6px 10px -4px rgba(0, 0, 0, 0.25);
+        border-top: 1px solid ${({ theme }) => theme.body.borderColor};
+        padding: 0.1rem;
+    }
+    .p-paginator .p-paginator-page {
+        background: ${({ theme }) => theme.thead.background };
+        color: ${({ theme }) => theme.body.textColor};
+        padding: 0.5rem;
+        font-size: 14px;
+        color: ${({ theme }) => theme.thead.textColor};
+    }
+    .p-paginator .p-paginator-page.p-highlight {
+        background: ${({ theme }) => darken(theme.thead.background, 0.2)};
+        opacity: 0.8;
+        border-color: ${({ theme }) => alpha(theme.body.borderColor, 0.4)};
+        font-weight: bold;
+    }
+    .p-paginator .p-paginator-page.p-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    // кнопки вперед, назад, начало, конец
+    .p-paginator .p-paginator-prev,
+    .p-paginator .p-paginator-next {
+        background: transparent;
+        color: ${({ theme }) => theme.body.textColor};
+        border: 1px solid ${({ theme }) => alpha(theme.body.borderColor, 0.15)};
+        border-radius: 6px;
+        padding: 4px 10px;
+        margin: 0 2px;
+        transition: background 0.2s, color 0.2s, border-color 0.2s;
+        cursor: pointer;
+        &:hover {
+            background: ${({ theme }) => alpha(theme.body.borderColor, 0.1)};
+        }
+    }
+    .p-paginator .p-paginator-prev.p-disabled,
+    .p-paginator .p-paginator-next.p-disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+    .p-paginator-last, .p-paginator-first {
+        visibility: hidden;
+    }
+    // выбор кол-ва элементов на страницу
+    .p-paginator .p-dropdown {
+        //background: ${({ theme }) => theme.thead.background};
+        border: 1px solid ${({ theme }) => alpha(theme.body.borderColor, 0.2)};
+        border-radius: 6px;
+        padding: 2px 8px;
+        color: ${({ theme }) => theme.body.textColor};
+        font-size: 14px;
+        display: flex;
+        align-items: center;
+        &:hover {
+            border-color: ${({ theme }) => alpha(theme.body.borderColor, 0.5)};
+        }
+    }
 `;
 
 
@@ -127,6 +184,7 @@ const StyledTableWrapper = styled.div<{
  * 🎁 Декоратор над PrimeReact `<DataTable>`:           
  * добавляет автоматическую подстройку высоты контейнера,       
  * сохраняя оригинальное API компонента.
+ * ? надо сделать логику lazy load data
  */
 export default function DataTableCustom({ value, children, header, footer, fontSizeHead, styles, style, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
@@ -134,6 +192,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
     const observerRef = useRef(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
     const [height, setHeight] = useState<number>();
+    const [autoPagination, setPagination] = useState(false);
     
     
     const mergeStyle = () => {
@@ -189,11 +248,13 @@ export default function DataTableCustom({ value, children, header, footer, fontS
         }
     }
     useEffect(()=> {
+        if(value?.length > 20) setPagination(true);
         const updateHeight =()=> {
             if(tableRef.current) {
                 const container = tableRef.current.getElement();
                 const bodyArea = tableRef.current.getTable().parentElement;
                 const parent = container.parentElement;     // родитель
+                const paginatorElement = container.querySelector('.p-paginator');
         
                 const headerElement = container.querySelector('.p-datatable-header');
                 const footerElement = container.querySelector('.p-datatable-footer');
@@ -202,10 +263,11 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 const containerHeight = container?.offsetHeight || 0;
                 const headerHeight = headerElement?.offsetHeight || 0;
                 const footerHeight = footerElement?.offsetHeight || 0;
+                const paginatorHeight = paginatorElement?.offsetHeight ?? 0;
                 
 
                 // Вычисляем высоту прокручиваемой области
-                const calculatedScrollHeight = containerHeight - headerHeight - footerHeight;
+                const calculatedScrollHeight = containerHeight - headerHeight - footerHeight - paginatorHeight;
                 
                 setScrollHeight(`${Math.max(calculatedScrollHeight, 50)}px`);
                 setHeight(getBound(container));
@@ -228,13 +290,16 @@ export default function DataTableCustom({ value, children, header, footer, fontS
     }, [header, footer, value]);
     
     
-    if(!props?.noStyled) return (
+    return (
         <StyledTableWrapper 
             as="span"
             theme={mergeStyle()} 
             fontSizeHead={fontSizeHead}
         >
             <DataTable
+                paginator={autoPagination}
+                rows={props.rows ?? 10}
+                rowsPerPageOptions={[10, 25, 50, 100]}
                 ref={tableRef}
                 value={value}
                 scrollable={true}
@@ -247,19 +312,5 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 { children }
             </DataTable>
         </StyledTableWrapper>
-    );
-    else return (
-        <DataTable
-            ref={tableRef}
-            value={value}
-            scrollable={true}
-            scrollHeight={scrollHeight}
-            style={{ height: '100%', width: '100%', flexGrow: 1, ...style }}
-            header={header}
-            footer={footer}
-            {...props}
-        >
-            {children}
-        </DataTable>
     );
 }

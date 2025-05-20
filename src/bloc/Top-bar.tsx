@@ -1,18 +1,12 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
-import { Component, LayoutCustom } from './type';
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
-import { GrStorage } from "react-icons/gr";
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import NumberInput from "src/components/input/number";
 
 
 
-export type ContentData = {
-    id: number 
-    type: 'Button' | 'IconButton' | 'Typography'
-}
 const categories = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> },

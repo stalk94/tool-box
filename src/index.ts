@@ -54,4 +54,9 @@ export { default as SelectButton } from './components/popup/select.button';
 export { default as HoverPopover } from './components/popup/HoverPopover';
 export type { HoverPopoverProps } from './components/popup/HoverPopover';
 
+// карусели
+export { CarouselHorizontal, CarouselVertical } from './components/carousel/media';
+export type { CarouselProps } from './components/carousel/media';
+
+// инструмент инспекции DOM узлов
 export { default as DomInspector } from './components/tools/inspector';

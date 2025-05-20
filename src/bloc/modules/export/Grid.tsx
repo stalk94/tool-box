@@ -3,7 +3,7 @@ import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import type { File } from '@babel/types';
 import { LayoutCustom } from '../../type';
-import { exportLiteralToFile } from "../../utils/export";
+import { exportLiteralToFile } from "../../helpers/export";
 import { Component } from '../../type';
 
 
