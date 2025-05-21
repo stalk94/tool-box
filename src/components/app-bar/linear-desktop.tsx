@@ -48,7 +48,7 @@ export const DesktopNestedMenuItem =({ item }: { item: NavLinkItem })=> {
                 open={Boolean(anchorEl)}
                 onClose={handleClose}
                 sx={{
-                    mt: 2
+                    mt: 0
                 }}
             >
                 { item.children && item.children.map?.((item, index) => (

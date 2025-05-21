@@ -137,7 +137,7 @@ export default function exportsGrid(
     style?: React.CSSProperties,
 ) {
     const singleList = ['Breadcrumbs', 'AppBar'];
-    const individualList = ['Tabs', 'BottomNav', 'DataTable'];
+    const individualList = ['Tabs', 'BottomNav', 'DataTable', 'HorizontCarousel', 'VerticalCarousel', 'PromoBanner', 'List'];
     
     const renderComponents = async(content: Component[], cell: LayoutCustom) => {
         const imports: string[] = [];

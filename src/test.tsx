@@ -7,10 +7,8 @@ import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './theme/index';
 import './style/index.css';
-import './bloc/modules/index';
 import Editor from './bloc/App';
-
-
+import './bloc/modules/index';
 
 const App = () => {
     const savedTheme = localStorage.getItem('theme');
@@ -29,30 +27,22 @@ const App = () => {
         globalThis.EDITOR = true;
     }, []);
 
+
     
     return(
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
             <CssBaseline />
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={
-                        <Editor
-
-                        />
-                    } />
-                    <Route path="*" element={<Navigate to='/' replace />} />
-                </Routes>
-            </BrowserRouter>
+            <Editor/>
         </ThemeProvider>
     );
 }
-
 
 
 //------------------------------------------------------------------------
 
 
 createRoot(document.querySelector(".root")).render(<App/>);
+
 
 /**
  * <Tools mode={darkMode} toggleTheme={toggleTheme}/>

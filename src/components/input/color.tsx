@@ -29,9 +29,9 @@ const toRgbaString = ({ r, g, b, a }: RgbaColor) => {
 const ColorWindow =({ color, onChange, sx })=> (
     <Box
         sx={{
-            p: 1,
-            background: '#343434f9',
-            border: '1px solid #79787840',
+            p: 1.5,
+            //background: '#343434f9',
+            //border: '1px solid #79787840',
             '& .react-colorful': {
                 width: '45vw',
                 height: '45vh',

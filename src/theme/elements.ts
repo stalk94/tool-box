@@ -77,11 +77,11 @@ export const components: ThemeOptions = {
                     maxHeight: '70vh',
                     minWidth: '200px',
                     backgroundColor: theme.palette?.menu?.main,
-                    backdropFilter: 'blur(14px)',
+                    //backdropFilter: 'blur(14px)',
                 }),
             },
             defaultProps: {
-                elevation: 0,
+                elevation: 1,
             },
         },
         // autocomplete popup
@@ -92,7 +92,7 @@ export const components: ThemeOptions = {
                     marginLeft: -20,
                     //marginRight: -10,
                     backgroundColor: theme.palette?.menu?.main,
-                    backdropFilter: 'blur(14px)',
+                    //backdropFilter: 'blur(14px)',
                 }),
             }
         },
@@ -147,40 +147,57 @@ export const components: ThemeOptions = {
                 }
             }
         },
+
+        MuiPopover: {
+            defaultProps: {
+                anchorOrigin: {
+                    vertical: 'bottom',
+                    horizontal: 'left',
+                },
+                transformOrigin: {
+                    vertical: 'top',
+                    horizontal: 'left',
+                },
+            },
+            styleOverrides: {
+                paper: ({ theme }) => ({
+                    backgroundColor: theme.palette?.menu?.main,
+                    backdropFilter: 'blur(8px)',
+                }),
+                // окружаюгий фон
+                root: {
+                
+                },
+            },
+        },
         // модалка
         MuiDialog: {
             styleOverrides: {
                 paper: {
-                    backgroundColor: '#1e1e1e',   // фон диалога
-                    borderRadius: 12,            // скругления
-                    color: '#fff',               // текст по умолчанию
-                    padding: 16,
                     boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
                 },
                 root: {
-                    backdropFilter: 'blur(4px)', // блюр фона
+                    
                 }
             },
             defaultProps: {
-                // можно отключить Escape, задать scroll и др.
                 scroll: 'paper',
             }
         },
         MuiDialogTitle: {
             styleOverrides: {
-                root: {
-                    fontSize: 18,
+                root: {   
                     fontWeight: 600,
-                    padding: '16px 24px',
-                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                    padding: '18px 24px',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
                 }
             }
         },
         MuiDialogContent: {
             styleOverrides: {
                 root: {
-                    padding: '16px 24px',
                     fontSize: 14,
+                    padding: '12px 24px',
                 }
             }
         },

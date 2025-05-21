@@ -1,6 +1,6 @@
 import React from 'react';
 import useResizeObserver from '@react-hook/resize-observer';
-import { Editor } from 'slate';
+
 
 type Size = { width: number; height: number, container: DOMRect };
 
@@ -35,29 +35,6 @@ export function useParentCellSize(ref: React.RefObject<HTMLElement>) {
     return size;
 }
 
-/**
- * Позволяет навесить сброс marks по ПКМ на любую кнопку
- * @param onClick обычный обработчик ЛКМ
- * @param editor slate editor instance
- * @param marks mark или список marks, которые будут сброшены по ПКМ
- */
-export const withResetOnRightClick = (
-    onClick: (e: React.MouseEvent<HTMLButtonElement>) => void,
-    editor: Editor,
-    marks: string | string[]
-) => {
-    const marksToClear = Array.isArray(marks) ? marks : [marks];
-
-    return {
-        onClick,
-        onContextMenu: (e: React.MouseEvent<HTMLButtonElement>) => {
-            e.preventDefault();
-            for (const mark of marksToClear) {
-                Editor.removeMark(editor, mark);
-            }
-        },
-    };
-};
 
 export const useComponentSizeWithSiblings = (componentId: string): Size => {
     const [size, setSize] = React.useState<Size>({ width: 100, height: 100, container:{} });

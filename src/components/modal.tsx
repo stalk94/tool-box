@@ -19,15 +19,8 @@ export default function SimpleDialog({ open, setOpen, children }: ModalProps) {
         <Dialog
             open={open} 
             onClose={handleClose}
-            sx={{
-                "& .MuiPaper-root": {
-                    background: (theme)=> theme.palette.menu.main,
-                    backdropFilter: "blur(14px)",
-                },
-            }}
         >
             <DialogTitle>
-
                 <IconButton
                     color="inherit"
                     onClick={handleClose}
@@ -35,7 +28,7 @@ export default function SimpleDialog({ open, setOpen, children }: ModalProps) {
                     sx={{ 
                         position: 'absolute', 
                         right: 1, 
-                        top: 2 
+                        top: 0
                     }}
                 >
                     <CloseIcon />

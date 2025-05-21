@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, Grid2, Slider, SliderProps, useTheme } from '@mui/material';
+import { Box, Grid, Slider, SliderProps, useTheme } from '@mui/material';
 import Input from '@mui/material/Input';
 
 
@@ -101,7 +101,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
         </Box>
     );
     else return(
-        <Grid2
+        <Grid
             container
             spacing={2}
             sx={{ 
@@ -110,12 +110,12 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
             }}
         >
             {start &&
-                <Grid2>
+                <Grid>
                     { start }
-                </Grid2>
+                </Grid>
             }
 
-            <Grid2 size="grow">
+            <Grid size="grow">
                 <Slider
                     value={curValue}
                     valueLabelDisplay="auto"
@@ -130,10 +130,10 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                     { ...useFiltre() }
                     onChange={(e, v) => handlerChange(v)}
                 />
-            </Grid2>
+            </Grid>
             {/*  */}
             {end &&
-                <Grid2>
+                <Grid>
                     {end === true
                         ? <Input
                             disabled={props.disabled}
@@ -163,8 +163,8 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                         />
                         : end
                     }
-                </Grid2>
+                </Grid>
             }
-        </Grid2>
+        </Grid>
     );
 }

@@ -1,19 +1,4 @@
-export function toJSXProps(obj: Record<string, any>): string {
-    return Object.entries(obj || {})
-        .map(([key, value]) => {
-            if (typeof value === 'string') {
-                return `${key}="${value}"`; // строки — в кавычки
-            } 
-            else if (typeof value === 'boolean') {
-                return value ? key : ''; // disabled={false} → пропуск
-            } 
-            else {
-                return `${key}={${JSON.stringify(value)}}`; // всё остальное — через {}
-            }
-        })
-        .filter(Boolean)
-        .join(' ');
-}
+import { toJSXProps, toObjectLiteral } from './utils';
 
 
 export default function exported(
@@ -37,13 +22,6 @@ export default function exported(
         autocomplete: 'AutoCompleteInput',
         file: 'FileInput'
     }[type];
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
-   
-
 
     return (`
         import React from 'react';
@@ -80,11 +58,7 @@ export function sliderRender(
     if(endIconName === 'none') endIconName = undefined;
     const importIcon = `import { ${startIconName??''}, ${endIconName??''} } from '@mui/icons-material';\n`;
     const rendericon = (iconName) => iconName ? `<${iconName} />` : 'undefined';
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
+    
 
     return (`
         import React from 'react';

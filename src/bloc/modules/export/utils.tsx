@@ -1,14 +1,60 @@
 import ReactDOMServer from 'react-dom/server';
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { act } from 'react';
 import prettier from 'prettier/standalone';
-import parserBabel from 'prettier/plugins/babel';
+import { JSONContent } from '@tiptap/react';
 import pluginEstree from 'prettier/plugins/estree';
 import * as parserTypescript from 'prettier/plugins/typescript';
+import { rendeHtml } from '../tip-tap';
 
 
 
+function cssStringToObject(styleStr: string): string {
+    const entries = styleStr
+        .split(';')
+        .map(line => line.trim())
+        .filter(Boolean)
+        .map(line => {
+            const [key, value] = line.split(':').map(s => s.trim());
+            const camelKey = key.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+            return `${camelKey}: "${value.replace(/"/g, '\\"')}"`;
+        });
+
+    return `{ ${entries.join(', ')} }`;
+}
+function convertNodeToJsx(node: Node): string {
+    if (node.nodeType === Node.TEXT_NODE) {
+        return node.textContent || '';
+    }
+
+    if (node.nodeType !== Node.ELEMENT_NODE) return '';
+
+    const el = node as HTMLElement;
+    const tag = el.tagName.toLowerCase();
+    const children = Array.from(el.childNodes).map(convertNodeToJsx).join('');
+
+    const props = Array.from(el.attributes)
+        .map(attr => {
+            if (attr.name === 'class') return `className="${attr.value}"`;
+            if (attr.name === 'style') return `style={${cssStringToObject(attr.value)}}`;
+            return `${attr.name}="${attr.value}"`;
+        })
+        .join(' ');
+
+    return `<${tag}${props ? ' ' + props : ''}>${children}</${tag}>`;
+}
+/** преобразует html строковый в literal */
+export function htmlToJsx(html: string): string {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, 'text/html');
+    const root = doc.body;
+
+    return Array.from(root.childNodes)
+        .map(node => convertNodeToJsx(node))
+        .join('\n');
+}
+
+/** prettier форматирование */
 export function formatJsx(code: string): Promise<string> {
     return prettier.format(code, {
         parser: 'typescript',
@@ -26,23 +72,73 @@ export function formatJsx(code: string): Promise<string> {
         arrowParens: 'avoid',          // скобки у стрелочных функций
     });
 }
-export const toObjectLiteral = (obj) => {
-    return Object.entries(obj || {})
-        .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
+/** для преобразования object в литерал */
+export const toObjectLiteral = (obj: any): string => {
+    if (typeof obj !== 'object' || obj === null) return '{}';
+
+    return Object.entries(obj)
+        .map(([key, value]) => {
+            const validKey = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : `'${key}'`;
+            return `${validKey}: ${toLiteral(value)}`;
+        })
         .join(', ');
 }
-function debugComponentTree(node: React.ReactElement) {
-    console.log('type:', node.type);
-    console.log('type.name:', node.type?.name);
-    console.log('type.displayName:', node.type?.displayName);
-    console.log('type.render?.name:', node.type?.render?.name);
-    console.log('type.type?.render?.name:', node.type?.type?.render?.name);
+/** обший случай применения на любой тип его преоюразование в литерал */
+export const toLiteral = (value: any): string => {
+    if (value === null) return 'null';
+    if (value === undefined) return 'undefined';
+
+    if (typeof value === 'object' && value !== null && '__raw' in value) {
+        return value.__raw;
+    }
+    if (typeof value === 'string') {
+        //return '`' + value.replace(/`/g, '\\`') + '`';
+        return(JSON.stringify(value))
+    }
+
+    if (typeof value === 'number' || typeof value === 'boolean') {
+        return String(value);
+    }
+
+    if (Array.isArray(value)) {
+        return `[${value.map(v => toLiteral(v)).join(', ')}]`;
+    }
+
+    if (typeof value === 'object') {
+        return `{ ${toObjectLiteral(value)} }`;
+    }
+
+    return 'undefined'; // fallback
 }
-function childTypeName(type: any): string {
-    if (typeof type === 'string') return type;
-    if (typeof type === 'function' && type.name) return type.name;
-    return 'div';
+/** для преобразования props в литерал */
+export function toJSXProps(obj: Record<string, any>): string {
+    return Object.entries(obj || {})
+        .map(([key, value]) => {
+            if (typeof value === 'string') {
+                return `${key}="${value}"`; // строки — в кавычки
+            } 
+            else if (typeof value === 'boolean') {
+                return value ? key : ''; // disabled={false} → пропуск
+            } 
+            else {
+                return `${key}={${JSON.stringify(value)}}`; // всё остальное — через {}
+            }
+        })
+        .filter(Boolean)
+        .join(' ');
 }
+/** преобразованиe в литерал data tip-tap editor */
+export const exportTipTapValue = (data: JSONContent | string) => {
+    if(typeof data === 'string') return (`<span>${data}</span>`)
+    else return htmlToJsx(rendeHtml(data));
+}
+
+
+
+////////////////////////////////////////////////////////////////////////////
+//   experemental
+////////////////////////////////////////////////////////////////////////////
+
 function getTypeNameFromReactComponent(node: React.ReactElement): string {
     const type = node.type;
 
@@ -71,7 +167,6 @@ function getTypeNameFromReactComponent(node: React.ReactElement): string {
 const isReactElement = (value: any): value is React.ReactElement => {
     return typeof value === 'object' && value !== null && '$$typeof' in value;
 }
-
 
 
 /**

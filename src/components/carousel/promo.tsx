@@ -9,6 +9,11 @@ import { useContainerWidth } from '../hooks/useContainerWidth';
 const faker = new Faker({ locale: [ru, en] });
 
 
+function normalizeContent(content: any) {
+  if (React.isValidElement(content)) return content;
+  if (typeof content === 'string') return <span dangerouslySetInnerHTML={{ __html: content }} />;
+  return null;
+}
 function generateTestData(count = 5) {
     return Array.from({ length: count }, () => ({
         title: faker.commerce.productName().toUpperCase(),
@@ -28,14 +33,17 @@ export type PromoSliderProps = {
     }[]
     button?: React.ReactElement
     style?: SxProps
-    styleDot?: {
-        activeColor?: string 
-        disableColor?: string 
-    }
-    styleText?: {
-        title?: SxProps
-        description?: SxProps
-        button?: SxProps
+    styles?: {
+        dot?: {
+            activeColor?: string 
+            color?: string 
+        }
+        title?: {
+
+        }
+        description?: {
+
+        }
     }
 }
 
@@ -52,8 +60,8 @@ const IconGroop = ({ active, setActive, count, style }) => {
                     onClick={() => setActive(i)}
                 >
                     {i === active
-                        ? <AdjustOutlined sx={{ fontSize: '14px', color: style?.activeColor ?? '#c11619' }} />
-                        : <FiberManualRecord sx={{ fontSize: '12px', color: style?.color }} />
+                        ? <AdjustOutlined sx={{ fontSize: (style?.size ?? '14px'), color: style?.activeColor ?? '#c11619' }} />
+                        : <FiberManualRecord sx={{ fontSize: (style?.size ?? '12px'), color: style?.color }} />
                     }
                 </IconButton>
             );
@@ -187,9 +195,9 @@ const Description = ({ data, navigationSlot, button, style }) => {
                     }}
                     variant='h4'
                 >
-                    { data.title }
+                    { normalizeContent(data.title) }
                 </MarqueeAdaptive>
-                <Typography
+                <Typography component="div"
                     color="text.secondary"
                     sx={{
                         textAlign: "left",
@@ -202,7 +210,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
                         }
                     }}
                 >
-                    { data.description }
+                    { normalizeContent(data.description) }
                 </Typography>
                 { button }
 
@@ -227,7 +235,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
 }
 
 
-export default function PromoSlider({ items, button, styleDot, styleText, style, ...props }: PromoSliderProps) {
+export default function PromoSlider({ items, button, styles, style, ...props }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
     const testData = generateTestData();            // моковые данные активны если не передать items
     const standartButton = (
@@ -241,6 +249,10 @@ export default function PromoSlider({ items, button, styleDot, styleText, style,
         </Button>
     );
     
+    React.useEffect(()=> {
+        if(props.onChange) props.onChange(active);
+    }, [active]);
+
 
     return (
         <Card 
@@ -249,10 +261,6 @@ export default function PromoSlider({ items, button, styleDot, styleText, style,
             { ...props }
         >
             <React.Fragment>
-                <MediaImage
-                    sx={{minHeight: 240, ...style}}
-                    src={(items ?? testData)[active].images[0]}
-                />
                 <Box
                     sx={{
                         position: "absolute",
@@ -270,12 +278,15 @@ export default function PromoSlider({ items, button, styleDot, styleText, style,
                     }}
                 >
                    <Description
-                        style={styleText}
+                        style={{
+                            title: styles?.title,
+                            description: styles?.description
+                        }}
                         button={button ?? standartButton}
                         data={(items ?? testData)[active]}
                         navigationSlot={
                             <IconGroop
-                                style={styleDot}
+                                style={styles?.dot}
                                 active={active}
                                 setActive={setActive}
                                 count={(items ?? testData).length}
@@ -283,6 +294,11 @@ export default function PromoSlider({ items, button, styleDot, styleText, style,
                         }
                     />
                 </Box>
+                
+                <MediaImage
+                    sx={{minHeight: 240, ...style}}
+                    src={(items ?? testData)[active].images[0]}
+                />
             </React.Fragment>
         </Card>
     );

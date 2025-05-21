@@ -144,7 +144,15 @@ export default function TipTapSlotEditor({
 
 export const rendeHtml =(value: JSONContent)=> {
     const result = generateHTML(value, extension);
-    const match = result.match(/^<p>([\s\S]*)<\/p>$/);
+    const match = result.match(/^<p([^>]*)>([\s\S]*)<\/p>$/);
+    
+    if (match) {
+        const attrs = match[1];                     // всё после <p
+        const content = match[2];                   // внутренний HTML
+        return `<div ${attrs}>${content}</div>`;
+    }
 
-    return match ? match[1] : result;
+    return  result;
 }
+
+

@@ -242,6 +242,15 @@ const propsAcordeon = {
         }
     }
 }
+const propsPromoBaner = {
+    styles: {
+       dot: {
+            activeColor: { type: 'color' },
+            color: { type: 'color' },
+            size: { type: 'slider', min: 14, max: 48, step: 2 }
+        }
+    }
+}
 
 
 export default {
@@ -264,5 +273,6 @@ export default {
     Accordion: propsAcordeon,
     Divider: propsDivider,
     Chip: propsChip,
-    BottomNav: propsBottomNav
+    BottomNav: propsBottomNav,
+    PromoBanner: propsPromoBaner
 }

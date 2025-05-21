@@ -18,10 +18,8 @@ import {  useSafeAsyncEffect } from "./helpers/usePopUp";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { updateComponentProps } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
-import GridTest from 'public/export/test/header/index.tsx';
 import GridTest2 from 'public/export/home/root/index';
 import "../style/edit.css";
-
 
 
 
@@ -278,7 +276,6 @@ export default function Block({ setShowBlocEditor }) {
             setTimeout(()=> setEnable(true), 100);
         });
     }, []);
-    
 
 
     return(

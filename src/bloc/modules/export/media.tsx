@@ -1,7 +1,5 @@
-import { rendeHtml } from '../tip-tap';
-import { toJSXProps } from './Inputs';
-import { htmlToJsx } from './Text';
-
+import { toJSXProps } from './utils';
+import { toObjectLiteral, exportTipTapValue } from './utils';
 
 
 export default function exportedCard(
@@ -23,7 +21,7 @@ export default function exportedCard(
         const result = {};
 
         Object.keys(slots).map((slotName)=> {
-            if(slots[slotName]) result[slotName] = htmlToJsx(rendeHtml(slots[slotName]));
+            if(slots[slotName]) result[slotName] = exportTipTapValue(slots[slotName]);
             else result[slotName] = `<div dangerouslySetInnerHTML={{__html: <p>${slotName}</p>}}/>`;
         });
 
@@ -138,13 +136,6 @@ export default function exportedCard(
 }
 
 export function renderImage(src, style, otherProps) {
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
-
-
     return (`
         <img
             src={"${src ?? '/placeholder.jpg'}"}
@@ -154,13 +145,6 @@ export function renderImage(src, style, otherProps) {
     `)
 }
 export function renderVideo(src, style, otherProps) {
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
-
-
     return (`
         <video
             src={"${src}"}
@@ -169,3 +153,4 @@ export function renderVideo(src, style, otherProps) {
         />
     `)
 }
+

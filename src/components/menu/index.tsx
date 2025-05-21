@@ -17,7 +17,6 @@ type CustomMenuProps = MenuProps & {
 export default function ({ anchorEl, open, onClose, width, children, ...props }: CustomMenuProps) {
     return(
         <Menu 
-            elevation={0}
             anchorEl={anchorEl}
             open={open}
             onClose={onClose}

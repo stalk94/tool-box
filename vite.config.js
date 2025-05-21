@@ -11,7 +11,7 @@ export default defineConfig({
     publicDir: '../public',
     plugins: [react(), writeFilePlugin(), quickDbPlugin(), tsconfigPaths()],
     server: {
-        port: 3001,
+        port: 3001
     },
     resolve: {
         alias: {
@@ -24,5 +24,14 @@ export default defineConfig({
     define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
         'process.env': '{}'
+    },
+    optimizeDeps: {
+        include: ['react', 'react-dom'],
+    },
+    css: {
+        devSourcemap: false, // 🔧 отключаем sourcemaps для CSS
+    },
+    build: {
+        sourcemap: false
     }
 });

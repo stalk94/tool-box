@@ -1,4 +1,3 @@
-import React from 'react';
 import { registerComponent } from './helpers/registry';
 import { ButtonWrapper, IconButtonWrapper } from './buttons';
 import { TypographyWrapper, TextWrapper } from './text';
@@ -19,8 +18,7 @@ import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper,
     HeaderWrapper, BreadcrumbsWrapper, ListWrapper 
 } from './complex';
 import { sharedContext, sharedEmmiter } from './helpers/shared';
-import { Box } from '@mui/material';
-import { serializeJSX } from '../helpers/sanitize';
+
 
 
 
@@ -460,7 +458,7 @@ registerComponent({
         items: [
             {
                 title: '・title-0',
-                content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
+                content: 'content'
             }
         ]
     },

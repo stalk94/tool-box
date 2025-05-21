@@ -8,7 +8,7 @@ import { ComponentProps } from '../type';
 import { deserializeJSX } from '../helpers/sanitize';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { renderComponentSsr, toObjectLiteral } from './export/utils';
-import { toJSXProps } from './export/Inputs';
+import { toJSXProps } from './export/utils';
 
 
 type DividerWrapperProps = DividerProps & ComponentProps;

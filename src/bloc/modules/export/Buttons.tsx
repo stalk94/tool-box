@@ -1,5 +1,4 @@
-import { toJSXProps } from './Inputs';
-import { renderComponentSsr, formatJsx } from './utils';
+import { renderComponentSsr, toJSXProps } from './utils';
 
 
 

@@ -8,7 +8,9 @@ import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
 import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/material';
 import TipTapSlotEditor from './tip-tap';
-import renderCart, { renderImage, renderVideo } from './export/BaseCard';
+import renderCart, { renderImage, renderVideo } from './export/media';
+import { exportTipTapValue, toJSXProps, toLiteral, renderComponentSsr } from './export/utils';
+
 
 type PromoBannerWrapperProps = {
     'data-id': number
@@ -20,11 +22,13 @@ type PromoBannerWrapperProps = {
         images: string[];
     }[]
     styles?: {
-        dot: {
+        dot?: {
             activeColor: string
             color: string
             fontSize: number | string
         }
+        title?: React.CSSProperties
+        description?: React.CSSProperties
     }
 }
 type CarouselWrapperProps = CarouselProps & {
@@ -276,6 +280,59 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
     const { items, fullWidth, 'data-id': dataId, style = {}, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
+    degidratationRef.current = (call) => {
+        const itemsLitears = items.map((item, index) => {
+            if(item.type !== 'content') return ({
+                ...item
+            });
+            else return ({
+                ...item,
+                src: renderComponentSsr(item.src)
+            });
+        });
+
+        const code = (`
+                import React from 'react';
+                import { CarouselHorizontal } from '@lib/index';
+    
+                export default function CarouselHorizontalWrap() {
+                    const items = ${toLiteral(itemsLitears)};
+
+                    return(
+                        <div 
+                            style={
+                                ${toLiteral({
+                                    display: 'block',
+                                    width: '100%',
+                                    overflow: 'hidden',
+                                    position: 'relative',
+                                    ...style
+                                })}
+                            }
+                        >
+                            <CarouselHorizontal
+                                items={items}
+                                style={{ }}
+                                ${toJSXProps(otherProps)}
+                            />
+                        </div>
+                    );
+                }
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+
 
     return (
         <div
@@ -301,6 +358,60 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
     const { 'data-id': dataId, fullWidth, items, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
+    degidratationRef.current = (call) => {
+        const itemsLitears = items.map((item, index) => {
+            if(item.type !== 'content') return ({
+                ...item
+            });
+            else return ({
+                ...item,
+                src: renderComponentSsr(item.src)
+            });
+        });
+
+        const code = (`
+                import React from 'react';
+                import { CarouselVertical } from '@lib/index';
+    
+                export default function CarouselVerticalWrap() {
+                    const items = ${toLiteral(itemsLitears)};
+
+                    return(
+                        <div 
+                            style={
+                                ${toLiteral({
+                                    display: 'block',
+                                    width: '100%',
+                                    overflow: 'hidden',
+                                    position: 'relative',
+                                    height: height
+                                })}
+                            }
+                        >
+                            <CarouselVertical
+                                items={items}
+                                style={{ }}
+                                height={${height}}
+                                ${toJSXProps(otherProps)}
+                            />
+                        </div>
+                    );
+                }
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+
     
     return(
         <div
@@ -323,16 +434,52 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
         </div>
     );
 });
-// ! баг с редактированием на вкладках
+
+
+
 export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
+    const [active, setActive] = React.useState(0);
     const {'data-id': dataId, items, fullWidth, style = {}, ...otherProps} = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
 
 
     degidratationRef.current = (call) => {
-        const code = (`
+        const itemsLitears = items.map((item, index) => {
+            return ({
+                images: item.images,
+                title: { __raw: `(${exportTipTapValue(item.title).trim()})` },
+                description: { __raw: `(${exportTipTapValue(item.description).trim()})` }
+            });
+        });
 
+        const code = (`
+                import React from 'react';
+                import { PromoBanner } from '@lib/index';
+    
+                export default function PromoBannerWrap() {
+                    const items = ${toLiteral(itemsLitears)};
+
+                    return(
+                        <div 
+                            style={
+                                ${toLiteral({
+                                    display: 'block',
+                                    overflow: 'hidden',
+                                    position: 'relative',
+                                    ...style
+                                })}
+                            }
+                        >
+                            <PromoBanner
+                                items={items}
+                                actionAreaEnabled={true}
+                                style={{ }}
+                                ${toJSXProps(otherProps)}
+                            />
+                        </div>
+                    );
+                }
         `);
 
         call(code);
@@ -348,13 +495,13 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         }
     }, []);
     const handleChangeEdit = (index: number, data: any) => {
-        console.log(index)
         if (items[index]) {
-            items[index] = data;
+            const newItems = [...items];
+            newItems[index] = data;
 
             updateComponentProps({
                 component: { props },
-                data: { items: [...items] }
+                data: { items: newItems },
             });
         }
     }
@@ -377,18 +524,20 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             />
         )
     }
-    const parse = () => {
-        if(items) return items.map((item, index) => {
-            return ({
-                title: textEditable('title', item.title, index),
-                description: textEditable('description', item.description, index),
-                images: item.images
-            });
+    const parsedItems = React.useMemo(() => {
+        return items.map((item, i) => {
+            if (i === active) {
+                return {
+                    images: item.images,
+                    title: textEditable('title', item.title, i),
+                    description: textEditable('description', item.description, i),
+                };
+            }
+            return item;
         });
-    }
-    const parsedItems = React.useMemo(() => parse(), [items]);
+    }, [items, active]);
     
-
+    
     return (
         <div
             ref={ref}
@@ -398,18 +547,19 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
                 display: 'block',
                 overflow: 'hidden',
                 position: 'relative',
+                ...style
             }}
         >
             <PromoBanner
+                onChange={setActive}
                 items={parsedItems}
                 style={{...style, height, width}}
+                styles={{...otherProps?.styles}}
                 actionAreaEnabled={otherProps?.actionAreaEnabled}
             />
         </div>
     );
 });
-
-
 export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const lastFileRef = React.useRef<number | null>(null);
@@ -605,7 +755,6 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
         </div>
     );
 });
-
 
 
 

@@ -14,7 +14,8 @@ import { uploadFile } from 'src/app/plugins';
 import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/Acordeon';
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
 import { DropSlot, ContextSlot } from '../Dragable';
-import TipTapSlotEditor from './tip-tap';
+import TipTapSlotEditor, {rendeHtml} from './tip-tap';
+import { exportTipTapValue, renderComponentSsr, toLiteral } from './export/utils';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { useEditorContext } from "../context";
 
@@ -1000,7 +1001,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
     );
 });
 
-// ! не доделан
+
 export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const {'data-id': dataId, style, isButton, isSecondary, fullWidth, items} = props;
@@ -1081,7 +1082,7 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
     const parse = () => {
         return items.map((item, index)=> {
             const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconEditable(item, index) : null;
-
+            
             return ({
                 startIcon: Icon ? Icon : undefined,
                 primary: textEditable('primary', item.primary, index),
@@ -1090,15 +1091,31 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
         });
     }
     degidratationRef.current = (call) => {
+        const stylePrerender = {...style, width: fullWidth ? "100%" : "fit-content"};
+        const itemsLitears = items.map((item, index)=> {
+            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconsList[item.startIcon] : null;
+            
+            return ({
+                startIcon: Icon ? {__raw: renderComponentSsr(<Icon />).trim() } : undefined,
+                primary: { __raw: `(${exportTipTapValue(item.primary).trim()})` },
+                secondary: isSecondary ? { __raw: `(${exportTipTapValue(item.secondary).trim()})` } : undefined
+            });
+        });
+        
+
         const code = (`
             import React from 'react';
             import { List } from '@lib/index';
 
             export default function ListWrap() {
+                const items = ${toLiteral(itemsLitears)};
+
+                
                 return(
-                    <div style={{ ${styleLiteral} }}>
+                    <div style={ ${toLiteral(stylePrerender)} }>
                         <List
-                            items={parsedItems}
+                            onClick={${isButton ? '(index: number, item)=> console.log(index)' : 'undefined'}}
+                            items={items}
                         />
                     </div>
                 );
