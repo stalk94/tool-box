@@ -23,10 +23,10 @@ function generateTestData(count = 5) {
 export type PromoSliderProps = {
     items: {
         title: string
-        buttonText: string
         description: string
         images: string[]
     }[]
+    button?: React.ReactElement
     style?: SxProps
     styleDot?: {
         activeColor?: string 
@@ -53,7 +53,7 @@ const IconGroop = ({ active, setActive, count, style }) => {
                 >
                     {i === active
                         ? <AdjustOutlined sx={{ fontSize: '14px', color: style?.activeColor ?? '#c11619' }} />
-                        : <FiberManualRecord sx={{ fontSize: '12px', color: style?.disableColor }} />
+                        : <FiberManualRecord sx={{ fontSize: '12px', color: style?.color }} />
                     }
                 </IconButton>
             );
@@ -138,8 +138,9 @@ const PhotoColage = ({ images }) => {
         </Box>
     );
 }
-const Description = ({ data, navigationSlot, style }) => {
+const Description = ({ data, navigationSlot, button, style }) => {
     const [ref, width] = useContainerWidth<HTMLDivElement>();
+    
     
     return (
         <Box
@@ -203,15 +204,7 @@ const Description = ({ data, navigationSlot, style }) => {
                 >
                     { data.description }
                 </Typography>
-                <Button
-                    variant='outlined'
-                    sx={{
-                        mt: 4,
-                        ...style?.button
-                    }}
-                >
-                    { data.buttonText }
-                </Button>
+                { button }
 
                 <Box
                     sx={{
@@ -234,14 +227,26 @@ const Description = ({ data, navigationSlot, style }) => {
 }
 
 
-export default function PromoSlider({ items, styleDot, styleText, style }: PromoSliderProps) {
+export default function PromoSlider({ items, button, styleDot, styleText, style, ...props }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
     const testData = generateTestData();            // моковые данные активны если не передать items
+    const standartButton = (
+        <Button
+            variant='outlined'
+            sx={{
+                mt: 4
+            }}
+        >
+            go to
+        </Button>
+    );
     
+
     return (
         <Card 
             actionAreaEnabled
             sx={{ minHeight: 240, ...style }}
+            { ...props }
         >
             <React.Fragment>
                 <MediaImage
@@ -264,8 +269,9 @@ export default function PromoSlider({ items, styleDot, styleText, style }: Promo
                         p: 2,
                     }}
                 >
-                    <Description
+                   <Description
                         style={styleText}
+                        button={button ?? standartButton}
                         data={(items ?? testData)[active]}
                         navigationSlot={
                             <IconGroop

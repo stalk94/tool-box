@@ -1,0 +1,1 @@
+import { FormAuthOrReg, Form } from '../../index';

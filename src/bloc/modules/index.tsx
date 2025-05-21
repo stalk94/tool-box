@@ -15,11 +15,12 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
 } from './inputs';
 import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
 import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper } from './any';
-import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, HeaderWrapper, BreadcrumbsWrapper } from './complex';
+import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, 
+    HeaderWrapper, BreadcrumbsWrapper, ListWrapper 
+} from './complex';
 import { sharedContext, sharedEmmiter } from './helpers/shared';
 import { Box } from '@mui/material';
 import { serializeJSX } from '../helpers/sanitize';
-import { InputStyles } from '../type';
 
 
 
@@ -352,6 +353,13 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         width: '100%',
+        
+        items: [{
+            title: 'Title',
+            buttonText: "ПОДРОБНЕЕ",
+            description: 'custom editable description',
+            images: [`https://placehold.co/600x400/353636/gray?text=Promoimage&font=roboto`]
+        }]
     },
     icon: ViewCarousel,
     category: 'media',
@@ -453,6 +461,25 @@ registerComponent({
             {
                 title: '・title-0',
                 content: serializeJSX(<Box sx={{m: 3}}>content</Box>)
+            }
+        ]
+    },
+    icon: ListAlt,
+    category: 'complex',
+});
+registerComponent({
+    type: 'List',
+    component: ListWrapper,
+    defaultProps: {
+        fullWidth: true,
+        isButton: false,
+        isSecondary: true,
+        styles: {},
+        items: [
+            {
+                startIcon: 'Settings',
+                primary: 'primary',
+                secondary: 'secondary'
             }
         ]
     },

@@ -1,6 +1,6 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
-import { Accordion, AccordionProps, HoverPopover } from '../../index';
+import { Accordion, AccordionProps, HoverPopover, List, ListCustomProps } from '../../index';
 import { icons, iconsList } from '@components/tools/icons';
 import { Box, Tabs, Button, Tab, BottomNavigation, BottomNavigationAction, Paper, TabsProps, Typography } from '@mui/material';
 import { ComponentProps, DataNested } from '../type';
@@ -14,10 +14,31 @@ import { uploadFile } from 'src/app/plugins';
 import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/Acordeon';
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
 import { DropSlot, ContextSlot } from '../Dragable';
+import TipTapSlotEditor from './tip-tap';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { useEditorContext } from "../context";
 
 
+type ListWrapperProps = ListCustomProps & {
+    'data-id': number
+    'data-type': 'List'
+    showLabels: boolean
+    style: React.CSSProperties
+    fullWidth: boolean
+    isButton?: boolean
+    isSecondary?: boolean
+    styles?: {
+        primary?: React.CSSProperties
+        secondary?: {
+            color?: string
+            fontSize?: number 
+        }
+        icon?: {
+            color?: string
+            fontSize?: number 
+        }
+    }
+}
 type BottomNavWrapperProps = {
     'data-id': number
     'data-type': 'BottomNav'
@@ -529,7 +550,6 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
         </Paper>
     );
 });
-
 export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref) => {
     const [data, setData] = React.useState([
         { test: 1, name: 'никалай' },
@@ -979,3 +999,172 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
         </div>
     );
 });
+
+// ! не доделан
+export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => { });
+    const {'data-id': dataId, style, isButton, isSecondary, fullWidth, items} = props;
+
+
+    const handleChangeEdit = (index: number, data: {primary:string,secondary:string,startIcon:string}) => {
+        if (items[index]) {
+            items[index] = data;
+
+            updateComponentProps({
+                component: { props },
+                data: { items: [...items] }
+            });
+        }
+    }
+    const iconEditable = (item: {primary:string,secondary:string,startIcon:string}, index: number) => {
+        const categorys = Object.keys(icons);
+
+        const resultRender = categorys.map((keyNameCategory)=> {
+            const items = Object.keys(icons[keyNameCategory]).map((iconKeyName)=> {
+                const Icon = iconsList[iconKeyName];
+                
+                return {
+                    id: iconKeyName,
+                    label: Icon ? <Icon style={{ fontSize:14 }}/> : null
+                }
+            });
+
+            return(
+                <div onClick={(e)=> e.stopPropagation()} key={keyNameCategory} style={{display:'flex',flexDirection:'column'}}>
+                    <Typography variant='subtitle2' sx={{textDecoration: 'underline',my:1}}>
+                        { keyNameCategory }
+                    </Typography>
+                    <ToggleInput
+                        items={items}
+                        onChange={(value)=> handleChangeEdit(index, {
+                            ...item,
+                            startIcon: value
+                        })}
+                    />
+                </div>
+            );
+        });
+
+        const Icon = iconsList[item.startIcon];
+
+        return (
+            <HoverPopover 
+                content={
+                    <div>
+                        { resultRender }
+                    </div>
+                }
+            >
+                <Icon />
+            </HoverPopover>
+        );
+    }
+    const textEditable = (key: 'primary'|'secondary', value: string, index: number) => {
+        return (
+            <TipTapSlotEditor
+                autoIndex={index}
+                value={value}
+                onChange={(html) => {
+                    const copy = { ...items[index] };
+                    copy[key] = html;
+                    handleChangeEdit(index, copy)
+                }}
+                placeholder="Текст"
+                className="no-p-margin"
+                isEditable={EDITOR}
+                initialInsert={{
+                    text: '',
+                }}
+            />
+        )
+    }
+    const parse = () => {
+        return items.map((item, index)=> {
+            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconEditable(item, index) : null;
+
+            return ({
+                startIcon: Icon ? Icon : undefined,
+                primary: textEditable('primary', item.primary, index),
+                secondary: isSecondary ? textEditable('secondary', item.secondary, index) : undefined
+            });
+        });
+    }
+    degidratationRef.current = (call) => {
+        const code = (`
+            import React from 'react';
+            import { List } from '@lib/index';
+
+            export default function ListWrap() {
+                return(
+                    <div style={{ ${styleLiteral} }}>
+                        <List
+                            items={parsedItems}
+                        />
+                    </div>
+                );
+            }
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+    const parsedItems = React.useMemo(() => parse(), [items]);
+    
+
+    return (
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type='List'
+            style={{
+                width: fullWidth ? "100%" : "fit-content"
+            }}
+        >
+            <List
+                onClick={isButton && console.log}
+                items={parsedItems}
+            />
+        </div>
+    );
+});
+
+
+
+/**
+ * <span
+                style={{
+                    border: '1px solid transparent',
+                    outline: 'none',
+                }}
+                onClick={(e) => e.stopPropagation()}
+                onBlur={(e) => {
+                    e.currentTarget.style.border = '1px solid transparent';
+                    e.currentTarget.style.background = 'none';
+                    e.currentTarget.style.padding = '0px';
+                    const copy = { ...items[index] };
+                    console.log(e.currentTarget.innerText.length)
+                    copy[key] = e.currentTarget.innerText.length > 0 ? e.currentTarget.innerText : undefined;
+
+                    handleChangeEdit(index, copy);
+                }}
+                contentEditable={true}
+                suppressContentEditableWarning
+                onFocus={(e) => {
+                    e.currentTarget.style.padding = '5px';
+                    e.currentTarget.style.borderRadius = '8px';
+                    e.currentTarget.style.background = '#0000008';
+                    e.currentTarget.style.border = '1px solid #3b8ee2b1';
+                }}
+            >
+                { value }
+            </span>
+ */

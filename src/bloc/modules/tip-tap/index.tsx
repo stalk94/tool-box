@@ -1,5 +1,5 @@
 import React from 'react';
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react';
+import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextStyle from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
@@ -43,6 +43,8 @@ const extension = [
 type PropsEditor = {
     value: JSONContent;
     onChange: (html: JSONContent) => void;
+    onFocus?: (editor: Editor) => void;
+    onBlur?: (editor: Editor) => void;
     readOnly?: boolean;
     placeholder?: string;
     className?: string;
@@ -60,6 +62,8 @@ type PropsEditor = {
 export default function TipTapSlotEditor({
     value,
     onChange,
+    onFocus,
+    onBlur,
     readOnly = false,
     placeholder = '',
     className,
@@ -96,9 +100,11 @@ export default function TipTapSlotEditor({
         },
         onFocus: ({ editor }) => {
             info.activeEditorTipTop.set(editor);
+            if(onFocus) onFocus(editor);
         },
         onBlur:({ editor }) => {
             setTimeout(()=> info.activeEditorTipTop.set(undefined), 1000);
+            if(onBlur) onBlur(editor);
         },
     });
     

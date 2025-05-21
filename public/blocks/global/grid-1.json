@@ -4,8 +4,46 @@
       "i": "cell-1746709723197",
       "x": 0,
       "y": 0,
-      "w": 6,
-      "h": 11,
+      "w": 5,
+      "h": 24,
+      "content": [
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "fullWidth": true,
+            "styles": {},
+            "items": [
+              {
+                "startIcon": "Home",
+                "primary": "primary",
+                "secondary": "secondary"
+              }
+            ],
+            "data-id": 1747770501402,
+            "data-type": "List"
+          },
+          "_owner": null,
+          "_store": {}
+        }
+      ],
+      "moved": false,
+      "static": false,
+      "props": {
+        "style": {},
+        "classNames": ""
+      }
+    },
+    {
+      "i": "cell-1747763221272",
+      "x": 5,
+      "y": 0,
+      "w": 7,
+      "h": 24,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
       "content": [],
       "moved": false,
       "static": false
@@ -14,26 +52,29 @@
   "content": {
     "cell-1746709723197": [
       {
-        "id": 1747449271018,
+        "id": 1747770501402,
         "parent": "cell-1746709723197",
         "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "primary",
           "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1747449271018,
-          "data-type": "Button"
+          "styles": {},
+          "items": [
+            {
+              "startIcon": "Home",
+              "primary": "home",
+              "secondary": "to home"
+            }
+          ],
+          "data-id": 1747770501402,
+          "data-type": "List"
         }
       }
-    ]
+    ],
+    "cell-1747763221272": []
   },
   "meta": {
     "scope": "global",
     "name": "grid-1",
-    "updatedAt": 1747449273205,
+    "updatedAt": 1747770600394,
     "preview": "snapshots/global-grid-1.png"
   },
   "size": {

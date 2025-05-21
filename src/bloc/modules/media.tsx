@@ -3,7 +3,6 @@ import { JSONContent } from '@tiptap/react';
 import Imgix from 'react-imgix';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { CarouselHorizontal, PromoBanner, Card, Header, MediaImage, CarouselVertical, CarouselProps } from '../../index';
-import Tollbar, { useToolbar } from './helpers/Toolbar';
 import { StarBorder, Settings } from '@mui/icons-material';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
@@ -11,6 +10,23 @@ import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/materia
 import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/BaseCard';
 
+type PromoBannerWrapperProps = {
+    'data-id': number
+    fullWidth: boolean
+    style?: React.CSSProperties
+    items: {
+        title: string;
+        description: string;
+        images: string[];
+    }[]
+    styles?: {
+        dot: {
+            activeColor: string
+            color: string
+            fontSize: number | string
+        }
+    }
+}
 type CarouselWrapperProps = CarouselProps & {
     'data-id': number
     fullWidth: boolean
@@ -307,33 +323,87 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
         </div>
     );
 });
-export const PromoBannerWrapper = React.forwardRef((props: any, ref) => {
-    const {
-        items,
-        fullWidth,
-        style = {}, 
-        ...otherProps
-    } = props;
+// ! баг с редактированием на вкладках
+export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperProps, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
+    const {'data-id': dataId, items, fullWidth, style = {}, ...otherProps} = props;
+    const { width, height } = useComponentSizeWithSiblings(dataId);
 
-    const componentId = props['data-id'];
-    const { width, height } = useComponentSizeWithSiblings(componentId);
+
+    degidratationRef.current = (call) => {
+        const code = (`
+
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+    const handleChangeEdit = (index: number, data: any) => {
+        console.log(index)
+        if (items[index]) {
+            items[index] = data;
+
+            updateComponentProps({
+                component: { props },
+                data: { items: [...items] }
+            });
+        }
+    }
+    const textEditable = (key: 'title' | 'description', value: string, index: number) => {
+        return (
+            <TipTapSlotEditor
+                autoIndex={index}
+                value={value}
+                onChange={(html) => {
+                    const copy = { ...items[index] };
+                    copy[key] = html;
+                    handleChangeEdit(index, copy)
+                }}
+                placeholder="Текст"
+                className="no-p-margin"
+                isEditable={EDITOR}
+                initialInsert={{
+                    text: '',
+                }}
+            />
+        )
+    }
+    const parse = () => {
+        if(items) return items.map((item, index) => {
+            return ({
+                title: textEditable('title', item.title, index),
+                description: textEditable('description', item.description, index),
+                images: item.images
+            });
+        });
+    }
+    const parsedItems = React.useMemo(() => parse(), [items]);
     
 
     return (
         <div
             ref={ref}
             data-type="PromoBanner"
-            data-id={componentId}
+            data-id={dataId}
             style={{
                 display: 'block',
                 overflow: 'hidden',
                 position: 'relative',
             }}
-            { ...otherProps }
         >
             <PromoBanner
-                items={items}
+                items={parsedItems}
                 style={{...style, height, width}}
+                actionAreaEnabled={otherProps?.actionAreaEnabled}
             />
         </div>
     );

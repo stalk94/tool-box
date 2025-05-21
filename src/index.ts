@@ -58,5 +58,9 @@ export type { HoverPopoverProps } from './components/popup/HoverPopover';
 export { CarouselHorizontal, CarouselVertical } from './components/carousel/media';
 export type { CarouselProps } from './components/carousel/media';
 
+// список
+export { default as List } from './components/list/base';
+export type { ListCustomProps } from './components/list/base';
+
 // инструмент инспекции DOM узлов
 export { default as DomInspector } from './components/tools/inspector';

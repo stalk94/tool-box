@@ -112,5 +112,86 @@ export const components: ThemeOptions = {
                 },
             },
         },
+        // list
+        MuiListItemText: {
+            defaultProps: {
+                
+            },
+            styleOverrides: {
+                root: {
+                    minWidth: 80
+                },
+                primary: {
+                    fontSize: 14,
+                    fontWeight: 500,
+                },
+                secondary: {
+                    fontSize: 12,
+                    color: '#777',
+                },
+            },
+        },
+        MuiListItemIcon: {
+            defaultProps: {
+                
+            },
+            styleOverrides: {
+                root: {
+                    marginLeft: 3,
+                    minWidth: 38,
+                    color: 'silver',               
+                    display: 'flex',
+                    '& svg': {
+                        fontSize: '1.2rem',     // напрямую задаём размер svg-иконке
+                    }
+                }
+            }
+        },
+        // модалка
+        MuiDialog: {
+            styleOverrides: {
+                paper: {
+                    backgroundColor: '#1e1e1e',   // фон диалога
+                    borderRadius: 12,            // скругления
+                    color: '#fff',               // текст по умолчанию
+                    padding: 16,
+                    boxShadow: '0 8px 30px rgba(0,0,0,0.5)',
+                },
+                root: {
+                    backdropFilter: 'blur(4px)', // блюр фона
+                }
+            },
+            defaultProps: {
+                // можно отключить Escape, задать scroll и др.
+                scroll: 'paper',
+            }
+        },
+        MuiDialogTitle: {
+            styleOverrides: {
+                root: {
+                    fontSize: 18,
+                    fontWeight: 600,
+                    padding: '16px 24px',
+                    borderBottom: '1px solid rgba(255,255,255,0.1)',
+                }
+            }
+        },
+        MuiDialogContent: {
+            styleOverrides: {
+                root: {
+                    padding: '16px 24px',
+                    fontSize: 14,
+                }
+            }
+        },
+        MuiDialogActions: {
+            styleOverrides: {
+                root: {
+                    padding: '12px 24px',
+                    justifyContent: 'flex-end',
+                    borderTop: '1px solid rgba(255,255,255,0.08)',
+                }
+            }
+        }
     }
 }

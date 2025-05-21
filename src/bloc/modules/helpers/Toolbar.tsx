@@ -162,14 +162,26 @@ export const SlotToolBar =({ dataId, type, item })=> {
     const [isThisSelect, setSelectThis] = React.useState(false);
     const info = useHookstate(useInfoState());
     const selectContent = info.select.content;
+    const listAcess = ['Accordion', 'Tabs', 'BottomNav', 'List', 'PromoBanner'];
     
-    if(type !== 'Accordion' && type !== 'Tabs' &&  type !== 'BottomNav') return;
+    if(!listAcess.includes(type)) return;
     const getOptions = () => {
         const getNewValue =(selectedProps)=> {
             if (type === 'Tabs') return `link-${selectedProps.items.length}`;
             else if(type === 'BottomNav') return {
                 icon: 'Settings',
                 label: 'test'
+            }
+            else if(type === 'List') return {
+                startIcon: 'Settings',
+                primary: 'primary',
+                secondary: 'secondary'
+            }
+            else if(type === 'PromoBanner') return {
+                title: 'Title',
+                buttonText: "ПОДРОБНЕЕ",
+                description: 'custom editable description',
+                images: [`https://placehold.co/600x400/353636/gray?text=PromoImage${selectedProps.items.length}&font=roboto`]
             }
             else return {
                 title: `・title-${selectedProps.items.length}`,

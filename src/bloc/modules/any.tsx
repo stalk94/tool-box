@@ -1,7 +1,6 @@
 import React from 'react';
 import { lighten } from '@mui/system';
 import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps, Rating, RatingProps } from '@mui/material';
-import { List, ListItem, ListItemText, ListItemAvatar, ListItemButton } from '@mui/material';
 import { uploadFile } from 'src/app/plugins';
 import { iconsList } from '../../components/tools/icons';
 import { fill, empty } from '../../components/tools/icons-rating';
