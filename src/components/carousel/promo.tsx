@@ -26,6 +26,7 @@ function generateTestData(count = 5) {
 }
 
 export type PromoSliderProps = {
+    editor?: React.ReactElement
     items: {
         title: string
         description: string
@@ -111,7 +112,7 @@ const PhotoColage = ({ images }) => {
                 },
                 maxWidth: "100%", // Ограничение по ширине для контейнера
                 overflow: "hidden", // Не вылазить за пределы
-                flexWrap: "wrap", 
+                flexWrap: "wrap",
             }}
         >
             {images.map((src, index) => index !== 0 && (
@@ -148,8 +149,8 @@ const PhotoColage = ({ images }) => {
 }
 const Description = ({ data, navigationSlot, button, style }) => {
     const [ref, width] = useContainerWidth<HTMLDivElement>();
-    
-    
+
+
     return (
         <Box
             ref={ref}
@@ -182,7 +183,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
                     color="text.primary"
                     sx={{
                         textAlign: "left",
-                         fontSize:  width < 600 ? "1.2rem" : {
+                        fontSize: width < 600 ? "1.2rem" : {
                             xs: "1.2rem",
                             sm: "1.6rem",
                             md: "2.5rem",
@@ -195,7 +196,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
                     }}
                     variant='h4'
                 >
-                    { normalizeContent(data.title) }
+                    {normalizeContent(data.title)}
                 </MarqueeAdaptive>
                 <Typography component="div"
                     color="text.secondary"
@@ -210,14 +211,14 @@ const Description = ({ data, navigationSlot, button, style }) => {
                         }
                     }}
                 >
-                    { normalizeContent(data.description) }
+                    {normalizeContent(data.description)}
                 </Typography>
-                { button }
+                {button}
 
                 <Box
                     sx={{
                         position: "absolute",
-                        bottom: width < 600 ? 0 :{
+                        bottom: width < 600 ? 0 : {
                             xs: 0,
                             md: 24,
                         },
@@ -225,7 +226,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
                         transform: "translateX(-50%)"
                     }}
                 >
-                    { navigationSlot }
+                    {navigationSlot}
                 </Box>
             </Box>
 
@@ -235,8 +236,9 @@ const Description = ({ data, navigationSlot, button, style }) => {
 }
 
 
-export default function PromoSlider({ items, button, styles, style, ...props }: PromoSliderProps) {
+export default function PromoSlider({ items, button, styles, style, editor, ...props }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
+    const isMounted = React.useRef(false);
     const testData = generateTestData();            // моковые данные активны если не передать items
     const standartButton = (
         <Button
@@ -248,58 +250,78 @@ export default function PromoSlider({ items, button, styles, style, ...props }: 
             go to
         </Button>
     );
-    
-    React.useEffect(()=> {
-        if(props.onChange) props.onChange(active);
+
+    React.useEffect(() => {
+        if (props.onChange && isMounted.current) {
+            props.onChange(active);
+        }
+        else if (!isMounted.current) {
+            isMounted.current = true;
+        }
     }, [active]);
 
 
     return (
-        <Card 
-            actionAreaEnabled
-            sx={{ minHeight: 240, ...style }}
-            { ...props }
-        >
-            <React.Fragment>
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        height: "100%",
-                        minHeight: 240,
-                        display: "flex",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                        textAlign: "center",
-                        p: 2,
+        <>
+            { editor &&
+                <div
+                    style={{
+                        position: 'absolute',
+                        width: '50%',
+                        top: '36%',
+                        left: '55%',
                     }}
                 >
-                   <Description
-                        style={{
-                            title: styles?.title,
-                            description: styles?.description
+
+                    {editor}
+
+                </div>
+            }
+            <Card
+                actionAreaEnabled
+                sx={{ minHeight: 240, ...style }}
+                {...props}
+            >
+                <React.Fragment>
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: 0,
+                            left: 0,
+                            width: "100%",
+                            height: "100%",
+                            minHeight: 240,
+                            display: "flex",
+                            flexDirection: "column",
+                            justifyContent: "center",
+                            alignItems: "center",
+                            textAlign: "center",
+                            p: 2,
                         }}
-                        button={button ?? standartButton}
-                        data={(items ?? testData)[active]}
-                        navigationSlot={
-                            <IconGroop
-                                style={styles?.dot}
-                                active={active}
-                                setActive={setActive}
-                                count={(items ?? testData).length}
-                            />
-                        }
+                    >
+                        <Description
+                            style={{
+                                title: styles?.title,
+                                description: styles?.description
+                            }}
+                            button={button ?? standartButton}
+                            data={(items ?? testData)[active]}
+                            navigationSlot={
+                                <IconGroop
+                                    style={styles?.dot}
+                                    active={active}
+                                    setActive={setActive}
+                                    count={(items ?? testData).length}
+                                />
+                            }
+                        />
+                    </Box>
+                    <MediaImage
+                        sx={{ minHeight: 240, ...style }}
+                        src={(items ?? testData)[active].images[0]}
                     />
-                </Box>
-                
-                <MediaImage
-                    sx={{minHeight: 240, ...style}}
-                    src={(items ?? testData)[active].images[0]}
-                />
-            </React.Fragment>
-        </Card>
+                </React.Fragment>
+            </Card>
+        </>
     );
 }

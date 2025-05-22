@@ -53,6 +53,7 @@ export function useBreadcrumbs(pathname: string, options?: Options): Breadcrumb[
 
 
 export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMap, linkStyle, isMobile }: BreadcrumbsNavProps) {
+    const isMounted = React.useRef(false);
     const parentRef = React.useRef<HTMLDivElement>(null);
     const itemRefs = React.useRef<HTMLSpanElement[]>([]);
     const [collapsed, setCollapsed] = React.useState(false);
@@ -68,23 +69,29 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
         base: { label: <Home sx={commonSx(false)} />, href: '/' },
     });
 
+    //? может не сработать
     React.useEffect(() => {
-        const checkOverflow = () => {
-            if (!parentRef.current) return;
-            const el = parentRef.current;
-            const totalItemsWidth = itemRefs.current.reduce((sum, item) => {
-                return sum + (item?.getBoundingClientRect().width ?? 0) + (5+14);
-            }, 0);
-            setCollapsed(el.offsetWidth < totalItemsWidth);
+        if(isMounted.current) {
+            const checkOverflow = () => {
+                if (!parentRef.current) return;
+                const el = parentRef.current;
+                const totalItemsWidth = itemRefs.current.reduce((sum, item) => {
+                    return sum + (item?.getBoundingClientRect().width ?? 0) + (5+14);
+                }, 0);
+                setCollapsed(el.offsetWidth < totalItemsWidth);
+            }
+
+            const observer = new ResizeObserver(checkOverflow);
+            if (parentRef.current) observer.observe(parentRef.current);
+
+            // также на инициализацию
+            checkOverflow();
+
+            return () => observer.disconnect();
         }
-
-        const observer = new ResizeObserver(checkOverflow);
-        if (parentRef.current) observer.observe(parentRef.current);
-
-        // также на инициализацию
-        checkOverflow();
-
-        return () => observer.disconnect();
+        else if(!isMounted.current) {
+            isMounted.current = true;
+        }
     }, []);
     if (isMobile || collapsed) {
         const current = crumbs.at(-1);

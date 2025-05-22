@@ -3,6 +3,7 @@ import 'primeicons/primeicons.css';
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';
+import { SnackbarProvider } from 'notistack';
 import ErrorBoundary from './components/error';
 import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
 import { darkTheme, lightTheme } from './theme/index';
@@ -32,7 +33,14 @@ const App = () => {
     return(
         <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
             <CssBaseline />
-            <Editor/>
+            <SnackbarProvider
+                maxSnack={3}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                autoHideDuration={4000}
+                preventDuplicate
+            >
+                <Editor/>
+            </SnackbarProvider>
         </ThemeProvider>
     );
 }

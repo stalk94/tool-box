@@ -4,9 +4,7 @@ import React from 'react';
 export function PromoBannerWrap() {
     const items = [
         {
-            images: [
-                'https://placehold.co/600x400/353636/gray?text=Promoimage&font=roboto'
-            ],
+            images: ['/uploads/pb-1747840618502-0.png?v=1747926095536'],
             title: <span>Title</span>,
             description: (
                 <div>
@@ -33,13 +31,14 @@ export function PromoBannerWrap() {
                 display: 'block',
                 overflow: 'hidden',
                 position: 'relative',
+                width: '100%',
                 marginLeft: '0%'
             }}
         >
             <PromoBanner
                 items={items}
                 actionAreaEnabled={true}
-                style={{}}
+                style={{ height: 290, width: '100%' }}
                 width="100%"
                 data-type="PromoBanner"
                 styles={{

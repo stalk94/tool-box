@@ -36,6 +36,7 @@ export const useAlert =()=> {
  */
 export function AlertProvider({ children, delDelay, variant }: AlertManagerProps) {
     const [stack, setStack] = React.useState<AlertItem[]>([]);
+    const isMounted = React.useRef(false);
     const bgColors = {
         error: "rgba(211, 47, 47, 0.03)",
         warning: "rgba(245, 124, 0, 0.02)",
@@ -83,11 +84,14 @@ export function AlertProvider({ children, delDelay, variant }: AlertManagerProps
         }, (delDelay ?? 6000));
     }
     React.useEffect(()=> {
-        if(stack.length > 4) {
+        if(isMounted.current && stack.length > 4) {
             setStack((old)=> {
                 old.splice(0, 1);
                 return [...old];
             });
+        }
+        else if(!isMounted.current) {
+            isMounted.current = true;
         }
     }, [stack]);
     

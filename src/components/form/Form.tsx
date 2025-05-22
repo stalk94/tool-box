@@ -16,7 +16,7 @@ export type FormProps = {
 
 /**
  * Конструирует по схеме набор форм ввода и обслуживает их как единый организм
- * 
+ * ! not ssr safe
  * `onChange` - весь список формы получить по изменению значения ввода любого инпута        
  * `onSpecificChange` - получить только то значение формы которая обновилась а так же ее предыдушее значение     
  * `labelPosition` - единый алиас на позицию лейблов инпутов (что бы каждому в ручную не прописывать)         
@@ -32,8 +32,21 @@ export type FormProps = {
  * ]
  */
 export default function Form({ scheme, onChange, onSpecificChange, labelPosition }: FormProps): React.JSX.Element {
+    const isMounted = React.useRef(false);
     const [state, setState] = React.useState<Record<string, any>>({});
 
+    
+    React.useEffect(() => {
+        if (scheme.length > 0) {
+            const initial: Record<string, any> = {};
+
+            scheme.forEach(field => {
+                initial[field.id] = field.value;
+            });
+
+            setState(initial);
+        }
+    }, [scheme]);
     const handleChange = React.useCallback((id: string, newValue: any) => {
         setState(prev => {
             const updated = { ...prev, [id]: newValue };
@@ -42,14 +55,7 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
             return updated;
         });
     }, [onChange, onSpecificChange]);
-    React.useEffect(() => {
-        const initialState: Record<string, any> = {};
-        scheme.forEach((field) => {
-            initialState[field.id] = field.value;
-        });
-        setState(initialState);
-    }, [scheme]);
-
+    
 
     return(
         <>
@@ -75,3 +81,14 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
         </>
     );
 }
+
+
+/**
+ * React.useEffect(() => {
+        const updatedState: Record<string, any> = {};
+        scheme.forEach((field) => {
+            updatedState[field.id] = field.value;
+        });
+        setState(updatedState);
+    }, [scheme]);
+ */

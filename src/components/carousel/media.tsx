@@ -8,6 +8,7 @@ type SourceIremType = {
     style?: React.CSSProperties 
 }
 export type CarouselProps = {
+    editor?: boolean
     width?: number 
     height?: number
     loop?: boolean
@@ -19,7 +20,7 @@ export type CarouselProps = {
 }
 
 
-export const CarouselHorizontal = ({ height, ...props }: CarouselProps) => {
+export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) => {
     const pointer = useRef({ startX: 0, dragging: false });
     const containerRef = useRef<HTMLDivElement>(null);
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -111,6 +112,21 @@ export const CarouselHorizontal = ({ height, ...props }: CarouselProps) => {
             </div>
         );
     }
+    const renderItemEditor = (item: SourceIremType) => {
+        if (item.type === 'image') return(item.src);
+        else if (item.type === 'video') return(item.src);
+        else return(
+            <div
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    height: height ?? '100%', 
+                }} 
+            >
+                { item.src }
+            </div>
+        );
+    }
 
     useEffect(() => {
         const update = () => {
@@ -127,7 +143,7 @@ export const CarouselHorizontal = ({ height, ...props }: CarouselProps) => {
         return () => window.removeEventListener('resize', update);
     }, [currentIndex, slidesToShow]);
     useEffect(() => {
-        if (!autoplay || items.length <= slidesToShow) return;
+        if (editor || !autoplay || items.length <= slidesToShow) return;
 
         const interval = setInterval(() => {
             const nextIndex = currentIndex + slidesToScroll;
@@ -186,7 +202,7 @@ export const CarouselHorizontal = ({ height, ...props }: CarouselProps) => {
                                 alignItems: 'center',
                             }}
                         >
-                            { renderItem(item) }
+                            { editor ? renderItemEditor(item) : renderItem(item) }
                         </div>
                     ))}
                 </motion.div>
@@ -231,7 +247,7 @@ export const CarouselHorizontal = ({ height, ...props }: CarouselProps) => {
 
 
 
-export const CarouselVertical = ({ height, ...props }: CarouselProps) => {
+export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) => {
     const pointer = useRef({ startY: 0, dragging: false });
     const containerRef = useRef<HTMLDivElement>(null);
     const [calculateHeightSlide, setHeight] = useState(height ?? 300);
@@ -331,6 +347,39 @@ export const CarouselVertical = ({ height, ...props }: CarouselProps) => {
             </div>
         );
     }
+    const renderItemEditor = (item: SourceIremType) => {
+        if (item.type === 'image') return(
+            <div
+                style={{
+                    width: '100%', 
+                    height: height / slidesToShow,
+                }}
+            >
+                { item.src }
+            </div>
+        );
+        else if (item.type === 'video') return(
+            <div
+                style={{
+                    width: '100%', 
+                    height: height / slidesToShow,
+                }}
+            >
+                { item.src }
+            </div>
+        );
+        else return(
+            <div
+                style={{ 
+                    ...item?.style,
+                    width: '100%', 
+                    height: height / slidesToShow, 
+                }} 
+            >
+                { item.src }
+            </div>
+        );
+    }
 
     useEffect(() => {
         if(height) {
@@ -353,7 +402,7 @@ export const CarouselVertical = ({ height, ...props }: CarouselProps) => {
         return () => window.removeEventListener('resize', update);
     }, [currentIndex, height, slidesToShow]);
     useEffect(() => {
-        if (!autoplay || items.length <= slidesToShow) return;
+        if (editor || !autoplay || items.length <= slidesToShow) return;
 
         const interval = setInterval(() => {
             const nextIndex = currentIndex + slidesToScroll;
@@ -414,7 +463,7 @@ export const CarouselVertical = ({ height, ...props }: CarouselProps) => {
                                 alignItems: 'center',
                             }}
                         >
-                            { renderItem(item) }
+                            { editor ? renderItemEditor(item) : renderItem(item) }
                         </div>
                     ))}
                 </motion.div>

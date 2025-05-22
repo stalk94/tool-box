@@ -1,8 +1,10 @@
 import React from 'react';
 import { JSONContent } from '@tiptap/react';
 import Imgix from 'react-imgix';
+import { LoaderToolWrapper } from './sources/image-toolbar';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { CarouselHorizontal, PromoBanner, Card, Header, MediaImage, CarouselVertical, CarouselProps } from '../../index';
+import { MediaImage as Media } from '../../components/carts/atomize';
 import { StarBorder, Settings } from '@mui/icons-material';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
@@ -10,6 +12,7 @@ import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/materia
 import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/media';
 import { exportTipTapValue, toJSXProps, toLiteral, renderComponentSsr } from './export/utils';
+import { positions } from '@mui/system';
 
 
 type PromoBannerWrapperProps = {
@@ -277,8 +280,9 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
 
 export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
+    const [active, setActive] = React.useState(0);
     const { items, fullWidth, 'data-id': dataId, style = {}, ...otherProps } = props;
-    const { width, height } = useComponentSizeWithSiblings(dataId);
+    //const { width, height } = useComponentSizeWithSiblings(dataId);
     
     degidratationRef.current = (call) => {
         const itemsLitears = items.map((item, index) => {
@@ -333,6 +337,52 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
         }
     }, []);
 
+    const handleChangeReloadContent = (index: number, data: string | undefined, type?: 'image'|'video') => {
+        if (items[index]) {
+            const newItems = [...items];
+            newItems[index].src = data ? data : '';
+            if(type) newItems[index].type = type;
+;
+            updateComponentProps({
+                component: { props },
+                data: { items: newItems },
+            });
+        }
+    }
+    const parsedItems = React.useMemo(() => {
+        return items.map((item, i) => {
+            const itemCopy = { ...item };
+
+            if(item.type === 'image' || item.type ==='video') {
+                const Tag = item.type === 'image' ? 'img' : 'video';
+                
+                itemCopy.src = (
+                    <LoaderToolWrapper
+                        style={{}}
+                        name={`hc-${dataId}-${i}`}
+                        src={item.src}
+                        select={active}
+                        index={i}
+                        setSelect={setActive}
+                        onAdd={(src: string, type)=> handleChangeReloadContent(i, src, type)}
+                        onDelete={()=> handleChangeReloadContent(i, undefined)}
+                    >
+                        <Tag 
+                            src={item.src} 
+                            style={{ 
+                                ...item?.style,
+                                width: '100%', 
+                                height: '100%'
+                            }} 
+                        />
+                    </LoaderToolWrapper>
+                );
+            }
+
+            return itemCopy;
+        });
+    }, [items, active]);
+    
 
     return (
         <div
@@ -347,7 +397,8 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
             }}
         >
             <CarouselHorizontal
-                items={items}
+                items={parsedItems}
+                editor={true}
                 { ...otherProps }
             />
         </div>
@@ -355,9 +406,11 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
 });
 export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
+    const [active, setActive] = React.useState(0);
     const { 'data-id': dataId, fullWidth, items, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
+
     degidratationRef.current = (call) => {
         const itemsLitears = items.map((item, index) => {
             if(item.type !== 'content') return ({
@@ -411,6 +464,64 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
+    const handleChangeReloadContent = (index: number, data: string | undefined, type?: 'image'|'video') => {
+        if (items[index]) {
+            const newItems = [...items];
+            newItems[index].src = data ? data : '';
+            if(type) newItems[index].type = type;
+;
+            updateComponentProps({
+                component: { props },
+                data: { items: newItems },
+            });
+        }
+    }
+    const parsedItems = React.useMemo(() => {
+        const styles = {
+            img: {
+                width: '100%',
+                paddingTop: 4,
+                paddingBottom: 4,
+                height: height / otherProps.slidesToShow,
+            },
+            video: {
+                objectFit: 'cover',
+                width: '100%',
+                height: height / otherProps.slidesToShow,
+                margin: 'auto',
+                paddingTop: 4,
+                paddingBottom: 4,
+            }
+        }
+
+        return items.map((item, i) => {
+            const itemCopy = { ...item };
+
+            if(item.type === 'image' || item.type ==='video') {
+                const Tag = item.type === 'image' ? 'img' : 'video';
+                
+                itemCopy.src = (
+                    <LoaderToolWrapper
+                        style={{}}
+                        name={`vc-${dataId}-${i}`}
+                        src={item.src}
+                        select={active}
+                        index={i}
+                        setSelect={setActive}
+                        onAdd={(src: string, type)=> handleChangeReloadContent(i, src, type)}
+                        onDelete={()=> handleChangeReloadContent(i, undefined)}
+                    >
+                        <Tag 
+                            src={item.src} 
+                            style={styles[Tag]} 
+                        />
+                    </LoaderToolWrapper>
+                );
+            }
+
+            return itemCopy;
+        });
+    }, [items, active, height]);
 
     
     return(
@@ -427,8 +538,9 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
             }}
         >
             <CarouselVertical
-                items={items}
+                items={parsedItems}
                 height={height}         // она будет поделена на slidesToShow (3 default)
+                editor={true}
                 { ...otherProps }
             />
         </div>
@@ -440,6 +552,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
 export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
+    const [activeSlide, setActiveSlide] = React.useState(0);
     const {'data-id': dataId, items, fullWidth, style = {}, ...otherProps} = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
 
@@ -467,6 +580,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
                                     display: 'block',
                                     overflow: 'hidden',
                                     position: 'relative',
+                                    width: '100%',
                                     ...style
                                 })}
                             }
@@ -474,7 +588,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
                             <PromoBanner
                                 items={items}
                                 actionAreaEnabled={true}
-                                style={{ }}
+                                style={{ height: ${height}, width: '100%' }}
                                 ${toJSXProps(otherProps)}
                             />
                         </div>
@@ -524,6 +638,33 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             />
         )
     }
+    const handleChangeReloadContent = (active: number, data: string | undefined) => {
+        if (items[active]) {
+            const newItems = [...items];
+            newItems[active].images[0] = data ? data : '';
+
+            updateComponentProps({
+                component: { props },
+                data: { items: newItems },
+            });
+        }
+    }
+    const createImageWrapper =(src: string, i: number)=> {
+        return(
+            <LoaderToolWrapper
+                isDelCentre={true}
+                name={`pb-${dataId}-${i}`}
+                src={src}
+                select={activeSlide}
+                index={i}
+                setSelect={setActiveSlide}
+                onAdd={(src: string, type) => handleChangeReloadContent(i, src)}
+                onDelete={() => handleChangeReloadContent(i, undefined)}
+            >
+                <div style={{height: 120}}/>
+            </LoaderToolWrapper>
+        );
+    }
     const parsedItems = React.useMemo(() => {
         return items.map((item, i) => {
             if (i === active) {
@@ -551,6 +692,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             }}
         >
             <PromoBanner
+                editor={createImageWrapper(parsedItems[active].images[activeSlide], active)}
                 onChange={setActive}
                 items={parsedItems}
                 style={{...style, height, width}}

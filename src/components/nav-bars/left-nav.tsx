@@ -34,6 +34,7 @@ type LeftNavigationProps = SidebarMenuProps & BoxProps & {
  */
 export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, selected, ...props }: SidebarMenuProps) {
     const theme = useTheme();
+    const isMounted = React.useRef(false)
     const [openMenus, setOpenMenus] = useState({});
     const [anchorEl, setAnchorEl] = useState(null);
     const [currentChildren, setCurrentChildren] = useState([]);
@@ -42,7 +43,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, s
 
 
     React.useEffect(()=> {
-        if(collapsed) setOpenMenus({});
+        if(collapsed && isMounted.current) setOpenMenus({});
     }, [collapsed]);
     const handleToggle =(id: string)=> {
         setOpenMenus((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -91,7 +92,8 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, s
         );
     }
     React.useEffect(()=> {
-        if(selected) setSelectedItem(selected);
+        if(selected && isMounted.current) setSelectedItem(selected);
+        else if(!isMounted.current) isMounted.current = true;
     }, [selected]);
     
 

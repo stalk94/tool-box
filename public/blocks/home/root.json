@@ -11,216 +11,93 @@
           "type": {},
           "key": null,
           "props": {
-            "children": "Заголовокhh",
-            "variant": "h5",
-            "fullWidth": true,
-            "style": {
-              "display": "flex"
-            },
-            "data-id": 1747257381802,
-            "data-type": "Typography"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "sizes": 65,
-            "src": "https://mui.com/static/images/avatar/3.jpg",
-            "file": "",
-            "icon": "",
-            "data-source": "src",
-            "style": {},
-            "data-id": 1747252072843,
-            "data-type": "Avatar"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "size": "medium",
-            "iconName": "none",
-            "apiPath": "api/test",
-            "colors": "#ff3d47",
-            "data-id": 1747759330890,
-            "data-type": "Rating"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "children": "Button",
-            "variant": "outlined",
-            "color": "primary",
-            "fullWidth": true,
-            "startIcon": "none",
-            "endIcon": "none",
-            "style": {},
-            "data-id": 1747254467189,
-            "data-type": "Button"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "children": "Список",
-            "variant": "h6",
-            "fullWidth": true,
-            "style": {
-              "display": "flex",
-              "justifyContent": "flex-start",
-              "marginLeft": "4%"
-            },
-            "data-id": 1747773424547,
-            "data-type": "Typography",
-            "styles": {
-              "text": {
-                "fontSize": "17",
-                "fontFamily": "Roboto",
-                "textAlign": "none"
-              }
-            }
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "styles": {},
-            "items": [
-              {
-                "startIcon": "Close",
-                "primary": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "paragraph",
-                      "attrs": {
-                        "textAlign": null
-                      },
-                      "content": [
-                        {
-                          "type": "text",
-                          "text": "primar"
-                        },
-                        {
-                          "type": "text",
-                          "marks": [
-                            {
-                              "type": "textStyle",
-                              "attrs": {
-                                "color": "rgba(0, 57, 255, 1)"
-                              }
-                            }
-                          ],
-                          "text": "yddd1"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "secondary": "secondary"
-              },
-              {
-                "startIcon": "Notifications",
-                "primary": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "paragraph",
-                      "attrs": {
-                        "textAlign": "left"
-                      },
-                      "content": [
-                        {
-                          "type": "text",
-                          "marks": [
-                            {
-                              "type": "link",
-                              "attrs": {
-                                "href": "https://google.com",
-                                "target": "_blank",
-                                "rel": "noopener noreferrer nofollow",
-                                "class": null
-                              }
-                            },
-                            {
-                              "type": "textStyle",
-                              "attrs": {
-                                "color": "rgba(168, 226, 219, 1)"
-                              }
-                            },
-                            {
-                              "type": "fontFamily",
-                              "attrs": {
-                                "family": "Montserrat"
-                              }
-                            }
-                          ],
-                          "text": "primarytt"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "secondary": "secondary"
-              },
-              {
-                "startIcon": "Home",
-                "primary": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "paragraph",
-                      "attrs": {
-                        "textAlign": null
-                      },
-                      "content": [
-                        {
-                          "type": "text",
-                          "text": "primarytt"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "secondary": "secondary"
-              }
-            ],
-            "data-id": 1747771578885,
-            "data-type": "List",
-            "style": {
-              "marginLeft": "0%"
-            }
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
             "fullWidth": true,
             "metaName": "FormAuth",
             "style": {},
             "data-id": 1747877195809,
             "data-type": "FormAuth"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "placeholder": "ввод",
+            "divider": "none",
+            "fullWidth": true,
+            "leftIcon": "none",
+            "styles": {},
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1747879266449,
+            "data-type": "TextInput"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "type": "time",
+            "fullWidth": true,
+            "styles": {},
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1747879269392,
+            "data-type": "Time"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "fullWidth": true,
+            "leftIcon": "none",
+            "rightIcon": "none",
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1747879273144,
+            "data-type": "Slider"
+          },
+          "_owner": null,
+          "_store": {}
+        },
+        {
+          "type": {},
+          "key": null,
+          "props": {
+            "label": "label",
+            "position": "column",
+            "fullWidth": true,
+            "items": [
+              {
+                "id": "1",
+                "label": "test-1"
+              },
+              {
+                "id": "2",
+                "label": "test-2"
+              }
+            ],
+            "labelStyle": {
+              "fontSize": 14
+            },
+            "data-id": 1747879276044,
+            "data-type": "ToggleButtons"
           },
           "_owner": null,
           "_store": {}
@@ -269,216 +146,7 @@
       "y": 0,
       "w": 4,
       "h": 11,
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "slots": {
-              "0": {
-                "content": {
-                  "cell-1747872564171": [
-                    {
-                      "id": 1747872571305,
-                      "parent": "cell-1747872564171",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747872571305,
-                        "data-type": "Button"
-                      }
-                    }
-                  ],
-                  "cell-1747872565778": [
-                    {
-                      "id": 1747872727494,
-                      "parent": "cell-1747872565778",
-                      "props": {
-                        "children": "Заголовок",
-                        "variant": "h5",
-                        "fullWidth": true,
-                        "style": {
-                          "display": "flex"
-                        },
-                        "data-id": 1747872727494,
-                        "data-type": "Typography"
-                      }
-                    }
-                  ],
-                  "cell-1747872566463": [
-                    {
-                      "id": 1747872573332,
-                      "parent": "cell-1747872566463",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747872573332,
-                        "data-type": "Button"
-                      }
-                    }
-                  ],
-                  "cell-1747872567621": [],
-                  "cell-1747872568546": []
-                },
-                "layout": [
-                  {
-                    "i": "cell-1747872564171",
-                    "x": 0,
-                    "y": 0,
-                    "w": 12,
-                    "h": 2,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Button",
-                          "variant": "outlined",
-                          "color": "primary",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747872571305,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      }
-                    ],
-                    "moved": false,
-                    "static": false
-                  },
-                  {
-                    "i": "cell-1747872565778",
-                    "x": 0,
-                    "y": 2,
-                    "w": 12,
-                    "h": 2,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Заголовок",
-                          "variant": "h5",
-                          "fullWidth": true,
-                          "style": {
-                            "display": "flex"
-                          },
-                          "data-id": 1747872727494,
-                          "data-type": "Typography"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      }
-                    ],
-                    "moved": false,
-                    "static": false
-                  },
-                  {
-                    "i": "cell-1747872566463",
-                    "x": 0,
-                    "y": 4,
-                    "w": 12,
-                    "h": 2,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [
-                      {
-                        "type": {},
-                        "key": null,
-                        "ref": null,
-                        "props": {
-                          "children": "Button",
-                          "variant": "outlined",
-                          "color": "primary",
-                          "fullWidth": true,
-                          "startIcon": "none",
-                          "endIcon": "none",
-                          "style": {},
-                          "data-id": 1747872573332,
-                          "data-type": "Button"
-                        },
-                        "_owner": null,
-                        "_store": {}
-                      }
-                    ],
-                    "moved": false,
-                    "static": false
-                  },
-                  {
-                    "i": "cell-1747872567621",
-                    "x": 0,
-                    "y": 6,
-                    "w": 4,
-                    "h": 2,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [],
-                    "moved": false,
-                    "static": false
-                  },
-                  {
-                    "i": "cell-1747872568546",
-                    "x": 4,
-                    "y": 6,
-                    "w": 4,
-                    "h": 2,
-                    "props": {
-                      "classNames": "",
-                      "style": {}
-                    },
-                    "content": [],
-                    "moved": false,
-                    "static": false
-                  }
-                ],
-                "size": {
-                  "width": 376,
-                  "height": 270
-                }
-              },
-              "1": {},
-              "2": {}
-            },
-            "items": [
-              "one",
-              "two",
-              "three"
-            ],
-            "data-id": 1747872553578,
-            "data-type": "Tabs"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -506,7 +174,7 @@
             "items": [
               {
                 "type": "image",
-                "src": "https://picsum.photos/seed/1/600/400"
+                "src": "/uploads/hc-1747753800232-0.png?v=1747921919228"
               },
               {
                 "type": "video",
@@ -572,44 +240,27 @@
               },
               {
                 "type": "video",
-                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+                "src": "/uploads/hc-1747753796861-1.mp4?v=1747922095312"
               },
               {
                 "type": "image",
                 "src": "https://picsum.photos/seed/1/300/400"
               },
               {
-                "type": "image",
-                "src": "https://picsum.photos/seed/1/600/400"
-              },
-              {
                 "type": "video",
-                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+                "src": "/uploads/hc-1747753796861-3.mp4?v=1747919174305"
               },
               {
                 "type": "image",
-                "src": "https://picsum.photos/seed/1/800/400"
+                "src": "/uploads/hc-1747753796861-4.png?v=1747919152340"
+              },
+              {
+                "type": "image",
+                "src": "/uploads/hc-1747753796861-5.png?v=1747919776830"
               }
             ],
             "data-id": 1747753796861,
             "data-type": "HorizontCarousel"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "children": "Button",
-            "variant": "outlined",
-            "color": "error",
-            "fullWidth": true,
-            "startIcon": "none",
-            "endIcon": "none",
-            "style": {},
-            "data-id": 1747771693460,
-            "data-type": "Button"
           },
           "_owner": null,
           "_store": {}
@@ -673,7 +324,7 @@
                   ]
                 },
                 "images": [
-                  "https://placehold.co/600x400/353636/gray?text=Promoimage&font=roboto"
+                  "/uploads/pb-1747840618502-0.png?v=1747926095536"
                 ]
               },
               {
@@ -717,6 +368,80 @@
           "data-id": 1747877195809,
           "data-type": "FormAuth"
         }
+      },
+      {
+        "id": 1747879266449,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод",
+          "divider": "none",
+          "fullWidth": true,
+          "leftIcon": "none",
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747879266449,
+          "data-type": "TextInput"
+        }
+      },
+      {
+        "id": 1747879269392,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "type": "time",
+          "fullWidth": true,
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747879269392,
+          "data-type": "Time"
+        }
+      },
+      {
+        "id": 1747879273144,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "leftIcon": "none",
+          "rightIcon": "none",
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747879273144,
+          "data-type": "Slider"
+        }
+      },
+      {
+        "id": 1747879276044,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "fullWidth": true,
+          "items": [
+            {
+              "id": "1",
+              "label": "test-1"
+            },
+            {
+              "id": "2",
+              "label": "test-2"
+            }
+          ],
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1747879276044,
+          "data-type": "ToggleButtons"
+        }
       }
     ],
     "cell-1747227523825": [
@@ -734,214 +459,7 @@
         }
       }
     ],
-    "cell-1747227526997": [
-      {
-        "id": 1747872553578,
-        "parent": "cell-1747227526997",
-        "props": {
-          "fullWidth": true,
-          "slots": {
-            "0": {
-              "content": {
-                "cell-1747872564171": [
-                  {
-                    "id": 1747872571305,
-                    "parent": "cell-1747872564171",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "primary",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747872571305,
-                      "data-type": "Button"
-                    }
-                  }
-                ],
-                "cell-1747872565778": [
-                  {
-                    "id": 1747872727494,
-                    "parent": "cell-1747872565778",
-                    "props": {
-                      "children": "Заголовок",
-                      "variant": "h5",
-                      "fullWidth": true,
-                      "style": {
-                        "display": "flex"
-                      },
-                      "data-id": 1747872727494,
-                      "data-type": "Typography"
-                    }
-                  }
-                ],
-                "cell-1747872566463": [
-                  {
-                    "id": 1747872573332,
-                    "parent": "cell-1747872566463",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "primary",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1747872573332,
-                      "data-type": "Button"
-                    }
-                  }
-                ],
-                "cell-1747872567621": [],
-                "cell-1747872568546": []
-              },
-              "layout": [
-                {
-                  "i": "cell-1747872564171",
-                  "x": 0,
-                  "y": 0,
-                  "w": 12,
-                  "h": 2,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747872571305,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    }
-                  ],
-                  "moved": false,
-                  "static": false
-                },
-                {
-                  "i": "cell-1747872565778",
-                  "x": 0,
-                  "y": 2,
-                  "w": 12,
-                  "h": 2,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Заголовок",
-                        "variant": "h5",
-                        "fullWidth": true,
-                        "style": {
-                          "display": "flex"
-                        },
-                        "data-id": 1747872727494,
-                        "data-type": "Typography"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    }
-                  ],
-                  "moved": false,
-                  "static": false
-                },
-                {
-                  "i": "cell-1747872566463",
-                  "x": 0,
-                  "y": 4,
-                  "w": 12,
-                  "h": 2,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [
-                    {
-                      "type": {},
-                      "key": null,
-                      "ref": null,
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "primary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1747872573332,
-                        "data-type": "Button"
-                      },
-                      "_owner": null,
-                      "_store": {}
-                    }
-                  ],
-                  "moved": false,
-                  "static": false
-                },
-                {
-                  "i": "cell-1747872567621",
-                  "x": 0,
-                  "y": 6,
-                  "w": 4,
-                  "h": 2,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [],
-                  "moved": false,
-                  "static": false
-                },
-                {
-                  "i": "cell-1747872568546",
-                  "x": 4,
-                  "y": 6,
-                  "w": 4,
-                  "h": 2,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [],
-                  "moved": false,
-                  "static": false
-                }
-              ],
-              "size": {
-                "width": 376,
-                "height": 270
-              }
-            },
-            "1": {},
-            "2": {}
-          },
-          "items": [
-            "one",
-            "two",
-            "three"
-          ],
-          "data-id": 1747872553578,
-          "data-type": "Tabs"
-        }
-      }
-    ],
+    "cell-1747227526997": [],
     "cell-1747227527273": [
       {
         "id": 1747753800232,
@@ -956,7 +474,7 @@
           "items": [
             {
               "type": "image",
-              "src": "https://picsum.photos/seed/1/600/400"
+              "src": "/uploads/hc-1747753800232-0.png?v=1747921919228"
             },
             {
               "type": "video",
@@ -1089,42 +607,27 @@
             },
             {
               "type": "video",
-              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              "src": "/uploads/hc-1747753796861-1.mp4?v=1747922095312"
             },
             {
               "type": "image",
               "src": "https://picsum.photos/seed/1/300/400"
             },
             {
-              "type": "image",
-              "src": "https://picsum.photos/seed/1/600/400"
-            },
-            {
               "type": "video",
-              "src": "https://www.w3schools.com/html/mov_bbb.mp4"
+              "src": "/uploads/hc-1747753796861-3.mp4?v=1747919174305"
             },
             {
               "type": "image",
-              "src": "https://picsum.photos/seed/1/800/400"
+              "src": "/uploads/hc-1747753796861-4.png?v=1747919152340"
+            },
+            {
+              "type": "image",
+              "src": "/uploads/hc-1747753796861-5.png?v=1747919776830"
             }
           ],
           "data-id": 1747753796861,
           "data-type": "HorizontCarousel"
-        }
-      },
-      {
-        "id": 1747771693460,
-        "parent": "cell-1747750856603",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "error",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1747771693460,
-          "data-type": "Button"
         }
       }
     ],
@@ -1173,7 +676,7 @@
                 ]
               },
               "images": [
-                "https://placehold.co/600x400/353636/gray?text=Promoimage&font=roboto"
+                "/uploads/pb-1747840618502-0.png?v=1747926095536"
               ]
             },
             {
@@ -1203,7 +706,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1747877886899,
+    "updatedAt": 1747926113930,
     "preview": "snapshots/home-root.png"
   },
   "size": {

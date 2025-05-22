@@ -56,37 +56,38 @@ export default function exportAppBar(
 
 
             return (
-                <AppBar
-                    style={{ ${toObjectLiteral(style)} }}
-                    elevation={ ${elevation ?? 1}}
-                    height={ ${height} }
-                    start={
-                        <Start>
-                            <Box
-                                component="img"
-                                src={ "${logo}" }
-                                alt="Logo"
-                                sx={{ ${toObjectLiteral(styles?.logo)} }}
-                            />
-                        </Start>
-                    }
-                    center={
-                        <LinearNavigation
-                            sx={{ ${toObjectLiteral(styles?.navigation)} }}
-                            items={transformUseRouter()}
-                        />
-                    }
-                    end={
-                        <React.Fragment>
-                            <MobailBurger
+                <div style={{ ${toObjectLiteral(style)} }} >
+                    <AppBar
+                        elevation={ ${elevation ?? 1}}
+                        height={ ${height} }
+                        start={
+                            <Start>
+                                <Box
+                                    component="img"
+                                    src={ "${logo}" }
+                                    alt="Logo"
+                                    sx={{ ${toObjectLiteral(styles?.logo)} }}
+                                />
+                            </Start>
+                        }
+                        center={
+                            <LinearNavigation
+                                sx={{ ${toObjectLiteral(styles?.navigation)} }}
                                 items={transformUseRouter()}
                             />
+                        }
+                        end={
+                            <React.Fragment>
+                                <MobailBurger
+                                    items={transformUseRouter()}
+                                />
 
-                            {/** секция доп элементов */}
-                            
-                        </React.Fragment>
-                    }
-                />
+                                {/** секция доп элементов */}
+                                
+                            </React.Fragment>
+                        }
+                    />
+                </div>
             );
         }
     `);

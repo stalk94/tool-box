@@ -47,6 +47,7 @@ export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
     'data-slot'?: boolean | string | number
+    apiPath?: string
     children ?: string | any
     style ?: React.CSSProperties
     styles?: any

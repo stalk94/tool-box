@@ -244,11 +244,11 @@ export const FrameWrapper = React.forwardRef((props: StackWrapperProps, ref) => 
         let metaNameParsed;
         if(metaName && metaName.length > 3) metaNameParsed = metaName;
 
-        const code = exportedFrame(
+        const code = slots[0]?.size ? exportedFrame(
             useEditorContext().meta.get({noproxy:true}),
             slots[0],
             metaNameParsed
-        );
+        ) : '';
         
         call(code);
     }

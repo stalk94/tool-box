@@ -125,7 +125,7 @@ type HeaderWrapperProps = {
 
 export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, style, items, styles, activeIndexs, slots, fullWidth, ...otherProps } = props;
+    const { 'data-id': dataId, style, metaName, items, styles, activeIndexs, slots, fullWidth, ...otherProps } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
     const handleChange = (index: number, data: string) => {
@@ -239,7 +239,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, style, items, slots, fullWidth, textColor, ...otherProps } = props;
+    const { 'data-id': dataId, style, items, metaName, slots, fullWidth, textColor, ...otherProps } = props;
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
@@ -800,7 +800,11 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
     degidratationRef.current = (call) => {
         const code = renderAppBar(
             src,
-            style,
+            {
+                width: '100%',
+                height: '100%',
+                ...style 
+            },
             elevation,
             height,
             {
@@ -880,47 +884,55 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
 
 
     return (
-        <AppBar
+        <div
+            ref={ref}
             data-id={dataId}
             data-type='AppBar'
-            style={{ ...style }}
-            elevation={elevation ?? 1}
-            height={height - 5}
-            start={
-                <Start>
-                    <Box
-                        component="img"
-                        src={src}
-                        alt="Logo"
+            style={{
+                width: '100%', 
+                height: '100%',
+                ...style 
+            }}
+        >
+            <AppBar
+                elevation={elevation ?? 1}
+                height={height - 5}
+                start={
+                    <Start>
+                        <Box
+                            component="img"
+                            src={src}
+                            alt="Logo"
+                            sx={{
+                                maxHeight: '40px',
+                                padding: '5px',
+                                objectFit: 'contain',
+                                borderRadius: '3px',
+                                ...styles?.logo
+                            }}
+                        />
+                    </Start>
+                }
+                center={
+                    <LinearNavigation
                         sx={{
-                            maxHeight: '40px',
-                            padding: '5px',
-                            objectFit: 'contain',
-                            borderRadius: '3px',
-                            ...styles?.logo
+                            justifyContent: 'flex-start',
+                            mr: 2,
+                            ...styles?.navigation
                         }}
-                    />
-                </Start>
-            }
-            center={
-                <LinearNavigation
-                    sx={{
-                        justifyContent: 'flex-start',
-                        mr: 2,
-                        ...styles?.navigation
-                    }}
-                    items={transformUseRouter()}
-                />
-            }
-            end={
-                <React.Fragment>
-                    <MobailBurger
                         items={transformUseRouter()}
                     />
+                }
+                end={
+                    <React.Fragment>
+                        <MobailBurger
+                            items={transformUseRouter()}
+                        />
 
-                </React.Fragment>
-            }
-        />
+                    </React.Fragment>
+                }
+            />
+        </div>
     );
 });
 export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperProps, ref) => {

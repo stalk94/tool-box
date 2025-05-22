@@ -1,6 +1,5 @@
 import cell_1746527949939 from './cell-1746527949939.tsx';
 import cell_1747227523825 from './cell-1747227523825.tsx';
-import cell_1747227526997 from './cell-1747227526997.tsx';
 import cell_1747227527273 from './cell-1747227527273.tsx';
 import cell_1747750856603 from './cell-1747750856603.tsx';
 import cell_1747755864668 from './cell-1747755864668.tsx';
@@ -165,22 +164,6 @@ export default function RenderGrid() {
                 }}
             >
                 {cell_1747227523825()}
-            </div>
-
-            <div
-                key={'cell-1747227526997'}
-                style={{
-                    overflowX: 'hidden',
-                    overflowY: 'auto',
-                    height: '100%',
-                    display: 'inline-flex',
-                    width: '100%',
-                    flexWrap: 'wrap',
-                    alignItems: 'stretch',
-                    alignContent: 'flex-start'
-                }}
-            >
-                {cell_1747227526997()}
             </div>
 
             <div

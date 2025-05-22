@@ -46,6 +46,7 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
         }
     }
     
+    
     if (type === 'video') {
         return (
             <CardMedia

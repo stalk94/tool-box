@@ -1,15 +1,32 @@
 import { CarouselHorizontal } from '@lib/index';
-import { Button } from '@mui/material';
 import React from 'react';
 
 export function CarouselHorizontalWrap() {
     const items = [
-        { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
-        { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-        { type: 'image', src: 'https://picsum.photos/seed/1/300/400' },
-        { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
-        { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
-        { type: 'image', src: 'https://picsum.photos/seed/1/800/400' }
+        {
+            type: 'video',
+            src: '/uploads/hc-1747753796861-0.mp4?v=1747928464797'
+        },
+        {
+            type: 'video',
+            src: '/uploads/hc-1747753796861-1.mp4?v=1747922095312'
+        },
+        {
+            type: 'image',
+            src: '/uploads/hc-1747753796861-2.png?v=1747928468917'
+        },
+        {
+            type: 'video',
+            src: '/uploads/hc-1747753796861-3.mp4?v=1747919174305'
+        },
+        {
+            type: 'image',
+            src: '/uploads/hc-1747753796861-4.png?v=1747919152340'
+        },
+        {
+            type: 'image',
+            src: '/uploads/hc-1747753796861-5.png?v=1747919776830'
+        }
     ];
 
     return (
@@ -39,24 +56,6 @@ export default function Cell() {
     return (
         <>
             <CarouselHorizontalWrap />
-
-            <Button
-                startIcon={undefined}
-                endIcon={undefined}
-                style={{}}
-                variant="outlined"
-                color="error"
-                fullWidth
-                data-type="Button"
-                onClick={() =>
-                    sharedEmmiter.emit('event', {
-                        id: 1747771693460,
-                        type: 'click'
-                    })
-                }
-            >
-                Button
-            </Button>
         </>
     );
 }

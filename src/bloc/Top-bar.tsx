@@ -71,7 +71,6 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         }
     }, [info.select.cell]);
 
-
     return (
         <Paper 
             component='div'

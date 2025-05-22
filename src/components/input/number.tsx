@@ -17,14 +17,29 @@ export type NumberInputProps = {
 
 export default function NumberInput({ value, min=-10, max=100, step=1, onChange, ...props }: NumberInputProps) {
     const theme = useTheme();
+    const isMounted = React.useRef(false);
     const [inputValue, setInputValue] = React.useState<number>(0);
+    const [rawInput, setRawInput] = React.useState<string>('0');
   
     const updateValue = (val: number) => {
         const clamped = Math.max(min, Math.min(val, max));
         setInputValue(clamped);
+        setRawInput(String(clamped));
         onChange?.(clamped);
     }
     const handleInputChange = (raw: string) => {
+        setRawInput(raw);
+
+        const cleaned = raw.replace(/[^\d-]/g, '');
+        const parsed = parseInt(cleaned, 10);
+
+        if (!isNaN(parsed)) {
+            updateValue(parsed);
+        }
+    }
+    const handleInputChangeOld = (raw: string) => {
+        setRawInput(raw);
+
         if (raw.trim() === '') {
             setInputValue(0); // можно отобразить пустое поле
             return;
@@ -38,11 +53,28 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
             updateValue(parsed);
         }
     }
+    const handleBlur = () => {
+        const cleaned = rawInput.replace(/[^\d-]/g, '');
+        const parsed = parseInt(cleaned, 10);
+
+        if (!isNaN(parsed)) {
+            updateValue(parsed);
+        } 
+        else {
+            updateValue(0);
+        }
+    }
     const decrease = () => updateValue(inputValue - step);
     const increase = () => updateValue(inputValue + step);
 
     React.useEffect(() => {
-        if(value !==undefined ) setInputValue(value);
+        if (typeof value === 'number' && value !== inputValue && isMounted.current) {
+            setInputValue(value);
+            setRawInput(value);
+        } 
+        else if (!isMounted.current) {
+            isMounted.current = true;
+        }
     }, [value]);
 
     const isMin = inputValue <= min;
@@ -62,9 +94,10 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
             </IconButton>
 
             <InputBaseCustom
-                value={inputValue}
+                value={rawInput}
                 type="text"
                 onChange={handleInputChange}
+                onBlur={handleBlur}
                 disabled={props.disabled}
                 sx={{
                     flex: 1,

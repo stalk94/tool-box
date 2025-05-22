@@ -81,7 +81,7 @@ ${renderedBlocks.join('\n\n')}
 //      работа с файлами editor (next or vite) (! отключить доступ в продакшене)
 // ----------------------------------------------------------------------------
 
-export const saveBlockToFile = async (scope: string, name: string) => {
+export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: string, type: 'error'|'success')=> void) => {
 	const context = useEditorContext();
 	const cellsContent = useCellsContent();
 
@@ -114,9 +114,11 @@ export const saveBlockToFile = async (scope: string, name: string) => {
 
 	if (!res.ok) {
 		console.error('❌ Ошибка при сохранении блока');
+		if(clb) clb('Ошибка при сохранении блока', 'error');
 	} 
 	else {
 		console.log('✅ Блок сохранён');
+		if(clb) clb('Блок сохранён', 'success');
 	}
 }
 export const exportLiteralToFile = async (path: string[], fileName: string, fileData: string) => {

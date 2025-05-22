@@ -18,6 +18,7 @@ export type ListProps = MenuItemProps & {
  */ 
 export default function({ item, onItemClick }: ListProps) {
     const theme = useTheme();
+    const isMounted = React.useRef(false);
     const colorSelect = theme.palette?.menu?.select;
     const [open, setOpen] = useState(false);
     
@@ -49,8 +50,11 @@ export default function({ item, onItemClick }: ListProps) {
         }
     }
     React.useEffect(()=> {
-        if(item.children) {
+        if(item.children && isMounted.current) {
             if(item.children.find((elem)=> elem.select)) setOpen(true);
+        }
+        else if(!isMounted.current) {
+            isMounted.current = true;
         }
     }, [item]);
 

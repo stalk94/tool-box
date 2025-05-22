@@ -76,6 +76,7 @@ const ColorWindow =({ color, onChange, sx })=> (
 
 export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showCopy, variant='popup', ...props }: ColorPickerProps) {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+    const isMounted = React.useRef(false);
     const [color, setColor] = useState<RgbaColor>(parseRgba(value));
     const [modalOpen, setModalOpen] = useState(false);
     const theme = useTheme();
@@ -99,8 +100,11 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
 
 
     React.useEffect(() => {
-        if (value) {
+        if (value && isMounted.current) {
             setColor(parseRgba(value));
+        }
+        else if(!isMounted.current) {
+            isMounted.current = true;
         }
     }, [value]);
 
@@ -170,6 +174,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
 
 export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showCopy, variant='popup', ...props }: ColorPickerProps) {
     const theme = useTheme();
+    const isMounted = React.useRef(false);
     const [inputValue, setInputValue] = useState(String(value));
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
@@ -214,9 +219,12 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
     );
 
     React.useEffect(() => {
-        if (value) {
+        if (value && isMounted.current) {
             setInputValue(String(value));
             setColor(parseRgba(String(value)));
+        }
+        else if(!isMounted.current) {
+            isMounted.current = true;
         }
     }, [value]);
   

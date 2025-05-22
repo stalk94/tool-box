@@ -1,5 +1,6 @@
 'use client'
 import React from "react";
+import { useSnackbar } from 'notistack';
 import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -40,6 +41,7 @@ if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter<Events>();
 // это редактор блоков сетки
 export default function Block({ setShowBlocEditor }) {
     globalThis.ZOOM = 1;   
+    const { enqueueSnackbar } = useSnackbar();
     const [enableContext, setEnable] = React.useState(false);
     const nestedContext = useHookstate(useNestedContext());                                    
     const cacheDrag = React.useRef<HTMLDivElement>(null);
@@ -61,7 +63,9 @@ export default function Block({ setShowBlocEditor }) {
         const name = ctx.meta.name.get();
         const scope = ctx.meta.scope.get();
         //snapshotAndUpload(`${scope}-${name}`);
-        saveBlockToFile(scope, name);
+        saveBlockToFile(scope, name, (msg, type)=> {
+            enqueueSnackbar(msg, {variant: type});
+        });
     }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, parent } = component;
@@ -254,7 +258,10 @@ export default function Block({ setShowBlocEditor }) {
     const handleKeyboard =(e: KeyboardEvent)=> {
         if (e.ctrlKey && e.key.toLowerCase() === 'c') {
             const select = info.select.content?.get({noproxy: true});
-            if(select) ctx.buffer.set(serrializeCopy(select));
+            if(select) {
+                ctx.buffer.set(serrializeCopy(select));
+                enqueueSnackbar('скопирован', {variant: 'default'});
+            }
         }
     }
     useSafeAsyncEffect(async (isMounted) => {

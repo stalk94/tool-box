@@ -12,7 +12,7 @@ type FormAuthOrRegWrapperProps = ComponentProps & {
 
 export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, style, items, fullWidth, ...otherProps } = props;
+    const { 'data-id': dataId, style, items, apiPath, fullWidth, ...otherProps } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
     const handleChange = (index: number, data: string) => {
@@ -85,3 +85,4 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
         </div>
     );
 });
+

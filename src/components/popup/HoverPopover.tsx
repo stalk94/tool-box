@@ -17,7 +17,7 @@ export type HoverPopoverProps = {
 
 
 export default function HoverPopover({ children, content, delay = 50, styles, ...props }: HoverPopoverProps) {
-    const theme = useTheme();
+    const isMounted = React.useRef(false);
     const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
     const timeoutRef = React.useRef<number | null>(null);
 
@@ -31,7 +31,8 @@ export default function HoverPopover({ children, content, delay = 50, styles, ..
         }, delay);
     }
     React.useEffect(()=> {
-        setAnchorEl(null);
+        if(isMounted.current) setAnchorEl(null);
+        else if(!isMounted.current) isMounted.current = true;
     }, [children]);
 
 

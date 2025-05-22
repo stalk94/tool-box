@@ -52,7 +52,7 @@ export const MobailBurger = MobailBurgerNavigation;
  */
 export default function ({ start, center, end, height, ...props }: AppBarCustomProps) {
     const theme = useTheme();
-
+    
     // alpha(theme.palette.background.input, 0.35)
     return(
         <AppBar 

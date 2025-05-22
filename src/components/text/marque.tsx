@@ -63,6 +63,7 @@ export const MarqueeAdaptive: React.FC<MarqueeTextProps> = ({
 }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const textRef = useRef<HTMLDivElement>(null);
+    const isMounted = useRef(false);
     const [shouldScroll, setShouldScroll] = useState(false);
 
 
@@ -71,19 +72,22 @@ export const MarqueeAdaptive: React.FC<MarqueeTextProps> = ({
         return `marquee ${duration}s`;
     }
     useEffect(() => {
-        const checkOverflow = () => {
-            if (containerRef.current && textRef.current) {
-                const isOverflowing = textRef.current.scrollWidth > containerRef.current.offsetWidth;
-                setShouldScroll(isOverflowing);
-            }
-        };
+        if(isMounted.current) {
+            const checkOverflow = () => {
+                if (containerRef.current && textRef.current) {
+                    const isOverflowing = textRef.current.scrollWidth > containerRef.current.offsetWidth;
+                    setShouldScroll(isOverflowing);
+                }
+            };
 
-        checkOverflow();
+            checkOverflow();
 
-        const resizeObserver = new ResizeObserver(checkOverflow);
-        if (containerRef.current) resizeObserver.observe(containerRef.current);
+            const resizeObserver = new ResizeObserver(checkOverflow);
+            if (containerRef.current) resizeObserver.observe(containerRef.current);
 
-        return () => resizeObserver.disconnect();
+            return () => resizeObserver.disconnect();
+        }
+        else isMounted.current = true;
     }, []);
 
     const keyframeName = direction === 'left' ? 'marquee-left' : 'marquee-right';

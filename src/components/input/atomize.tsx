@@ -1,6 +1,6 @@
 import React from 'react';
-import { InputBase, Paper, useTheme, InputBaseProps, InputLabel, InputLabelProps as InputLabelP, Box } from '@mui/material';
-import { alpha, lighten, darken, styled, fontStyle, SxProps } from '@mui/system';
+import { InputBase, useTheme, InputBaseProps, InputLabel, InputLabelProps as InputLabelP, Box } from '@mui/material';
+import { alpha, lighten, styled, SxProps } from '@mui/system';
 
 
 
@@ -173,6 +173,7 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
 /** Базовый инпут */
 export function InputBaseCustom({ value, onChange, type, styles, ...props }: PropsInputBaseCustom) {
     const theme = useTheme();
+    const isMounted = React.useRef(false);
     const [v, setV] = React.useState(value);
     
     const placeholderStyle = {
@@ -200,7 +201,12 @@ export function InputBaseCustom({ value, onChange, type, styles, ...props }: Pro
         onChange && onChange(newValue);
     };
     React.useEffect(()=> {
-        setV(value);
+        if (isMounted.current) {
+            setV(value);
+        } 
+        else {
+            isMounted.current = true;
+        }
     }, [value]);
    
     

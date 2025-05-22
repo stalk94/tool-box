@@ -82,7 +82,7 @@ const Templates =(args)=> {
  
     return(
         <AlertProvider {...args}>
-             <SnackbarProvider
+            <SnackbarProvider
                 maxSnack={3}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
                 autoHideDuration={4000}
