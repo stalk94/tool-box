@@ -12,7 +12,7 @@ import { componentMap, componentsRegistry } from './modules/helpers/registry';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
-import { serializeJSX } from './helpers/sanitize';
+import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
 import {  useSafeAsyncEffect } from "./helpers/usePopUp";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
@@ -251,6 +251,12 @@ export default function Block({ setShowBlocEditor }) {
             rerender: true
         });
     }
+    const handleKeyboard =(e: KeyboardEvent)=> {
+        if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+            const select = info.select.content?.get({noproxy: true});
+            if(select) ctx.buffer.set(serrializeCopy(select));
+        }
+    }
     useSafeAsyncEffect(async (isMounted) => {
         try {
             const data = await fetchFolders();
@@ -275,6 +281,11 @@ export default function Block({ setShowBlocEditor }) {
             });
             setTimeout(()=> setEnable(true), 100);
         });
+        window.addEventListener('keydown', handleKeyboard);
+
+        return () => {
+            window.removeEventListener('keydown', handleKeyboard);
+        }
     }, []);
 
 

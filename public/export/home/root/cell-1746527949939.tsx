@@ -17,9 +17,9 @@ export function ListWrap() {
                 </svg>
             ),
             primary: (
-                <div style={{ textAlign: 'left' }}>
+                <div>
                     primar
-                    <span style={{ color: 'rgba(0, 57, 255, 1)' }}>ydd</span>
+                    <span style={{ color: 'rgba(0, 57, 255, 1)' }}>yddd1</span>
                 </div>
             ),
             secondary: undefined
@@ -38,7 +38,17 @@ export function ListWrap() {
             ),
             primary: (
                 <div style={{ textAlign: 'left' }}>
-                    <span style={{ fontFamily: 'Montserrat' }}>primarytt</span>
+                    <a
+                        target="_blank"
+                        rel="noopener noreferrer nofollow"
+                        href="https://google.com"
+                    >
+                        <span style={{ color: 'rgba(168, 226, 219, 1)' }}>
+                            <span style={{ fontFamily: 'Montserrat' }}>
+                                primarytt
+                            </span>
+                        </span>
+                    </a>
                 </div>
             ),
             secondary: undefined
@@ -61,7 +71,7 @@ export function ListWrap() {
     ];
 
     return (
-        <div style={{ width: '100%' }}>
+        <div style={{ marginLeft: '0%', width: '100%' }}>
             <List onClick={undefined} items={items} />
         </div>
     );

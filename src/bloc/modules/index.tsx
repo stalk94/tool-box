@@ -5,7 +5,7 @@ import { ImageWrapper } from './media';
 import { 
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
-    ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt,
+    ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt, TableRows,
     VideoCameraFront, AccountBox, Label, Subtitles, StarsOutlined
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
@@ -17,6 +17,8 @@ import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper } from './any
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, 
     HeaderWrapper, BreadcrumbsWrapper, ListWrapper 
 } from './complex';
+import { FrameWrapper } from './blocs';
+import { FormAuthOrRegWrapper } from './forms';
 import { sharedContext, sharedEmmiter } from './helpers/shared';
 
 
@@ -450,6 +452,7 @@ registerComponent({
     component: AccordionWrapper,
     defaultProps: {
         fullWidth: true,
+        metaName: 'CustomAccordion',
         activeIndexs: [],
         styles: {},
         slots: {
@@ -489,6 +492,7 @@ registerComponent({
     component: TabsWrapper,
     defaultProps: {
         fullWidth: true,
+        metaName: 'CustomTabs',
         // ! ВСЕГДА ОБЬЕКТ 
         slots: {
             0: {},
@@ -566,5 +570,33 @@ registerComponent({
         style: {}
     },
     icon: Repartition,
+    category: 'block',
+});
+
+// bloks 
+registerComponent({
+    type: 'Frame',
+    component: FrameWrapper,
+    defaultProps: {
+        fullWidth: true,
+        metaName: 'CustomFrame',
+        slots: {
+            0: {}
+        },
+        style: {}
+    },
+    icon: TableRows,
+    category: 'block',
+});
+
+registerComponent({
+    type: 'FormAuth',
+    component: FormAuthOrRegWrapper,
+    defaultProps: {
+        fullWidth: true,
+        metaName: 'FormAuth',
+        style: {}
+    },
+    icon: TableRows,
     category: 'block',
 });

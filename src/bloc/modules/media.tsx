@@ -287,7 +287,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
             });
             else return ({
                 ...item,
-                src: renderComponentSsr(item.src)
+                src: { __raw: renderComponentSsr(item.src).trim() }
             });
         });
 
@@ -365,7 +365,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
             });
             else return ({
                 ...item,
-                src: renderComponentSsr(item.src)
+                src: { __raw: renderComponentSsr(item.src).trim() }
             });
         });
 

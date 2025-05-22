@@ -46,6 +46,17 @@ export const typography: ThemeOptions = {
 /** предустановки компонентов (!никаких явно заданных цветов) */
 export const components: ThemeOptions = {
     components: {
+        MuiInputBase: {
+            styleOverrides: {
+                root: {
+                    '& input:-webkit-autofill': {
+                        boxShadow: '0 0 0 1000pxrgba(245, 245, 245, 0) inset', // ← цвет фона
+                        WebkitTextFillColor: 'white',
+                        transition: 'background-color 5000s ease-in-out 0s', // хак
+                    },
+                }
+            },
+        },
         MuiTooltip: {
             styleOverrides: {
                 tooltip: {

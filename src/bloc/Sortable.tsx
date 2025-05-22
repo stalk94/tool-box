@@ -92,27 +92,8 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
     }
     // добавление в колекцию сохраненных
     const useAddToCollection = (ids: number) => {
-        const serialize =()=> {
-            const rawProps = { ...children.props };
-            const type = rawProps['data-type'];
-            const id = rawProps['data-id'];
-
-            delete rawProps.ref;
-            const cleanedProps = serializeJSX(rawProps);
-            console.log(cleanedProps)
-
-            return {
-                id,
-                props: {
-                    ...cleanedProps,
-                    'data-id': id,
-                    'data-type': type,
-                }
-            };
-        }
-
         const name = prompt('Введите key name для компонента (не менее 3х символов)');
-        if(name && name.length > 3) db.set(`blank.${name}`, serialize());
+        if(name && name.length > 3) db.set(`blank.${name}`, serrialize(children));
     }
     const handleClick = (target: HTMLDivElement) => {
         requestIdleCallback(()=> {

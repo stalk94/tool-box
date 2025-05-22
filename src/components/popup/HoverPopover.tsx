@@ -61,7 +61,7 @@ export default function HoverPopover({ children, content, delay = 50, styles, ..
                 }}
                 anchorOrigin={{
                     vertical: 'bottom',
-                    horizontal: 'center',
+                    horizontal: 'left',
                 }}
                 transformOrigin={{
                     vertical: 'top',

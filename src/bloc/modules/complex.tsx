@@ -1143,6 +1143,7 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
             data-id={dataId}
             data-type='List'
             style={{
+                ...style,
                 width: fullWidth ? "100%" : "fit-content"
             }}
         >

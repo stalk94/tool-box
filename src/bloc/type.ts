@@ -9,6 +9,7 @@ import EventEmitter from "../app/emiter";
 //                  GLOBAL DECLARE
 //////////////////////////////////////////////////////////////////////////
 export interface Events {
+    [key: string]: (data: any)=> void
     htmlRender: (data: { str: string; view:any })=> void
     jsonRender: (data: { call: (newJson: any)=> void })=> void
     leftBarChange: (data: any)=> void
@@ -45,13 +46,10 @@ export type ComponentRegister = {
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
-    /** если генерит события, то будет список labels emiters */
-    'data-pubs' ?: DataEmiters[]
-    /** на кого подписан */
-    'data-subs' ?: string | number[]
+    'data-slot'?: boolean | string | number
     children ?: string | any
     style ?: React.CSSProperties
-    styles?: InputStyles | any
+    styles?: any
     [key: string]: any
 }
 export type Component = React.ReactElement & {
@@ -68,7 +66,7 @@ export type Component = React.ReactElement & {
 export type ComponentSerrialize = {
     id: number
     /** id ячейки */
-    parent: string
+    parent: string | number
     props: ComponentProps
 }
 

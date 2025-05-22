@@ -15,7 +15,7 @@ import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
     const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
-    const switchKeys = ['fullHeight', 'showLabels'];
+    const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels'];
     //const fileKeys = [''];
     
     if(switchKeys.includes(propName)) {

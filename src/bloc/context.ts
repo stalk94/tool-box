@@ -1,6 +1,6 @@
 import { hookstate, State } from '@hookstate/core';
 import { localstored } from '@hookstate/localstored';
-import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ScopeData } from './type';
+import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ComponentProps, ScopeData } from './type';
 import { Editor } from '@tiptap/react';
 
 
@@ -31,6 +31,7 @@ export type EditorContextType = {
         isAbsolute: boolean
         position: {x:number, y:number}
     }
+    buffer?: ComponentSerrialize,
     currentCell?: LayoutCustom
     curentNestedContext?: {
         parentComponentId: number | string
@@ -46,13 +47,9 @@ export type InfoStateType = {
         cell?: string;
         content?: Component
         slot: {
-            id: string
-            props?: Record<string, any>
-            source: {
-                propsList: PropsSimpleList
-                render: ()=> void
-                degidratation: (props: Record<string, any>)=> void
-            }
+            component: Component,
+            index: number,
+            parent: ComponentProps
         }
         panel: {
             lastAddedType: string;
@@ -97,6 +94,7 @@ export function useEditorContext(): State<EditorContextType> | null {
                 currentCell: undefined,
                 // LINK - EXPEREMENTAL вложенный контекст компонента поддерживаюший вложенную сетку
                 curentNestedContext: undefined,
+                buffer: undefined,                      // скопированные компоненты
                 inspector: {
                     lastData: {},
                     colapsed: false,

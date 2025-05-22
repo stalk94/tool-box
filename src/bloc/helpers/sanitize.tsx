@@ -1,6 +1,6 @@
 import React from 'react';
 import { componentMap } from '../modules/helpers/registry';
-
+import { ComponentSerrialize, Component } from '../type';
 
 export function sanitizeProps<T extends Record<string, any>>(props: T): T {
     return JSON.parse(
@@ -102,7 +102,7 @@ export function deserializeJSX(node: any, maps?: Record<string, any>): any {
 }
 
 // используется для json редактора
-export const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
+export const serrialize = (component: Component, parent?: string|number): ComponentSerrialize => {
     const rawProps = { ...component.props };
     const type = rawProps['data-type'];
     const id = rawProps['data-id'] ?? Date.now();
@@ -112,7 +112,7 @@ export const serrialize = (component: Component, cellId: string): ComponentSerri
 
     return {
         id,
-        parent: cellId,
+        parent: parent,
         props: {
             ...cleanedProps,
             'data-id': id,
@@ -127,8 +127,7 @@ export const desserealize = (component: ComponentSerrialize, data?: Record<strin
         //console.log(component)
         const Component = componentMap[type];
         Component.displayName = type;
-        Component.parent = parent;
-        
+        Component.parent = parent ?? data?.parent;
 
 
         if (!Component) {

@@ -32,7 +32,8 @@ export function PromoBannerWrap() {
             style={{
                 display: 'block',
                 overflow: 'hidden',
-                position: 'relative'
+                position: 'relative',
+                marginLeft: '0%'
             }}
         >
             <PromoBanner

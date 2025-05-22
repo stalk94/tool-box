@@ -5,6 +5,7 @@ import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
     RadioButtonUnchecked, RadioButtonChecked, Add, Code
 } from "@mui/icons-material";
+import { TbCell } from "react-icons/tb";
 import { FaReact } from 'react-icons/fa';
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
@@ -18,9 +19,10 @@ import { createBlockToFile, fetchFolders } from "./helpers/export";
 import { componentMap, componentsRegistry } from "./modules/helpers/registry";
 import { usePopUpName, useSafeAsyncEffect } from './helpers/usePopUp';
 import { getUniqueBlockName } from "./helpers/editor";
-import { LeftToolPanelProps, ProxyComponentName } from './type';
+import { LeftToolPanelProps, ProxyComponentName, Component } from './type';
 import { useKeyboardListener } from './helpers/hooks';
 import { db } from "./helpers/export";
+import { useSelectSlot } from './helpers/useSlot';
 import { SiHomepage } from "react-icons/si";
 import exportGrid from './modules/export/Grid';
 import { DraggableToolItem } from './Dragable';
@@ -375,33 +377,28 @@ const useStylesEditor = (elem, onChange, curSub, setSub) => {
         )
     };
 }
-const useCell = (cell, curSub, setSub) => {
+const useSlot = (slot, curSub, setSub, onChange) => {
     return {
         start: (
             <TooglerInput
                 value={curSub}
-                disabled={!cell}
+                disabled={!slot?.component?.get()}
                 onChange={setSub}
                 sx={{ px: 0.2 }}
                 items={[
                     { label: <More sx={{ fontSize: 18 }} />, id: 'props' },
                     { label: <ColorLens sx={{ fontSize: 18 }} />, id: 'style' },
                     { label: <BorderStyle sx={{ fontSize: 18 }} />, id: 'flex' },
+                    { label: <FormatColorText sx={{ fontSize: 20 }} />, id: 'text' },
                 ]}
             />
         ),
         children: (
-            <>
-                {curSub === 'props' &&
-                    Object.entries(cell.get({ noProxy: true })?.props).map(([propsName, value])=> {
-                        if(propsName !== 'style') return(
-                            <span key={propsName}>
-                                
-                            </span>
-                        );
-                    })
-                }
-            </>
+            <Forms
+                type={curSub}
+                elemLink={slot?.component}
+                onChange={onChange}
+            />
         )
     };
 }
@@ -414,9 +411,9 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
     const render = useHookstate(useRenderState());
     const meta = useHookstate(useEditorContext().meta);
     const select = info.select;
-    const [curCellPanel, setCurCellPanel] = React.useState<'props' | 'style' | 'flex'>('props');
+    const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'cell'>('project');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'slot'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
     const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
 
@@ -430,7 +427,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         { divider: true },
         { id: 'styles', label: 'Настройки', icon: <Palette /> },
         { divider: true },
-        { id: 'cell', label: 'cell', icon: <SiHomepage size={20} style={{margin: 5}} /> }
+        //{ id: 'slot', label: 'cell', icon: <TbCell size={24} style={{margin: 3}} /> }
     ];
     const endItems = [
         { id: 'save', label: 'Сохранить', icon: <Save /> },
@@ -471,7 +468,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         else if (item.id === 'styles') setCurrentToolPanel('styles');
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') useDump();
-        else if (item.id === 'cell') setCurrentToolPanel('cell');
+        else if (item.id === 'slot') setCurrentToolPanel('slot');
         else if (item.id === 'export') handleExportGrid();
     }
     const useComponentUpdateFromEditorForm = (newDataProps) => {
@@ -479,6 +476,13 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         if (selectComponent) updateComponentProps({ 
             component: selectComponent, 
             data: newDataProps 
+        });
+    }
+    const useComponentSlotUpdateFromEditorForm = (newDataProps) => {
+        const selectSlot = select.slot.get({ noproxy: true });
+        if (selectSlot) EVENT.emit(`slotUpdate.${selectSlot.parent['data-id']}`, {
+            data: newDataProps,
+            index: selectSlot.index
         });
     }
 
@@ -490,7 +494,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         component: () => useElements(currentTool, setCurrentTool),
         styles: () => useStylesEditor(select.content, useComponentUpdateFromEditorForm, curSubpanel, setSubPanel),
         atoms: () => useAtoms(currentAtom, setCurrentAtom, desserealize),
-        cell: ()=> useCell(currentCell, curCellPanel, setCurCellPanel)
+        slot: ()=> useSlot(select.slot, curSlotPanel, setCurSlotPanel, useComponentSlotUpdateFromEditorForm)
     }
     const { start, children } = panelRenderers[currentToolPanel]
         ? panelRenderers[currentToolPanel]()

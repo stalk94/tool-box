@@ -235,7 +235,10 @@ export function InputBaseCustom({ value, onChange, type, styles, ...props }: Pro
                 },
                 ...props.sx
             }}
-            inputProps={{ style: { textAlign: theme.mixins.input.alight, resize: 'both', } }}
+            inputProps={{ 
+                style: { textAlign: theme.mixins.input.alight, resize: 'both', },
+                autoComplete: 'off',
+            }}
             onChange={(e) => useChange(e.target.value)}
         />
     );

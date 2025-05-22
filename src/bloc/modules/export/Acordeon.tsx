@@ -6,6 +6,7 @@ import { exportLiteralToFile } from "../../helpers/export";
 import MiniRender from '../../nest-slot/MiniRender';
 
 
+const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
 export async function useRender(layout: LayoutCustom[], size): Promise<string> {
     const container = document.createElement('div'); // НЕ добавляем в DOM
     const root = createRoot(container);
@@ -173,7 +174,8 @@ export function exportedTabs(
 
         Object.values(slots).map((data, idSlot)=> {
             if(data.layout) {
-                const name = items[idSlot] ?? `TabsSlotGrid_${idSlot}`;
+                const name = items[idSlot] ? capitalizeFirst(items[idSlot]) : `TabsSlotGrid_${idSlot}`;
+                
                 result.bodys.push(`<${name} />`);
                 result.imports.push(`import ${name} from './tabsSlots/${name}';`);
             }
@@ -196,9 +198,11 @@ export function exportedTabs(
         
         ls.map(async(elem, index)=> {
             if(elem.layout) {
+                const name = items[index] ? capitalizeFirst(items[index]) : `TabsSlotGrid_${index}`
+
                 exportLiteralToFile(
                     [meta.scope, `${meta.name}/tabsSlots`], 
-                    items[index] ?? `TabsSlotGrid_${index}`,
+                    name,
                     await useRender(elem.layout, elem.size)
                 );
             }
@@ -244,6 +248,46 @@ export function exportedTabs(
         }
     `);
 }
+export function exportedFrame(
+    meta: { scope: string, name: string },
+    slot: DataNested,
+    metaName?: string
+) {
+    const renderSlotsLinks =(name: string)=> {
+        return {
+            body: `<${name} />`,
+            imports: `import ${name} from './frames/${name}';`
+        }
+    }
+    const renderSlot = async(name: string)=> {
+        exportLiteralToFile(
+            [meta.scope, `${meta.name}/frames`],
+            name,
+            await useRender(slot.layout, slot.size)
+        );
+    }
+    const prerender = renderSlotsLinks(metaName??'StackGrid');
+    renderSlot(metaName??'StackGrid');
+
+
+    return (`
+        import React from 'react';
+        ${prerender.imports}
+        
+
+        export default function Frame() {
+
+            return (
+                <div
+                    style={{ width: '100%', display: 'block' }}
+                >
+                    ${prerender.body}
+                </div>
+            );
+        }
+    `);
+}
+
 // individual
 export function exportedBottomNav(
     items: {label:string, icon:string,id?:string}[],

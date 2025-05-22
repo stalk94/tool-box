@@ -252,6 +252,10 @@ const propsPromoBaner = {
     }
 }
 
+const propsStack = {
+    count: { type: 'number', min: 2, max: 8, step: 1 },
+}
+
 
 export default {
     Button: propsButton,
@@ -274,5 +278,6 @@ export default {
     Divider: propsDivider,
     Chip: propsChip,
     BottomNav: propsBottomNav,
-    PromoBanner: propsPromoBaner
+    PromoBanner: propsPromoBaner,
+    Stack: propsStack
 }

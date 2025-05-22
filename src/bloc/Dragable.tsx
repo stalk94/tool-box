@@ -76,21 +76,20 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
         });
     }, [isOver]);
 
+    
     return (
-        <div
+        <span
             data-slot-id={id}
             ref={setNodeRef}
             style={{
                 border: canDrop ? '1px dashed #4caf50' : '0px dashed #999',
-                minHeight: 60,
-                height: '100%',
                 transition: 'background 0.15s',
                 inset: 0,
                 zIndex: 9999
             }}
         >
             { children }
-        </div>
+        </span>
     );
 }
 // data - данные сетки слота

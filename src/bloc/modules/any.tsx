@@ -7,8 +7,7 @@ import { fill, empty } from '../../components/tools/icons-rating';
 import { ComponentProps } from '../type';
 import { deserializeJSX } from '../helpers/sanitize';
 import { updateComponentProps } from '../helpers/updateComponentProps';
-import { renderComponentSsr, toObjectLiteral } from './export/utils';
-import { toJSXProps } from './export/utils';
+import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr } from './export/utils';
 
 
 type DividerWrapperProps = DividerProps & ComponentProps;

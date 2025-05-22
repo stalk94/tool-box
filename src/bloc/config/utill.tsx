@@ -92,7 +92,7 @@ export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) 
     const listTypes = { flex:flexOptions, text:textOptions }[listType];
     const result: Schema[] = [];
 
-    Object.keys(listTypes).forEach((key, index) => {
+    Object.keys(listTypes??{}).forEach((key, index) => {
         const data = listTypes[key];            // значение из option
 
         

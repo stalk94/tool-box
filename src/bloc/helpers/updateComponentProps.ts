@@ -80,6 +80,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
     });
 }
 
+
 export function updateCelltProps(data) {
     const context = useEditorContext();
     const infoState = useInfoState();
