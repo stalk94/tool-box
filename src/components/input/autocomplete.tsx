@@ -21,7 +21,6 @@ export type AutoCompleteProps = Omit<AutocompleteProps<any, boolean, boolean, bo
 
 export default function AutoCompleteInput({ options, value, onChange, placeholder, ...props }: AutoCompleteProps) {
     const [curvalue, setCurValue] = React.useState(value ?? 'none');
-    const isMounted = React.useRef(false);
     const theme = useTheme();
     const placeholderStyle = {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -50,12 +49,9 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
         return clone;
     }
     React.useEffect(()=> {
-        if(value && isMounted.current) {
-            setCurValue(value);
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
-        }
+        if (typeof window === 'undefined') return;
+
+        if(value) setCurValue(value);
     }, [value]);
     
     
@@ -68,7 +64,7 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
                     color: theme.palette.action.active,
                 }}
             >
-                { props.left }
+                { props?.left }
             </IconButton>
 
             <Autocomplete

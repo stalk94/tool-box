@@ -6,103 +6,7 @@
       "y": 0,
       "w": 5,
       "h": 32,
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "metaName": "FormAuth",
-            "style": {},
-            "data-id": 1747877195809,
-            "data-type": "FormAuth"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "placeholder": "ввод",
-            "divider": "none",
-            "fullWidth": true,
-            "leftIcon": "none",
-            "styles": {},
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1747879266449,
-            "data-type": "TextInput"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "type": "time",
-            "fullWidth": true,
-            "styles": {},
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1747879269392,
-            "data-type": "Time"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "leftIcon": "none",
-            "rightIcon": "none",
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1747879273144,
-            "data-type": "Slider"
-          },
-          "_owner": null,
-          "_store": {}
-        },
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "label": "label",
-            "position": "column",
-            "fullWidth": true,
-            "items": [
-              {
-                "id": "1",
-                "label": "test-1"
-              },
-              {
-                "id": "2",
-                "label": "test-2"
-              }
-            ],
-            "labelStyle": {
-              "fontSize": 14
-            },
-            "data-id": 1747879276044,
-            "data-type": "ToggleButtons"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -116,23 +20,7 @@
       "y": 0,
       "w": 3,
       "h": 11,
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "src": "/placeholder.jpg",
-            "file": "",
-            "data-source": "src",
-            "alt": "Картинка",
-            "data-id": 1747257445972,
-            "data-type": "Image"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -160,50 +48,7 @@
       "y": 11,
       "w": 3,
       "h": 21,
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "slidesToShow": 3,
-            "slidesToScroll": 1,
-            "autoplay": true,
-            "autoplayDelay": 4000,
-            "loop": false,
-            "items": [
-              {
-                "type": "image",
-                "src": "/uploads/hc-1747753800232-0.png?v=1747921919228"
-              },
-              {
-                "type": "video",
-                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
-              },
-              {
-                "type": "image",
-                "src": "https://picsum.photos/seed/1/300/400"
-              },
-              {
-                "type": "image",
-                "src": "https://picsum.photos/seed/1/600/400"
-              },
-              {
-                "type": "video",
-                "src": "https://www.w3schools.com/html/mov_bbb.mp4"
-              },
-              {
-                "type": "image",
-                "src": "https://picsum.photos/seed/1/800/400"
-              }
-            ],
-            "data-id": 1747753800232,
-            "data-type": "VerticalCarousel"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -221,51 +66,7 @@
         "classNames": "",
         "style": {}
       },
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "slidesToShow": 3,
-            "slidesToScroll": 1,
-            "autoplay": true,
-            "autoplayDelay": 4000,
-            "loop": false,
-            "width": "100%",
-            "items": [
-              {
-                "type": "image",
-                "src": "https://picsum.photos/seed/1/600/400"
-              },
-              {
-                "type": "video",
-                "src": "/uploads/hc-1747753796861-1.mp4?v=1747922095312"
-              },
-              {
-                "type": "image",
-                "src": "https://picsum.photos/seed/1/300/400"
-              },
-              {
-                "type": "video",
-                "src": "/uploads/hc-1747753796861-3.mp4?v=1747919174305"
-              },
-              {
-                "type": "image",
-                "src": "/uploads/hc-1747753796861-4.png?v=1747919152340"
-              },
-              {
-                "type": "image",
-                "src": "/uploads/hc-1747753796861-5.png?v=1747919776830"
-              }
-            ],
-            "data-id": 1747753796861,
-            "data-type": "HorizontCarousel"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false
     },
@@ -279,79 +80,7 @@
         "classNames": "",
         "style": {}
       },
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "width": "100%",
-            "items": [
-              {
-                "title": "Title",
-                "buttonText": "ПОДРОБНЕЕ",
-                "description": {
-                  "type": "doc",
-                  "content": [
-                    {
-                      "type": "paragraph",
-                      "attrs": {
-                        "textAlign": null
-                      },
-                      "content": [
-                        {
-                          "type": "text",
-                          "text": "custom editable "
-                        },
-                        {
-                          "type": "text",
-                          "marks": [
-                            {
-                              "type": "textStyle",
-                              "attrs": {
-                                "color": "rgba(227, 24, 24, 1)"
-                              }
-                            }
-                          ],
-                          "text": "descriptidon "
-                        },
-                        {
-                          "type": "text",
-                          "text": "12"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                "images": [
-                  "/uploads/pb-1747840618502-0.png?v=1747926095536"
-                ]
-              },
-              {
-                "title": "Title",
-                "buttonText": "ПОДРОБНЕЕ",
-                "description": "custom editable description",
-                "images": [
-                  "https://placehold.co/600x400/353636/gray?text=PromoImage1&font=roboto"
-                ]
-              }
-            ],
-            "data-id": 1747840618502,
-            "data-type": "PromoBanner",
-            "styles": {
-              "dot": {
-                "size": "24",
-                "activeColor": "rgba(30, 63, 222, 1)"
-              }
-            },
-            "style": {
-              "marginLeft": "0%"
-            }
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false
     }
@@ -359,88 +88,26 @@
   "content": {
     "cell-1746527949939": [
       {
-        "id": 1747877195809,
+        "id": 1748005383266,
         "parent": "cell-1746527949939",
         "props": {
           "fullWidth": true,
-          "metaName": "FormAuth",
-          "style": {},
-          "data-id": 1747877195809,
-          "data-type": "FormAuth"
-        }
-      },
-      {
-        "id": 1747879266449,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "placeholder": "ввод",
-          "divider": "none",
-          "fullWidth": true,
-          "leftIcon": "none",
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1747879266449,
-          "data-type": "TextInput"
-        }
-      },
-      {
-        "id": 1747879269392,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "type": "time",
-          "fullWidth": true,
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1747879269392,
-          "data-type": "Time"
-        }
-      },
-      {
-        "id": 1747879273144,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "leftIcon": "none",
-          "rightIcon": "none",
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1747879273144,
-          "data-type": "Slider"
-        }
-      },
-      {
-        "id": 1747879276044,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "fullWidth": true,
-          "items": [
-            {
-              "id": "1",
-              "label": "test-1"
-            },
-            {
-              "id": "2",
-              "label": "test-2"
+          "metaName": "CustomFrame",
+          "elevation": 0,
+          "slots": {
+            "0": {
+              "TEST": 1,
+              "content": {},
+              "layout": [],
+              "size": {
+                "width": 471,
+                "height": 795
+              }
             }
-          ],
-          "labelStyle": {
-            "fontSize": 14
           },
-          "data-id": 1747879276044,
-          "data-type": "ToggleButtons"
+          "style": {},
+          "data-id": 1748005383266,
+          "data-type": "Frame"
         }
       }
     ],
@@ -459,7 +126,23 @@
         }
       }
     ],
-    "cell-1747227526997": [],
+    "cell-1747227526997": [
+      {
+        "id": 1748006167822,
+        "parent": "cell-1747227526997",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1748006167822,
+          "data-type": "Button"
+        }
+      }
+    ],
     "cell-1747227527273": [
       {
         "id": 1747753800232,
@@ -706,7 +389,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1747926113930,
+    "updatedAt": 1748009818778,
     "preview": "snapshots/home-root.png"
   },
   "size": {

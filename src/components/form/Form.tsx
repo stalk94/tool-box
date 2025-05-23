@@ -32,11 +32,12 @@ export type FormProps = {
  * ]
  */
 export default function Form({ scheme, onChange, onSpecificChange, labelPosition }: FormProps): React.JSX.Element {
-    const isMounted = React.useRef(false);
     const [state, setState] = React.useState<Record<string, any>>({});
 
     
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
         if (scheme.length > 0) {
             const initial: Record<string, any> = {};
 

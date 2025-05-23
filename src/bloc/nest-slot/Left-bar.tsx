@@ -226,6 +226,7 @@ export default function (
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') {
             const cellsContent = useCellsContent();
+            console.red('LEFT BAR: ', cellsContent);
 
             onChange({
                 content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках

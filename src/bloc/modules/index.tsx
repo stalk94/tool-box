@@ -580,6 +580,7 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         metaName: 'CustomFrame',
+        elevation: 0,
         slots: {
             0: {}
         },

@@ -1,4 +1,5 @@
 'use client'
+import colorLog from '../app/helpers/console';
 import React from "react";
 import { useSnackbar } from 'notistack';
 import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
@@ -23,24 +24,24 @@ import GridTest2 from 'public/export/home/root/index';
 import "../style/edit.css";
 
 
-
+/////////////////////////////////////////////////////////////////////////////
 if (!window.next) {
     import('./modules/index').then((mod) => {
-        console.log('Модуль подгружен:', mod);
+        console.gray('Модуль подгружен:', mod);
     })
     .catch((err) => {
         console.error('❌ Ошибка при загрузке модуля:', err);
     });
 }
 
-// ANCHOR - СИТЕМНЫЙ ЭММИТЕР
 if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter<Events>();
+globalThis.ZOOM = 1; 
+colorLog();
+/////////////////////////////////////////////////////////////////////////////
 
 
 
-// это редактор блоков сетки
-export default function Block({ setShowBlocEditor }) {
-    globalThis.ZOOM = 1;   
+export default function Block({ setShowBlocEditor }) {  
     const { enqueueSnackbar } = useSnackbar();
     const [enableContext, setEnable] = React.useState(false);
     const nestedContext = useHookstate(useNestedContext());                                    
@@ -278,28 +279,32 @@ export default function Block({ setShowBlocEditor }) {
         }
     }, []);
     React.useEffect(()=> {
-        // нажат переход к вложенной сетке слота компонента
-        EVENT.on('addGridContext', (data: SlotDataBus)=> {
+        const handle = (data: SlotDataBus)=> {
             console.log('ADD GRID CONTEXT: ', data);
+            dumpRender();           // сохранимся предварительно
 
             nestedContext.set({
                 isEnable: true,
                 currentData: data
             });
             setTimeout(()=> setEnable(true), 100);
-        });
+        }
+
+        EVENT.on('addGridContext', handle);
         window.addEventListener('keydown', handleKeyboard);
 
         return () => {
             window.removeEventListener('keydown', handleKeyboard);
+            EVENT.off('addGridContext', handle);
         }
     }, []);
-
+    
 
     return(
         <>
             { enableContext &&
                 <NestedContext
+                    key={`nested-${nestedContext.currentData.idParent.get()}-${nestedContext.currentData.idSlot.get()}`}
                     useBackToEditorBase={(editData)=> {
                         handleChangeNestedContext(editData);
                         setEnable(false)

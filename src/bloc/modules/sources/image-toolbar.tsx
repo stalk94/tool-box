@@ -47,6 +47,8 @@ export const LoaderToolWrapper = (props) => {
                     transform: 'translate(-50%, -50%)',
                     display: 'flex',
                     zIndex: 2,
+                    padding: '2 12',
+                    borderRadius: 1,
                     ...style
                 }}
             >
@@ -58,9 +60,9 @@ export const LoaderToolWrapper = (props) => {
                     }}
                     sx={{
                         border: '1px solid #ffffff99',
-                        background: '#ffffff31',
-                        borderRadius: 3,
-                        padding: '4px 12px',
+                        background: '#ffffff12',
+                        borderRadius: 2,
+                        padding: '2px 12px',
                         cursor: 'pointer',
                         zIndex: 5,
                         opacity: 0.8,
@@ -68,13 +70,14 @@ export const LoaderToolWrapper = (props) => {
                         fontWeight: 'bold',
                         textAlign: 'center',
                         transition: 'all 0.2s ease',
+                        backdropFilter: 'blur(12px)', 
                         '&:hover': {
                             background: '#ffffffcc',
                             opacity: 1,
                         }
                     }}
                 >
-                    <Upload />
+                    <Upload sx={{fontSize: 16}} />
                 </IconButton>
                 <IconButton
                     size='small'
@@ -83,9 +86,9 @@ export const LoaderToolWrapper = (props) => {
                         onDelete();
                     }}
                     sx={{
-                        border: '1px solid #c21c1cb2',
+                        border: '1px solid #e2727299',
                         background: '#ffffff12',
-                        borderRadius: 3,
+                        borderRadius: 2,
                         padding: '2px 4px',
                         cursor: 'pointer',
                         ml: 0.5,
@@ -95,13 +98,14 @@ export const LoaderToolWrapper = (props) => {
                         fontWeight: 'bold',
                         textAlign: 'center',
                         transition: 'all 0.2s ease',
+                        backdropFilter: 'blur(12px)',
                         '&:hover': {
                             background: '#fb404038',
                             opacity: 1,
                         }
                     }}
                 >
-                    <DeleteForever sx={{color: '#d91c1c'}} />
+                    <DeleteForever sx={{color: '#c65555', fontSize: 20}} />
                 </IconButton>
             </Box>
 

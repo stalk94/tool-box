@@ -2,30 +2,94 @@ import React from 'react';
 import { DropSlot, ContextSlot } from '../Dragable';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { ComponentSerrialize, Component, ComponentProps } from '../type';
-import { IconButton, Button, Stack } from "@mui/material";
-import { desserealize, serrialize } from '../helpers/sanitize';
-import { useSelectSlot } from '../helpers/useSlot';
-import { updateComponentProps } from '../helpers/updateComponentProps';
-import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
-import { Add, DeleteForever } from '@mui/icons-material';
-import { FaPaste } from "react-icons/fa6";
-import { useHookstate } from "@hookstate/core";
 import { useEditorContext } from "../context";
 import { exportedFrame } from './export/Acordeon';
+import { Paper } from '@mui/material';
 
 
-type StackWrapperProps = ComponentProps & {
+type FrameWrapperProps = ComponentProps & {
     'data-id': number
     'data-type': 'Stack'
     fullWidth: boolean
     style: React.CSSProperties
-    isDirectionColumn: boolean
-    spacing?: number
-    divider?: boolean
-    count: number           // количество слотов от 2 до 6
     slots: Record<string, ComponentSerrialize>
 }
-const SlotRenderWrapper = ({ isDirectionColumn, fullWidth, children, index, select, setSelect, onAdd }) => {
+
+
+export const FrameWrapper = React.forwardRef((props: FrameWrapperProps, ref) => {
+    const degidratationRef = React.useRef<(call) => void>(() => {});
+    const { 'data-id': dataId, fullWidth, style={}, metaName, slots, ...otherProps } = props;
+    const { width, height, container } = useComponentSizeWithSiblings(dataId);
+
+    degidratationRef.current = (call) => {
+        let metaNameParsed;
+        if(metaName && metaName.length > 3) metaNameParsed = metaName;
+
+        const code = slots[0]?.size ? exportedFrame(
+            useEditorContext().meta.get({noproxy:true}),
+            slots[0],
+            metaNameParsed
+        ) : '';
+        
+        call(code);
+    }
+    React.useEffect(()=> {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.'+dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.'+dataId, handler);
+        }
+    }, []);
+    
+
+    
+    return (
+        <Paper
+            component='div'
+            ref={ref}
+            data-id={dataId}
+            data-type="Frame"
+            style={{ 
+                width: '100%',
+                ...style, 
+                borderWidth: '1px',
+                border: style?.borderColor ? `1px solid ${style?.borderColor}` : 'none',
+                borderStyle: style?.borderStyle ?? 'none',
+                display: 'block', 
+                height: height ?? '100%',
+                zIndex: 2,
+            }}
+            { ...otherProps }
+        >
+            <ContextSlot
+                idParent={dataId}
+                idSlot={0}
+                fullHeight={height}
+                data={{
+                    ...slots[0],
+                    size: {
+                        width: container.width,
+                        height: container.height
+                    }
+                }}
+                nestedComponentsList={{
+                    Button: true,
+                    Typography: true
+                }}
+            />
+        </Paper>
+    );
+});
+
+
+
+
+
+/**
+ * const SlotRenderWrapper = ({ isDirectionColumn, fullWidth, children, index, select, setSelect, onAdd }) => {
     const buffer = useHookstate(useEditorContext().buffer);
     const typeAcessTest = ['Button', 'IconButton', 'Chip', 'List', 'Card', 'Text', 'Typography'];
    
@@ -234,58 +298,4 @@ export const StackWrapperNewStyle = React.forwardRef((props: StackWrapperProps, 
         </div>
     );
 });
-
-export const FrameWrapper = React.forwardRef((props: StackWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
-    const { 'data-id': dataId, fullWidth, style, metaName, slots, isDirectionColumn, ...otherProps } = props;
-    const { width, height, container } = useComponentSizeWithSiblings(dataId);
-
-    degidratationRef.current = (call) => {
-        let metaNameParsed;
-        if(metaName && metaName.length > 3) metaNameParsed = metaName;
-
-        const code = slots[0]?.size ? exportedFrame(
-            useEditorContext().meta.get({noproxy:true}),
-            slots[0],
-            metaNameParsed
-        ) : '';
-        
-        call(code);
-    }
-    React.useEffect(()=> {
-        const handler = (data) => degidratationRef.current(data.call);
-        sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.'+dataId, handler);
-
-        return () => {
-            sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.'+dataId, handler);
-        }
-    }, []);
-    
-    
-    return (
-        <div
-            ref={ref}
-            data-id={dataId}
-            data-type="Frame"
-            style={{ ...style, width: '100%', display: 'block' }}
-        >
-            <ContextSlot
-                idParent={dataId}
-                idSlot={0}
-                data={{
-                    ...slots[0],
-                    size: {
-                        width: container.width,
-                        height: container.height / 4
-                    }
-                }}
-                nestedComponentsList={{
-                    Button: true,
-                    Typography: true
-                }}
-            />
-        </div>
-    );
-});
+ */

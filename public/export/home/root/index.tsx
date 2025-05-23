@@ -1,5 +1,6 @@
 import cell_1746527949939 from './cell-1746527949939.tsx';
 import cell_1747227523825 from './cell-1747227523825.tsx';
+import cell_1747227526997 from './cell-1747227526997.tsx';
 import cell_1747227527273 from './cell-1747227527273.tsx';
 import cell_1747750856603 from './cell-1747750856603.tsx';
 import cell_1747755864668 from './cell-1747755864668.tsx';
@@ -16,112 +17,64 @@ export default function RenderGrid() {
             layouts={{
                 lg: [
                     {
-                        w: 5,
-                        h: 32,
+                        i: 'cell-1746527949939',
                         x: 0,
                         y: 0,
-                        i: 'cell-1746527949939',
-                        minW: undefined,
-                        maxW: undefined,
-                        minH: undefined,
-                        maxH: undefined,
+                        w: 5,
+                        h: 32,
                         moved: false,
                         static: false,
-                        isDraggable: undefined,
-                        isResizable: undefined,
-                        resizeHandles: undefined,
-                        isBounded: undefined,
                         props: { style: {}, classNames: '' }
                     },
                     {
-                        w: 3,
-                        h: 11,
+                        i: 'cell-1747227523825',
                         x: 5,
                         y: 0,
-                        i: 'cell-1747227523825',
-                        minW: undefined,
-                        maxW: undefined,
-                        minH: undefined,
-                        maxH: undefined,
+                        w: 3,
+                        h: 11,
                         moved: false,
                         static: false,
-                        isDraggable: undefined,
-                        isResizable: undefined,
-                        resizeHandles: undefined,
-                        isBounded: undefined,
                         props: { style: {}, classNames: '' }
                     },
                     {
-                        w: 4,
-                        h: 11,
+                        i: 'cell-1747227526997',
                         x: 8,
                         y: 0,
-                        i: 'cell-1747227526997',
-                        minW: undefined,
-                        maxW: undefined,
-                        minH: undefined,
-                        maxH: undefined,
+                        w: 4,
+                        h: 11,
                         moved: false,
                         static: false,
-                        isDraggable: undefined,
-                        isResizable: undefined,
-                        resizeHandles: undefined,
-                        isBounded: undefined,
                         props: { style: {}, classNames: '' }
                     },
                     {
+                        i: 'cell-1747227527273',
+                        x: 5,
+                        y: 11,
                         w: 3,
                         h: 21,
-                        x: 5,
-                        y: 11,
-                        i: 'cell-1747227527273',
-                        minW: undefined,
-                        maxW: undefined,
-                        minH: undefined,
-                        maxH: undefined,
                         moved: false,
                         static: false,
-                        isDraggable: undefined,
-                        isResizable: undefined,
-                        resizeHandles: undefined,
-                        isBounded: undefined,
                         props: { style: {}, classNames: '' }
                     },
                     {
+                        i: 'cell-1747750856603',
+                        x: 8,
+                        y: 11,
                         w: 4,
                         h: 9,
-                        x: 8,
-                        y: 11,
-                        i: 'cell-1747750856603',
-                        minW: undefined,
-                        maxW: undefined,
-                        minH: undefined,
-                        maxH: undefined,
+                        props: { classNames: '', style: {} },
                         moved: false,
-                        static: false,
-                        isDraggable: undefined,
-                        isResizable: undefined,
-                        resizeHandles: undefined,
-                        isBounded: undefined,
-                        props: { style: {}, classNames: '' }
+                        static: false
                     },
                     {
-                        w: 4,
-                        h: 12,
+                        i: 'cell-1747755864668',
                         x: 8,
                         y: 20,
-                        i: 'cell-1747755864668',
-                        minW: undefined,
-                        maxW: undefined,
-                        minH: undefined,
-                        maxH: undefined,
+                        w: 4,
+                        h: 12,
+                        props: { classNames: '', style: {} },
                         moved: false,
-                        static: false,
-                        isDraggable: undefined,
-                        isResizable: undefined,
-                        resizeHandles: undefined,
-                        isBounded: undefined,
-                        props: { style: {}, classNames: '' }
+                        static: false
                     }
                 ]
             }}
@@ -164,6 +117,22 @@ export default function RenderGrid() {
                 }}
             >
                 {cell_1747227523825()}
+            </div>
+
+            <div
+                key={'cell-1747227526997'}
+                style={{
+                    overflowX: 'hidden',
+                    overflowY: 'auto',
+                    height: '100%',
+                    display: 'inline-flex',
+                    width: '100%',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch',
+                    alignContent: 'flex-start'
+                }}
+            >
+                {cell_1747227526997()}
             </div>
 
             <div

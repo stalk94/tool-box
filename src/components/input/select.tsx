@@ -151,7 +151,6 @@ export function Custom({ value, onChange, items, placeholder, ...props }: BaseSe
 
 export default function ({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [selected, setSelected] = React.useState({});
     
 
@@ -176,12 +175,11 @@ export default function ({ value, onChange, items, placeholder, ...props }: Base
         }
     }
     React.useEffect(()=> {
-        if(value && isMounted.current) {
+        if (typeof window === 'undefined') return;
+        
+        if(value) {
             if(typeof value === 'object') setSelected(value);
             else setSelected({ id: value, label: value });
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
         }
     }, [value]);
 

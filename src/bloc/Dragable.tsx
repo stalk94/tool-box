@@ -2,8 +2,8 @@ import React from 'react';
 import { useDraggable, useDroppable, Modifier } from '@dnd-kit/core';
 import { DropSlotProps, ContextSlotProps } from './type';
 import { hookstate } from '@hookstate/core';
-import { IconButton } from '@mui/material';
-import { Add } from '@mui/icons-material';
+import { Box, IconButton } from '@mui/material';
+import { Add, Input } from '@mui/icons-material';
 import MiniRender from './nest-slot/MiniRender';
 export const activeSlotState = hookstate(null);
 
@@ -93,36 +93,63 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
     );
 }
 // data - данные сетки слота
-export function ContextSlot({ idParent, idSlot, nestedComponentsList, children, data }: ContextSlotProps) {
+export function ContextSlot({ idParent, idSlot, nestedComponentsList, data }: ContextSlotProps) {
     const handle = () => EVENT.emit('addGridContext', {
         nestedComponentsList,
         data: data ?? {},
         idParent,
         idSlot
     });
+    
 
     return (
         <div
             style={{
-                border: '1px dashed #4b9ec85a',
+                position: 'relative',
                 transition: 'background 0.15s',
-                display: 'flex',
                 width: '100%',
+                height: '100%',
+                background: '#00000026',
             }}
         >
-            {!data.layout &&
-                <IconButton sx={{ margin:'auto' }}
+            <Box
+                sx={{
+                    position: 'absolute',
+                    transform: 'translate(-50%, -50%)',
+                    top: '50%',
+                    left: '50%',
+                    zIndex: 4,
+                }}
+            >
+                <IconButton
+                    sx={{
+                        border: '1px solid #ffffff7c',
+                        background: '#ffffff12',
+                        borderRadius: 2,
+                        padding: '2px 12px',
+                        cursor: 'pointer',
+                        zIndex: 5,
+                        opacity: 0.3,
+                        fontSize: 14,
+                        fontWeight: 'bold',
+                        textAlign: 'center',
+                        transition: 'all 0.2s ease',
+                        backdropFilter: 'blur(12px)',
+                        '&:hover': {
+                            opacity: 1,
+                        }
+                    }}
                     onClick={handle}
                 >
-                    <Add />
+                    <Input sx={{ color: '#ffffff9f' }} />
                 </IconButton>
-            }
+            </Box>
 
-            {data.layout &&  
+            { data.layout && data.layout[0] &&
                 <MiniRender
-                    onClick={handle}
                     size={data.size}
                     layouts={data.layout}
+                    cellsContent={data.content}
                 />
             }
         </div>

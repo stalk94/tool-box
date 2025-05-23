@@ -18,7 +18,6 @@ export type PasswordInputProps = InputBaseProps & {
 // todo:  убрать лишние рендеры
 export default function PasswordInput({ value, helperText, useVerify, ...props }: PasswordInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [type, setType] = React.useState<'password'|'text'>('password');
     const [customHelper, setCustomHelper] = React.useState<string>();
     const [isValid, setValid] = React.useState<boolean>(true);
@@ -41,12 +40,9 @@ export default function PasswordInput({ value, helperText, useVerify, ...props }
         if(props.onChange) props.onChange(newValue);
     }
     React.useEffect(()=> {
-        if(value && isMounted.current) {
-            setValid(useHookVerify(value));
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
-        }
+        if (typeof window === 'undefined') return;
+        
+        if(value) setValid(useHookVerify(value));
     }, [value]);
 
 

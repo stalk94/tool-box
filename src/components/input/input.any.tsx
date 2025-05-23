@@ -69,7 +69,6 @@ export type ChekBoxAgrementProps = CheckBoxInputProps & {
 
 export function EmailInput({ value, useVerify, onChange, helperText, disabled, placeholder, ...props }: EmailInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [customHelper, setCustomHelper] = React.useState<string>();
     const [emailValue, setEmailValue] = useState(value);
     const [isValid, setIsValid] = useState(true);
@@ -92,11 +91,10 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
         onChange(newValue); // Передаем значение родителю
     }
     React.useEffect(()=> {
-        if(isMounted.current) {
-            setEmailValue(value);
-            if(value?.length > 0) setIsValid(useHookVerify(value));
-        }
-        else isMounted.current = true;
+        if (typeof window === 'undefined') return;
+
+        setEmailValue(value);
+        if(value?.length > 0) setIsValid(useHookVerify(value));
     }, [value]);
 
     
@@ -143,7 +141,6 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
 }
 export function PhoneInput({ value, onChange, useVerify, helperText, disabled, placeholder, ...props }: PhoneInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [customHelper, setCustomHelper] = React.useState<string>();
     const [phoneValue, setPhoneValue] = useState('');
     const [isValid, setIsValid] = useState(true);
@@ -167,12 +164,11 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
         }
     }
     React.useEffect(()=> {
-        if(/^\+?\d+$/.test(value) && isMounted.current) {
+        if (typeof window === 'undefined') return;
+
+        if(/^\+?\d+$/.test(value)) {
             setPhoneValue(value);
             setIsValid(useHookVerify(value));
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
         }
     }, [value]);
 
@@ -220,7 +216,6 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
 //! доработать темизацию (groop button)
 export function TooglerInput({ items, value, label, onChange, ...props }: TooglerInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [curentValue, setCurent] = React.useState<string[]>([]);
 
 
@@ -236,14 +231,13 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
         }
     }
     React.useEffect(()=> {
-        if(typeof value === 'string' && isMounted.current) {
+        if (typeof window === 'undefined') return;
+        
+        if(typeof value === 'string') {
             setCurent([value]);
         }
-        else if(Array.isArray(value) && isMounted.current) {
+        else if(Array.isArray(value)) {
             setCurent([...value]);
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
         }
     }, [value]);
     

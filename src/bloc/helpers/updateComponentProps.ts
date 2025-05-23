@@ -65,7 +65,6 @@ export function updateComponentProps({ component, data, rerender = true }: Param
                     ...data,
                 });
 
-                console.log(updatedComponent)
                 infoState.select?.content?.set(updatedComponent);         // fix
                 layer.content[i] = updatedComponent;
             } 

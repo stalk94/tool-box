@@ -238,7 +238,6 @@ const Description = ({ data, navigationSlot, button, style }) => {
 
 export default function PromoSlider({ items, button, styles, style, editor, ...props }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
-    const isMounted = React.useRef(false);
     const testData = generateTestData();            // моковые данные активны если не передать items
     const standartButton = (
         <Button
@@ -252,12 +251,9 @@ export default function PromoSlider({ items, button, styles, style, editor, ...p
     );
 
     React.useEffect(() => {
-        if (props.onChange && isMounted.current) {
-            props.onChange(active);
-        }
-        else if (!isMounted.current) {
-            isMounted.current = true;
-        }
+        if (typeof window === 'undefined') return;
+        
+        if (props.onChange) props.onChange(active);
     }, [active]);
 
 

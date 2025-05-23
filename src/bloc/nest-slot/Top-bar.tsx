@@ -4,7 +4,7 @@ import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-materia
 import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
 import { useHookstate } from "@hookstate/core";
 import NumberInput from "src/components/input/number";
-
+import { LayoutCustom, ComponentSerrialize } from '../type';
 
 
 export type ContentData = {
@@ -32,6 +32,40 @@ const Instrument = () => {
         </>
     );
 }
+function fullyUnwrape(layouts: LayoutCustom[]) {
+    const result = layouts.map((lay) => {
+        const copyLay: LayoutCustom = {
+            i: lay.i,
+            x: lay.x,
+            y: lay.y,
+            w: lay.w,
+            h: lay.h,
+            minW: lay.minW,
+            minH: lay.minH,
+            content: [], // 👈 очищаем ReactElements
+            props: {
+                classNames: '',
+                style: {}
+            }
+        };
+
+        return copyLay;
+    });
+
+    return structuredClone(result); // здесь уже безопасно
+}
+function findReactElements(obj: any, path = 'root') {
+    if (React.isValidElement(obj)) {
+        console.warn('🚨 ReactElement найден по пути:', path, obj);
+        return;
+    }
+
+    if (typeof obj !== 'object' || obj === null) return;
+
+    for (const key in obj) {
+        findReactElements(obj[key], `${path}.${key}`);
+    }
+}
 
 
 /**
@@ -48,9 +82,10 @@ const Instrument = () => {
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = ({ setShowBlocEditor }) => {
     const ctx = useHookstate(useEditorContext());
-    const cellsContent = useHookstate(useCellsContent());
+    const cellsContent = useCellsContent();
     const [bound, setBound] = React.useState<DOMRect>();
-    const info = useHookstate(useInfoState());
+    const info = useInfoState();
+    const layouts = useHookstate(ctx.layout);
 
     
     const handleChangeBreackpoint = (bp: 'lg'|'md'|'sm'|'xs') => {
@@ -97,12 +132,19 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                             borderRadius: '4px',
                         }}
                         onClick={() => {
+                            const raw = layouts.get({ noproxy: true });
+                            const result = fullyUnwrape(raw);
+                            const resultFind = findReactElements(raw)
+                            console.log(resultFind)
+                            
+
                             setShowBlocEditor({
-                                content: cellsContent.get({ noproxy: true }),
-                                layout: ctx.layout.get({ noproxy: true }),
+                                TEST: 1,
+                                content: structuredClone(cellsContent.get({ noproxy: true })),
+                                layout: result,
                                 size: {
-                                    width: ctx.size.width.get({ noproxy: true }),
-                                    height: ctx.size.height.get({ noproxy: true })
+                                    width: structuredClone(ctx.size.width.get({ noproxy: true })),
+                                    height: structuredClone(ctx.size.height.get({ noproxy: true }))
                                 }
                             });
                         }}

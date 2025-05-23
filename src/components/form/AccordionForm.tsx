@@ -82,6 +82,8 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
         });
     }
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
         const initialState: Record<string, Record<string, any>> = {};
 
         scheme.forEach((fieldAccordion) => {

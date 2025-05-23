@@ -70,6 +70,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
             setBound(bound);
         }
     }, [info.select.cell]);
+    
 
     return (
         <Paper 

@@ -13,10 +13,10 @@ import { serrialize } from '../helpers/sanitize';
 
 
 export function SortableItem({ id, children, cellId }: { id: number, children: Component, cellId: string }) {
-    const info = useHookstate(useInfoState());
-    const context = useHookstate(useEditorContext());
-    const renderState = useHookstate(useRenderState());
-    const cellsContent = useHookstate(useCellsContent());
+    const info = useInfoState();
+    const context = useEditorContext();
+    const renderState = useRenderState();
+    const cellsContent = useCellsContent();
     const itemRef = React.useRef<HTMLDivElement>(null);
     const selectContent = info.select.content;
     const dragEnabled = context.dragEnabled;

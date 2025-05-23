@@ -14,7 +14,7 @@ const margin: [number, number] = [5, 5];
 
 type NestGridEditor = { 
     desserealize: (component: ComponentSerrialize)=> void
-    dataCell: {
+    nestedData: {
         content: Record<string, ComponentSerrialize[]>
         layout?: LayoutCustom[]
         size: {
@@ -25,7 +25,7 @@ type NestGridEditor = {
 }
 
 
-export default function ({ desserealize, dataCell }: NestGridEditor) {
+export default function ({ desserealize, nestedData }: NestGridEditor) {
     const ctx = useHookstate(useEditorContext());
     const render = useHookstate(useRenderState());
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
@@ -87,8 +87,13 @@ export default function ({ desserealize, dataCell }: NestGridEditor) {
         removeComponentFromCell(cellId, index);
         info.select.content.set(null);
     }
+    // согласование серриализованных компонентов в ячейках с render layouts
     const consolidation = (layoutList: LayoutCustom[]) => {
+        if(layoutList[0] === null) return [];
+
         return layoutList.map((layer) => {
+            if(!layer) return;
+
             const cache = cellsCache.get({ noproxy: true });
             const curCacheLayout = cache[layer.i];
 
@@ -105,16 +110,22 @@ export default function ({ desserealize, dataCell }: NestGridEditor) {
             return layer;
         });
     }
-    const handleChangeLayout = (layout) => {
-        if(layout[0]) {
-            ctx.layout.set((prev) =>
+    const handleChangeLayout = (layoutList: LayoutCustom[]) => {
+        if(layoutList[0]) {
+            ctx.layout?.set((prev) =>
                 prev.map((cell) => {
-                    const updated = layout.find((l) => l.i === cell.i);
-                    return updated ? { ...cell, ...updated } : cell;
+                    const updatedLayout = layoutList.find((l) => l.i === cell.i);
+                    
+                    if(updatedLayout) Object.keys(updatedLayout).map((key)=> {
+                        if(key !== 'content') cell[key] = updatedLayout[key];
+                    });
+                    cell.content = [];
+
+                    return cell;
                 })
             );
             
-            render.set(consolidation(layout));
+            render.set(consolidation(layoutList));
         }
     }
     const delCellData = (idCell: string) => {
@@ -202,19 +213,23 @@ export default function ({ desserealize, dataCell }: NestGridEditor) {
         }
     }, []);
     React.useEffect(() => {
-        if (dataCell.content) cellsCache.set(dataCell.content);
-        if(dataCell?.layout) ctx.layout.set(dataCell.layout);
+        if (nestedData.content) cellsCache.set(nestedData.content);
 
-        if (dataCell.size) {
-            ctx.size.set((old) => ({ ...old, ...dataCell.size }));
+        if (nestedData?.layout && nestedData?.layout[0]?.i) {
+            console.green('init nested layouts:', nestedData.layout);
+            ctx.layout.set(nestedData.layout);
         }
-    }, [dataCell]);
+
+        if (nestedData.size) {
+            ctx.size.set((old) => ({ ...old, ...nestedData.size }));
+        }
+    }, [nestedData]);
     React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
 
-        render.set(consolidation(dataCell?.layout ?? []));
-        if(dataCell?.layout) ctx.layout.set(dataCell.layout);
+        render.set(consolidation(nestedData?.layout ?? []));
+        if(nestedData?.layout) ctx.layout.set(nestedData.layout);
 
         return () => {
             document.removeEventListener('keydown', handleDeleteKeyPress);
@@ -249,7 +264,8 @@ export default function ({ desserealize, dataCell }: NestGridEditor) {
                 onLayoutChange={handleChangeLayout}
             >
                 { render.get({ noproxy: true }).map((layer) => {
-                    return(
+
+                    if(layer?.i) return(
                         <div 
                             onClick={(e) => {
                                 // LINK (event) переключение на панель компонентов
@@ -279,7 +295,7 @@ export default function ({ desserealize, dataCell }: NestGridEditor) {
                             <DroppableCell key={layer.i} id={layer.i}>
                                 {EDITOR &&
                                     <SortableContext
-                                        items={layer.content.map((cnt) => cnt.props['data-id'])}
+                                        items={layer.content?.map((cnt) => cnt.props['data-id'])}
                                         strategy={rectSortingStrategy}
                                     >
                                         {Array.isArray(layer.content) &&

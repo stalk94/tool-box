@@ -32,7 +32,6 @@ export default function DateTimeInput({
     ...props
 }: DateTimeInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
     const [modalOpen, setModalOpen] = useState(false);
     const [parsedValue, setParsedValue] = useState<Dayjs | null>(null);
@@ -77,12 +76,11 @@ export default function DateTimeInput({
             : setModalOpen(true);
     }
     useEffect(() => {
-        if (value && isMounted.current) {
+        if (typeof window === 'undefined') return;
+        
+        if (value) {
             const parsed = dayjs(value, dateFormat);
             setParsedValue(parsed.isValid() ? parsed : null);
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
         }
     }, [value, dateFormat]);
 

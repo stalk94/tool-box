@@ -95,15 +95,21 @@ export default function ({ desserealize }) {
             return layer;
         });
     }
-    const handleChangeLayout = (layout) => {
-        ctx?.layout?.set((prev) =>
-            prev?.map((cell) => {
-                const updated = layout.find((l) => l.i === cell.i);
-                return updated ? { ...cell, ...updated } : cell;
+    const handleChangeLayout = (layoutList: LayoutCustom[]) => {
+        ctx.layout?.set((prev) =>
+            prev.map((cell) => {
+                const updatedLayout = layoutList.find((l) => l.i === cell.i);
+                
+                if(updatedLayout) Object.keys(updatedLayout).map((key)=> {
+                    if(key !== 'content') cell[key] = updatedLayout[key];
+                });
+                cell.content = [];
+
+                return cell;
             })
         );
         
-        render.set(consolidation(layout))
+        render.set(consolidation(layoutList));
     }
     const delCellData = (idCell: string) => {
         render.set((prev) => prev.filter((cell) => cell.i !== idCell));
@@ -176,7 +182,7 @@ export default function ({ desserealize }) {
             info.container.width.set(containerWidth);
 
             const maxY = Math.max(...cur.map((item) => item.y + item.h));
-            console.log(maxY)
+            console.log(`%c max y cell : ${maxY}`, 'color: orange; font-weight: bold;');
             const totalVerticalMargin = margin[1] * (maxY + 1);
             const availableHeight = parentHeight - totalVerticalMargin;
             // setRowHeight(availableHeight / maxY);

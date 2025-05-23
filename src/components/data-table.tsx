@@ -190,7 +190,6 @@ const StyledTableWrapper = styled.div<{
  */
 export default function DataTableCustom({ value, children, header, footer, fontSizeHead, styles, style, ...props }: DataTablePropsWrapper) {
     const theme = useTheme();
-    const [isMounted, setMounted] = useState(false);
     const tableRef = useRef<DataTable<DataTableValueArray>>(null);
     const observerRef = useRef(null);
     const [scrollHeight, setScrollHeight] = useState<string>();
@@ -251,58 +250,59 @@ export default function DataTableCustom({ value, children, header, footer, fontS
         }
     }
     useEffect(()=> {
-        if(isMounted && tableRef.current) {
-            if(value?.length > 20) setPagination(true);
-            const updateHeight =()=> {
-                if(tableRef.current) {
-                    const container = tableRef.current.getElement();
-                    const bodyArea = tableRef.current.getTable().parentElement;
-                    const parent = container.parentElement;     // родитель
-                    const paginatorElement = container.querySelector('.p-paginator');
-            
-                    const headerElement = container.querySelector('.p-datatable-header');
-                    const footerElement = container.querySelector('.p-datatable-footer');
+        if (typeof window === 'undefined') return;
 
-                    //const parentHeight = parent.offsetHeight || 0;
-                    const containerHeight = container?.offsetHeight || 0;
-                    const headerHeight = headerElement?.offsetHeight || 0;
-                    const footerHeight = footerElement?.offsetHeight || 0;
-                    const paginatorHeight = paginatorElement?.offsetHeight ?? 0;
-                    
-
-                    // Вычисляем высоту прокручиваемой области
-                    const calculatedScrollHeight = containerHeight - headerHeight - footerHeight - paginatorHeight;
-                    
-                    setScrollHeight(`${Math.max(calculatedScrollHeight, 50)}px`);
-                    setHeight(getBound(container));
-                }
-            };
-
-            const debouncedUpdateHeight = debounce(updateHeight, 1000);
-            const observer = new ResizeObserver(debouncedUpdateHeight);
-            observerRef.current = observer;
-
+        if (value?.length > 20) setPagination(true);
+        const updateHeight = () => {
             if (tableRef.current) {
                 const container = tableRef.current.getElement();
-                if (container) observer.observe(container);
-            }
+                const bodyArea = tableRef.current.getTable().parentElement;
+                const parent = container.parentElement;     // родитель
+                const paginatorElement = container.querySelector('.p-paginator');
 
-            return () => {
-                observerRef.current?.disconnect();
-                observerRef.current = null;
+                const headerElement = container.querySelector('.p-datatable-header');
+                const footerElement = container.querySelector('.p-datatable-footer');
+
+                //const parentHeight = parent.offsetHeight || 0;
+                const containerHeight = container?.offsetHeight || 0;
+                const headerHeight = headerElement?.offsetHeight || 0;
+                const footerHeight = footerElement?.offsetHeight || 0;
+                const paginatorHeight = paginatorElement?.offsetHeight ?? 0;
+
+
+                // Вычисляем высоту прокручиваемой области
+                const calculatedScrollHeight = containerHeight - headerHeight - footerHeight - paginatorHeight;
+
+                setScrollHeight(`${Math.max(calculatedScrollHeight, 50)}px`);
+                setHeight(getBound(container));
             }
+        };
+
+        const debouncedUpdateHeight = debounce(updateHeight, 1000);
+        const observer = new ResizeObserver(debouncedUpdateHeight);
+        observerRef.current = observer;
+
+        if (tableRef.current) {
+            const container = tableRef.current.getElement();
+            if (container) observer.observe(container);
         }
-        else setMounted(true);
+
+        return () => {
+            observerRef.current?.disconnect();
+            observerRef.current = null;
+        }
+
     }, [header, footer, value]);
     
     
     return (
-        <>  {!isMounted &&
+        <>  
+            {(typeof window === 'undefined') &&
                 <Skeleton
                     sx={{ height: '100%', width: '100%' }}
                 />
             }
-            {isMounted &&
+            {!(typeof window === 'undefined') &&
                 <StyledTableWrapper 
                     as="span"
                     theme={mergeStyle()} 

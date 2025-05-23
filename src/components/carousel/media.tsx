@@ -129,6 +129,8 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
     }
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         const update = () => {
             if (containerRef.current) {
                 const fullWidth = containerRef.current.offsetWidth;
@@ -143,6 +145,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
         return () => window.removeEventListener('resize', update);
     }, [currentIndex, slidesToShow]);
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         if (editor || !autoplay || items.length <= slidesToShow) return;
 
         const interval = setInterval(() => {
@@ -382,11 +385,15 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
     }
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         if(height) {
             setHeight(height / slidesToShow);
         }
     }, [height]);
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         const update = () => {
             if (containerRef.current) {
                 const fullHeight = containerRef.current.offsetHeight;
@@ -402,6 +409,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
         return () => window.removeEventListener('resize', update);
     }, [currentIndex, height, slidesToShow]);
     useEffect(() => {
+        if (typeof window === 'undefined') return;
         if (editor || !autoplay || items.length <= slidesToShow) return;
 
         const interval = setInterval(() => {

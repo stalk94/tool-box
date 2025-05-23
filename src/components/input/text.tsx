@@ -26,7 +26,6 @@ export type BaseInputProps = {
 
 export default function TextInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [inputValue, setInputValue] = React.useState<number | string>('');
 
     const useStyleIcon =()=> {
@@ -64,11 +63,10 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
         return clone;
     }
     React.useEffect(()=> {
-        if(value && value !== inputValue && isMounted.current) {
+        if (typeof window === 'undefined') return;
+        
+        if(value && value !== inputValue) {
             setInputValue(value);
-        }
-        else if(!isMounted.current) {
-            isMounted.current = true;
         }
     }, [value]);
     

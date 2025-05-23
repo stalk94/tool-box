@@ -21,17 +21,8 @@ export default defineConfig({
             '@system': path.resolve(__dirname, 'src/app'),
         }
     },
-    define: {
+     define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
         'process.env': '{}'
-    },
-    optimizeDeps: {
-        include: ['react', 'react-dom'],
-    },
-    css: {
-        devSourcemap: false, // 🔧 отключаем sourcemaps для CSS
-    },
-    build: {
-        sourcemap: false
     }
 });

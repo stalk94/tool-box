@@ -98,6 +98,8 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
     }), [state]);
 
     React.useEffect(()=> {
+        if (typeof window === 'undefined') return;
+        
         useTransform(scheme);
 
         const timer = setInterval(()=> {

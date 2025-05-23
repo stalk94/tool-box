@@ -8,6 +8,8 @@ import { hookstate, useHookstate } from "@hookstate/core";
 import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
 import { componentMap, componentsRegistry } from '../modules/helpers/registry';
 import { serializeJSX } from '../helpers/sanitize';
+import { useSelector, useDispatch } from 'react-redux'
+import type { RootState, AppDispatch } from './store';
 
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { ToolBarInfo } from './Top-bar';
@@ -26,7 +28,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const render = useHookstate(useRenderState());
     const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
-    const curCell = ctx.currentCell;                                    // текушая выбранная ячейка
+    const curCell = useHookstate(ctx.currentCell);                                    // текушая выбранная ячейка
     const cellsCache = useHookstate(useCellsContent());                   // элементы в ячейках (dump из localStorage)
     const activeSlot = useHookstate(activeSlotState);
     const sensors = useSensors(
@@ -92,14 +94,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
                 cell.content.push(clone);
 
                 cellsCache.set((old)=> {
-                    const findIndex = ctx.layout.get({noproxy: true}).findIndex((el)=> el.i === cellId);
-                    if(findIndex !== -1) {
-                        ctx.layout.set((old)=> {
-                            old[findIndex].content?.push(component);
-                            return old;
-                        });
-                    }
-                    
                     if(!old[cellId]) old[cellId] = [serialized];
                     else old[cellId].push(serialized);
         
@@ -216,9 +210,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         info.project.set(data);
         ctx.dragEnabled.set(true);
     }, []);
-    React.useEffect(()=> {
-
-    }, []);
     
 
 
@@ -250,7 +241,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
                     <ToolBarInfo setShowBlocEditor={useBackToEditorBase} />         
                     <GridComponentEditor
                         desserealize={desserealize}
-                        dataCell={data}
+                        nestedData={data}
                     />
                     
                 </div>
@@ -258,3 +249,15 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         </DndContext>
     );
 }
+
+
+
+/**
+ *  const findIndex = ctx.layout.get({noproxy: true}).findIndex((el)=> el.i === cellId);
+                    if(findIndex !== -1) {
+                        ctx.layout.set((old)=> {
+                            old[findIndex].content?.push(component);
+                            return old;
+                        });
+                    }
+ */

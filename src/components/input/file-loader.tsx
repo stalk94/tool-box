@@ -229,6 +229,8 @@ export default function FileLoader({
 
 
     useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         if (value instanceof File) setFileList([value]);
         else if (Array.isArray(value)) setFileList(value);
     }, [value]);
@@ -259,7 +261,7 @@ export default function FileLoader({
                 ref={inputRef}
                 type="file"
                 hidden
-                accept={accept}
+                accept={accept ? accept : undefined}
                 multiple={multiple}
                 disabled={disabled}
                 onChange={handleFileChange}

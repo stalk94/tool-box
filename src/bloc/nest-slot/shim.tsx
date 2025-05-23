@@ -8,10 +8,10 @@ import { useEditorContext, useRenderState, useCellsContent, useInfoState } from 
 
 
 export function updateComponentProps({ component, data, rerender = true }) {
-    const context = useEditorContext();
-    const cellsContent = useCellsContent();
-    const infoState = useInfoState();
-    const renderState = useRenderState();
+    const context = useHookstate(useEditorContext());
+    const cellsContent = useHookstate(useCellsContent());
+    const infoState = useHookstate(useInfoState());
+    const renderState = useHookstate(useRenderState());
     const id = component?.props?.['data-id'];
     const cellId = context.currentCell.get()?.i;
 

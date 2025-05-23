@@ -14,15 +14,15 @@ type MiniRenderSlotProps = {
         width: number 
         height: number 
     }
-    onClick: ()=> void
-    onReadyLiteral: (code: string)=> void
+    cellsContent: Record<string, ComponentSerrialize[]>
+    onReadyLiteral?: (code: string)=> void
 }
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
 
 
-export default function MiniRender({ layouts, size, onClick, onReadyLiteral }: MiniRenderSlotProps) {
+export default function MiniRender({ layouts, cellsContent, size, onReadyLiteral }: MiniRenderSlotProps) {
     // режим headles render
     const degidrateAll = async () => {
         const cacheIds = [];
@@ -55,65 +55,71 @@ export default function MiniRender({ layouts, size, onClick, onReadyLiteral }: M
         const fileCode = generateRenderGridFileSafe(resultCellsRender, layouts);
         onReadyLiteral(fileCode);
     }
+    const consolidation = (): LayoutCustom[] => {
+        if (!cellsContent) return console.error('! не передан `cellsContent`');
+        if (!layouts) return console.error('! не передан `layouts`');
+
+        return layouts.map((lay)=> {
+            const cacheCell = cellsContent[lay.i];
+
+            if(!cacheCell) console.warn('⚠️ при консолидации не была обнаружена ячейка в исходном cacheCell');
+            else lay.content = cacheCell.map((component)=> 
+                desserealize(component)
+            );
+            
+            return lay;
+        });
+    }
     React.useEffect(()=> {
+        console.log('mount')
         if(onReadyLiteral) degidrateAll();
     }, []);
-
+    
 
     return(
-        <div style={{position: 'relative'}}>
-        {!onReadyLiteral &&
-            <div style={{position: 'absolute', zIndex: 999, left:'45%', top: '30%' }}>
-                <IconButton onClick={onClick}>
-                    <Input style={{fontSize: 24}} />
-                </IconButton>
-            </div>
-        }
-        <ResponsiveGridLayout
-            style={{ 
-                background: '#222222', 
-                width: size?.width
-            }}
-            className="GRID-SLOT"
-            layouts={{ lg: layouts ?? [] }}                                   // Схема сетки
-            breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-            cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
-            rowHeight={20}
-            compactType={null}                                          // Отключение автоматической компоновки
-            preventCollision={true}
-            isDraggable={false}                                         // Отключить перетаскивание
-            isResizable={false}                                         // Отключить изменение размера
-            margin={margin}
-        >
-            { layouts && layouts?.map((layer) => {
-                return (
-                    <div
-                        data-id={layer.i}
-                        key={layer.i}
-                        className={layer?.props?.classNames}
-                        style={{
-                            ...layer?.props?.style,
-                            overflowX: 'hidden',
-                            overflowY: 'auto',
-                            height: '100%',
-                            display: 'inline-flex',
-                            width: '100%',
-                            flexWrap: 'wrap',
-                            alignItems: 'stretch',
-                            alignContent: 'flex-start'
-                        }}
-                    >
-                        { Array.isArray(layer.content) &&
-                            layer.content.map((component, index) =>
-                                <React.Fragment key={index}>
-                                    { desserealize(component) }
-                                </React.Fragment>
-                            )
-                        }
-                    </div>
-                );
-            })}
-        </ResponsiveGridLayout>
+        <div style={{ position: 'relative' }}>
+            <ResponsiveGridLayout
+                className="GRID-SLOT"
+                layouts={{ lg: layouts ?? [] }}                                   // Схема сетки
+                breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
+                cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
+                rowHeight={20}
+                compactType={null}                                          // Отключение автоматической компоновки
+                preventCollision={true}
+                isDraggable={false}                                         // Отключить перетаскивание
+                isResizable={false}                                         // Отключить изменение размера
+                margin={margin}
+                onLayoutChange={console.log}
+            >
+                { consolidation()?.map((layer) => {
+                    return (
+                        <div
+                            data-id={layer.i}
+                            key={layer.i}
+                            className={layer?.props?.classNames}
+                            style={{
+                                ...layer?.props?.style,
+                                overflowX: 'hidden',
+                                overflowY: 'auto',
+                                height: '100%',
+                                display: 'inline-flex',
+                                width: '100%',
+                                flexWrap: 'wrap',
+                                alignItems: 'stretch',
+                                alignContent: 'flex-start'
+                            }}
+                        >
+                            { Array.isArray(layer.content) &&
+                                layer.content.map((component, index) =>
+                                    <React.Fragment key={index}>
+                                        { component }
+                                    </React.Fragment>
+                                )
+                            }
+                        </div>
+                    );
+                })}
+            </ResponsiveGridLayout>
         </div>
     );
 }

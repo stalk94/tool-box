@@ -84,9 +84,14 @@ ${renderedBlocks.join('\n\n')}
 export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: string, type: 'error'|'success')=> void) => {
 	const context = useEditorContext();
 	const cellsContent = useCellsContent();
+	const layoutClear = context.layout.get({ noproxy: true }).map((lay)=> {
+		lay.content = [];
+		return lay;
+	});
+	
 
 	const data = {
-		layout: context.layout.get({ noproxy: true }),		// текушая сетка
+		layout: layoutClear,		// текушая сетка
 		content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
 		meta: {
 			scope,
@@ -95,11 +100,12 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 			preview: `snapshots/${scope}-${name}.png`
 		},
 		size: {
-			width: context.size.width.get(),
-			height: context.size.height.get()
+			width: context.size.width.get({ noproxy: true }),
+			height: context.size.height.get({ noproxy: true })
 		}
 	};
 
+	console.log(data)
 	const body = {
 		folder: `public/blocks/${scope}`,
 		filename: `${name}.json`,

@@ -17,7 +17,6 @@ export type NumberInputProps = {
 
 export default function NumberInput({ value, min=-10, max=100, step=1, onChange, ...props }: NumberInputProps) {
     const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [inputValue, setInputValue] = React.useState<number>(0);
     const [rawInput, setRawInput] = React.useState<string>('0');
   
@@ -30,7 +29,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
     const handleInputChange = (raw: string) => {
         setRawInput(raw);
 
-        const cleaned = raw.replace(/[^\d-]/g, '');
+        const cleaned = raw?.replace(/[^\d-]/g, '');
         const parsed = parseInt(cleaned, 10);
 
         if (!isNaN(parsed)) {
@@ -46,7 +45,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
         }
 
         // Только цифры, поддержка минуса
-        const cleaned = raw.replace(/[^\d-]/g, '');
+        const cleaned = raw?.replace(/[^\d-]/g, '');
         const parsed = parseInt(cleaned, 10);
 
         if (!isNaN(parsed)) {
@@ -68,12 +67,11 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
     const increase = () => updateValue(inputValue + step);
 
     React.useEffect(() => {
-        if (typeof value === 'number' && value !== inputValue && isMounted.current) {
+        if (typeof window === 'undefined') return;
+
+        if (typeof value === 'number') {
             setInputValue(value);
             setRawInput(value);
-        } 
-        else if (!isMounted.current) {
-            isMounted.current = true;
         }
     }, [value]);
 

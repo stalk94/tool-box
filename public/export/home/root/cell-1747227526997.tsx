@@ -1,6 +1,5 @@
-import { Box, Button, Chip } from '@mui/material';
-import { Accordion } from '@lib/index';
 import React from 'react';
+import CustomFrame from './frames/CustomFrame';
 
 export default function Cell() {
     return (
@@ -11,17 +10,7 @@ export default function Cell() {
                     display: 'block'
                 }}
             >
-                <Accordion
-                    activeIndexs={[]}
-                    tabStyle={{}}
-                    headerStyle={{}}
-                    items={[
-                        {
-                            title: '・title-0',
-                            content: <div>not content</div>
-                        }
-                    ]}
-                />
+                <CustomFrame />
             </div>
         </>
     );

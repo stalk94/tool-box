@@ -44,6 +44,9 @@ export const flexOptions = {
     margin: '',
     justifyContent: ["flex-start","flex-end","center","space-between","space-around","space-evenly",],
     alignItems: ["stretch", "flex-start", "flex-end", "center", "baseline"],
+    borderColor: "color",
+    background: "color",
+    borderStyle: ['none', 'solid', 'dashed', 'dotted', 'double', 'groove', 'ridge', 'inset'],
     //alignContent: ["stretch","flex-start","flex-end","center","space-between","space-around",],
     //alignSelf: ["auto", "stretch", "flex-start", "flex-end", "center", "baseline"],
 }
