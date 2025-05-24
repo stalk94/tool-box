@@ -5,10 +5,8 @@ import {
     Settings, AccountTree, Logout, Palette, Extension, Save, Functions,
     RadioButtonUnchecked, RadioButtonChecked, Add, Code
 } from "@mui/icons-material";
-import { TbCell } from "react-icons/tb";
 import { FaReact } from 'react-icons/fa';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
-import { useHookstate } from "@hookstate/core";
+import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { updateComponentProps, updateCelltProps } from './helpers/updateComponentProps';
@@ -22,18 +20,12 @@ import { getUniqueBlockName } from "./helpers/editor";
 import { LeftToolPanelProps, ProxyComponentName, Component } from './type';
 import { useKeyboardListener } from './helpers/hooks';
 import { db } from "./helpers/export";
-import { useSelectSlot } from './helpers/useSlot';
-import { SiHomepage } from "react-icons/si";
 import exportGrid from './modules/export/Grid';
 import { DraggableToolItem } from './Dragable';
 
 
 const RenderListProject = ({ currentCat }) => {
-    const context = useHookstate(useEditorContext());
-    const info = useHookstate(useInfoState());
-    const size = context.size;
-    const meta = context.meta;
-    const project = info.project;
+    const meta = editorContext.meta.use();
     const { popover, handleOpen, trigger } = usePopUpName();
     
 
@@ -53,7 +45,10 @@ const RenderListProject = ({ currentCat }) => {
         return sorted[sorted.length - 1][0];
     }
     const getAllBlockFromScope = () => {
-        const currentScope = project.get({ noproxy: true })?.[meta.scope.get()];
+        const project = infoSlice.project.get();
+        const meta = editorContext.meta.get();
+
+        const currentScope = project[meta.scope];
         return currentScope ?? [];
     }
     const getKeyNameSize = (name: string) => {
@@ -78,6 +73,7 @@ const RenderListProject = ({ currentCat }) => {
     useSafeAsyncEffect (async (isMounted) => {
         if (!trigger) return;
 
+        const meta = editorContext.meta.get();
         const scope = getAllBlockFromScope();
         const existingNames = scope.map(el => el.name);
         const uniqueName = getUniqueBlockName(trigger, existingNames);
@@ -85,12 +81,12 @@ const RenderListProject = ({ currentCat }) => {
         if (typeof window === 'undefined') return;
 
         try {
-            await createBlockToFile(meta.scope.get(), uniqueName);
+            await createBlockToFile(meta.scope, uniqueName);
             const data = await fetchFolders();
 
             if (isMounted() && data) {
-                context.meta.name.set(uniqueName);
-                info.project.set(data);
+                editorContext.meta.name.set(uniqueName);
+                infoSlice.project.set(data);
             }
         } 
         catch (err) {
@@ -119,13 +115,13 @@ const RenderListProject = ({ currentCat }) => {
                                 flexDirection: 'row',
                                 my: 0.7,
                                 cursor:'pointer',
-                                borderBottom: `1px dotted ${meta.name.get() === blockData.name ? '#ffffff61' : '#83818163'}`,
-                                opacity: meta.name.get() === blockData.name ? 1 : 0.6,
+                                borderBottom: `1px dotted ${meta.name === blockData.name ? '#ffffff61' : '#83818163'}`,
+                                opacity: meta.name === blockData.name ? 1 : 0.6,
                                 '&:hover': {
                                     backgroundColor: '#e0e0e022',
                                 }
                             }}
-                            onClick={() => meta.name.set(blockData.name)}
+                            onClick={() => editorContext.meta.name.set(blockData.name)}
                             key={index}
                         >
                             <Typography 
@@ -141,14 +137,14 @@ const RenderListProject = ({ currentCat }) => {
                             <button
                                 style={{
                                     cursor: 'pointer',
-                                    color: meta.name.get() === blockData.name ? '#C9C9C9' : '#c9c5c5c7',
+                                    color: meta.name === blockData.name ? '#C9C9C9' : '#c9c5c5c7',
                                     background: 'transparent',
                                     marginLeft: 'auto',
                                     borderRadius: '4px',
                                     border: 'none',
                                 }}
                             >
-                                { meta.name.get() === blockData.name
+                                { meta.name === blockData.name
                                     ? <RadioButtonChecked sx={{ fontSize: '16px'}} />
                                     : <RadioButtonUnchecked sx={{ fontSize: '16px'}} />
                                 }
@@ -162,24 +158,28 @@ const RenderListProject = ({ currentCat }) => {
     );
 }
 const RenderProjectTopPanel = () => {
-    const context = useHookstate(useEditorContext());
-    const info = useHookstate(useInfoState());
+    const meta = editorContext.meta.use();
     const { popover, handleOpen, trigger } = usePopUpName();
-    const [value, setValue] = React.useState(context?.meta?.scope?.get());
-
+    const [value, setValue] = React.useState(editorContext.meta?.scope?.get());
+    
 
     const handleChangeScope = (newScope: string) => {
-        const currentProject = info.project?.get({ noproxy: true })?.[newScope];
+        const currentProject = infoSlice.project?.get()?.[newScope];
         const existingNamesBlocks = currentProject.map(el => el.name);
+        
+        // 🧹 Чистим layout/render до применения нового
+        renderSlice.set([]);
+        editorContext.layout.set([]);
+        editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
 
         setValue(newScope);
-        context.meta.scope.set(newScope);
-        if(existingNamesBlocks[0]) context.meta.name.set(existingNamesBlocks[0]);
+        editorContext.meta.scope.set(newScope);
+        if(existingNamesBlocks[0]) editorContext.meta.name.set(existingNamesBlocks[0]);
     }
     useSafeAsyncEffect(async (isMounted) => {
         if (!trigger) return;
-
-        const existingNames = Object.keys(info.project.get({ noproxy: true })) ?? [];
+        
+        const existingNames = Object.keys(infoSlice.project.get()) ?? [];
         const uniqueName = getUniqueBlockName(trigger.trim(), existingNames);
 
         if (uniqueName.length <= 3 || typeof window === 'undefined') return;
@@ -187,11 +187,17 @@ const RenderProjectTopPanel = () => {
         try {
             await createBlockToFile(uniqueName, 'root');
             const data = await fetchFolders();
-
+            
             if (isMounted() && data) {
-                context.meta.scope.set(uniqueName);
-                context.meta.name.set('root');
-                info.project.set(data);
+                // Сброс перед установкой
+                renderSlice.set([]);
+                editorContext.layout.set([]);
+                editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
+
+                editorContext.meta.scope.set(uniqueName);
+                editorContext.meta.name.set('root');
+                infoSlice.project.set(data);
+
                 handleChangeScope(uniqueName);
             }
         } 
@@ -199,9 +205,11 @@ const RenderProjectTopPanel = () => {
             console.error('❌ Ошибка при создании блока:', err);
         }
     }, [trigger]);
-    React.useEffect(()=> {
-
-    }, []);
+    editorContext.meta.scope.useWatch((scope)=> {
+        console.log(scope);
+        setValue(scope);
+    });
+    
 
 
 
@@ -214,7 +222,7 @@ const RenderProjectTopPanel = () => {
                 displayEmpty
                 sx={{ fontSize: 14, height: 36, color: '#ccc', background: '#2a2a2a84', ml: 1, mt: 0.3 }}
             >
-                {Object.keys(info.project.get({ noproxy: true }))?.map((scope) => (
+                {Object.keys(infoSlice.project.get())?.map((scope) => (
                     <MenuItem key={scope} value={scope} >
                         { scope }
                     </MenuItem>
@@ -406,11 +414,8 @@ const useSlot = (slot, curSub, setSub, onChange) => {
 
 // левая панель редактора
 export default function ({ useDump, desserealize }: LeftToolPanelProps) {
-    const currentCell = useHookstate(useEditorContext().currentCell);
-    const info = useHookstate(useInfoState());
-    const render = useHookstate(useRenderState());
-    const meta = useHookstate(useEditorContext().meta);
-    const select = info.select;
+    const meta = editorContext.meta;
+    const select = infoSlice.select;
     const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'slot'>('project');
@@ -436,9 +441,9 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
     ];
 
     const handleExportGrid = () => exportGrid(
-        render.get({ noproxy: true }),
-        meta.scope.get({ noproxy: true }),
-        meta.name.get({ noproxy: true })
+        renderSlice.get(),
+        meta.scope.get(),
+        meta.name.get()
     );
     useKeyboardListener((key)=> {
         if(key === '1') setCurrentTool('block');
@@ -462,7 +467,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
    
 
     // Обработка навигации по разделам
-    const changeNavigation =(item) => {
+    const changeNavigation =(item: {id: string}) => {
         if (item.id === 'component') setCurrentToolPanel('component');
         else if (item.id === 'project') setCurrentToolPanel('project');
         else if (item.id === 'styles') setCurrentToolPanel('styles');
@@ -472,14 +477,16 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         else if (item.id === 'export') handleExportGrid();
     }
     const useComponentUpdateFromEditorForm = (newDataProps) => {
-        const selectComponent = select.content.get({ noproxy: true });
+        const selectComponent = select.content.get();
+
         if (selectComponent) updateComponentProps({ 
             component: selectComponent, 
             data: newDataProps 
         });
     }
     const useComponentSlotUpdateFromEditorForm = (newDataProps) => {
-        const selectSlot = select.slot.get({ noproxy: true });
+        const selectSlot = select.slot.get();
+
         if (selectSlot) EVENT.emit(`slotUpdate.${selectSlot.parent['data-id']}`, {
             data: newDataProps,
             index: selectSlot.index
@@ -531,3 +538,31 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         </LeftSideBarAndTool>
     );
 }
+
+
+
+/**
+ * useSafeAsyncEffect(async (isMounted) => {
+        if (!trigger) return;
+
+        const existingNames = Object.keys(infoSlice.project.get()) ?? [];
+        const uniqueName = getUniqueBlockName(trigger.trim(), existingNames);
+
+        if (uniqueName.length <= 3 || typeof window === 'undefined') return;
+
+        try {
+            await createBlockToFile(uniqueName, 'root');
+            const data = await fetchFolders();
+
+            if (isMounted() && data) {
+                editorContext.meta.scope.set(uniqueName);
+                editorContext.meta.name.set('root');
+                infoSlice.project.set(data);
+                handleChangeScope(uniqueName);
+            }
+        } 
+        catch (err) {
+            console.error('❌ Ошибка при создании блока:', err);
+        }
+    }, [trigger]);
+ */

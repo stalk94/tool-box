@@ -1,7 +1,6 @@
 import React from 'react';
 import { Box, IconButton, Paper } from '@mui/material';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../../context";
-import { useHookstate } from '@hookstate/core';
+import { editorContext, cellsSlice, infoSlice } from "../../context";
 import { updateComponentProps } from '../../helpers/updateComponentProps';
 import { Power, LinkOff, Add, Remove } from '@mui/icons-material';
 import { serializeJSX } from '../../helpers/sanitize';
@@ -21,22 +20,19 @@ export type ContextualToolbarProps = {
     position?: 'center' | 'left' | 'right';
 }
 export function useToolbar(id: number, onVisibleChange?: (v: boolean)=> void, alwaysVisible = false) {
-    const infoState = useHookstate(useInfoState());
-    const cellsContent = useHookstate(useCellsContent());
-    const context = useHookstate(useEditorContext());
-    const selected = infoState.select.content;
+    const selected = infoSlice.select.content;
     const [visible, setVisible] = React.useState(false);
 
 
     React.useEffect(() => {
-        const isSelected = selected.get({noproxy:true})?.props?.['data-id'] === id;
+        const isSelected = selected.get()?.props?.['data-id'] === id;
         const show = alwaysVisible || isSelected;
         setVisible(show);
         onVisibleChange?.(show);
     }, [selected, id, alwaysVisible]);
 
 
-    return { visible, selected, context, cellsContent };
+    return { visible, selected, editorContext, cellsSlice };
 }
 
 
@@ -103,12 +99,10 @@ const ContextualToolbar: React.FC<ContextualToolbarProps> = ({
 
 export const LinktoolBar =({dataId, subs, onChange})=> {
     const [isThisSelect, setSelectThis] = React.useState(false);
-    const ctx = useHookstate(useEditorContext());
-    const info = useHookstate(useInfoState());
-    const selectContent = info.select.content;
+    const selectContent = infoSlice.select.content;
 
     const create = () => {
-        const selectedProps = selectContent.get({noproxy: true})?.props
+        const selectedProps = selectContent.get()?.props
         const selectedSubs: string[] = selectedProps?.['data-subs'] ?? [];
         const options = [];
 
@@ -139,7 +133,7 @@ export const LinktoolBar =({dataId, subs, onChange})=> {
         return options;
     }
     React.useEffect(()=> {
-        const cur = selectContent.get({noproxy: true});
+        const cur = selectContent.get();
 
         if(cur) {
             const selectDataId = cur?.props['data-id'];
@@ -160,8 +154,7 @@ export const LinktoolBar =({dataId, subs, onChange})=> {
 
 export const SlotToolBar =({ dataId, type, item })=> {
     const [isThisSelect, setSelectThis] = React.useState(false);
-    const info = useHookstate(useInfoState());
-    const selectContent = info.select.content;
+    const selectContent = infoSlice.select.content;
     const listAcess = ['Accordion', 'Tabs', 'BottomNav', 'List', 'PromoBanner'];
     
     if(!listAcess.includes(type)) return;
@@ -192,7 +185,7 @@ export const SlotToolBar =({ dataId, type, item })=> {
         return [
             {
                 action: () => {
-                    const selectedProps = selectContent.get({ noproxy: true })?.props;
+                    const selectedProps = selectContent.get()?.props;
 
                     updateComponentProps({
                         component: { props: selectedProps },
@@ -203,7 +196,7 @@ export const SlotToolBar =({ dataId, type, item })=> {
             },
             {
                 action: () => {
-                    const selectedProps = selectContent.get({ noproxy: true })?.props;
+                    const selectedProps = selectContent.get()?.props;
                     const newItem = getNewValue(selectedProps);
 
                     updateComponentProps({
@@ -216,10 +209,10 @@ export const SlotToolBar =({ dataId, type, item })=> {
         ];
     }
     React.useEffect(()=> {
-        const cur = selectContent.get({noproxy: true});
+        const cur = selectContent.get();
 
         if(cur) {
-            const selectDataId = cur?.props['data-id'];
+            const selectDataId = cur?.props?.['data-id'];
             if(selectDataId === dataId) setSelectThis(true);
             else setSelectThis(false);
         }

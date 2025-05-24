@@ -1,28 +1,22 @@
 import React from 'react';
-import { mergeImports } from '../modules/export/Grid';
 import { Box, IconButton, Paper } from '@mui/material';
-import { useHookstate } from '@hookstate/core';
 import { Power, LinkOff, Add, Remove } from '@mui/icons-material';
 import { serializeJSX } from '../helpers/sanitize';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
+import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 
 
 export function updateComponentProps({ component, data, rerender = true }) {
-    const context = useHookstate(useEditorContext());
-    const cellsContent = useHookstate(useCellsContent());
-    const infoState = useHookstate(useInfoState());
-    const renderState = useHookstate(useRenderState());
     const id = component?.props?.['data-id'];
-    const cellId = context.currentCell.get()?.i;
+    const cellId = editorSlice.currentCell.get()?.i;
 
     if (!id || !cellId) {
         console.warn('updateComponentProps: отсутствует data-id или data-cell');
         return;
     }
     
-    // 🧠 Обновляем данные в hookstate-кэше
-    cellsContent.set((old) => {
+    cellsSlice.set((old) => {
         const index = old[cellId]?.findIndex((c) => c.id === id);
+
         if (index !== -1) {
             Object.entries(data).forEach(([key, value]) => {
                 old[cellId][index].props[key] = value;
@@ -32,7 +26,7 @@ export function updateComponentProps({ component, data, rerender = true }) {
     });
 
     // 🔁 Обновляем визуальный рендер через context.render
-    if (rerender) renderState.set((layers) => {
+    if (rerender) renderSlice.set((layers) => {
         console.log('update props: ', component, data);
         
         const updated = layers.map((layer) => {
@@ -54,10 +48,10 @@ export function updateComponentProps({ component, data, rerender = true }) {
                     ...data,
                 });
 
-                infoState.select?.content?.set(updatedComponent);         // fix
+                infoSlice.select?.content?.set(updatedComponent);         // fix
                 layer.content[i] = updatedComponent;
                
-                context.layout.set((old)=> 
+                editorSlice.layout.set((old)=> 
                     old.map((l)=> {
                         if(l.i === layer.i) l.content[i] = updatedComponent;
                         return l;
@@ -71,7 +65,7 @@ export function updateComponentProps({ component, data, rerender = true }) {
             return layer;
         });
 
-        return [...updated];
+        layers = [...updated];
     });
 }
 
@@ -142,9 +136,9 @@ const ContextualToolbar: React.FC<ContextualToolbarProps> = ({
 }
 export const SlotToolBar =({ dataId, type, item })=> {
     const [isThisSelect, setSelectThis] = React.useState(false);
-    const info = useHookstate(useInfoState());
-    const selectContent = info.select.content;
+    const selectContent = infoSlice.select.content;
     
+
     if(type !== 'Accordion' && type !== 'Tabs' &&  type !== 'BottomNav') return;
     const getOptions = () => {
         const getNewValue =(selectedProps)=> {
@@ -162,7 +156,7 @@ export const SlotToolBar =({ dataId, type, item })=> {
         return [
             {
                 action: () => {
-                    const selectedProps = selectContent.get({ noproxy: true })?.props;
+                    const selectedProps = selectContent.get()?.props;
 
                     updateComponentProps({
                         component: { props: selectedProps },
@@ -173,7 +167,7 @@ export const SlotToolBar =({ dataId, type, item })=> {
             },
             {
                 action: () => {
-                    const selectedProps = selectContent.get({ noproxy: true })?.props;
+                    const selectedProps = selectContent.get()?.props;
                     const newItem = getNewValue(selectedProps);
 
                     updateComponentProps({
@@ -186,7 +180,7 @@ export const SlotToolBar =({ dataId, type, item })=> {
         ];
     }
     React.useEffect(()=> {
-        const cur = selectContent.get({noproxy: true});
+        const cur = selectContent.get();
 
         if(cur) {
             const selectDataId = cur?.props['data-id'];

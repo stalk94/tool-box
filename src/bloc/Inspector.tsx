@@ -2,10 +2,9 @@ import React, { useState } from 'react';
 import { Paper, IconButton, Box, Typography, Button } from '@mui/material';
 import { Close, DragIndicator, ExpandMore, ExpandLess, Code, } from '@mui/icons-material';
 import { JsonViewer } from '@textea/json-viewer';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
+import { editorContext } from "./context";
 import { AiOutlinePushpin } from "react-icons/ai";
 import { IoMove } from "react-icons/io5";
-import { useHookstate } from "@hookstate/core";
 import { formatJsx } from './modules/export/utils';
 
 
@@ -15,15 +14,15 @@ export default function InspectorPanel ({ data, onClose }) {
     const [mod, setMod] = useState<'json'|'render'>('json');
     const [cache, setCache] = useState<string>();
     const renderRef = React.useRef<HTMLDivElement>(null);
-    const state = useHookstate(useEditorContext().inspector);
+    const state = editorContext.inspector.use();
     const [width, setWidth] = useState(400);
     const draggingRef = React.useRef(false);
     const offsetRef = React.useRef({ x: 0, y: 0 });
     
     const styleAbs = {
         position: 'fixed',
-        top: state?.position?.y?.get() ?? 0,
-        left: state?.position?.x?.get() ?? 0,
+        top: state?.position?.y ?? 0,
+        left: state?.position?.x ?? 0,
         zIndex: 1500,
         width: width,
         maxHeight: '30vh',
@@ -47,7 +46,7 @@ export default function InspectorPanel ({ data, onClose }) {
     }
     const onMouseDown = (e: React.MouseEvent) => {
         draggingRef.current = true;
-        const position = state.position.value;
+        const position = state.position;
 
         offsetRef.current = {
             x: e.clientX - position.x,
@@ -56,7 +55,7 @@ export default function InspectorPanel ({ data, onClose }) {
     }
     const onMouseMove = (e: MouseEvent) => {
         if (draggingRef.current) {
-            state.position.set({
+            editorContext.inspector.position.set({
                 x: e.clientX - offsetRef.current.x,
                 y: e.clientY - offsetRef.current.y,
             });
@@ -81,23 +80,26 @@ export default function InspectorPanel ({ data, onClose }) {
         }
 
         if (!state?.colapsed?.value) {
-            state?.position?.set({ x: window.innerWidth - 60, y: 50 });
+            editorContext.inspector?.position?.set({ x: window.innerWidth - 60, y: 50 });
         }
         else {
-            state?.position?.set({ x: window.innerWidth - 400, y: 50 });
+            editorContext.inspector?.position?.set({ x: window.innerWidth - 400, y: 50 });
         }
-    }, [state?.colapsed?.get()]);
+    }, [state?.colapsed]);
     React.useEffect(()=> {
         const handle =({str, view})=> {
             formatJsx(str).then(console.log);
             
             if(view) {
-                state.position.set({x: view?.x ?? state.position.x.value, y: view?.y ?? state.position.y.value});
+                editorContext.inspector.position.set({
+                    x: view?.x ?? state.position.x, 
+                    y: view?.y ?? state.position.y
+                });
                 setWidth(view?.width ?? width)
             }
 
             setMod('render');
-            state.isAbsolute.set(true);
+            editorContext.inspector.isAbsolute.set(true);
             setCache(str);
             if(renderRef.current) renderRef.current.innerHTML = str;
         }
@@ -105,10 +107,10 @@ export default function InspectorPanel ({ data, onClose }) {
             refEditor.current = data;
             state.lastData.set(data.data);
             setMod('json');
-            state.isAbsolute.set(true);
+            editorContext.inspector.isAbsolute.set(true);
         }
         
-        state?.lastData?.set({})
+        editorContext.inspector?.lastData?.set({})
         EVENT.on('htmlRender', handle);
         EVENT.on('jsonRender', handleJson);
         return ()=> {
@@ -118,12 +120,12 @@ export default function InspectorPanel ({ data, onClose }) {
     }, []);
    
     
-    if(!state?.colapsed?.get() && state?.isAbsolute?.get()) return (
+    if(!state?.colapsed && state?.isAbsolute) return (
         <div 
             onMouseDown={onMouseDown} 
             style={{
                 position: 'fixed',
-                top: state.position.y.get(),
+                top: state.position.y,
                 right: 0,
                 zIndex: 1500,
                 width: 60,
@@ -132,14 +134,14 @@ export default function InspectorPanel ({ data, onClose }) {
                 border: '1px solid gray'
             }}
         >
-            <IconButton size="small" onClick={() => state.colapsed.set((collapsed)=> !collapsed)}>
+            <IconButton size="small" onClick={() => editorContext.inspector.colapsed.set((collapsed)=> !collapsed)}>
                 <ExpandMore sx={{ color: '#aaa', fontSize:16 }} />
             </IconButton>
         </div>
     );
     else return (
         <Paper 
-            sx={state?.isAbsolute?.value ? styleAbs : style }
+            sx={state?.isAbsolute ? styleAbs : style }
         >
             <Box
                 onMouseDown={onMouseDown}
@@ -154,16 +156,16 @@ export default function InspectorPanel ({ data, onClose }) {
                 }}
             >
                 <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton sx={{ml:1}} size="small" onClick={() => state.isAbsolute.set(o => !o)}>
-                        {state?.isAbsolute?.value
+                    <IconButton sx={{ml:1}} size="small" onClick={() => editorContext.inspector.isAbsolute.set(o => !o)}>
+                        {state?.isAbsolute
                             ? <AiOutlinePushpin style={{ color: '#aaa', fontSize:14 }} />
                             : <IoMove style={{ color: '#aaa', fontSize:12 }} />
                         }
                     </IconButton>
                 </Box>
                 <Box>
-                    <IconButton size="small" onClick={() => state.colapsed.set((collapsed)=> !collapsed)}>
-                        {!state?.colapsed?.get()
+                    <IconButton size="small" onClick={() => editorContext.inspector.colapsed.set((collapsed)=> !collapsed)}>
+                        {!state?.colapsed
                             ? <ExpandMore sx={{ color: '#aaa', fontSize:14 }} />
                             : <ExpandLess sx={{ color: '#aaa', fontSize:14 }} />
                         }
@@ -175,7 +177,7 @@ export default function InspectorPanel ({ data, onClose }) {
             </Box>
 
             
-            {state?.colapsed?.get() && (
+            {state?.colapsed && (
                 <>
                     <div ref={renderRef}/>
                     { mod === 'json' &&
@@ -186,7 +188,7 @@ export default function InspectorPanel ({ data, onClose }) {
                                 lineHeight: 1.4,
                                 textAlign: 'left',
                             }}
-                            value={state?.lastData?.get()}
+                            value={state?.lastData}
                             editable
                             onChange={(p, oldVal, newVal) => {
                                 state.lastData.set((old) => {

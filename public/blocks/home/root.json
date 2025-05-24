@@ -6,7 +6,10 @@
       "y": 0,
       "w": 5,
       "h": 32,
-      "content": [],
+      "content": [
+        null,
+        null
+      ],
       "moved": false,
       "static": false,
       "props": {
@@ -88,25 +91,47 @@
   "content": {
     "cell-1746527949939": [
       {
-        "id": 1748005383266,
+        "id": 1748107160269,
+        "parent": "cell-1746527949939",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1748107160269,
+          "data-type": "Button"
+        }
+      },
+      {
+        "id": 1748107159587,
+        "parent": "cell-1746527949939",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "error",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1748107159587,
+          "data-type": "Button"
+        }
+      },
+      {
+        "id": 1748111357458,
         "parent": "cell-1746527949939",
         "props": {
           "fullWidth": true,
           "metaName": "CustomFrame",
           "elevation": 0,
           "slots": {
-            "0": {
-              "TEST": 1,
-              "content": {},
-              "layout": [],
-              "size": {
-                "width": 471,
-                "height": 795
-              }
-            }
+            "0": {}
           },
           "style": {},
-          "data-id": 1748005383266,
+          "data-id": 1748111357458,
           "data-type": "Frame"
         }
       }
@@ -389,7 +414,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1748009818778,
+    "updatedAt": 1748111557999,
     "preview": "snapshots/home-root.png"
   },
   "size": {

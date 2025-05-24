@@ -282,7 +282,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
     React.useEffect(() => {
         if (!elemLink) return;
     
-        const elem = elemLink.get({ noproxy: true });
+        const elem = elemLink.get();
         const props = elem?.props;
     
         if (!props || !props['data-id'] || !props['data-type']) return;

@@ -1,11 +1,19 @@
 import React from 'react';
 import { useDraggable, useDroppable, Modifier } from '@dnd-kit/core';
 import { DropSlotProps, ContextSlotProps } from './type';
-import { hookstate } from '@hookstate/core';
 import { Box, IconButton } from '@mui/material';
 import { Add, Input } from '@mui/icons-material';
 import MiniRender from './nest-slot/MiniRender';
-export const activeSlotState = hookstate(null);
+
+export const activeSlotState = {
+    slot: undefined,
+    get() {
+        return activeSlotState.slot
+    },
+    set(data) {
+        activeSlotState.slot = data;
+    }
+};
 
 
 

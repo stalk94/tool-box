@@ -1,8 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
-import { useHookstate } from '@hookstate/core';
+import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { Component } from '../type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps, SlotToolBar } from './shim';
@@ -12,14 +11,9 @@ import { serrialize } from '../helpers/sanitize';
 
 
 
-export function SortableItem({ id, children, cellId }: { id: number, children: Component, cellId: string }) {
-    const info = useInfoState();
-    const context = useEditorContext();
-    const renderState = useRenderState();
-    const cellsContent = useCellsContent();
+export function SortableItem({ id, children, cellId }: { id: number, children: Component, cellId: string }) {;
     const itemRef = React.useRef<HTMLDivElement>(null);
-    const selectContent = info.select.content;
-    const dragEnabled = context.dragEnabled;
+    const dragEnabled = editorSlice.dragEnabled.use();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
         id ,
         data: {
@@ -27,7 +21,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
             cellId,
             element: children
         },
-        disabled: !dragEnabled.get()        // ✅ глобальный флаг
+        disabled: !dragEnabled        // ✅ глобальный флаг
     });
     
     
@@ -38,7 +32,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         opacity: isDragging ? 0.5 : 1,
         width: children.props.fullWidth ? '100%' : (children.props.width ?? 300),
         display: 'flex',
-        cursor: dragEnabled.get() ? 'grab' : 'default',
+        cursor: dragEnabled ? 'grab' : 'default',
         alignItems: 'center',
         borderRight: '1px dotted #8580806b',
         transformOrigin: 'center',
@@ -46,30 +40,30 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 100),
         maxWidth: '100%',
     }
+    const useDegidratationHandler = (code: string) => {
+        console.log(code)
+    }
     const iseDeleteComponent = (ids: number) => {
+        const removeCoponentFromCells = (componentIndex: number) => {
+            cellsSlice.set((old) => {
+                old[cellId].splice(componentIndex, 1);
+                return old;
+            });
+        }
         const removeComponentFromCell = (cellId: string, componentIndex: number) => {
-            renderState.set((prev) => {
-                const updatedRender = [...prev];
-                const cellIndex = updatedRender.findIndex(item => item.i === cellId);
+            renderSlice.set((prevRender) => {
+                const cellIndex = prevRender.findIndex(item => item.i === cellId);
 
                 if (cellIndex !== -1) {
-                    if (Array.isArray(updatedRender[cellIndex]?.content)) {
-                        // Удаляем компонент из ячейки
-                        updatedRender[cellIndex]?.content?.splice(componentIndex, 1);
-                        // обновим наш dump
-                        cellsContent.set((old) => {
-                            old[cellId].splice(componentIndex, 1);
-
-                            return old;
-                        });
+                    if (Array.isArray(prevRender[cellIndex]?.content)) {
+                        prevRender[cellIndex]?.content?.splice(componentIndex, 1);
+                        removeCoponentFromCells(componentIndex);
                     }
                 }
-
-                return updatedRender;
             });
         }
 
-        const render = renderState.get({ noproxy: true });
+        const render = renderSlice.get();
 
         if (!id) return;
 
@@ -84,9 +78,11 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         if (index === -1 || index === undefined) return;
 
         removeComponentFromCell(cellId, index);
-        selectContent.set(null);
+        infoSlice.select.content.set(null);
     }
     const handleClick = (target: HTMLDivElement) => {
+        const selectContent = infoSlice.select.content;
+        
         requestIdleCallback(()=> {
             target.classList.add('editor-selected');
             selectContent.set(children);
@@ -103,7 +99,9 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
             label: <div style={{color:'gold',fontSize:14}}>export code</div>, 
             icon: <Star sx={{color:'gold',fontSize:18}} />, 
             onClick: (id)=> {
-                sharedEmmiter.emit('degidratation.'+id, {call: useDegidratationHandler})
+                sharedEmmiter.emit('degidratation.'+id, {
+                    call: useDegidratationHandler
+                });
             }
         },
         { 
@@ -137,7 +135,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                 }}
                 style={styleWrapper}
                 {...attributes}
-                {...(dragEnabled.get() ? listeners : {})}
+                {...(dragEnabled ? listeners : {})}
                 onClick={(e)=> handleClick(e.currentTarget)} 
                 onContextMenu={(e)=> {
                     e.stopPropagation();

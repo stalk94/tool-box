@@ -1,16 +1,15 @@
-import { useHookstate } from '@hookstate/core';
-import { useInfoState } from '../context';
+import { infoSlice } from '../context';
 import React from 'react';
 
 
 
 export const useSelectSlot = () => {
-    const info = useHookstate(useInfoState());
+    const info = infoSlice.get();
     const selectSlot = info.select.slot;
 
 
     React.useEffect(()=> {
-        console.log(selectSlot.get({noproxy: true}))
+        console.log(selectSlot)
     }, [selectSlot]);
 
     return selectSlot

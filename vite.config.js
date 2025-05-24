@@ -18,7 +18,7 @@ export default defineConfig({
             '@bloc': path.resolve(__dirname, 'src/bloc'),
             '@components': path.resolve(__dirname, 'src/components'),
             '@lib': path.resolve(__dirname, 'src'),
-            '@system': path.resolve(__dirname, 'src/app'),
+            '@system': path.resolve(__dirname, 'src/app')
         }
     },
      define: {

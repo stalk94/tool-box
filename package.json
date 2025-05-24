@@ -65,8 +65,6 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@faker-js/faker": "^9.7.0",
-    "@hookstate/core": "^4.0.2",
-    "@hookstate/localstored": "^4.0.2",
     "@mui/material": "^7.1.0",
     "@mui/system": "^7.1.0",
     "@mui/x-data-grid": "^7.27.3",
@@ -104,7 +102,9 @@
     "react-imgix": "^9.10.0",
     "react-redux": "^9.2.0",
     "react-slick": "^0.30.3",
+    "redux": "^4.2.1",
     "slick-carousel": "^1.8.1",
+    "statekit-react": "^1.0.4",
     "write-file-atomic": "^6.0.0",
     "xlsx": "^0.18.5"
   }

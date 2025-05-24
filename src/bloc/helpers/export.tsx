@@ -1,5 +1,5 @@
 import { writeFile } from '../../app/plugins';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "../context";
+import { editorContext, infoSlice, renderSlice, cellsSlice } from "../context";
 import { formatJsx } from '../modules/export/utils';
 
 
@@ -48,10 +48,8 @@ ${spaces}</${type}>`;
 }
 
 export const exportAsJSX = async (name: string) => {
-	const context = useEditorContext();
-	const cellsContent = useCellsContent();
-	const layout = context.render.get({ noproxy: true });
-	const cells = cellsContent.get({ noproxy: true });
+	const layout = renderSlice.get();
+	const cells = cellsSlice.get();
 
 	const renderedBlocks = layout.map(cell => {
 		const comps = cells[cell.i] ?? [];
@@ -82,17 +80,13 @@ ${renderedBlocks.join('\n\n')}
 // ----------------------------------------------------------------------------
 
 export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: string, type: 'error'|'success')=> void) => {
-	const context = useEditorContext();
-	const cellsContent = useCellsContent();
-	const layoutClear = context.layout.get({ noproxy: true }).map((lay)=> {
-		lay.content = [];
-		return lay;
-	});
+	const layouts = editorContext.layout.get();
+	const size = editorContext.size.get();
 	
 
 	const data = {
-		layout: layoutClear,		// текушая сетка
-		content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
+		layout: layouts,		// текушая сетка
+		content: cellsSlice.get(),		// список компонентов в ячейках
 		meta: {
 			scope,
 			name,
@@ -100,12 +94,12 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 			preview: `snapshots/${scope}-${name}.png`
 		},
 		size: {
-			width: context.size.width.get({ noproxy: true }),
-			height: context.size.height.get({ noproxy: true })
+			width: size.width,
+			height: size.height
 		}
 	};
 
-	console.log(data)
+	
 	const body = {
 		folder: `public/blocks/${scope}`,
 		filename: `${name}.json`,
@@ -149,8 +143,8 @@ export const exportLiteralToFile = async (path: string[], fileName: string, file
 	}
 }
 export const createBlockToFile = async (scope: string, name: string) => {
-	const context = useEditorContext();
-
+	const size = editorContext.size.get();
+	
 	const data = {
 		layout: [],
 		content: {},
@@ -161,8 +155,8 @@ export const createBlockToFile = async (scope: string, name: string) => {
 			preview: ''
 		},
 		size: {
-			width: context.size.width.get(),
-			height: context.size.height.get()
+			width: size.width,
+			height: size.height
 		}
 	};
 

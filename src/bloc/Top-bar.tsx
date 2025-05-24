@@ -1,8 +1,7 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
-import { useHookstate } from "@hookstate/core";
+import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
 
 
@@ -13,9 +12,9 @@ const categories = [
     { id: 'preview', label: <Input style={{fontSize: 24}} /> }
 ];
 const Instrument = () => {
-    const mod = useHookstate(useEditorContext().mod);
+    const mod = editorContext.mod.use();
 
-    if(mod.get() === 'grid') return(
+    if(mod === 'grid') return(
         <>
             <IconButton
                 onClick={() => EVENT.emit('addCell', {})}
@@ -40,21 +39,22 @@ const Instrument = () => {
 
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = ({ setShowBlocEditor }) => {
-    const ctx = useHookstate(useEditorContext());
     const ref = React.useRef<HTMLDivElement>(null);
     const [width, setWidth] = React.useState('100%');
     const [bound, setBound] = React.useState<DOMRect>();
-    const info = useHookstate(useInfoState());
+    const mod = editorContext.mod.use();
+    const size = editorContext.size.use();
 
 
     const handleChangeBreackpoint = (bp: 'lg'|'md'|'sm'|'xs') => {
         const breakpoints = { lg: 1200, md: 960, sm: 600, xs: 460 };
         const width = breakpoints[bp] ?? 1200;
-        ctx.size.breackpoint.set(bp);
-        ctx.size.width.set(width);
+        editorContext.size.breackpoint.set(bp);
+        editorContext.size.width.set(width);
     }
     React.useEffect(() => {
         if (!ref.current) return;
+
         const i = setInterval(()=> {
             const bound = ref.current.getBoundingClientRect();
             if(window.innerWidth - bound.x !== width) setWidth(window.innerWidth - bound.x);
@@ -62,14 +62,12 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
 
         return () => clearInterval(i);
     }, []);
-    React.useEffect(()=> {
-        const value = info.select.cell.get({noproxy:true});
-
-        if(value) {
-            const bound = value.getBoundingClientRect();
+    infoSlice.select.cell.useWatch((selectCell) => {
+        if (selectCell) {
+            const bound = selectCell.getBoundingClientRect();
             setBound(bound);
         }
-    }, [info.select.cell]);
+    });
     
 
     return (
@@ -114,14 +112,14 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                     <button key={i}
                         style={{
                             cursor: 'pointer',
-                            color: ctx.mod.get() === elem.id ? 'rgba(255, 255, 255, 0.8)' : 'gray',
+                            color: mod === elem.id ? 'rgba(255, 255, 255, 0.8)' : 'gray',
                             background: 'transparent',
                             padding: '5px',
                             marginRight: '8px',
                             borderRadius: '4px',
-                            border: `1px ${ctx.mod.get() === elem.id ? 'solid rgba(255, 255, 255, 0.8)' : 'dotted #c9c5c55f'}`, 
+                            border: `1px ${mod === elem.id ? 'solid rgba(255, 255, 255, 0.8)' : 'dotted #c9c5c55f'}`, 
                         }}
-                        onClick={()=> ctx.mod.set(elem.id)}
+                        onClick={()=> editorContext.mod.set(elem.id)}
                     >
                         { elem.label }
                     </button>
@@ -137,7 +135,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                 <Box display="flex" alignItems="center">
                     <Select style={{marginLeft:'auto', marginRight:'5px'}}
                         size="small"
-                        value={ctx?.size?.breackpoint?.get() ?? 'lg'}
+                        value={size?.breackpoint ?? 'lg'}
                         onChange={(e) => handleChangeBreackpoint(e.target.value)}
                         displayEmpty
                         sx={{ fontSize: 14, height: 30, color: '#ccc', background: 'rgba(255, 255, 255, 0.05)'}}
@@ -150,11 +148,11 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                     </Select>
                     <span style={{marginRight:'10px', marginLeft:'7px',color:'gray'}}>⋮</span>
                     <NumberInput
-                        value={ctx?.size?.width?.get()}
+                        value={size?.width}
                         min={0}
                         step={20}
                         max={window.innerWidth}
-                        onChange={(v) => ctx?.size?.width?.set(v)}
+                        onChange={(v) => editorContext.size.width.set(v)}
                         sx={{ 
                             maxWidth: '80px',
                             height: 32,
@@ -164,8 +162,8 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                         ×
                     </Typography>
                     <NumberInput
-                        value={ctx?.size?.height?.get()}
-                        onChange={(v) => ctx?.size?.height?.set(v)}
+                        value={size?.height}
+                        onChange={(v) => editorContext.size.height.set(v)}
                         min={0}
                         max={10000}
                         step={20}

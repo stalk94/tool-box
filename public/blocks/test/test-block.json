@@ -381,7 +381,8 @@
           "data-source": "src",
           "alt": "Картинка",
           "data-id": 1746740026793,
-          "data-type": "Image"
+          "data-type": "Image",
+          "fullWidth": true
         }
       }
     ],
@@ -441,7 +442,7 @@
   "meta": {
     "scope": "test",
     "name": "test-block",
-    "updatedAt": 1747413194876,
+    "updatedAt": 1748106292338,
     "preview": "snapshots/test-test-block.png"
   },
   "size": {

@@ -1,12 +1,11 @@
 import React from 'react';
 import { JSONContent } from '@tiptap/react';
 import { Typography, TypographyProps } from '@mui/material';
-import { useHookstate } from '@hookstate/core';
 import { updateComponentProps } from '../helpers/updateComponentProps';
-import { useInfoState, useEditorContext } from "../context";
+import { infoSlice, editorContext} from "../context";
 import { useDebounced } from 'src/components/hooks/debounce';
 import TipTapSlotEditor from './tip-tap';
-import { exportText, exportTypography, formatJsx } from './export/Text';
+import { exportText, exportTypography } from './export/Text';
 
 
 type TextWrapperProps = {
@@ -84,8 +83,7 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const { children, 'data-id': dataId, styles, style, fullWidth, ...otherProps } = props;
     const [text, setText] = React.useState(children);
-    const infoState = useInfoState();
-    const selected = useHookstate(infoState.select.content);
+    const selected = infoSlice.select.content.use();
     
     const handleBlur = (e) => {
         const newText = e.target.innerText;
@@ -126,7 +124,7 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
             ref={ref} 
             data-id={dataId}
             data-type="Typography" 
-            contentEditable={globalThis.EDITOR && selected.get({noproxy:true})?.props?.['data-id'] === dataId}
+            contentEditable={globalThis.EDITOR && selected?.props?.['data-id'] === dataId}
             suppressContentEditableWarning
             onBlur={handleBlur}
             { ...otherProps }

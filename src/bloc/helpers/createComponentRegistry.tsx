@@ -1,7 +1,7 @@
 import React from 'react';
 import { componentMap, componentDefaultsProps } from '../modules/helpers/registry';
 import { Component } from '../type';
-;
+
 
 
 // неоюходим при создании нового компонента в рабочей области (применяется только в App)

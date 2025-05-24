@@ -1,12 +1,11 @@
 import { Component, LayoutCustom } from '../type';
-import { useRenderState } from "../context";
+import { renderSlice } from "../context";
 
 
 export function getComponentById(id: number): Component | undefined {
-    const renderState = useRenderState();
     let result;
 
-    renderState.get({ noproxy: true }).forEach((layer) => {  
+    renderSlice.get().forEach((layer) => {  
         const find = layer.content?.find?.((elem)=> elem.props['data-id'] === id);
         if(find) result = find;
     });
@@ -66,7 +65,7 @@ export function findLowestY(cells: LayoutCustom[]): number {
 export const stackHorizont = (countW: number, containerHeight: number, rowHeight: number, margin: [number, number]): LayoutCustom[] => {
     const cellW = Math.floor(12 / countW); // ширина в колонках
     const cellH = Math.floor((containerHeight + margin[1]) / (rowHeight + margin[1])); // высота в строках
-    const y = findLowestY(useRenderState().get({ noproxy: true })); // если нужно добавить снизу
+    const y = findLowestY(renderSlice.get()); // если нужно добавить снизу
 
     return Array.from({ length: countW }, (_, i) => ({
         i: `cell-${Date.now()}-${i}`,
@@ -78,7 +77,7 @@ export const stackHorizont = (countW: number, containerHeight: number, rowHeight
     }));
 }
 export const stackVertical = (countH: number, containerHeight: number, rowHeight: number, margin: [number, number]): LayoutCustom[] => {
-    const cells = useRenderState().get({ noproxy: true });
+    const cells = renderSlice.get();
     const maxCols = 12;
 
     const totalRows = Math.floor((containerHeight + margin[1]) / (rowHeight + margin[1]));

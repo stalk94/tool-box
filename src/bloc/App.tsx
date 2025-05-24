@@ -1,13 +1,13 @@
 'use client'
 import colorLog from '../app/helpers/console';
 import React from "react";
+import { Provider } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
-import { useEditorContext, useRenderState, useCellsContent, useInfoState, useNestedContext } from "./context";
-import { hookstate, useHookstate } from "@hookstate/core";
+import { editorContext, infoSlice, renderSlice, cellsSlice, nestedContextSlice } from "./context";
 import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
 import { componentMap, componentsRegistry } from './modules/helpers/registry';
@@ -16,7 +16,6 @@ import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
-import {  useSafeAsyncEffect } from "./helpers/usePopUp";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { updateComponentProps } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
@@ -41,33 +40,17 @@ colorLog();
 
 
 
-export default function Block({ setShowBlocEditor }) {  
+function EditorGlobal({ setShowBlocEditor, dumpRender }) {  
     const { enqueueSnackbar } = useSnackbar();
-    const [enableContext, setEnable] = React.useState(false);
-    const nestedContext = useHookstate(useNestedContext());                                    
-    const cacheDrag = React.useRef<HTMLDivElement>(null);
+    const cacheDrag = React.useRef<HTMLDivElement>(null);                                  
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
-    const ctx = useHookstate(useEditorContext());
-    const mod = useHookstate(ctx.mod);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
-    const render = useHookstate(useRenderState());
-    const info = useHookstate(useInfoState());                             // данные по выделенным обьектам
-    const curCell = ctx.currentCell;                                    // текушая выбранная ячейка
-    const cellsCache = useHookstate(useCellsContent());                   // элементы в ячейках (dump из localStorage)
-    const activeSlot = useHookstate(activeSlotState);
+    const mod = editorContext.mod.use();
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
    
 
-    const dumpRender = () => {
-        const name = ctx.meta.name.get();
-        const scope = ctx.meta.scope.get();
-        //snapshotAndUpload(`${scope}-${name}`);
-        saveBlockToFile(scope, name, (msg, type)=> {
-            enqueueSnackbar(msg, {variant: type});
-        });
-    }
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, parent } = component;
         const type = props["data-type"];
@@ -98,7 +81,6 @@ export default function Block({ setShowBlocEditor }) {
 
         delete rawProps.ref;
         const cleanedProps = serializeJSX(rawProps);
-        console.log(cleanedProps)
 
         return {
             id,
@@ -111,68 +93,72 @@ export default function Block({ setShowBlocEditor }) {
         };
     }
     const addComponentToCell = (cellId: string, component: Component) => {
-        render.set((prev) => {
-            const updatedRender = [...prev];
-            const cellIndex = updatedRender.findIndex(item => item.i === cellId);
-
-            if (cellIndex !== -1) {
-                const cell = updatedRender[cellIndex];
-                if(!Array.isArray(cell.content)) cell.content = [];
-                const serialized = serrialize(component, cellId);
-
-                const clone = React.cloneElement(component, {
-                    'data-id': serialized.id,
-                    ref: (el) => {
-                        if (el) refs.current[serialized.id] = el;
-                    }
-                });
-                cell.content.push(clone);
-
-                cellsCache.set((old)=> {
-                    if(!old[cellId]) old[cellId] = [serialized];
-                    else old[cellId].push(serialized);
-        
-                    return old;
-                });
+        const serialized = serrialize(component, cellId);
+        const clone = React.cloneElement(component, {
+            'data-id': serialized.id,
+            ref: (el) => {
+                if (el) refs.current[serialized.id] = el;
             }
-            return updatedRender;
+        });
+
+        renderSlice.set((prevRender) => {
+            const findIndex = prevRender.findIndex((cell) => cell.i === cellId);
+
+            if (findIndex !== -1) {
+                const targetCell = prevRender[findIndex];
+
+                if (Array.isArray(targetCell.content)) {
+                    targetCell.content.push(clone);
+                }
+                else targetCell.content = [clone];
+            }
+
+            return prevRender;
+        });
+
+        cellsSlice.set((old) => {
+            old[cellId].push(serialized);
+            return old;
         });
     }
     const handleDragEndOld = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
-      
         if (!active || !over || active.id === over.id) return;
 
-        const currentList = cellsCache.get({ noproxy: true })[cellId];
-        const oldIndex = currentList.findIndex((comp) => comp.props['data-id'] === active.id);
-        const newIndex = currentList.findIndex((comp) => comp.props['data-id'] === over.id);
+        const currentList = cellsSlice.get();
+        const oldIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === active.id);
+        const newIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === over.id);
 
         if (oldIndex === -1 || newIndex === -1) return;
 
-        // 🔁 Обновляем состояние через setRender
-        render.set((prev) => {
-            const updated = [...prev];
-            const target = updated.find((c) => c.i === cellId);
+        // 🔁 Обновляем стейты
+        renderSlice.set((prev) => {
+            const target = prev.find((cell) => cell.i === cellId);
+
             if (target?.content) {
                 target.content = arrayMove(target.content, oldIndex, newIndex);
             }
-
-            // ⚠️ Обновляем и cellsContent 
-            cellsCache.set((old) => {
-                old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
-                return old;
-            });
-
-            return updated;
         });
+        editorContext.layout.set((prev) => {
+            prev.map((lay) => {
+                if (lay.i === cellId) {
+                    lay.content = arrayMove(lay.content, oldIndex, newIndex);
+                }
+                return lay;
+            });
+        });
+        cellsSlice.set((old) => {
+            old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
+        });
+
 
         if (cacheDrag.current) {
             cacheDrag.current.classList.add('editor-selected');
-            const find = render.get({ noproxy: true }).find(el => el.i === cellId);
+            const find = renderSlice.get().find(el => el.i === cellId);
 
             if (find && Array.isArray(find.content)) {
                 const findChild = find.content.find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
-                if (findChild) requestIdleCallback(() => info.select.content.set(findChild));
+                if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
             }
         }
     }
@@ -202,7 +188,7 @@ export default function Block({ setShowBlocEditor }) {
         }
         // перетаскивание на слот
         else if (dropMeta?.type === 'sortable') {
-            const slot = activeSlot.get({ noproxy: true });
+            const slot = activeSlotState.get();
             const dataType = dragData.dataType;
             
             if(slot?.dataTypesAccepts && dataType && slot?.dataTypesAccepts?.includes(dataType) ) {
@@ -213,23 +199,98 @@ export default function Block({ setShowBlocEditor }) {
             const dragged = active.data?.current?.element;
             const type = active.data?.current?.type;
             const accepts = over?.data?.current?.dataTypesAccepts;
-            console.log(accepts)
-            // добавление из галереи компонентов
-            if(dragged && type === 'element' && !accepts) {
-                curCell.set({ i: over.id });
-                const ref = document.querySelector(`[data-id="${over.id}"]`);
-                info.select.cell.set(ref);
 
-                if(curCell.get()?.i) {
-                    addComponentToCell(curCell.get().i, createComponentFromRegistry(active.id));
-                }
+            // добавление из галереи компонентов
+            if (dragged && type === 'element' && !accepts) {
+                editorContext.currentCell.set({ i: over.id });
+
+                const ref = document.querySelector(`[data-id="${over.id}"]`);
+                infoSlice.select.cell.set(ref);
+
+                addComponentToCell(
+                    over.id,
+                    createComponentFromRegistry(active.id)
+                );
             }
         }
 
         setActiveDragElement(null); // очистка
     }
+    const handleKeyboard =(e: KeyboardEvent)=> {
+        if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+            const select = infoSlice.select.content?.get();
+
+            if(select) {
+                editorContext.buffer.set(serrializeCopy(select));
+                enqueueSnackbar('скопирован', {variant: 'default'});
+            }
+        }
+    }
+    React.useEffect(()=> {
+        window.addEventListener('keydown', handleKeyboard);
+
+        return ()=> window.removeEventListener('keydown', handleKeyboard);
+    }, []);
+    
+
+    return (
+        <DndContext
+            collisionDetection={pointerWithin}
+            sensors={sensors}
+            onDragStart={(event) => {
+                const dragged = event.active.data?.current?.element;
+                const dragData = event.active.data?.current;
+
+                if (dragData.type === 'sortable') handleDragStart(event);
+                if (dragged) setActiveDragElement(dragged);
+            }}
+            onDragEnd={handleDragEnd}
+        >
+            <DragOverlay dropAnimation={null}>
+                {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
+            </DragOverlay>
+
+            <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row' }}>
+                <LeftToolBar
+                    desserealize={desserealize}
+                    useDump={dumpRender}
+                />
+
+                <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+                    <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
+                    
+                    {mod === 'preview'
+                        ? <GridTest2 />
+                        : <GridComponentEditor
+                            desserealize={desserealize}
+                        />
+                    }
+
+                </div>
+            </div>
+        </DndContext>
+    );
+}
+
+
+export default function EditorApp({ setShowBlocEditor }) {
+    const { enqueueSnackbar } = useSnackbar();
+    const [isLoad, setIsLoad] = React.useState(false);
+    const [enableContext, setEnable] = React.useState(false);
+    const meta = editorContext.meta.use();
+    const nestedContext = nestedContextSlice.use();
+
+
+    const fileSaveFromDumpRender = () => {
+        const name = editorContext.meta.name.get();
+        const scope = editorContext.meta.scope.get();
+        //snapshotAndUpload(`${scope}-${name}`);
+        saveBlockToFile(scope, name, (msg, type)=> {
+            enqueueSnackbar(msg, {variant: type});
+        });
+    }
     const findById = (idToFind: number): ComponentSerrialize | undefined => {
-        const rawCache = cellsCache.get({ noproxy: true });
+        const rawCache = cellsSlice.get();
 
         for (const layerKey in rawCache) {
             const list = rawCache[layerKey];
@@ -240,131 +301,90 @@ export default function Block({ setShowBlocEditor }) {
         return undefined;
     }
     const handleChangeNestedContext = (editData: DataNested) => {
-        const idComponent = nestedContext.currentData.idParent.get();
-        const idSlot = nestedContext.currentData.idSlot.get();
+        const idComponent = nestedContextSlice.currentData.idParent.get();
+        const idSlot = nestedContextSlice.currentData.idSlot.get();
         const findComponentSerrialize = findById(idComponent);
-        console.log('CHANGE CONTEXT:', editData);
-        
+        console.red('CHANGE CONTEXT:', editData);
+
         if (findComponentSerrialize) updateComponentProps({
             component: findComponentSerrialize,
             data: {
                 slots: {
                     ...findComponentSerrialize.props?.slots,
-                    [idSlot]: {...editData}
+                    [idSlot]: { ...editData }
                 }
             },
             rerender: true
         });
     }
-    const handleKeyboard =(e: KeyboardEvent)=> {
-        if (e.ctrlKey && e.key.toLowerCase() === 'c') {
-            const select = info.select.content?.get({noproxy: true});
-            if(select) {
-                ctx.buffer.set(serrializeCopy(select));
-                enqueueSnackbar('скопирован', {variant: 'default'});
-            }
-        }
-    }
-    useSafeAsyncEffect(async (isMounted) => {
-        try {
+    const useGetDataFileDir = async() => {
+         try {
             const data = await fetchFolders();
             
-            if (isMounted() && data) {
-                info.project.set(data);
-                ctx.dragEnabled.set(true);
+            if (data) {
+                infoSlice.project.set(data);
+                editorContext.dragEnabled.set(true);
             }
         }
         catch (e) {
-            console.error("fetchFolders error:", e);
+            console.error("❗❗❗ fetchFolders error:", e);
         }
+    }
+    React.useLayoutEffect(()=> {
+        useGetDataFileDir()
+            .then(()=> setIsLoad(true))
+            .catch(()=> console.error('🚨 data projects not load'));
+    }, [])
+    React.useEffect(()=> {
+        const handle = (data: SlotDataBus) => {
+            console.green('GET GRID CONTEXT =>', data);
+            fileSaveFromDumpRender();
+
+            nestedContextSlice.set({
+                isEnable: true,
+                currentData: structuredClone(data)
+            });
+
+            setTimeout(() => setEnable(true), 100);
+        }
+        
+        EVENT.on('addGridContext', handle);
+        return ()=> EVENT.off('addGridContext', handle);
     }, []);
     React.useEffect(()=> {
-        const handle = (data: SlotDataBus)=> {
-            console.log('ADD GRID CONTEXT: ', data);
-            dumpRender();           // сохранимся предварительно
+        setIsLoad(false);
 
-            nestedContext.set({
-                isEnable: true,
-                currentData: data
-            });
-            setTimeout(()=> setEnable(true), 100);
-        }
+        // 🧹 Чистим старое
+        cellsSlice.set({});
+        renderSlice.set([]);
+        editorContext.layout.set([]);
+        editorContext.currentCell.set(undefined); // ⬅️ важно, иначе останется старый cellId
+        editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
 
-        EVENT.on('addGridContext', handle);
-        window.addEventListener('keydown', handleKeyboard);
+        setTimeout(() => setIsLoad(true), 200);
+    }, [meta.name, meta.scope]);
 
-        return () => {
-            window.removeEventListener('keydown', handleKeyboard);
-            EVENT.off('addGridContext', handle);
-        }
-    }, []);
-    
 
     return(
         <>
-            { enableContext &&
+            { (enableContext && isLoad) &&
                 <NestedContext
-                    key={`nested-${nestedContext.currentData.idParent.get()}-${nestedContext.currentData.idSlot.get()}`}
+                    key={`nested-${nestedContext.currentData.idParent}-${nestedContext.currentData.idSlot}`}
                     useBackToEditorBase={(editData)=> {
+                        setEnable(false);
                         handleChangeNestedContext(editData);
-                        setEnable(false)
                     }}
-                    nestedComponentsList={nestedContext.currentData.nestedComponentsList.get({noproxy: true})}
-                    data={nestedContext.currentData.data.get({noproxy: true})}
+                    nestedComponentsList={nestedContext.currentData.nestedComponentsList}
+                    data={nestedContext.currentData.data}
                     onChange={handleChangeNestedContext}
                 />
             }
-            { !enableContext && 
-                <DndContext
-                    collisionDetection={pointerWithin}
-                    sensors={sensors}
-                    onDragStart={(event) => {
-                        const dragged = event.active.data?.current?.element;
-                        const dragData = event.active.data?.current;
-
-                        if (dragData.type === 'sortable') handleDragStart(event);
-                        if (dragged) setActiveDragElement(dragged);
-                    }}
-                    onDragEnd={handleDragEnd}
-                >
-                    <DragOverlay dropAnimation={null}>
-                        {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
-                    </DragOverlay>
-
-                    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row' }}>
-                        <LeftToolBar
-                            desserealize={desserealize}
-                            useDump={dumpRender}
-                        />
-
-                        <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
-                            <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
-                            {mod.get() === 'preview'
-                                ? <GridTest2 />
-                                : <GridComponentEditor
-                                    desserealize={desserealize}
-                                />
-                            }
-
-                        </div>
-                    </div>
-                </DndContext>
+            { !enableContext && isLoad && 
+                <EditorGlobal 
+                    setShowBlocEditor={setShowBlocEditor} 
+                    dumpRender={fileSaveFromDumpRender}
+                />
             }
         </>
     );
 }
-
-
-
-/**
- *   React.useEffect(()=> {
-        const call =(data)=> {
-            const cell = curCell.get();
-            addComponentToCell(cell.i, data);
-        }
-
-        // ! data bus, вставка компонента в тек. выделенную ячейку
-        EVENT.on('addComponentToCell', call);
-        return ()=> EVENT.off('addComponentToCel', call);
-    }, []);
- */

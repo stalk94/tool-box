@@ -1,0 +1,31 @@
+{
+  "layout": [
+    {
+      "i": "cell-1748107079538",
+      "x": 0,
+      "y": 0,
+      "w": 12,
+      "h": 13,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    }
+  ],
+  "content": {
+    "cell-1748107079538": []
+  },
+  "meta": {
+    "scope": "test",
+    "name": "ara",
+    "updatedAt": 1748107087218,
+    "preview": "snapshots/test-ara.png"
+  },
+  "size": {
+    "width": 1200,
+    "height": 710
+  }
+}

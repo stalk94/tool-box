@@ -3,8 +3,6 @@ import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { LayoutCustom, ComponentSerrialize } from '../type';
 import { desserealize } from '../helpers/sanitize';
-import { Input } from "@mui/icons-material";
-import { IconButton } from "@mui/material";
 import { generateRenderGridFileSafe } from './shim';
 
 
@@ -59,11 +57,12 @@ export default function MiniRender({ layouts, cellsContent, size, onReadyLiteral
         if (!cellsContent) return console.error('! не передан `cellsContent`');
         if (!layouts) return console.error('! не передан `layouts`');
 
+        
         return layouts.map((lay)=> {
             const cacheCell = cellsContent[lay.i];
 
             if(!cacheCell) console.warn('⚠️ при консолидации не была обнаружена ячейка в исходном cacheCell');
-            else lay.content = cacheCell.map((component)=> 
+            else cacheCell.map((component)=> 
                 desserealize(component)
             );
             

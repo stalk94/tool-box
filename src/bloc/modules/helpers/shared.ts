@@ -1,13 +1,8 @@
-import { hookstate } from "@hookstate/core";
-import { useInfoState } from "../../context";
+import { infoSlice } from "../../context";
 import EventEmitter from "../../../app/emiter";
-import { DataEmiters } from "../../type";
+import { createState, useLocalStorage } from 'statekit-react';
 
-
-// shared storage 
-export const sharedContext = hookstate({
-    all: {}
-});
+export const sharedContext = createState('sharedContext', {});
 export const sharedEmmiter = new EventEmitter();
 
 
@@ -16,29 +11,12 @@ export const sharedEmmiter = new EventEmitter();
 export const useCtxBufer = (id: number, initValue: any) => {
     const uid = `${id}`;
     const ref = document.querySelector(`[data-id='${uid}']`);
-    const infoState = useInfoState();
 
     // создаст storage в shared storage 
-    sharedContext.set((prev)=> {
-        if(prev[uid]) console.warn('Перезаписан bufer storage: ', uid);
-
-        prev[uid] = initValue;
-        return prev;
-    });
 
     
     return (newValue: any)=> {
-        sharedContext.set((prev)=> {
-            infoState.inspector.lastData.set({
-                mutation: uid,
-                prev: prev,
-                new: newValue,
-                ref
-            });
-
-            prev[uid] = newValue;
-            return prev;
-        });
+    
     }
 }
 //  компонент создает эммитер

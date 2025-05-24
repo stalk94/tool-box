@@ -1,6 +1,4 @@
 import { NodeViewWrapper } from '@tiptap/react';
-import { useStorageContext } from '../../context';
-import { useHookstate } from '@hookstate/core';
 
 
 

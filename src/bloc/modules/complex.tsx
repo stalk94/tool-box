@@ -17,7 +17,7 @@ import { DropSlot, ContextSlot } from '../Dragable';
 import TipTapSlotEditor, {rendeHtml} from './tip-tap';
 import { exportTipTapValue, renderComponentSsr, toLiteral } from './export/utils';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
-import { useEditorContext } from "../context";
+import { editorContext } from "../context";
 
 
 type ListWrapperProps = ListCustomProps & {
@@ -197,7 +197,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
 
     degidratationRef.current = (call) => {
         const code = render(
-            useEditorContext().meta.get({noproxy:true}),
+            editorContext.meta.get(),
             activeIndexs,
             styles,
             items,
@@ -246,7 +246,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
 
     degidratationRef.current = (call) => {
         const code = exportedTabs(
-            useEditorContext().meta.get({noproxy:true}),
+            editorContext.meta.get(),
             items,
             textColor,
             slots
@@ -839,8 +839,8 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
                 return elem;
             });
         }
-
-        const result = func(linkItems ?? []);
+        
+        const result = func([]);
         return result;
     }
     const handleUpload = async (file) => {

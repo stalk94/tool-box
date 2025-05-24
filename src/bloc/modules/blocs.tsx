@@ -2,7 +2,7 @@ import React from 'react';
 import { DropSlot, ContextSlot } from '../Dragable';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { ComponentSerrialize, Component, ComponentProps } from '../type';
-import { useEditorContext } from "../context";
+import { editorContext } from "../context";
 import { exportedFrame } from './export/Acordeon';
 import { Paper } from '@mui/material';
 
@@ -26,7 +26,7 @@ export const FrameWrapper = React.forwardRef((props: FrameWrapperProps, ref) => 
         if(metaName && metaName.length > 3) metaNameParsed = metaName;
 
         const code = slots[0]?.size ? exportedFrame(
-            useEditorContext().meta.get({noproxy:true}),
+            editorContext.meta.get(),
             slots[0],
             metaNameParsed
         ) : '';

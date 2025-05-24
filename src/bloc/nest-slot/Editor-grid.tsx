@@ -2,8 +2,7 @@ import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { LayoutCustom, ComponentSerrialize } from '../type';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
-import { useHookstate } from "@hookstate/core";
+import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from '../helpers/editor';
@@ -26,48 +25,42 @@ type NestGridEditor = {
 
 
 export default function ({ desserealize, nestedData }: NestGridEditor) {
-    const ctx = useHookstate(useEditorContext());
-    const render = useHookstate(useRenderState());
-    const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
-    const curCell = useHookstate(ctx.currentCell);                          // текушая выбранная ячейка
-    const info = useHookstate(useInfoState());                              // данные по выделенным обьектам
-    const cellsCache = useHookstate(useCellsContent());                     // элементы в ячейках
+    const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки    
+    const render = renderSlice.use();     
+    const curCell = editorSlice.currentCell.use();
+    const size = editorSlice.size.use();
+    const mod = editorSlice.mod.use();
     
 
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
-        render.set((prev) => {
-            const updatedRender = [...prev];
-            
-            const cellIndex = updatedRender.findIndex(item => item.i === cellId);
-            ctx.layout.set((layer)=> {
-                return layer.map((lay)=> {
-                    lay.content.splice(componentIndex, 1);
-                    return lay;
-                });
-            });
-        
+        renderSlice.set((prevRender) => {
+            const cellIndex = prevRender.findIndex(item => item.i === cellId);
 
             if (cellIndex !== -1) {
-                if (Array.isArray(updatedRender[cellIndex]?.content)) {
+                if (Array.isArray(prevRender[cellIndex]?.content)) {
                     // Удаляем компонент из ячейки
-                    updatedRender[cellIndex]?.content?.splice(componentIndex, 1);
-                    // обновим наш dump
-                    cellsCache.set((old) => {
-                        old[cellId].splice(componentIndex, 1);
-
-                        return old;
-                    });
+                    prevRender[cellIndex]?.content?.splice(componentIndex, 1);
                 }
             }
+        });
 
-            return updatedRender;
+        cellsSlice.set((old) => {
+            old[cellId].splice(componentIndex, 1);
+            return old;
+        });
+
+        editorSlice.layout.set((layer) => {
+            layer = layer.map((lay) => {
+                lay.content.splice(componentIndex, 1);
+                return lay;
+            });
         });
     }
     const handleDeleteKeyPress = (event: KeyboardEvent) => {
-        const renderData = render.get({noproxy: true});
+        const renderData = renderSlice.get();
         if (event.key !== 'Delete') return;
       
-        const selected = info.select.content.get({ noproxy: true });
+        const selected = infoSlice.select.content?.get();
         if (!selected) return;
       
         const id = selected.props?.['data-id'];
@@ -85,34 +78,35 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
         if (index === -1 || index === undefined) return;
       
         removeComponentFromCell(cellId, index);
-        info.select.content.set(null);
+        infoSlice.select.content.set(null);
     }
     // согласование серриализованных компонентов в ячейках с render layouts
     const consolidation = (layoutList: LayoutCustom[]) => {
         if(layoutList[0] === null) return [];
 
         return layoutList.map((layer) => {
+            const copyLayer = { ...layer };
             if(!layer) return;
 
-            const cache = cellsCache.get({ noproxy: true });
+            const cache = cellsSlice.get();
             const curCacheLayout = cache[layer.i];
-
+            const resultsLayer = [];
+            
             if (curCacheLayout) {
-                const resultsLayer = [];
-
                 Object.values(curCacheLayout).map((content) => {
                     const result = desserealize(content);
                     if (result) resultsLayer.push(result);
                 });
-                layer.content = resultsLayer;
-            }
 
-            return layer;
+                copyLayer.content = resultsLayer;
+            }
+            
+            return copyLayer;
         });
     }
     const handleChangeLayout = (layoutList: LayoutCustom[]) => {
         if(layoutList[0]) {
-            ctx.layout?.set((prev) =>
+            editorSlice.layout?.set((prev) =>
                 prev.map((cell) => {
                     const updatedLayout = layoutList.find((l) => l.i === cell.i);
                     
@@ -125,45 +119,41 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
                 })
             );
             
-            render.set(consolidation(layoutList));
+            renderSlice.set(consolidation(layoutList));
         }
     }
     const delCellData = (idCell: string) => {
-        render.set((prev) => prev.filter((cell) => cell.i !== idCell));
-        ctx.layout.set((prev) => prev.filter((cell) => cell.i !== idCell));
+        renderSlice.set((prev) => prev.filter((cell) => cell.i !== idCell));
+        editorSlice.layout.set((prev) => prev.filter((cell) => cell.i !== idCell));
 
         // Удаляем содержимое из кэша
-        cellsCache.set((old) => {
+        cellsSlice.set((old) => {
             delete old[idCell];
             return old;
         });
     }
     const addCellData = (cells: any[], clean?: 'all'|string) => {
-        if(clean === 'all') render.get().map((cell)=> delCellData(cell.i));
+        if(clean === 'all') render.map((cell)=> delCellData(cell.i));
         else if(clean && clean !== 'all') delCellData(clean);
 
         cells.map((cell, index)=> {
             cell.i = cell.i ?? `cell-${Date.now()+index}`;
 
-            render.set((prev) => [
-                ...prev,
-                cell
-            ]);
-            ctx.layout.set((prev) => [
-                ...prev,
-                cell
-            ]);
-            cellsCache.set((old) => {
+            renderSlice.set((prev) => {
+                prev.push(cell);
+            });
+            editorSlice.layout.set((prev) => {
+                prev.push(cell);
+            });
+            cellsSlice.set((old) => {
                 old[cell.i] = [];
-                return old;
             });
         });
     }
     const addNewCell = () => {
-        const all = render.get({ noproxy: true });
         const defaultW = 12;
         const defaultH = 2;
-        const spot = findFreeSpot(defaultW, defaultH, all, 12);
+        const spot = findFreeSpot(defaultW, defaultH, render, 12);
 
         if (!spot) {
             console.warn('⛔ Нет свободного места');
@@ -184,9 +174,7 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
     }
 
     React.useEffect(() => {
-        const cur = render.get({ noproxy: true });
-        
-        if (!cur || !cur.length) return;
+        if (!render || !render.length) return;
         
         const resizeObserver = new ResizeObserver(() => {
             if (!gridContainerRef.current) return;
@@ -194,11 +182,11 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
             const parentHeight = gridContainerRef.current.clientHeight;
             const containerWidth = gridContainerRef.current.offsetWidth;
 
-            info.container.height.set(parentHeight);
-            info.container.width.set(containerWidth);
+            infoSlice.container.height.set(parentHeight);
+            infoSlice.container.width.set(containerWidth);
 
-            const maxY = Math.max(...cur.map((item) => item.y + item.h));
-            console.log(maxY)
+            const maxY = Math.max(...render.map((item) => item.y + item.h));
+            //console.log(maxY)
             const totalVerticalMargin = margin[1] * (maxY + 1);
             const availableHeight = parentHeight - totalVerticalMargin;
             // setRowHeight(availableHeight / maxY);
@@ -213,23 +201,26 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
         }
     }, []);
     React.useEffect(() => {
-        if (nestedData.content) cellsCache.set(nestedData.content);
+        console.red('GRID nestedData update');
+        if (nestedData.content) cellsSlice.set(nestedData.content);
 
         if (nestedData?.layout && nestedData?.layout[0]?.i) {
             console.green('init nested layouts:', nestedData.layout);
-            ctx.layout.set(nestedData.layout);
+            editorSlice.layout.set(structuredClone(nestedData.layout));
         }
 
         if (nestedData.size) {
-            ctx.size.set((old) => ({ ...old, ...nestedData.size }));
+            editorSlice.size.width.set(nestedData.size.width);
+            editorSlice.size.height.set(nestedData.size.height);
         }
     }, [nestedData]);
     React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
 
-        render.set(consolidation(nestedData?.layout ?? []));
-        if(nestedData?.layout) ctx.layout.set(nestedData.layout);
+        const result = consolidation(nestedData?.layout ?? []);
+        renderSlice.set(result);
+        if(nestedData?.layout) editorSlice.layout.set(nestedData.layout);
 
         return () => {
             document.removeEventListener('keydown', handleDeleteKeyPress);
@@ -243,8 +234,8 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
         <div 
             style={{ 
                 margin: 5,
-                maxWidth: ctx.size.width?.get() ?? '100%', 
-                height: ctx.size.height?.get() ?? '100%',
+                maxWidth: size.width ?? '100%', 
+                height: size.height ?? '100%',
                 border: '1px dashed #fbfbfa26'
             }}
             ref={gridContainerRef}
@@ -252,29 +243,29 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
             <ResponsiveGridLayout
                 style={{ background: '#222222' }}
                 className="GRID-EDITOR"
-                layouts={{ lg: render.get({noproxy:true}) }}                // Схема сетки
+                layouts={{ lg: render }}                // Схема сетки
                 breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
                 cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
                 rowHeight={20}
                 compactType={null}                                          // Отключение автоматической компоновки
                 preventCollision={true}
-                isDraggable={ctx.mod.get()==='grid' && true}                // Отключить перетаскивание
-                isResizable={ctx.mod.get()==='grid' && true}                // Отключить изменение размера
+                isDraggable={mod === 'grid' && true}                // Отключить перетаскивание
+                isResizable={mod === 'grid' && true}                // Отключить изменение размера
                 margin={margin}
                 onLayoutChange={handleChangeLayout}
             >
-                { render.get({ noproxy: true }).map((layer) => {
+                { render?.map((layer) => {
 
                     if(layer?.i) return(
                         <div 
                             onClick={(e) => {
                                 // LINK (event) переключение на панель компонентов
-                                if(curCell.get()?.i !== layer.i) {
+                                if(curCell?.i !== layer.i) {
                                     EVENT.emit('leftBarChange', {currentToolPanel: 'component'});
                                 }
                                 
-                                curCell.set({ i: layer.i });
-                                info.select.cell.set(e.currentTarget);
+                                editorSlice.currentCell.set({ i: layer.i });
+                                infoSlice.select.cell.set(e.currentTarget);
                                 EVENT.emit('onSelectCell', layer.i);
                             }}
                             data-id={layer.i} 
@@ -282,8 +273,8 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
                             style={{
                                 overflowX: 'hidden',
                                 overflowY: 'auto',
-                                border: `1px dashed ${curCell.get()?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
-                                background: curCell.get()?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
+                                border: `1px dashed ${curCell?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
+                                background: curCell?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
                                 height: '100%',
                                 display: 'inline-flex',
                                 width: '100%',

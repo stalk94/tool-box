@@ -6,8 +6,7 @@ import {
     RadioButtonUnchecked, RadioButtonChecked, Add, Code
 } from "@mui/icons-material";
 import { FaReact } from 'react-icons/fa';
-import { useEditorContext, useRenderState, useCellsContent, useInfoState } from "./context";
-import { useHookstate } from "@hookstate/core";
+import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { TooglerInput } from '../../components/input/input.any';
 import LeftSideBarAndTool from '../../components/nav-bars/tool-left'
 import { updateComponentProps } from './shim';
@@ -179,9 +178,7 @@ export default function (
         onChange: (data: any)=> void 
     }
 ) {
-    const ctx = useHookstate(useEditorContext());
-    const info = useHookstate(useInfoState());
-    const select = info.select;
+    const select = infoSlice.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'component' | 'atoms' | 'styles'>('component');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
@@ -225,20 +222,17 @@ export default function (
         else if (item.id === 'styles') setCurrentToolPanel('styles');
         else if (item.id === 'atoms') setCurrentToolPanel('atoms');
         else if (item.id === 'save') {
-            const cellsContent = useCellsContent();
-            console.red('LEFT BAR: ', cellsContent);
-
             onChange({
-                content: cellsContent.get({ noproxy: true }),		// список компонентов в ячейках
+                content: cellsSlice.get(),		// список компонентов в ячейках
                 size: {
-                    width: ctx.size.width.get({ noproxy: true }),
-                    height: ctx.size.height.get({ noproxy: true })
+                    width: editorSlice.size.width.get(),
+                    height: editorSlice.size.height.get()
                 }
             });
         };
     };
     const useComponentUpdateFromEditorForm = (newDataProps) => {
-        const selectComponent = select.content.get({ noproxy: true });
+        const selectComponent = select.content.get();
         if (selectComponent) updateComponentProps({ 
             component: selectComponent, 
             data: newDataProps 
@@ -279,7 +273,7 @@ export default function (
             center={start}
             end={
                 <Inspector
-                    data={globalThis.sharedContext.get()}
+                    data={globalThis.sharedContext.get()}  // ??
                     onClose={console.log}
                 />
             }
@@ -290,13 +284,3 @@ export default function (
         </LeftSideBarAndTool>
     );
 }
-
-
-/**
- *  end={
-                <Inspector
-                    data={globalThis.sharedContext.get()}
-                    onClose={console.log}
-                />
-            }
- */

@@ -1,7 +1,6 @@
-import { hookstate, State } from '@hookstate/core';
-import { localstored } from '@hookstate/localstored';
 import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ComponentProps, ScopeData } from './type';
 import { Editor } from '@tiptap/react';
+import { createState, useLocalStorage } from 'statekit-react';
 
 
 export type PropsSimpleList = {
@@ -18,18 +17,20 @@ export type EditorContextType = {
     };
     mod: 'block' | 'grid' | 'preview' | 'storage' | 'slot';     //?? 'slot', 'storage' 
     dragEnabled: boolean;
-    linkMode: string | undefined;
     layout: LayoutCustom[];
     size: {
-        width: number;
-        height: number;
-        breackpoint: string;
+        width: number
+        height: number
+        breackpoint: string
     }
     inspector: {
         lastData: any
         colapsed: boolean
         isAbsolute: boolean
-        position: {x:number, y:number}
+        position: {
+            x: number
+            y: number
+        }
     }
     buffer?: ComponentSerrialize,
     currentCell?: LayoutCustom
@@ -44,7 +45,7 @@ export type InfoStateType = {
         height: number
     }
     select: {
-        cell?: string;
+        cell?: Element;
         content?: Component
         slot: {
             component: Component,
@@ -70,109 +71,55 @@ export type NestedContextStateType = {
 
 
 
-let contextState: State<EditorContextType> | null = null;
-let nestedContextState: State<EditorContextType> | null = null;
-let renderStateInstance: State<LayoutCustom[]> | null = null;
-let cellsContentInstance: State<Record<string, ComponentSerrialize[]>> | null = null;
-let infoStateInstance: State<InfoStateType> | null = null;
+export const editorContext = createState('EDITOR', {
+    mod: 'block',
+    dragEnabled: true,
+    meta: {
+        scope: 'test',
+        name: 'test-block',
+    },
+    layout: [],
+    size: { 
+        width: 1000, 
+        height: 600, 
+        breackpoint: 'lg' 
+    },
+    currentCell: {},
+    inspector: {
+        lastData: {},
+        colapsed: false,
+        isAbsolute: false,
+        position: {
+            x: window.innerWidth - 400,
+            y: 50
+        }
+    },
+} as EditorContextType, [
+    useLocalStorage({ restore: true })
+]);
 
-export function useEditorContext(): State<EditorContextType> | null {
-    if (typeof window === 'undefined') return null;
 
-    if (!contextState) {
-        contextState = hookstate<EditorContextType>(
-            {
-                meta: {
-                    scope: 'test',
-                    name: 'test-block',
-                },
-                mod: 'block',
-                dragEnabled: true,
-                linkMode: undefined,
-                layout: [],
-                size: { width: 1000, height: 600, breackpoint: 'lg' },
-                currentCell: undefined,
-                // LINK - EXPEREMENTAL вложенный контекст компонента поддерживаюший вложенную сетку
-                curentNestedContext: undefined,
-                buffer: undefined,                      // скопированные компоненты
-                inspector: {
-                    lastData: {},
-                    colapsed: false,
-                    isAbsolute: false,
-                    position: {
-                        x: window.innerWidth-400,
-                        y: 50
-                    }
-                },
-            },
-            localstored({ 
-                key: 'CONTEXT', 
-                engine: localStorage 
-            })
-        );
-    }
+export const renderSlice = createState('renderGlobal', [] as LayoutCustom[]);
+export const cellsSlice = createState('cellsGlobal', {} as Record<string, ComponentSerrialize[]>);
 
-    return contextState;
-}
 
-export function useNestedContext(): State<NestedContextStateType> | null {
-    if (typeof window === 'undefined') return null;
+export const infoSlice = createState('infoGlobal', {
+    container: {
+        width: 0,
+        height: 0,
+    },
+    select: {
+        cell: {},
+        content: {},
+        slot: {},
+        panel: {
+            lastAddedType: '',
+        },
+    },
+    project: {}
+} as InfoStateType);
 
-    if (!nestedContextState) {
-        nestedContextState = hookstate<NestedContextStateType>(
-            {
-                isEnable: false
-            }
-        );
-    }
 
-    return nestedContextState;
-}
-
-export function useRenderState(): State<LayoutCustom[]> | null {
-    if (typeof window === 'undefined') return null;
-
-    if (!renderStateInstance) {
-        renderStateInstance = hookstate<LayoutCustom[]>([]);
-    }
-
-    return renderStateInstance;
-}
-
-export function useCellsContent(): State<Record<string, ComponentSerrialize[]>> | null {
-    if (typeof window === 'undefined') return null;
-
-    if (!cellsContentInstance) {
-        cellsContentInstance = hookstate<Record<string, ComponentSerrialize[]>>(
-            {}
-        );
-    }
-
-    return cellsContentInstance;
-}
-
-export function useInfoState(): State<InfoStateType> | null {
-    if (typeof window === 'undefined') return null;
-
-    if (!infoStateInstance) {
-        infoStateInstance = hookstate<InfoStateType>({
-            container: {
-                width: 0,
-                height: 0,
-            },
-            select: {
-                cell: undefined,
-                content: undefined,
-                slot: undefined,
-                panel: {
-                    lastAddedType: '',
-                },
-            },
-            project: {},
-            contentAllRefs: undefined,
-            activeEditorTipTop: undefined,
-        });
-    }
-
-    return infoStateInstance;
-}
+export const nestedContextSlice = createState('nestedContextGlobal', {
+    isEnable: false
+} as NestedContextStateType);
