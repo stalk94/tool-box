@@ -110,8 +110,9 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         });
 
         cellsSlice.set((old) => {
-            console.log(old)
-            old[cellId].push(data);
+            if(Array.isArray(old[cellId])) old[cellId].push(data);
+            else old[cellId] = [data];
+            
             return old;
         });
     }
@@ -226,6 +227,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         }
     }
     React.useEffect(()=> {
+        if (typeof window === 'undefined') return;
         window.addEventListener('keydown', handleKeyboard);
 
         return ()=> window.removeEventListener('keydown', handleKeyboard);
@@ -350,6 +352,8 @@ export default function EditorApp({ setShowBlocEditor }) {
             .catch(() => console.error('🚨 data projects not load'));
     }, [])
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         const handle = (data: SlotDataBus) => {
             console.green('GET GRID CONTEXT =>', data);
             fileSaveFromDumpRender();
@@ -366,6 +370,7 @@ export default function EditorApp({ setShowBlocEditor }) {
         return () => EVENT.off('addGridContext', handle);
     }, []);
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
         // 🔁 Очищаем перед установкой нового блока
         renderSlice.set([]);
         cellsSlice.set({});

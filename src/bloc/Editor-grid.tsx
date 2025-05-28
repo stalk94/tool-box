@@ -159,6 +159,7 @@ export default function ({ desserealize }) {
     }
 
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
 
@@ -170,6 +171,8 @@ export default function ({ desserealize }) {
         }
     }, []);
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+        
         const resizeObserver = new ResizeObserver(() => {
             if (!gridContainerRef.current) return;
 
