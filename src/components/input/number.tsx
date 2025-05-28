@@ -27,8 +27,6 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
         onChange?.(clamped);
     }
     const handleInputChange = (raw: string) => {
-        setRawInput(raw);
-
         const cleaned = raw?.replace(/[^\d-]/g, '');
         const parsed = parseInt(cleaned, 10);
 
@@ -53,7 +51,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
         }
     }
     const handleBlur = () => {
-        const cleaned = rawInput.replace(/[^\d-]/g, '');
+        const cleaned = rawInput?.replace(/[^\d-]/g, '');
         const parsed = parseInt(cleaned, 10);
 
         if (!isNaN(parsed)) {
@@ -71,7 +69,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
 
         if (typeof value === 'number') {
             setInputValue(value);
-            setRawInput(value);
+            setRawInput(String(value));
         }
     }, [value]);
 
@@ -94,7 +92,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
             <InputBaseCustom
                 value={rawInput}
                 type="text"
-                onChange={handleInputChange}
+                onChange={(v)=> handleInputChange(String(v))}
                 onBlur={handleBlur}
                 disabled={props.disabled}
                 sx={{

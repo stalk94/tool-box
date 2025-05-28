@@ -105,7 +105,7 @@ export default function InspectorPanel ({ data, onClose }) {
         }
         const handleJson =(data)=> {
             refEditor.current = data;
-            state.lastData.set(data.data);
+            editorContext.inspector.lastData.set(data.data);
             setMod('json');
             editorContext.inspector.isAbsolute.set(true);
         }
