@@ -42,6 +42,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
     const ref = React.useRef<HTMLDivElement>(null);
     const [width, setWidth] = React.useState('100%');
     const [bound, setBound] = React.useState<DOMRect>();
+    const selectCell = infoSlice.select.cell.use();
     const mod = editorContext.mod.use();
     const size = editorContext.size.use();
 
@@ -62,12 +63,12 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
 
         return () => clearInterval(i);
     }, []);
-    infoSlice.select.cell.useWatch((selectCell) => {
-        if (selectCell) {
+    React.useEffect(()=> {
+        if (selectCell && selectCell.getBoundingClientRect) {
             const bound = selectCell.getBoundingClientRect();
             setBound(bound);
         }
-    });
+    }, [selectCell]);
     
 
     return (

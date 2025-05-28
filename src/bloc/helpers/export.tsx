@@ -86,7 +86,7 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 
 	const data = {
 		layout: layouts,		// текушая сетка
-		content: cellsSlice.get(),		// список компонентов в ячейках
+		content: cellsSlice.get(true),		// список компонентов в ячейках
 		meta: {
 			scope,
 			name,

@@ -1,9 +1,9 @@
 import React from 'react';
 import { useDraggable, useDroppable, Modifier } from '@dnd-kit/core';
 import { DropSlotProps } from '../type';
-import { createState } from 'statekit-react';
+import { createStore } from 'statekit-lite';
 
-const activeSlot = createState('activeSlot', {});
+const activeSlot = createStore({});
 
 
 export function DraggableToolItem({ id, type, dataType, element }) {
@@ -68,7 +68,8 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
     React.useEffect(() => {
         activeSlot.set({
             type: 'slot',
-            dataTypesAccepts
+            dataTypesAccepts,
+            onAdd
         });
     }, [isOver]);
 
@@ -99,7 +100,7 @@ export function DroppableCell({ id, children }) {
     
     //const style
     React.useEffect(() => {
-        activeSlot.set({});
+        activeSlot.set(null);
     }, [isOver]);
 
     return (

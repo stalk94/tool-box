@@ -3,7 +3,7 @@ import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton,
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
-import { LayoutCustom, ComponentSerrialize } from '../type';
+
 
 
 export type ContentData = {
@@ -31,31 +31,6 @@ const Instrument = () => {
         </>
     );
 }
-function fullyUnwrape(layouts: LayoutCustom[]) {
-    const result = [];
-
-    layouts.forEach((lay) => {
-        const copyLay: LayoutCustom = {
-            i: lay.i,
-            x: lay.x,
-            y: lay.y,
-            w: lay.w,
-            h: lay.h,
-            minW: lay.minW,
-            minH: lay.minH,
-            content: [],
-            props: {
-                classNames: '',
-                style: {}
-            }
-        };
-
-        result.push(copyLay);
-    });
-
-    console.log(result);
-    return result;
-}
 
 
 /**
@@ -72,6 +47,7 @@ function fullyUnwrape(layouts: LayoutCustom[]) {
 // верхняя полоска (инфо обшее)
 export const ToolBarInfo = ({ setShowBlocEditor }) => {
     const [bound, setBound] = React.useState<DOMRect>();
+    const selectCell = infoSlice.select.cell.use();
     const mod = editorSlice.mod.use();
     const size = editorSlice.size.use();
 
@@ -83,23 +59,21 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         editorSlice.size.width.set(width);
     }
     const handleClickToBaseContext =()=> {
-        const result = fullyUnwrape(editorSlice.layout.get());
-
         setShowBlocEditor({
-            content: structuredClone(cellsSlice.get()),
-            layout: result,
+            content: cellsSlice.get(true),
+            layout: renderSlice.get(true),
             size: {
-                width: editorSlice.size.width.get(),
-                height: editorSlice.size.height.get()
+                width: Math.round(editorSlice.size.width.get(true)),
+                height: Math.round(editorSlice.size.height.get(true))
             }
         });
     }
-    infoSlice.select.cell.useWatch((selectCell)=> {
-        if(selectCell) {
+    React.useEffect(() => {
+        if (selectCell && selectCell.getBoundingClientRect) {
             const bound = selectCell.getBoundingClientRect();
             setBound(bound);
         }
-    });
+    }, [selectCell]);
 
 
     return (

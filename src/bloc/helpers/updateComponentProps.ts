@@ -14,9 +14,10 @@ type Params = {
 // ВАЖНАЯ ФУНКЦИЯ ЖИЗНЕННОГО ЦИКЛА
 ///////////////////////////////////////////////////////////////////////////////////
 export function updateComponentProps({ component, data, rerender = true }: Params) {
+    console.blue('update component props')
     const id = component?.props?.['data-id'];
     const cellId = editorContext.currentCell.get()?.i;
-
+    
     if (!id || !cellId) {
         console.warn('updateComponentProps: отсутствует data-id или data-cell');
         return;
@@ -33,9 +34,7 @@ export function updateComponentProps({ component, data, rerender = true }: Param
         return old;
     });
 
-    // 🔁 Обновляем визуальный рендер через context.render
-    let updatedComponent: React.ReactElement | null = null;
-    const render = renderSlice.get();
+    const render = renderSlice.get(true);
 
     const updated = render.map((layer) => {
         if (!Array.isArray(layer.content)) return layer;
@@ -47,25 +46,17 @@ export function updateComponentProps({ component, data, rerender = true }: Param
         if (!current) return layer;
 
         try {
-            const { ref, ...safeProps } = current.props ?? {};
+            const newComponent = {
+                id: current.id,
+                parent: current.parent,
+                props: {
+                    ...current.props,
+                    ...data
+                }
+            };
 
-            updatedComponent = React.cloneElement(current, {
-                ...safeProps,
-                ...data
-            });
-
-            const newContent = [
-                ...layer.content.slice(0, i),
-                updatedComponent,
-                ...layer.content.slice(i + 1),
-            ];
-
-            console.log(newContent);
-
-            return {
-                ...layer,
-                content: newContent
-            }
+            layer.content[i] = newComponent;
+            return layer;
         }
         catch (e) {
             console.error('❌ Ошибка при клонировании компонента:', e, current);
@@ -74,12 +65,42 @@ export function updateComponentProps({ component, data, rerender = true }: Param
     });
 
     renderSlice.set(updated);
-    
+}
 
-    // 🛠 вне renderSlice.set()
-    if (updatedComponent) {
-        infoSlice.select?.content?.set(updatedComponent);
-    }
+
+/** обновить slice project */
+export const updateProjectState = (scope: string, name: string) => {
+	const layouts = editorContext.layout.get();
+	const size = editorContext.size.get();
+
+	infoSlice.project.set((prev)=> {
+		const data = {
+			layout: layouts,					// текушая сетка
+			content: cellsSlice.get(true),		// список компонентов в ячейках
+			meta: {
+				scope,
+				name,
+				updatedAt: Date.now(),
+				preview: `snapshots/${scope}-${name}.png`
+			},
+			size: {
+				width: size.width,
+				height: size.height
+			}
+		}
+
+		const currentScope = prev?.[scope];
+
+		if(currentScope) {
+			const findIndex = currentScope?.findIndex((x) => x.name === name);
+
+			if(findIndex !== -1) {
+				currentScope[findIndex].data = data;
+			}
+		}
+
+		return prev;
+	});
 }
 
 // !

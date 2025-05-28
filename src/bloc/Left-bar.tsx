@@ -121,7 +121,10 @@ const RenderListProject = ({ currentCat }) => {
                                     backgroundColor: '#e0e0e022',
                                 }
                             }}
-                            onClick={() => editorContext.meta.name.set(blockData.name)}
+                            onClick={() => {
+                                if (editorContext.meta.name.get() === blockData.name) return;
+                                editorContext.meta.name.set(blockData.name);
+                            }}
                             key={index}
                         >
                             <Typography 
@@ -189,11 +192,6 @@ const RenderProjectTopPanel = () => {
             const data = await fetchFolders();
             
             if (isMounted() && data) {
-                // Сброс перед установкой
-                renderSlice.set([]);
-                editorContext.layout.set([]);
-                editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
-
                 editorContext.meta.scope.set(uniqueName);
                 editorContext.meta.name.set('root');
                 infoSlice.project.set(data);

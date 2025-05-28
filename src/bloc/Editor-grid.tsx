@@ -3,8 +3,10 @@ import { LayoutCustom, BlocData } from './type';
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
+import useContextMenu from '@components/context-main';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
+import { Delete, Edit, Star } from '@mui/icons-material';
 import { findFreeSpot, stackHorizont, stackVertical } from './helpers/editor';
 import { DroppableCell } from './Dragable';
 import Container from '@mui/material/Container';
@@ -19,7 +21,6 @@ export default function ({ desserealize }) {
     const [ready, setReady] = React.useState(false);
     const size = editorContext.size.use();
     const mod = editorContext.mod.use();
-    const layouts = editorContext.layout.use();
     const meta = editorContext.meta.use();
     const project = infoSlice.project.use();
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
@@ -37,6 +38,8 @@ export default function ({ desserealize }) {
                     prevRender[cellIndex]?.content?.splice(componentIndex, 1);
                 }
             }
+
+            return prevRender;
         });
 
         cellsSlice.set((old) => {
@@ -75,24 +78,6 @@ export default function ({ desserealize }) {
         removeComponentFromCell(cellId, index);
         infoSlice.select.content.set(null);
     }
-    const consolidation = (layoutList: LayoutCustom[]) => {
-        return layoutList.map((layer) => {
-            const copyLayer = structuredClone(layer);
-            const cache = cellsSlice.get();
-            const curCacheLayout = cache[layer.i];
-
-            copyLayer.content = [];
-
-            if (curCacheLayout) {
-                for (const content of Object.values(curCacheLayout)) {
-                    const result = desserealize(content);
-                    if (result) copyLayer.content.push(result);
-                }
-            }
-
-            return copyLayer;
-        });
-    }
     const handleChangeLayout = (layoutList: LayoutCustom[]) => {
         editorContext.layout?.set((prev) =>
             prev.map((cell) => {
@@ -106,8 +91,19 @@ export default function ({ desserealize }) {
                 return cell;
             })
         );
+    }
+    const handleClickCell = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, layer: LayoutCustom) => {
+        // (event) переключение на панель компонентов
+        EVENT.emit('leftBarChange', {
+            currentToolPanel: 'component'
+        });
 
-        renderSlice.set(consolidation(layoutList));
+        
+        if (curCell?.i !== layer.i) {
+            editorContext.currentCell.set({ i: layer.i });
+            infoSlice.select.cell.set(e.currentTarget);
+            EVENT.emit('onSelectCell', layer.i);
+        }
     }
     const delCellData = (idCell: string) => {
         renderSlice.set((prev) => prev.filter((cell) => cell.i !== idCell));
@@ -128,12 +124,14 @@ export default function ({ desserealize }) {
 
             renderSlice.set((prev) => {
                 prev.push(cell);
+                return prev;
             });
             editorContext.layout.set((prev) => {
                 prev.push(cell);
             });
             cellsSlice.set((old) => {
                 old[cell.i] = [];
+                return old;
             });
         });
     }
@@ -160,34 +158,6 @@ export default function ({ desserealize }) {
         }]);
     }
 
-   
-    React.useEffect(() => {
-        const currentScope = project?.[meta?.scope];
-        const found: BlocData = currentScope?.find((obj) => obj.name === meta?.name);
-       
-        if (!found?.data) return;
-        
-        cellsSlice.set({});
-        renderSlice.set([]);
-        editorContext.layout.set([]);
-        editorContext.currentCell.set(undefined);
-        editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
-
-        // ✅ устанавливаем layout и content
-        if (found.data.content) cellsSlice.set(found.data.content);
-        if (found.data.layout) editorContext.layout.set(found.data.layout);
-        if (found.data.size) {
-            editorContext.size.width.set(found.data.size.width);
-            editorContext.size.height.set(found.data.size.height);
-        }
-
-        // ✅ defer render slice
-        setTimeout(() => {
-            const freshLayout = editorContext.layout.get(); // важно: получаем уже обновлённый layout
-            const result = consolidation(freshLayout); // применяем на актуальном layout
-            renderSlice.set(result); // безопасно
-        }, 0);
-    }, [meta.name, project]);
     React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
@@ -209,11 +179,10 @@ export default function ({ desserealize }) {
             if (containerWidth > 0) {
                 infoSlice.container.height.set(parentHeight);
                 infoSlice.container.width.set(containerWidth);
-                setReady(true);             // ✅ разрешаем рендер grid
+                setReady(true);
             }
 
             const maxY = Math.max(...render.map((item) => item.y + item.h));
-            console.log(`%c max y cell : ${maxY}`, 'color: orange; font-weight: bold;');
             const totalVerticalMargin = margin[1] * (maxY + 1);
             const availableHeight = parentHeight - totalVerticalMargin;
             // setRowHeight(availableHeight / maxY);
@@ -226,10 +195,17 @@ export default function ({ desserealize }) {
             resizeObserver.disconnect();
             if (ref) resizeObserver.unobserve(ref); // ⬅️ важно: unobserve тот же ref
         }
-    }, [meta.name]);
-  
+    }, [meta, project]);
     
+    const { menu, handleOpen } = useContextMenu([
+        {
+            label: <div style={{ color: 'red', fontSize: 14 }}>Удалить cell</div>,
+            icon: <Delete sx={{ color: 'red', fontSize: 18 }} />,
+            onClick: (id) => delCellData(id),
+        },
+    ]);
     
+
     return (
         <Container 
             sx={{
@@ -249,33 +225,26 @@ export default function ({ desserealize }) {
         >
             {ready &&
             <ResponsiveGridLayout
-                key={`${meta.scope}-${meta.name}`}
                 style={{ background: '#222222', height: (size.height - 10) ?? '99%', }}
                 className="GRID-EDITOR"
-                layouts={{ lg: layouts }}                // Схема сетки
+                layouts={{ lg: editorContext.layout.get() }}                // Схема сетки
                 breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
                 cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
                 rowHeight={rowHeight}
                 compactType={null}                                          // Отключение автоматической компоновки
                 preventCollision={true}
-                isDraggable={mod === 'grid' && true}                // Отключить перетаскивание
-                isResizable={mod === 'grid' && true}                // Отключить изменение размера
+                isDraggable={mod === 'grid' && true}                // перетаскивание
+                isResizable={mod === 'grid' && true}                // изменение размера
                 margin={margin}
                 onLayoutChange={handleChangeLayout}
             >
                 { render?.map((layer) => {
-                    
                     return(
                         <div 
-                            onClick={(e) => {
-                                // LINK (event) переключение на панель компонентов
-                                if(curCell?.i !== layer.i) {
-                                    EVENT.emit('leftBarChange', {currentToolPanel: 'component'});
-                                }
-                                
-                                editorContext.currentCell.set({ i: layer.i });
-                                infoSlice.select.cell.set(e.currentTarget);
-                                EVENT.emit('onSelectCell', layer.i);
+                            onClick={(e) => handleClickCell(e, layer)}
+                            onContextMenu={(e)=> {
+                                handleClickCell(e, layer);
+                                handleOpen(e, {id: layer.i});
                             }}
                             data-id={layer.i} 
                             key={layer.i}
@@ -334,6 +303,7 @@ export default function ({ desserealize }) {
             </ResponsiveGridLayout>
             }
         </div>
+        { menu }
         </Container>
     );
 }
@@ -341,6 +311,45 @@ export default function ({ desserealize }) {
 
 
 
+/** 
+ * const consolidation = (layoutList: LayoutCustom[]) => {
+        return layoutList.map((layer) => {
+            const copyLayer = structuredClone(layer);
+            const cache = cellsSlice.get();
+            const curCacheLayout = cache[layer.i];
+
+            copyLayer.content = [];
+
+            if (curCacheLayout) {
+                for (const content of Object.values(curCacheLayout)) {
+                    const result = desserealize(content);
+                    if (result) copyLayer.content.push(result);
+                }
+            }
+
+            return copyLayer;
+        });
+    } */
+/**
+ *  React.useEffect(() => {
+        const currentScope = project?.[meta?.scope];
+        const found: BlocData = currentScope?.find((obj) => obj.name === meta?.name);
+       
+        if (!found?.data) return;
+
+        // ✅ устанавливаем layout и content
+        if (found.data.content) cellsSlice.set(found.data.content);
+        if (found.data.layout) editorContext.layout.set(found.data.layout);
+        if (found.data.size) {
+            editorContext.size.width.set(found.data.size.width);
+            editorContext.size.height.set(found.data.size.height);
+        }
+
+        const freshLayout = found.data.layout ?? [];
+        const result = consolidation(freshLayout);
+        renderSlice.set(result);
+    }, [meta.name, project]);
+ */
 /**
  *  React.useEffect(() => {
         const cur = render.get({ noproxy: true });

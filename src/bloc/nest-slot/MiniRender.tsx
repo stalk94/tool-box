@@ -53,24 +53,7 @@ export default function MiniRender({ layouts, cellsContent, size, onReadyLiteral
         const fileCode = generateRenderGridFileSafe(resultCellsRender, layouts);
         onReadyLiteral(fileCode);
     }
-    const consolidation = (): LayoutCustom[] => {
-        if (!cellsContent) return console.error('! не передан `cellsContent`');
-        if (!layouts) return console.error('! не передан `layouts`');
-
-        
-        return layouts.map((lay)=> {
-            const cacheCell = cellsContent[lay.i];
-
-            if(!cacheCell) console.warn('⚠️ при консолидации не была обнаружена ячейка в исходном cacheCell');
-            else cacheCell.map((component)=> 
-                desserealize(component)
-            );
-            
-            return lay;
-        });
-    }
     React.useEffect(()=> {
-        console.log('mount')
         if(onReadyLiteral) degidrateAll();
     }, []);
     
@@ -79,7 +62,7 @@ export default function MiniRender({ layouts, cellsContent, size, onReadyLiteral
         <div style={{ position: 'relative' }}>
             <ResponsiveGridLayout
                 className="GRID-SLOT"
-                layouts={{ lg: layouts ?? [] }}                                   // Схема сетки
+                layouts={{ lg: structuredClone(layouts) ?? [] }}                                   // Схема сетки
                 breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
                 cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
                 rowHeight={20}
@@ -88,9 +71,9 @@ export default function MiniRender({ layouts, cellsContent, size, onReadyLiteral
                 isDraggable={false}                                         // Отключить перетаскивание
                 isResizable={false}                                         // Отключить изменение размера
                 margin={margin}
-                onLayoutChange={console.log}
+                //onLayoutChange={console.log}
             >
-                { consolidation()?.map((layer) => {
+                { layouts?.map((layer) => {
                     return (
                         <div
                             data-id={layer.i}
@@ -111,7 +94,7 @@ export default function MiniRender({ layouts, cellsContent, size, onReadyLiteral
                             { Array.isArray(layer.content) &&
                                 layer.content.map((component, index) =>
                                     <React.Fragment key={index}>
-                                        { component }
+                                        { desserealize(component) }
                                     </React.Fragment>
                                 )
                             }

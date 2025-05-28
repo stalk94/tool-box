@@ -61,11 +61,12 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                         removeCoponentFromCells(componentIndex);
                     }
                 }
+
+                return [...prevRender];
             });
         }
 
-        const render = renderSlice.get();
-
+        const render = renderSlice.get(true);
         if (!id) return;
 
         const cellId = render.find((layer) =>
@@ -96,6 +97,11 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
 
         document.querySelectorAll('[ref-id]').forEach(el => {
             if (el != target) el.classList.remove('editor-selected');
+        });
+    }
+    const handleDoubleClick = (target: HTMLDivElement) => {
+        EVENT.emit('leftBarChange', {
+            currentToolPanel: 'styles'
         });
     }
 
@@ -139,7 +145,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         <React.Fragment>
             <div
                 ref-id={id}
-                ref-parent={children.type.parent}
+                ref-parent={children.parent ?? children?.type?.parent}
                 ref={(node) => {
                     setNodeRef(node);
                     itemRef.current = node;
@@ -148,10 +154,11 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                 {...attributes}
                 {...(dragEnabled ? listeners : {})}
                 onClick={(e)=> handleClick(e.currentTarget)} 
+                onDoubleClick={(e)=> handleDoubleClick(e.currentTarget)}
                 onContextMenu={(e)=> {
                     e.stopPropagation();
-                    handleOpen(e, {id, type: children.props['data-type']});
                     handleClick(e.currentTarget);
+                    handleOpen(e, {id, type: children.props['data-type']});
                 }}
             >
                 <SlotToolBar

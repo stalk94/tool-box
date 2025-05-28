@@ -1,5 +1,5 @@
 import React from "react";
-import { NestedContext, ComponentSerrialize, Component, LayoutCustom } from '../type';
+import { NestedContext, ComponentSerrialize, ComponentProps, DataRegisterComponent } from '../type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
@@ -7,8 +7,7 @@ import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
 import { componentMap, componentsRegistry } from '../modules/helpers/registry';
 import { serializeJSX } from '../helpers/sanitize';
-import { Provider } from "react-redux";
-import { store } from 'statekit-react';
+
 
 import { DragItemCopyElement } from './Dragable';
 import { ToolBarInfo } from './Top-bar';
@@ -19,8 +18,7 @@ import GridComponentEditor from './Editor-grid';
 
 // это редактор блоков сетки
 export default function Block({ useBackToEditorBase, data, nestedComponentsList, onChange }: NestedContext) {
-    globalThis.ZOOM = 1;    
-    const refs = React.useRef({});                                   // список всех рефов на все компоненты                                         // в редакторе блоков зум отключаем
+    globalThis.ZOOM = 1;                                           // в редакторе блоков зум отключаем
     const cacheDrag = React.useRef<HTMLDivElement>(null);
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
     const sensors = useSensors(
@@ -47,13 +45,11 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             />
         );
     }
-    // вызывается только при добавлении нового сонтента 
-    const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
-        const rawProps = { ...component.props };
+    const createDataComponent = (rawProps: ComponentProps, cellId: string): ComponentSerrialize => {
         const type = rawProps['data-type'];
         const id = Date.now();
 
-        delete rawProps.ref;
+        if (rawProps.ref) delete rawProps.ref;
         const cleanedProps = serializeJSX(rawProps);
 
         return {
@@ -66,32 +62,31 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             }
         };
     }
-    const addComponentToCell = (cellId: string, component: Component) => {
-        const serialized = serrialize(component, cellId);
-        const clone = React.cloneElement(component, {
-            'data-id': serialized.id,
-            ref: (el) => {
-                if (el) refs.current[serialized.id] = el;
-            }
-        });
+    const addComponentToCell = (cellId: string, component: DataRegisterComponent) => {
+        const { Component, props } = component;
+        const data = createDataComponent(props, cellId);
 
-        renderSlice.set((prevRender) => {
+        editorSlice.layout.set((prevRender) => {
             const findIndex = prevRender.findIndex((cell) => cell.i === cellId);
 
-            if(findIndex !== -1) {
+            if (findIndex !== -1) {
                 const targetCell = prevRender[findIndex];
 
-                if(Array.isArray(targetCell.content)) {
-                    targetCell.content.push(clone);
+                if (Array.isArray(targetCell.content)) {
+                    targetCell.content.push(data);
                 }
-                else targetCell.content = [clone];
+                else targetCell.content = [data];
             }
 
             return prevRender;
         });
+        renderSlice.set(editorSlice.layout.get(true));
 
+        
         cellsSlice.set((old) => {
-            old[cellId].push(serialized);
+            if(Array.isArray(old[cellId])) old[cellId].push(data);
+            else old[cellId] = [data];
+
             return old;
         });
     }
@@ -99,7 +94,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         const { active, over } = event;
         if (!active || !over || active.id === over.id) return;
 
-        const currentList = cellsSlice.get();
+        const currentList = cellsSlice.get(true);
         const oldIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === active.id);
         const newIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === over.id);
 
@@ -112,9 +107,11 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             if (target?.content) {
                 target.content = arrayMove(target.content, oldIndex, newIndex);
             }
+
+            return prev;
         });
         editorSlice.layout.set((prev) => {
-            prev.map((lay) => {
+            return prev.map((lay) => {
                 if (lay.i === cellId) {
                     lay.content = arrayMove(lay.content, oldIndex, newIndex);
                 }
@@ -123,6 +120,8 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         });
         cellsSlice.set((old) => {
             old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
+
+            return old;
         });
 
 
@@ -182,15 +181,37 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         setActiveDragElement(null); // очистка
     }
 
-    React.useLayoutEffect(()=> {
-        infoSlice.project.set(data);
+    React.useEffect(()=> {
+        editorSlice.currentCell.set(undefined);
+        infoSlice.set({
+            container: {
+                width: 0,
+                height: 0,
+            },
+            select: {
+                cell: {},
+                panel: {
+                    lastAddedType: '',
+                },
+            },
+            project: {}
+        });
+        
+        //infoSlice.project.set(data);
         editorSlice.dragEnabled.set(true);
+
+        return ()=> {
+            cellsSlice.set({});
+            renderSlice.set([]);
+            editorSlice.layout.set([]);
+            editorSlice.currentCell.set(undefined);
+            infoSlice.select.content.set(null);
+        }
     }, []);
     
 
 
     return(
-        <Provider store={store}>
         <DndContext 
             collisionDetection={pointerWithin}
             sensors={sensors}
@@ -224,7 +245,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
                 </div>
             </div>
         </DndContext>
-        </Provider>
     );
 }
 

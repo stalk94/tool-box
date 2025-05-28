@@ -1,6 +1,7 @@
 import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ComponentProps, ScopeData } from './type';
 import { Editor } from '@tiptap/react';
 import { createState, useLocalStorage } from 'statekit-react';
+import { createStore as create } from 'statekit-lite';
 
 
 export type PropsSimpleList = {
@@ -60,7 +61,7 @@ export type InfoStateType = {
         lastData: any
         task: any[];
     };
-    project: Record<string, ScopeData>
+    project: Record<string, ScopeData[]>
     contentAllRefs?: any;
     activeEditorTipTop: Editor
 }
@@ -99,8 +100,14 @@ export const editorContext = createState('EDITOR', {
 ]);
 
 
-export const renderSlice = createState('renderGlobal', [] as LayoutCustom[]);
-export const cellsSlice = createState('cellsGlobal', {} as Record<string, ComponentSerrialize[]>);
+export const renderSlice = create([] as LayoutCustom[], {
+    devtools: true,
+    immer: true
+});
+export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
+    devtools: true,
+    immer: true
+});
 
 
 export const infoSlice = createState('infoGlobal', {

@@ -1,6 +1,6 @@
 import { ComponentSerrialize, LayoutCustom, ProxyComponentName, Component } from '../type';
 import { Editor } from '@tiptap/react';
-import { createState } from 'statekit-react';
+import { createStore as create } from 'statekit-lite';
 
 
 export type PropsSimpleList = {
@@ -70,37 +70,36 @@ export type InfoStateType = {
 
 
 
-export const renderSlice = createState('render', [] as LayoutCustom[]);
-export const cellsSlice = createState('cells', {} as Record<string, ComponentSerrialize[]>);
+export const renderSlice = create([] as LayoutCustom[], {
+    devtools: {name: 'renderNested'},
+    immer: true
+});
+export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
+    devtools: {name: 'cellsNested'},
+    immer: true
+});
 
-export const infoSlice = createState('info', {
+export const infoSlice = create({
     container: {
         width: 0,
         height: 0,
     },
     select: {
-        cell: {
-
-        },
+        cell: {},
         panel: {
             lastAddedType: '',
         },
     },
-    project: {
+    project: {},
+} as InfoStateType, {
+    devtools: {name: 'infoNested'},
+    immer: true
+});
 
-    },
-} as InfoStateType);
-
-export const editorSlice = createState('editor', {
+export const editorSlice = create({
     mod: 'block',
     dragEnabled: true,
-    currentCell: {
-        
-    },
-    meta: {
-        scope: 'test',
-        name: 'test-block',
-    },
+    currentCell: {},
     size: { 
         width: 1000, 
         height: 600, 
@@ -116,4 +115,7 @@ export const editorSlice = createState('editor', {
             y: 50
         }
     }
-} as EditorContextType);
+} as EditorContextType, {
+    devtools: {name: 'editorNested'},
+    immer: true
+});

@@ -5,11 +5,8 @@
       "x": 0,
       "y": 0,
       "w": 5,
-      "h": 32,
-      "content": [
-        null,
-        null
-      ],
+      "h": 25,
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -89,56 +86,109 @@
     }
   ],
   "content": {
+    "cell-1747910002163": [
+      {
+        "id": 1747910013149,
+        "parent": "cell-1747910002163",
+        "props": {
+          "fullWidth": true,
+          "logo": "",
+          "file": "",
+          "data-source": "src",
+          "linkItems": [
+            {
+              "id": "test",
+              "label": "test",
+              "path": "/test"
+            },
+            {
+              "id": "settings",
+              "label": "settings",
+              "path": "/settings"
+            }
+          ],
+          "slots": {},
+          "data-id": 1747910013149,
+          "data-type": "AppBar"
+        }
+      }
+    ],
     "cell-1746527949939": [
       {
-        "id": 1748107160269,
-        "parent": "cell-1746527949939",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "primary",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1748107160269,
-          "data-type": "Button"
-        }
-      },
-      {
-        "id": 1748107159587,
-        "parent": "cell-1746527949939",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "error",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1748107159587,
-          "data-type": "Button"
-        }
-      },
-      {
-        "id": 1748111357458,
+        "id": 1748450044625,
         "parent": "cell-1746527949939",
         "props": {
           "fullWidth": true,
           "metaName": "CustomFrame",
           "elevation": 0,
           "slots": {
-            "0": {}
+            "0": {
+              "content": {
+                "cell-1748450064933": [
+                  {
+                    "id": 1748450223706,
+                    "parent": "cell-1748450064933",
+                    "props": {
+                      "children": "Button",
+                      "variant": "outlined",
+                      "color": "error",
+                      "fullWidth": true,
+                      "startIcon": "none",
+                      "endIcon": "none",
+                      "style": {},
+                      "data-id": 1748450223706,
+                      "data-type": "Button"
+                    }
+                  }
+                ]
+              },
+              "layout": [
+                {
+                  "i": "cell-1748450064933",
+                  "x": 0,
+                  "y": 0,
+                  "w": 12,
+                  "h": 12,
+                  "props": {
+                    "classNames": "",
+                    "style": {}
+                  },
+                  "content": [
+                    {
+                      "id": 1748450223706,
+                      "parent": "cell-1748450064933",
+                      "props": {
+                        "children": "Button",
+                        "variant": "outlined",
+                        "color": "error",
+                        "fullWidth": true,
+                        "startIcon": "none",
+                        "endIcon": "none",
+                        "style": {},
+                        "data-id": 1748450223706,
+                        "data-type": "Button"
+                      }
+                    }
+                  ],
+                  "moved": false,
+                  "static": false
+                }
+              ],
+              "size": {
+                "width": 464,
+                "height": 620
+              }
+            }
           },
           "style": {},
-          "data-id": 1748111357458,
+          "data-id": 1748450044625,
           "data-type": "Frame"
         }
       }
     ],
     "cell-1747227523825": [
       {
-        "id": 1747257445972,
+        "id": 1748451089146,
         "parent": "cell-1747227523825",
         "props": {
           "fullWidth": true,
@@ -146,28 +196,12 @@
           "file": "",
           "data-source": "src",
           "alt": "Картинка",
-          "data-id": 1747257445972,
+          "data-id": 1748451089146,
           "data-type": "Image"
         }
       }
     ],
-    "cell-1747227526997": [
-      {
-        "id": 1748006167822,
-        "parent": "cell-1747227526997",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "primary",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1748006167822,
-          "data-type": "Button"
-        }
-      }
-    ],
+    "cell-1747227526997": [],
     "cell-1747227527273": [
       {
         "id": 1747753800232,
@@ -414,7 +448,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1748111557999,
+    "updatedAt": 1748451416502,
     "preview": "snapshots/home-root.png"
   },
   "size": {

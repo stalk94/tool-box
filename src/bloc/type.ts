@@ -70,14 +70,17 @@ export type ComponentSerrialize = {
     parent: string | number
     props: ComponentProps
 }
-
+export type DataRegisterComponent = {
+    Component: React.FC;
+    props: ComponentProps;
+}
 
 //////////////////////////////////////////////////////////////////////////////
 //                        
 //////////////////////////////////////////////////////////////////////////////
 export type LayoutCustom = Layout & {
     /** массив компонентов */
-    content?: Component[]
+    content?: ComponentSerrialize[]
     /** стилизация ячейки */
     props?: {
         style?: React.CSSProperties
@@ -106,24 +109,22 @@ export type LeftToolPanelProps = {
 //          Data Formats
 /////////////////////////////////////////////////////////////////////////////
 export type BlocData = {
-    name: string
-    data: {
-        content: Record<string, ComponentSerrialize[]>
-        layout: LayoutCustom[]
-        meta: {
-            scope: string
-            name: string
-            updatedAt: number
-        }
-        size: {
-            width: number
-            height: number
-        }
+    content: Record<string, ComponentSerrialize[]>
+    layout: LayoutCustom[]
+    meta: {
+        scope: string
+        name: string
+        updatedAt: number
+    }
+    size: {
+        breackpoint: 'lg' | 'md' | 'xs' | 'lm'
+        width: number
+        height: number
     }
 }
 export type ScopeData = {
     name: string 
-    data: BlocData[]
+    data: BlocData
 }
 /////////////////////////////////////////////////////////////////////////////
 //          вложенный контекст (+ виртуализация)

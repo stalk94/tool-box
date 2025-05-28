@@ -19,54 +19,46 @@ export function updateComponentProps({ component, data, rerender = true }) {
 
         if (index !== -1) {
             Object.entries(data).forEach(([key, value]) => {
-                old[cellId][index].props[key] = value;
+                if(old?.[cellId]?.[index]) old[cellId][index].props[key] = value;
             });
         }
         return old;
     });
 
     // 🔁 Обновляем визуальный рендер через context.render
-    if (rerender) renderSlice.set((layers) => {
-        console.log('update props: ', component, data);
-        
-        const updated = layers.map((layer) => {
-            if (!Array.isArray(layer.content)) return layer;
-            
-            const i = layer.content.findIndex((c) => c?.props?.['data-id'] === id);
+    if (rerender) {
+        const render = renderSlice.get(true);
 
+        const updated = render.map((layer) => {
+            if (!Array.isArray(layer.content)) return layer;
+
+            const i = layer.content.findIndex((c) => c?.props?.['data-id'] === id);
             if (i === -1) return layer;
+
             const current = layer.content[i];
-            
-            if (!current) {
-                console.warn('updateComponentProps: компонент не найден в render');
-                return layer;
-            }
+            if (!current) return layer;
 
             try {
-                const updatedComponent = React.cloneElement(current, {
-                    ...current.props,
-                    ...data,
-                });
+                const newComponent = {
+                    id: current.id,
+                    parent: current.parent,
+                    props: {
+                        ...current.props,
+                        ...data
+                    }
+                };
 
-                infoSlice.select?.content?.set(updatedComponent);         // fix
-                layer.content[i] = updatedComponent;
-               
-                editorSlice.layout.set((old)=> 
-                    old.map((l)=> {
-                        if(l.i === layer.i) l.content[i] = updatedComponent;
-                        return l;
-                    })
-                );
-            } 
+                layer.content[i] = newComponent;
+                return layer;
+            }
             catch (e) {
                 console.error('❌ Ошибка при клонировании компонента:', e, current);
+                return layer;
             }
-
-            return layer;
         });
 
-        layers = [...updated];
-    });
+        renderSlice.set(updated);
+    }
 }
 
 

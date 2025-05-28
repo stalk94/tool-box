@@ -3,9 +3,9 @@ import { Menu, MenuItem, ListItemText, ListItemIcon } from '@mui/material';
 
 
 export interface ContextMenuItem<T = any> {
-    label: string;
-    icon?: React.ReactNode;
-    onClick: (target: T) => void;
+    label: string | React.ReactNode
+    icon?: React.ReactNode
+    onClick: (target: T) => void
 }
 export type ContextMenuState<T = any> = {
     mouseX: number;

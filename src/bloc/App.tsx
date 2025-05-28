@@ -1,23 +1,22 @@
 'use client'
 import colorLog from '../app/helpers/console';
 import React from "react";
-import { Provider } from 'react-redux';
 import { useSnackbar } from 'notistack';
-import { LayoutCustom, ComponentSerrialize, Component, Events, SlotDataBus, DataNested } from './type';
+import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, SlotDataBus, DataNested } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
 import { editorContext, infoSlice, renderSlice, cellsSlice, nestedContextSlice } from "./context";
 import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
-import { componentMap, componentsRegistry } from './modules/helpers/registry';
+import { componentMap } from './modules/helpers/registry';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
-import { updateComponentProps } from './helpers/updateComponentProps';
+import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import GridTest2 from 'public/export/home/root/index';
 import "../style/edit.css";
@@ -74,12 +73,11 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         );
     }
     // вызывается только при добавлении нового сонтента 
-    const serrialize = (component: Component, cellId: string): ComponentSerrialize => {
-        const rawProps = { ...component.props };
+    const createDataComponent = (rawProps: ComponentProps, cellId: string): ComponentSerrialize => {
         const type = rawProps['data-type'];
         const id = Date.now();
 
-        delete rawProps.ref;
+        if(rawProps.ref) delete rawProps.ref;
         const cleanedProps = serializeJSX(rawProps);
 
         return {
@@ -92,14 +90,9 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             }
         };
     }
-    const addComponentToCell = (cellId: string, component: Component) => {
-        const serialized = serrialize(component, cellId);
-        const clone = React.cloneElement(component, {
-            'data-id': serialized.id,
-            ref: (el) => {
-                if (el) refs.current[serialized.id] = el;
-            }
-        });
+    const addComponentToCell = (cellId: string, component: DataRegisterComponent) => {
+        const { Component, props } = component;
+        const data = createDataComponent(props, cellId);
 
         renderSlice.set((prevRender) => {
             const findIndex = prevRender.findIndex((cell) => cell.i === cellId);
@@ -108,16 +101,17 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                 const targetCell = prevRender[findIndex];
 
                 if (Array.isArray(targetCell.content)) {
-                    targetCell.content.push(clone);
+                    targetCell.content.push(data);
                 }
-                else targetCell.content = [clone];
+                else targetCell.content = [data];
             }
 
             return prevRender;
         });
 
         cellsSlice.set((old) => {
-            old[cellId].push(serialized);
+            console.log(old)
+            old[cellId].push(data);
             return old;
         });
     }
@@ -125,7 +119,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         const { active, over } = event;
         if (!active || !over || active.id === over.id) return;
 
-        const currentList = cellsSlice.get();
+        const currentList = cellsSlice.get(true);
         const oldIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === active.id);
         const newIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === over.id);
 
@@ -138,6 +132,8 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             if (target?.content) {
                 target.content = arrayMove(target.content, oldIndex, newIndex);
             }
+            
+            return prev;
         });
         editorContext.layout.set((prev) => {
             prev.map((lay) => {
@@ -149,6 +145,8 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         });
         cellsSlice.set((old) => {
             old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
+
+            return old;
         });
 
 
@@ -163,6 +161,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         }
     }
     const handleDragStart = (event: DragStartEvent) => {
+        console.red('DRAG START')
         const elActivator = event.activatorEvent.target as HTMLElement;
         const container = elActivator.closest('[ref-id]') as HTMLElement | null;
         cacheDrag.current = container;
@@ -285,9 +284,21 @@ export default function EditorApp({ setShowBlocEditor }) {
         const name = editorContext.meta.name.get();
         const scope = editorContext.meta.scope.get();
         //snapshotAndUpload(`${scope}-${name}`);
-        saveBlockToFile(scope, name, (msg, type)=> {
-            enqueueSnackbar(msg, {variant: type});
+        saveBlockToFile(scope, name, (msg, type) => {
+            enqueueSnackbar(msg, { variant: type });
+            updateProjectState(scope, name);
         });
+    }
+    const getDataFromCurrentScope =()=> {
+        const scope = editorContext.meta.scope.get();
+        const name = editorContext.meta.name.get();
+        const project = infoSlice.project.get();
+
+        const currentScope = project?.[scope];
+        const found = currentScope?.find((x) => x.name === name);
+        if (!found?.data) return;
+
+        return found.data;
     }
     const findById = (idToFind: number): ComponentSerrialize | undefined => {
         const rawCache = cellsSlice.get();
@@ -317,10 +328,10 @@ export default function EditorApp({ setShowBlocEditor }) {
             rerender: true
         });
     }
-    const useGetDataFileDir = async() => {
-         try {
+    const useGetDataFileDir = async () => {
+        try {
             const data = await fetchFolders();
-            
+
             if (data) {
                 infoSlice.project.set(data);
                 editorContext.dragEnabled.set(true);
@@ -330,12 +341,15 @@ export default function EditorApp({ setShowBlocEditor }) {
             console.error("❗❗❗ fetchFolders error:", e);
         }
     }
-    React.useLayoutEffect(()=> {
+
+    React.useLayoutEffect(() => {
+        console.gray('layout effect');
+        
         useGetDataFileDir()
-            .then(()=> setIsLoad(true))
-            .catch(()=> console.error('🚨 data projects not load'));
+            .then(() => setIsLoad(true))
+            .catch(() => console.error('🚨 data projects not load'));
     }, [])
-    React.useEffect(()=> {
+    React.useEffect(() => {
         const handle = (data: SlotDataBus) => {
             console.green('GET GRID CONTEXT =>', data);
             fileSaveFromDumpRender();
@@ -347,22 +361,52 @@ export default function EditorApp({ setShowBlocEditor }) {
 
             setTimeout(() => setEnable(true), 100);
         }
-        
+
         EVENT.on('addGridContext', handle);
-        return ()=> EVENT.off('addGridContext', handle);
+        return () => EVENT.off('addGridContext', handle);
     }, []);
-    React.useEffect(()=> {
-        setIsLoad(false);
-
-        // 🧹 Чистим старое
-        cellsSlice.set({});
+    React.useEffect(() => {
+        // 🔁 Очищаем перед установкой нового блока
         renderSlice.set([]);
+        cellsSlice.set({});
         editorContext.layout.set([]);
-        editorContext.currentCell.set(undefined); // ⬅️ важно, иначе останется старый cellId
         editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
+        editorContext.currentCell.set(undefined);
+        infoSlice.select.content.set(null);
+        
+        setTimeout(() => {
+            const data = getDataFromCurrentScope();
+            if(!data) return;
 
-        setTimeout(() => setIsLoad(true), 200);
+            const content = data.content ?? {};
+            const layout = data.layout ?? [];
+
+            // 🧠 Устанавливаем всё чисто
+            cellsSlice.set(data.content);
+            editorContext.layout.set(layout);
+            editorContext.size.set(data.size ?? { width: 0, height: 0, breackpoint: 'lg' });
+
+            // 🎯 Собираем renderSlice
+            const result = layout.map((layer) => {
+                const cellContent = content[layer.i] ?? [];
+                const children = cellContent.map((cmp) => {
+                    const C = componentMap[cmp.props['data-type']];
+                    if (!C) return null;
+
+                    return cmp;
+                }).filter(Boolean);
+
+                return {
+                    ...layer,
+                    content: children,
+                };
+            });
+
+            //console.red('INIT EFFECT', result)
+            renderSlice.set(result);
+        }, 100);
     }, [meta.name, meta.scope]);
+    
 
 
     return(
@@ -381,6 +425,7 @@ export default function EditorApp({ setShowBlocEditor }) {
             }
             { !enableContext && isLoad && 
                 <EditorGlobal 
+                    key={Date.now()}
                     setShowBlocEditor={setShowBlocEditor} 
                     dumpRender={fileSaveFromDumpRender}
                 />
