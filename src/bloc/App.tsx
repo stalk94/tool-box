@@ -371,7 +371,6 @@ export default function EditorApp({ setShowBlocEditor }) {
         cellsSlice.set({});
         editorContext.layout.set([]);
         editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
-        editorContext.currentCell.set(undefined);
         infoSlice.select.content.set(null);
         
         setTimeout(() => {

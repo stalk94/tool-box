@@ -339,10 +339,11 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
 
     const handleChangeReloadContent = (index: number, data: string | undefined, type?: 'image'|'video') => {
         if (items[index]) {
-            const newItems = [...items];
+            const newItems = JSON.parse(JSON.stringify(items));
+            
             newItems[index].src = data ? data : '';
             if(type) newItems[index].type = type;
-;
+
             updateComponentProps({
                 component: { props },
                 data: { items: newItems },
@@ -466,7 +467,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
     }, []);
     const handleChangeReloadContent = (index: number, data: string | undefined, type?: 'image'|'video') => {
         if (items[index]) {
-            const newItems = [...items];
+            const newItems = JSON.parse(JSON.stringify(items));
             newItems[index].src = data ? data : '';
             if(type) newItems[index].type = type;
 ;
@@ -640,7 +641,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
     }
     const handleChangeReloadContent = (active: number, data: string | undefined) => {
         if (items[active]) {
-            const newItems = [...items];
+            const newItems = JSON.parse(JSON.stringify(items));
             newItems[active].images[0] = data ? data : '';
 
             updateComponentProps({
@@ -669,7 +670,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         return items.map((item, i) => {
             if (i === active) {
                 return {
-                    images: item.images,
+                    images: [...item.images],
                     title: textEditable('title', item.title, i),
                     description: textEditable('description', item.description, i),
                 };
