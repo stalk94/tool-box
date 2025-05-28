@@ -65,6 +65,7 @@ export const FrameWrapper = React.forwardRef((props: FrameWrapperProps, ref) => 
             { ...otherProps }
         >
             <ContextSlot
+                type='Frame'
                 idParent={dataId}
                 idSlot={0}
                 fullHeight={height}

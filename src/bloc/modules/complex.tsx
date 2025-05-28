@@ -171,6 +171,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             );
             const SlotContent = () => (
                 <ContextSlot
+                    type='Accordion'
                     idParent={dataId} 
                     idSlot={index}
                     data={{
@@ -339,6 +340,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             </Tabs>
             {/* Слоты */}
             <ContextSlot
+                type='Tabs'
                 idParent={dataId}
                 idSlot={value}
                 data={{

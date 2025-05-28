@@ -156,6 +156,7 @@ export type ContextSlotProps = {
     data: DataNested
     idParent: number
     idSlot: number | string
+    type?: 'Frame' | 'Tabs' | 'Accordion'
 }
 
 

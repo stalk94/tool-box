@@ -85,6 +85,7 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
     const {
         src,
         file,
+        'data-id': dataId,
         alt = '',
         'data-source': source,
         fullWidth,
@@ -92,13 +93,12 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
         ...otherProps
     } = props;
 
-    const componentId = props['data-id'];
-    const { width, height } = useComponentSizeWithSiblings(componentId);
+    const { width, height } = useComponentSizeWithSiblings(dataId);
     
 
     const handleUpload = async (file) => {
         setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
-        const filename = `img-${componentId}.${file.name.split('.').pop()}`;
+        const filename = `img-${dataId}.${file.name.split('.').pop()}`;
         const url = await uploadFile(file, filename);
 
        
@@ -124,11 +124,11 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
     React.useEffect(() => {
         const handler = (data) => degidratationRef.current(data.call);
         sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.' + componentId, handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
 
         return () => {
             sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.' + componentId, handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
     React.useEffect(() => {
@@ -148,20 +148,21 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
         else setImgSrc(src);
     }, [src]);
     
-
+    
     return (
         <img
             ref={ref}
-            data-id={componentId}
+            data-id={dataId}
             data-type="Image"
             src={imgSrc ?? '/placeholder.jpg'}
             style={{
                 width: '100%',
-                height: height - 1,
+                height: height ?? '100%',
                 ...style
             }}
             {...otherProps}
         />
+
     );
 });
 export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => {
