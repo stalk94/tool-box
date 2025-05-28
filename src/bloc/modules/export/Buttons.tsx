@@ -30,6 +30,7 @@ export function exportedMuiButton(
                     }
                     endIcon={${rendericon(endIcon)}}
                     style={{ ${toObjectLiteral(style)} }}
+                    sx={{ whiteSpace: 'nowrap' }}
                     ${ toJSXProps(otherProps) }
                     onClick={()=> sharedEmmiter.emit('event', {
                         id: ${id},

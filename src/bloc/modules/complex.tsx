@@ -14,7 +14,7 @@ import { uploadFile } from 'src/app/plugins';
 import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/Acordeon';
 import renderAppBar, { exportBreadCrumbs } from './export/AppBar';
 import { DropSlot, ContextSlot } from '../Dragable';
-import TipTapSlotEditor, {rendeHtml} from './tip-tap';
+import TipTapSlotEditor from './tip-tap';
 import { exportTipTapValue, renderComponentSsr, toLiteral } from './export/utils';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { editorContext } from "../context";
@@ -129,14 +129,14 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
     const handleChange = (index: number, data: string) => {
-        const copy = [...items];
+        const copy = JSON.parse(JSON.stringify(items));
 
         if (copy[index]) {
             copy[index].title = data;
 
             updateComponentProps({
                 component: { props },
-                data: { items: [...copy] }
+                data: { items: copy }
             });
         }
     }
@@ -272,12 +272,14 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
         triggerFlyFromComponent(String(dataId));
     }
     const handleChangeEdit = (index: number, data: string) => {
+        const copy = JSON.parse(JSON.stringify(items));
+
         if (items[index]) {
-            items[index] = data;
+            copy[index] = data;
 
             updateComponentProps({
                 component: { props },
-                data: { items: [...items] }
+                data: { items: copy }
             });
         }
     }
@@ -412,12 +414,14 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
         triggerFlyFromComponent(String(dataId));
     }
     const handleChangeEdit = (index: number, data: {label:string,icon:string,id:string}) => {
+        const copy = JSON.parse(JSON.stringify(items));
+
         if (items[index]) {
-            items[index] = data;
+            copy[index] = data;
 
             updateComponentProps({
                 component: { props },
-                data: { items: [...items] }
+                data: { items: copy }
             });
         }
     }
@@ -1022,12 +1026,14 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
 
 
     const handleChangeEdit = (index: number, data: {primary:string,secondary:string,startIcon:string}) => {
+        const copy = JSON.parse(JSON.stringify(items));
+
         if (items[index]) {
-            items[index] = data;
+            copy[index] = data;
 
             updateComponentProps({
                 component: { props },
-                data: { items: [...items] }
+                data: { items: copy }
             });
         }
     }

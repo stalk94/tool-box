@@ -34,11 +34,11 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         width: children.props.fullWidth ? '100%' : (children.props.width ?? 300),
         display: 'flex',
         cursor: dragEnabled ? 'grab' : 'default',
-        alignItems: 'center',
+        //alignItems: 'center',
         borderRight: '1px dotted #8580806b',
         transformOrigin: 'center',
         flexShrink: 0,
-        flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 100),
+        flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
         maxWidth: '100%',
     }
     const useDegidratationHandler = (code: string) => {

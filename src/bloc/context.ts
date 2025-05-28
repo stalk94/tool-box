@@ -101,11 +101,11 @@ export const editorContext = createState('EDITOR', {
 
 
 export const renderSlice = create([] as LayoutCustom[], {
-    devtools: true,
+    devtools: { name: 'render' },
     immer: true
 });
 export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
-    devtools: true,
+    devtools: { name: 'cells' },
     immer: true
 });
 

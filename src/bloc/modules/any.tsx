@@ -1,13 +1,13 @@
 import React from 'react';
 import { lighten } from '@mui/system';
-import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps, Rating, RatingProps } from '@mui/material';
+import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps, Rating, RatingProps, Typography } from '@mui/material';
 import { uploadFile } from 'src/app/plugins';
 import { iconsList } from '../../components/tools/icons';
 import { fill, empty } from '../../components/tools/icons-rating';
 import { ComponentProps } from '../type';
-import { deserializeJSX } from '../helpers/sanitize';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr } from './export/utils';
+import { infoSlice, editorContext} from "../context";
 
 
 type DividerWrapperProps = DividerProps & ComponentProps;
@@ -25,22 +25,48 @@ type AvatarWrapperProps = AvatarProps & ComponentProps & {
 
 export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, children, fullWidth, orientation, variant, ...otherProps } = props;
-    const parsedChild = React.useMemo(() => deserializeJSX(children), [children]);
+    const { 'data-id': dataId, isChildren, children, fullWidth, variant, style, ...otherProps } = props;
+    const selected = infoSlice.select.content.use();
+    
 
+    const handleBlur = (e) => {
+        const newText = e.target.innerText;
+        
+        updateComponentProps({
+            component: { props: props },
+            data: { children: newText }
+        });
+    }
     degidratationRef.current = (call) => {
+        const styleLiteral = toObjectLiteral({
+            paddingTop: !isChildren && '4px',
+            width: fullWidth ? '100%' : '',
+            ...style
+        });
+        const renderChild =()=> {
+            if(isChildren) return(`
+                <Typography
+                    variant='subtitle2'
+                >
+                    ${ children }
+                </Typography>
+            `);
+            else return '';
+        } 
+        
         const code = (`
             import React from 'react';
-            import { Divider } from '@mui/material';
+            import { Divider, Typography } from '@mui/material';
 
             export default function DividerWrap() {
                 return(
                     <Divider
                         flexItem
-                        orientation={"${orientation??'horizontal'}"}
+                        orientation={"${fullWidth ? 'horizontal' : 'vertical'}"}
                         variant={"${variant ?? 'fullWidth'}"}
+                        style={{ ${styleLiteral} }}
                     >
-                        ${ renderComponentSsr(parsedChild) }
+                        ${ renderChild() }
                     </Divider>
                 );
             }
@@ -61,17 +87,37 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
 
 
     return (
-        <Divider
+        <span
             ref={ref}
             data-id={dataId}
             data-type='Divider'
-            orientation={orientation}
-            variant={variant}
-            flexItem
-            {...otherProps}
+            style={{
+                minHeight: !fullWidth ? '22px' : '14px',
+                minWidth: '14px',
+                width: fullWidth && '100%',
+                paddingTop: !isChildren && '4px'
+            }}
         >
-            { parsedChild }
-        </Divider>
+            <Divider
+                orientation={fullWidth ? 'horizontal' : 'vertical'}
+                variant={variant}
+                flexItem={fullWidth}
+                style={{ ...style }}
+                { ...otherProps }
+            >
+                { isChildren
+                    ? <Typography
+                        variant='subtitle2'
+                        contentEditable={globalThis.EDITOR && selected?.props?.['data-id'] === dataId}
+                        suppressContentEditableWarning
+                        onBlur={handleBlur}
+                    >
+                        { children }
+                     </Typography>
+                    : undefined
+                }
+            </Divider>
+        </span>
     );
 });
 export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {

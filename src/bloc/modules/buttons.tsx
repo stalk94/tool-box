@@ -98,6 +98,7 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
             variant="outlined"
             startIcon={StartIcon ? <StartIcon /> : undefined}
             endIcon={EndIcon ? <EndIcon /> : undefined}
+            sx={{ whiteSpace: 'nowrap' }}
             style={style}
             {...otherProps}
         >

@@ -1,5 +1,5 @@
 import { iconsList } from '../../components/tools/icons';
-import { ViewModule, TouchApp, Photo, Layers, Widgets } from '@mui/icons-material';
+import { ViewModule, TouchApp, Photo, Layers, Widgets, Launch } from '@mui/icons-material';
 import { Paper } from '@mui/material';
 import { LuBlocks } from "react-icons/lu";
 import { MdOutlineWidgets } from "react-icons/md";
@@ -7,9 +7,9 @@ import { MdOutlineWidgets } from "react-icons/md";
 
 // список категорий компонентов
 export const componentGroups = {
-    block: {
-        label: 'Базовые блоки',
-        icon: ViewModule,
+    misc: {
+        label: 'Прочее',
+        icon: Widgets,
     },
     interactive: {
         label: 'Интерактивные',
@@ -23,9 +23,9 @@ export const componentGroups = {
         label: 'Сложные блоки',
         icon: Layers,
     },
-    misc: {
-        label: 'Прочее',
-        icon: Widgets,
+    block: {
+        label: 'Блоковые',
+        icon: Launch,
     },
 }
 

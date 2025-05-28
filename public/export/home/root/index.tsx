@@ -21,7 +21,7 @@ export default function RenderGrid() {
                         x: 0,
                         y: 0,
                         w: 5,
-                        h: 32,
+                        h: 25,
                         moved: false,
                         static: false,
                         props: { style: {}, classNames: '' }

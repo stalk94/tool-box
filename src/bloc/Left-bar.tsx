@@ -417,7 +417,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
     const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'slot'>('project');
-    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('block');
+    const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('misc');
     const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
 
    

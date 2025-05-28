@@ -5,8 +5,8 @@ import { ImageWrapper } from './media';
 import { 
     Settings, Description, FlashAuto, ViewList, Check, EditAttributes,
     RadioButtonChecked, LinearScale, EventAvailable, Schedule, Exposure, TextFields, Create, Image,
-    ViewCarousel, BackupTable, ListAlt, Repartition, ViewQuilt, TableRows,
-    VideoCameraFront, AccountBox, Label, Subtitles, StarsOutlined
+    ViewCarousel, BackupTable, ListAlt, Repartition, EditNote, TableRows,
+    VideoCameraFront, AccountBox, Label, Subtitles, StarsOutlined, Checklist, Title, AdsClick, RecentActors
  } from '@mui/icons-material';
 import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrapper,
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
@@ -37,7 +37,7 @@ globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
 ///////////////////////////////////////////////////////////////////////
 
-
+// buttons
 registerComponent({
     type: 'Button',
     component: ButtonWrapper,
@@ -50,65 +50,9 @@ registerComponent({
         endIcon: 'none',
         style: {}
     },
-    icon: Settings,
+    icon: AdsClick,
     category: 'interactive',
 });
-
-
-registerComponent({
-    type: 'Typography',
-    component: TypographyWrapper,
-    defaultProps: {
-        children: 'Заголовок',
-        variant: 'h5',
-        fullWidth: true,
-        style: {
-            display: 'flex',  
-        }
-    },
-    icon: TextFields,
-    category: 'interactive',
-});
-registerComponent({
-    type: 'Text',
-    component: TextWrapper,
-    defaultProps: {
-        fullWidth: true,
-    },
-    icon: TextFields,
-    category: 'interactive',
-});
-
-registerComponent({
-    type: 'Image',
-    component: ImageWrapper,
-    defaultProps: {
-        fullWidth: true,
-        src: '/placeholder.jpg',
-        file: '',
-        'data-source': 'src',
-        alt: 'Картинка',
-    },
-    icon: Image,
-    category: 'media',
-});
-registerComponent({
-    type: 'Video',
-    component: VideoWrapper,
-    defaultProps: {
-        src: '',
-        file: '',
-        'data-source': 'src',
-        autoplay: false,
-        controls: true,
-        loop: false,
-        poster: '',
-        fullWidth: true,
-    },
-    icon: VideoCameraFront,
-    category: 'media',
-});
-
 registerComponent({
     type: 'IconButton',
     component: IconButtonWrapper,
@@ -117,9 +61,10 @@ registerComponent({
         icon: 'Add',
         color: 'default',
     },
-    icon: Settings,
+    icon: AdsClick,
     category: 'interactive',
 });
+
 
 // инпуты
 registerComponent({
@@ -301,6 +246,36 @@ registerComponent({
     category: 'interactive',
 });
 
+// media
+registerComponent({
+    type: 'Image',
+    component: ImageWrapper,
+    defaultProps: {
+        fullWidth: true,
+        src: '/placeholder.jpg',
+        file: '',
+        'data-source': 'src',
+        alt: 'Картинка',
+    },
+    icon: Image,
+    category: 'media',
+});
+registerComponent({
+    type: 'Video',
+    component: VideoWrapper,
+    defaultProps: {
+        src: '',
+        file: '',
+        'data-source': 'src',
+        autoplay: false,
+        controls: true,
+        loop: false,
+        poster: '',
+        fullWidth: true,
+    },
+    icon: VideoCameraFront,
+    category: 'media',
+});
 // карусели (донастроить)
 registerComponent({
     type: 'HorizontCarousel',
@@ -367,7 +342,30 @@ registerComponent({
 
 
 
-// any
+// misc
+registerComponent({
+    type: 'Typography',
+    component: TypographyWrapper,
+    defaultProps: {
+        children: 'Заголовок',
+        variant: 'h5',
+        fullWidth: true,
+        style: {
+            display: 'flex',  
+        }
+    },
+    icon: Title,
+    category: 'misc',
+});
+registerComponent({
+    type: 'Text',
+    component: TextWrapper,
+    defaultProps: {
+        fullWidth: true,
+    },
+    icon: TextFields,
+    category: 'misc',
+});
 registerComponent({
     type: 'Rating',
     component: RatingWrapper,
@@ -387,8 +385,10 @@ registerComponent({
     component: DividerWrapper,
     defaultProps: {
         fullWidth: true,
+        isChildren: false,
         variant: 'fullWidth',
         width: '100%',
+        children: 'text'
     },
     icon: LinearScale,
     category: 'misc',
@@ -444,9 +444,86 @@ registerComponent({
     icon: Subtitles,
     category: 'media',
 });
+registerComponent({
+    type: 'List',
+    component: ListWrapper,
+    defaultProps: {
+        fullWidth: true,
+        isButton: false,
+        isSecondary: true,
+        styles: {},
+        items: [
+            {
+                startIcon: 'Settings',
+                primary: 'primary',
+                secondary: 'secondary'
+            }
+        ]
+    },
+    icon: Checklist,
+    category: 'misc',
+});
 
 
 // complex
+registerComponent({
+    type: 'DataTable',
+    component: DataTableWrapper,
+    defaultProps: {
+        fullWidth: true,
+        sourceType: 'google',
+        'data-source': 'table',
+        file: '',
+        source: '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE',
+        refreshInterval: 25000
+    },
+    icon: BackupTable,
+    category: 'complex',
+});
+registerComponent({
+    type: 'AppBar',
+    component: HeaderWrapper,
+    defaultProps: {
+        fullWidth: true,
+        logo: '',
+        file: '',
+        'data-source': 'src',
+        linkItems: [
+            {id: 'test', label: 'test'},
+            {id: 'settings', label: 'settings'}
+        ],
+        slots: {
+            
+        }
+    },
+    icon: Repartition,
+    category: 'complex',
+});
+registerComponent({
+    type: 'Breadcrumbs',
+    component: BreadcrumbsWrapper,
+    defaultProps: {
+        fullWidth: true,
+        pathname: 'test/room/any',
+        style: {}
+    },
+    icon: Repartition,
+    category: 'complex',
+});
+registerComponent({
+    type: 'FormAuth',
+    component: FormAuthOrRegWrapper,
+    defaultProps: {
+        fullWidth: true,
+        metaName: 'FormAuth',
+        style: {}
+    },
+    icon: EditNote,
+    category: 'complex',
+});
+
+
+// blocks
 registerComponent({
     type: 'Accordion',
     component: AccordionWrapper,
@@ -465,27 +542,8 @@ registerComponent({
             }
         ]
     },
-    icon: ListAlt,
-    category: 'complex',
-});
-registerComponent({
-    type: 'List',
-    component: ListWrapper,
-    defaultProps: {
-        fullWidth: true,
-        isButton: false,
-        isSecondary: true,
-        styles: {},
-        items: [
-            {
-                startIcon: 'Settings',
-                primary: 'primary',
-                secondary: 'secondary'
-            }
-        ]
-    },
-    icon: ListAlt,
-    category: 'complex',
+    icon: ViewList,
+    category: 'block',
 });
 registerComponent({
     type: 'Tabs',
@@ -506,7 +564,7 @@ registerComponent({
         ]
     },
     icon: Repartition,
-    category: 'complex',
+    category: 'block',
 });
 registerComponent({
     type: 'BottomNav',
@@ -524,56 +582,8 @@ registerComponent({
         ]
     },
     icon: Repartition,
-    category: 'complex',
-});
-registerComponent({
-    type: 'DataTable',
-    component: DataTableWrapper,
-    defaultProps: {
-        fullWidth: true,
-        sourceType: 'google',
-        'data-source': 'table',
-        file: '',
-        source: '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE',
-        refreshInterval: 25000
-    },
-    icon: BackupTable,
     category: 'block',
 });
-
-
-registerComponent({
-    type: 'AppBar',
-    component: HeaderWrapper,
-    defaultProps: {
-        fullWidth: true,
-        logo: '',
-        file: '',
-        'data-source': 'src',
-        linkItems: [
-            {id: 'test', label: 'test'},
-            {id: 'settings', label: 'settings'}
-        ],
-        slots: {
-            
-        }
-    },
-    icon: Repartition,
-    category: 'block',
-});
-registerComponent({
-    type: 'Breadcrumbs',
-    component: BreadcrumbsWrapper,
-    defaultProps: {
-        fullWidth: true,
-        pathname: 'test/room/any',
-        style: {}
-    },
-    icon: Repartition,
-    category: 'block',
-});
-
-// bloks 
 registerComponent({
     type: 'Frame',
     component: FrameWrapper,
@@ -584,18 +594,6 @@ registerComponent({
         slots: {
             0: {}
         },
-        style: {}
-    },
-    icon: TableRows,
-    category: 'block',
-});
-
-registerComponent({
-    type: 'FormAuth',
-    component: FormAuthOrRegWrapper,
-    defaultProps: {
-        fullWidth: true,
-        metaName: 'FormAuth',
         style: {}
     },
     icon: TableRows,
