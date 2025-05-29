@@ -71,11 +71,9 @@ export type InfoStateType = {
 
 
 export const renderSlice = create([] as LayoutCustom[], {
-    devtools: {name: 'renderNested'},
     immer: true
 });
 export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
-    devtools: {name: 'cellsNested'},
     immer: true
 });
 
@@ -92,7 +90,6 @@ export const infoSlice = create({
     },
     project: {},
 } as InfoStateType, {
-    devtools: {name: 'infoNested'},
     immer: true
 });
 
@@ -116,6 +113,5 @@ export const editorSlice = create({
         }
     }
 } as EditorContextType, {
-    devtools: {name: 'editorNested'},
     immer: true
 });
