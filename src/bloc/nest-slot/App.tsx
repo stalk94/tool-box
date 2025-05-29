@@ -131,6 +131,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
 
             if (find && Array.isArray(find.content)) {
                 const findChild = find.content.find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
+                console.red('FIND SELECT CONTENT: ', findChild)
                 if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
             }
         }

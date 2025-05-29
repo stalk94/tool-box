@@ -60,11 +60,11 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
     }
     const handleClickToBaseContext =()=> {
         setShowBlocEditor({
-            content: cellsSlice.get(true),
-            layout: renderSlice.get(true),
+            content: cellsSlice.get(),
+            layout: renderSlice.get(),
             size: {
-                width: Math.round(editorSlice.size.width.get(true)),
-                height: Math.round(editorSlice.size.height.get(true))
+                width: editorSlice.size.width.get(),
+                height: editorSlice.size.height.get()
             }
         });
     }
@@ -103,7 +103,13 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                             marginRight: '80px',
                             borderRadius: '4px',
                         }}
-                        onClick={handleClickToBaseContext}
+                        onClick={()=> {
+                            EVENT.emit('leftBarChange', {
+                                currentToolPanel: 'component'
+                            });
+
+                            setTimeout(handleClickToBaseContext, 50);
+                        }}
                     >
                         <DynamicFeed sx={{ color: 'white', mt: 0.7 }} />
                     </button>

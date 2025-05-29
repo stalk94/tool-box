@@ -324,11 +324,13 @@ export default function EditorApp({ setShowBlocEditor }) {
             data: {
                 slots: {
                     ...findComponentSerrialize.props?.slots,
-                    [idSlot]: { ...editData }
+                    [idSlot]: JSON.parse(JSON.stringify(editData))
                 }
             },
             rerender: true
         });
+
+        setEnable(false);
     }
     const useGetDataFileDir = async () => {
         try {
@@ -419,7 +421,6 @@ export default function EditorApp({ setShowBlocEditor }) {
                 <NestedContext
                     key={`nested-${nestedContext.currentData.idParent}-${nestedContext.currentData.idSlot}`}
                     useBackToEditorBase={(editData)=> {
-                        setEnable(false);
                         handleChangeNestedContext(editData);
                     }}
                     nestedComponentsList={nestedContext.currentData.nestedComponentsList}

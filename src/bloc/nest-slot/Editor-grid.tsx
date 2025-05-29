@@ -1,9 +1,8 @@
 import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import { LayoutCustom, ComponentSerrialize } from '../type';
-import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
-import { componentMap } from '../modules/helpers/registry';
+import { LayoutCustom, ComponentSerrialize, Component } from '../type';
+import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";;
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from '../helpers/editor';
@@ -21,7 +20,7 @@ type NestedData = {
     }
 }
 type NestGridEditor = { 
-    desserealize: (component: ComponentSerrialize)=> void
+    desserealize: (component: ComponentSerrialize)=> Component
     nestedData: NestedData
 }
 
@@ -279,14 +278,12 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
                                             <>
                                                 {Array.isArray(layer.content) && layer.content.map((component) => (
                                                     <SortableItem
+                                                        desserealize={desserealize}
                                                         key={component.props['data-id']}
                                                         id={component.props['data-id']}
                                                         cellId={layer.i}
                                                     >
-                                                        {React.isValidElement(component)
-                                                            ? component
-                                                            : desserealize(component)
-                                                        }
+                                                        { component }
                                                     </SortableItem>
                                                 ))}
                                             </>

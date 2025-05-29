@@ -2,16 +2,22 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
-import { Component } from '../type';
+import { ComponentSerrialize, Component } from '../type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps, SlotToolBar } from './shim';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { serrialize } from '../helpers/sanitize';
 
 
+type SortableItemProps = { 
+    id: number
+    children: ComponentSerrialize
+    cellId: string 
+    desserealize: (serrializeData: ComponentSerrialize)=> Component
+}
 
 
-export function SortableItem({ id, children, cellId }: { id: number, children: Component, cellId: string }) {;
+export function SortableItem({ id, children, cellId, desserealize }: SortableItemProps) {;
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorSlice.dragEnabled.use();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
@@ -82,23 +88,22 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         removeComponentFromCell(cellId, index);
         infoSlice.select.content.set(null);
     }
-    const handleClick = (target: HTMLDivElement) => {
-        const selectContent = infoSlice.select.content;
+    const handleClick = React.useCallback((target: HTMLDivElement) => {
+        infoSlice.select.content.set(children);
         
         requestIdleCallback(()=> {
             target.classList.add('editor-selected');
-            selectContent.set(children);
         });
         
         document.querySelectorAll('[ref-id]').forEach(el => {
             if(el != target) el.classList.remove('editor-selected');
         });
-    }
-    const handleDoubleClick = (target: HTMLDivElement) => {
+    }, [children]);
+    const handleDoubleClick = React.useCallback((target: HTMLDivElement) => {
         EVENT.emit('leftBarChange', {
             currentToolPanel: 'styles'
         });
-    }
+    }, [children]);
 
     
     const { menu, handleOpen } = useContextMenu([
@@ -119,7 +124,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                     component: { props: children.props }, 
                     data: {...data}
                 }),
-                data: serrialize(children, cellId).props
+                data: children.props
             }), 
         },
         { 
@@ -135,7 +140,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         <React.Fragment>
             <div
                 ref-id={id}
-                ref-parent={children.type.parent}
+                ref-parent={children.parent}
                 ref={(node) => {
                     setNodeRef(node);
                     itemRef.current = node;
@@ -157,7 +162,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                     onChange={console.log}
                 />
                 
-                { children }
+                { desserealize(children) }
             </div>
             
             { menu }

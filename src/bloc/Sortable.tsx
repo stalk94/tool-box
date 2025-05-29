@@ -2,17 +2,22 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
-import { Component } from './type';
+import { ComponentSerrialize, Component } from './type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps } from './helpers/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./helpers/export";
-import { serializeJSX, serrialize } from './helpers/sanitize';
 import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
 
+type SortableItemProps = { 
+    id: number
+    children: ComponentSerrialize
+    cellId: string 
+    desserealize: (serrializeData: ComponentSerrialize)=> Component
+}
 
 
-export function SortableItem({ id, children, cellId }: { id: number, children: Component, cellId: string }) {
+export function SortableItem({ id, children, cellId, desserealize }: SortableItemProps) {
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorContext.dragEnabled.use();
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -85,14 +90,13 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
     // добавление в колекцию сохраненных
     const useAddToCollection = (ids: number) => {
         const name = prompt('Введите key name для компонента (не менее 3х символов)');
-        if(name && name.length > 3) db.set(`blank.${name}`, serrialize(children));
+        if(name && name.length > 3) db.set(`blank.${name}`, children);
     }
     const handleClick = (target: HTMLDivElement) => {
-        const selectContent = infoSlice.select.content;
+        infoSlice.select.content.set(children);
 
         requestIdleCallback(() => {
             target.classList.add('editor-selected');
-            selectContent.set(children);
         });
 
         document.querySelectorAll('[ref-id]').forEach(el => {
@@ -130,7 +134,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                     component: { props: children.props }, 
                     data: {...data}
                 }),
-                data: serrialize(children, cellId).props
+                data: children.props
             }), 
         },
         { 
@@ -145,7 +149,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
         <React.Fragment>
             <div
                 ref-id={id}
-                ref-parent={children.parent ?? children?.type?.parent}
+                ref-parent={children.parent}
                 ref={(node) => {
                     setNodeRef(node);
                     itemRef.current = node;
@@ -167,7 +171,7 @@ export function SortableItem({ id, children, cellId }: { id: number, children: C
                     onChange={console.log}
                 />
                 
-                { children }
+                { desserealize(children) }
             </div>
             
             { menu }

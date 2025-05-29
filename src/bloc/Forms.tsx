@@ -312,7 +312,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
     React.useEffect(() => {
         return () => useEdit.cancel();
     }, []);
-
+    console.log(elemLink.get())
 
     return(
         <motion.div

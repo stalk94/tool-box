@@ -46,7 +46,7 @@ export type InfoStateType = {
     }
     select: {
         cell?: Element;
-        content?: Component;
+        content?: ComponentSerrialize;
         panel: {
             lastAddedType: string;
         };

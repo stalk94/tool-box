@@ -47,7 +47,7 @@ export type InfoStateType = {
     }
     select: {
         cell?: Element;
-        content?: Component
+        content?: ComponentSerrialize
         slot: {
             component: Component,
             index: number,
