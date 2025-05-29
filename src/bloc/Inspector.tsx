@@ -22,7 +22,8 @@ export default function InspectorPanel ({ data, onClose }) {
     const styleAbs = {
         position: 'fixed',
         top: state?.position?.y ?? 0,
-        left: state?.position?.x ?? 0,
+        //left: state?.position?.x ?? 0,
+        right: 0,
         zIndex: 1500,
         width: width,
         maxHeight: '30vh',

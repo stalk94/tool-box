@@ -387,7 +387,7 @@ export default function EditorApp({ setShowBlocEditor }) {
             const content = data.content ?? {};
             const layout = data.layout ?? [];
 
-            // 🧠 Устанавливаем всё чисто
+            // Устанавливаем
             cellsSlice.set(data.content);
             editorContext.layout.set(layout);
             editorContext.size.set(data.size ?? { width: 0, height: 0, breackpoint: 'lg' });
@@ -410,7 +410,7 @@ export default function EditorApp({ setShowBlocEditor }) {
 
             //console.red('INIT EFFECT', result)
             renderSlice.set(result);
-        }, 100);
+        }, 50);
     }, [meta.name, meta.scope]);
     
 

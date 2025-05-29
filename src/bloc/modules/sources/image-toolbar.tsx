@@ -35,7 +35,7 @@ export const LoaderToolWrapper = (props) => {
             style={{
                 position: 'relative',
                 overflow: 'hidden',
-                border: (select === index && !isDelCentre) && '2px solid #58beea8d',
+                //border: (select === index && !isDelCentre) && '1px solid #cea2518d',
                 background: select === index ? '#35422e10' : 'transparent'
             }}
         >

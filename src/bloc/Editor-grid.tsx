@@ -293,7 +293,7 @@ export default function ({ desserealize }) {
                             {/* ANCHOR - Вне редактора */}
                             { (!EDITOR && Array.isArray(layer.content)) && 
                                 layer.content.map((component, index) => 
-                                    <React.Fragment key={index}>
+                                    <React.Fragment key={component.props['data-id']}>
                                         { desserealize(component) }
                                     </React.Fragment>
                                 )

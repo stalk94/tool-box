@@ -45,6 +45,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         flexShrink: 0,
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 100),
         maxWidth: '100%',
+        padding: 1,
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code)

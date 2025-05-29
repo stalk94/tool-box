@@ -32,6 +32,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
     
     
     const styleWrapper: React.CSSProperties = {
+        boxSizing: 'border-box',
         position: 'relative',
         transform: CSS.Transform.toString(transform),
         transition,
@@ -40,11 +41,12 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         display: 'flex',
         cursor: dragEnabled ? 'grab' : 'default',
         //alignItems: 'center',
-        borderRight: '1px dotted #8580806b',
+        borderRight: !children.props.fullWidth && '1px dashed #b1544529',
         transformOrigin: 'center',
         flexShrink: 0,
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
         maxWidth: '100%',
+        padding: 1
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code)
