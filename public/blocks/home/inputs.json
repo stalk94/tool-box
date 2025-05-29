@@ -5,7 +5,7 @@
       "x": 0,
       "y": 0,
       "w": 12,
-      "h": 3,
+      "h": 2,
       "props": {
         "classNames": "",
         "style": {}
@@ -60,7 +60,7 @@
   "content": {
     "cell-1747910002163": [
       {
-        "id": 1747910013149,
+        "id": 1748472350217,
         "parent": "cell-1747910002163",
         "props": {
           "fullWidth": true,
@@ -70,28 +70,39 @@
           "linkItems": [
             {
               "id": "test",
-              "label": "test",
-              "path": "/test"
+              "label": "test"
             },
             {
               "id": "settings",
-              "label": "settings",
-              "path": "/settings"
+              "label": "settings"
             }
           ],
           "slots": {},
-          "data-id": 1747910013149,
+          "data-id": 1748472350217,
           "data-type": "AppBar"
         }
       }
     ],
     "cell-1748440374733": [],
-    "cell-1748440376986": []
+    "cell-1748440376986": [],
+    "cell-1747929787672": [
+      {
+        "id": 1748472207789,
+        "parent": "cell-1747929787672",
+        "props": {
+          "fullWidth": true,
+          "metaName": "FormAuth",
+          "style": {},
+          "data-id": 1748472207789,
+          "data-type": "FormAuth"
+        }
+      }
+    ]
   },
   "meta": {
     "scope": "home",
     "name": "inputs",
-    "updatedAt": 1748440547051,
+    "updatedAt": 1748472364082,
     "preview": "snapshots/home-inputs.png"
   },
   "size": {

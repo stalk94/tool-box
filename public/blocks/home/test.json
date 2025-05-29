@@ -1,0 +1,160 @@
+{
+  "layout": [
+    {
+      "i": "cell-1748490985905",
+      "x": 0,
+      "y": 4,
+      "w": 5,
+      "h": 16,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748491021219",
+      "x": 5,
+      "y": 4,
+      "w": 7,
+      "h": 16,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748491997153",
+      "x": 4,
+      "y": 20,
+      "w": 4,
+      "h": 12,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748492001453",
+      "x": 0,
+      "y": 20,
+      "w": 4,
+      "h": 12,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    }
+  ],
+  "content": {
+    "cell-1748490985905": [
+      {
+        "id": 1748491249974,
+        "parent": "cell-1748490985905",
+        "props": {
+          "fullWidth": true,
+          "src": "/uploads/img-1748491249974.png?1748491256521",
+          "file": {},
+          "data-source": "src",
+          "alt": "Картинка",
+          "data-id": 1748491249974,
+          "data-type": "Image",
+          "style": {
+            "marginTop": "0%",
+            "marginBottom": "0%"
+          }
+        }
+      }
+    ],
+    "cell-1748491021219": [
+      {
+        "id": 1748491298297,
+        "parent": "cell-1748491021219",
+        "props": {
+          "children": "Компания Метпромснаб",
+          "variant": "h5",
+          "fullWidth": true,
+          "style": {
+            "display": "flex",
+            "fontWeight": "bold",
+            "marginTop": "8%",
+            "marginLeft": "1%"
+          },
+          "data-id": 1748491298297,
+          "data-type": "Typography",
+          "styles": {
+            "text": {
+              "fontSize": "45",
+              "fontFamily": "Roboto",
+              "color": "rgba(2, 2, 2, 1)"
+            }
+          }
+        }
+      },
+      {
+        "id": 1748491387679,
+        "parent": "cell-1748491021219",
+        "props": {
+          "children": "Московская компания специализируемся на производстве и продаже товаров для систем вентиляции и ревизионных люков. С 2004 года мы уверенно занимаем лидирующие позиции в отрасли. В нашем интернет-магазине вы найдёте широкий ассортимент продукции с возможностью доставки по всей стране.",
+          "variant": "h5",
+          "fullWidth": true,
+          "style": {
+            "display": "flex",
+            "marginLeft": "3%",
+            "marginTop": "7%"
+          },
+          "data-id": 1748491387679,
+          "data-type": "Typography",
+          "styles": {
+            "text": {
+              "fontSize": "18",
+              "color": "rgba(11, 10, 10, 1)"
+            }
+          }
+        }
+      },
+      {
+        "id": 1748491440733,
+        "parent": "cell-1748491021219",
+        "props": {
+          "children": "Button",
+          "variant": "contained",
+          "color": "error",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {
+            "marginLeft": "10%",
+            "marginRight": "44%",
+            "marginTop": "6%"
+          },
+          "data-id": 1748491440733,
+          "data-type": "Button"
+        }
+      }
+    ],
+    "cell-1748491997153": [],
+    "cell-1748492001453": []
+  },
+  "meta": {
+    "scope": "home",
+    "name": "test",
+    "updatedAt": 1748492027106,
+    "preview": "snapshots/home-test.png"
+  },
+  "size": {
+    "width": 1200,
+    "height": 815
+  }
+}

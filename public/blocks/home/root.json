@@ -34,7 +34,10 @@
       "y": 0,
       "w": 4,
       "h": 11,
-      "content": [],
+      "content": [
+        null,
+        null
+      ],
       "moved": false,
       "static": false,
       "props": {
@@ -131,7 +134,7 @@
                     "props": {
                       "children": "Button",
                       "variant": "outlined",
-                      "color": "error",
+                      "color": "textPrimary",
                       "fullWidth": true,
                       "startIcon": "none",
                       "endIcon": "none",
@@ -160,7 +163,7 @@
                       "props": {
                         "children": "Button",
                         "variant": "outlined",
-                        "color": "error",
+                        "color": "textPrimary",
                         "fullWidth": true,
                         "startIcon": "none",
                         "endIcon": "none",
@@ -175,7 +178,7 @@
                 }
               ],
               "size": {
-                "width": 464,
+                "width": 471,
                 "height": 620
               }
             }
@@ -188,7 +191,7 @@
     ],
     "cell-1747227523825": [
       {
-        "id": 1748451089146,
+        "id": 1748457868541,
         "parent": "cell-1747227523825",
         "props": {
           "fullWidth": true,
@@ -196,12 +199,86 @@
           "file": "",
           "data-source": "src",
           "alt": "Картинка",
-          "data-id": 1748451089146,
+          "data-id": 1748457868541,
           "data-type": "Image"
         }
       }
     ],
-    "cell-1747227526997": [],
+    "cell-1747227526997": [
+      {
+        "id": 1748468671736,
+        "parent": "cell-1747227526997",
+        "props": {
+          "fullWidth": false,
+          "sizes": 55,
+          "src": "https://mui.com/static/images/avatar/3.jpg",
+          "file": "",
+          "icon": "",
+          "data-source": "src",
+          "style": {},
+          "data-id": 1748468671736,
+          "data-type": "Avatar",
+          "variant": "circular"
+        }
+      },
+      {
+        "id": 1748470271342,
+        "parent": "cell-1747227526997",
+        "props": {
+          "fullWidth": false,
+          "variant": "",
+          "size": "small",
+          "color": "",
+          "icon": "",
+          "label": "chip",
+          "style": {},
+          "data-id": 1748470271342,
+          "data-type": "Chip"
+        }
+      },
+      {
+        "id": 1748468972253,
+        "parent": "cell-1747227526997",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "success",
+          "fullWidth": false,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1748468972253,
+          "data-type": "Button"
+        }
+      },
+      {
+        "id": 1748464825482,
+        "parent": "cell-1747227526997",
+        "props": {
+          "fullWidth": false,
+          "size": "medium",
+          "iconName": "none",
+          "apiPath": "api/test",
+          "colors": "#ff3d47",
+          "precision": 1,
+          "data-id": 1748464825482,
+          "data-type": "Rating"
+        }
+      },
+      {
+        "id": 1748467038112,
+        "parent": "cell-1747227526997",
+        "props": {
+          "fullWidth": true,
+          "isChildren": true,
+          "variant": "fullWidth",
+          "width": "100%",
+          "children": "menu",
+          "data-id": 1748467038112,
+          "data-type": "Divider"
+        }
+      }
+    ],
     "cell-1747227527273": [
       {
         "id": 1747753800232,
@@ -224,7 +301,7 @@
             },
             {
               "type": "image",
-              "src": "https://picsum.photos/seed/1/300/400"
+              "src": "/uploads/vc-1747753800232-2.png?v=1748458010463"
             },
             {
               "type": "image",
@@ -345,7 +422,7 @@
           "items": [
             {
               "type": "image",
-              "src": "https://picsum.photos/seed/1/600/400"
+              "src": "/uploads/hc-1747753796861-0.jpg?v=1748458014816"
             },
             {
               "type": "video",
@@ -353,7 +430,7 @@
             },
             {
               "type": "image",
-              "src": "https://picsum.photos/seed/1/300/400"
+              "src": "/uploads/hc-1747753796861-2.jpg?v=1748452802978"
             },
             {
               "type": "video",
@@ -411,7 +488,7 @@
                       },
                       {
                         "type": "text",
-                        "text": "12"
+                        "text": "112"
                       }
                     ]
                   }
@@ -426,7 +503,7 @@
               "buttonText": "ПОДРОБНЕЕ",
               "description": "custom editable description",
               "images": [
-                "https://placehold.co/600x400/353636/gray?text=PromoImage1&font=roboto"
+                "/uploads/pb-1747840618502-1.png?v=1748479618872"
               ]
             }
           ],
@@ -448,11 +525,11 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1748451416502,
+    "updatedAt": 1748488831420,
     "preview": "snapshots/home-root.png"
   },
   "size": {
     "width": 1200,
-    "height": 815
+    "height": 800
   }
 }

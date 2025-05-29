@@ -3,7 +3,7 @@ import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import type { File } from '@babel/types';
 import { LayoutCustom } from '../../type';
-import { exportLiteralToFile } from "../../helpers/export";
+import { exportLiteralToFile, addModuleToIndex } from "../../helpers/export";
 import { Component } from '../../type';
 
 
@@ -317,7 +317,8 @@ export default function exportsGrid(
             }
         `);
         
-        exportLiteralToFile([scope, name], 'index', literal);
+        const resultExport = await exportLiteralToFile([scope, name], 'index', literal);
+        if(resultExport) addModuleToIndex(`import ${scope + '_' + name} from './${scope}/${name}';`);
     }
 
    

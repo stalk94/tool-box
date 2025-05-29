@@ -103,6 +103,21 @@ export default function writeFilePlugin() {
                     res.end(JSON.stringify({ error: 'Ошибка при чтении scope' }));
                 }
             });
+            server.middlewares.use('/get-index', (req, res) => {
+                const basePath = path.join(process.cwd(), 'public', 'export/index.tsx');
+
+                try {
+                    const file = fs.readFileSync(basePath, {encoding:'utf-8'});
+
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(file);
+                } 
+                catch (err) {
+                    console.error('❌ Ошибка при чтении:', err);
+                    res.statusCode = 500;
+                    res.end(JSON.stringify({ error: 'Ошибка при чтении папок и файлов' }));
+                }
+            });
         },
     };
 }

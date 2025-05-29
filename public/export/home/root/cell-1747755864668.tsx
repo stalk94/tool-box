@@ -12,14 +12,12 @@ export function PromoBannerWrap() {
                     <span style={{ color: 'rgba(227, 24, 24, 1)' }}>
                         descriptidon{' '}
                     </span>
-                    12
+                    112
                 </div>
             )
         },
         {
-            images: [
-                'https://placehold.co/600x400/353636/gray?text=PromoImage1&font=roboto'
-            ],
+            images: ['/uploads/pb-1747840618502-1.png?v=1748479618872'],
             title: <span>Title</span>,
             description: <span>custom editable description</span>
         }

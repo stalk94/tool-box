@@ -1,5 +1,4 @@
 import { loadProjectConfig, loadLayoutConfig, loadPageSchema } from './helpers';
-import ResponsiveRenderPage from './ResponsiveRender';
 import { notFound } from 'next/navigation';
 
 
@@ -27,10 +26,8 @@ export default async function DynamicPage({ params }: { params: { page: string }
 
 
     return (
-        <ResponsiveRenderPage
-            schema={pageSchema}
-            header={headerSchema}
-            footer={footerSchema}
-        />
+        <>
+        
+        </>
     );
 }

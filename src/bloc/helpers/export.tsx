@@ -142,6 +142,45 @@ export const exportLiteralToFile = async (path: string[], fileName: string, file
 		return `/${path[1]}/${fileName}.tsx`;
 	}
 }
+/** добавляет в главный index.tsx записи */
+export const addModuleToIndex = async(strImport: string) => {
+	const res = await fetch(`${API_BASE}/get-index`);
+	const text = await res.text();
+
+	if(!text.includes(strImport)) {
+		const newTextRaw = text + '\n' + strImport;;
+
+		const lines = newTextRaw
+			.split(/\r?\n/)
+			.map(line => line.trim())
+			.filter(line => line.startsWith('import'));
+
+		const variableNames = lines.map(line => {
+			const match = line.match(/^import\s+(\w+)\s+from\s+['"](.+)['"];?$/);
+			return match ? match[1] : null;
+		}).filter(Boolean);
+
+		const importSection = lines.join('\n');
+		const exportSection = `\n\nexport default {\n  ${variableNames.join(',\n  ')}\n};`;
+		const finalText = importSection + exportSection;
+
+
+		const res = await fetch(`${API_BASE}/write-file`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				folder: `public/export`,
+				filename: `index.tsx`,
+				content: finalText
+			})
+		});
+
+		if (!res.ok) {
+			console.error('❌ Ошибка при сохранении блока');
+		}
+		else console.log('✅ index file change');
+	}
+}
 export const createBlockToFile = async (scope: string, name: string) => {
 	const size = editorContext.size.get();
 	

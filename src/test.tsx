@@ -21,11 +21,6 @@ const App = () => {
         height: 100
     });
     
-
-    const toggleTheme =()=> {
-        localStorage.setItem('theme', !darkMode ? 'dark' : 'light');
-        setDarkMode(!darkMode);
-    }
     React.useEffect(()=> {
         globalThis.EDITOR = true;
     }, []);

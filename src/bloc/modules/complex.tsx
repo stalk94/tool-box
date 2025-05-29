@@ -1174,35 +1174,3 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
         </div>
     );
 });
-
-
-
-/**
- * <span
-                style={{
-                    border: '1px solid transparent',
-                    outline: 'none',
-                }}
-                onClick={(e) => e.stopPropagation()}
-                onBlur={(e) => {
-                    e.currentTarget.style.border = '1px solid transparent';
-                    e.currentTarget.style.background = 'none';
-                    e.currentTarget.style.padding = '0px';
-                    const copy = { ...items[index] };
-                    console.log(e.currentTarget.innerText.length)
-                    copy[key] = e.currentTarget.innerText.length > 0 ? e.currentTarget.innerText : undefined;
-
-                    handleChangeEdit(index, copy);
-                }}
-                contentEditable={true}
-                suppressContentEditableWarning
-                onFocus={(e) => {
-                    e.currentTarget.style.padding = '5px';
-                    e.currentTarget.style.borderRadius = '8px';
-                    e.currentTarget.style.background = '#0000008';
-                    e.currentTarget.style.border = '1px solid #3b8ee2b1';
-                }}
-            >
-                { value }
-            </span>
- */

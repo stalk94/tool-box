@@ -3,12 +3,18 @@ import React from 'react';
 
 export function CarouselHorizontalWrap() {
     const items = [
-        { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
+        {
+            type: 'image',
+            src: '/uploads/hc-1747753796861-0.jpg?v=1748458014816'
+        },
         {
             type: 'video',
             src: '/uploads/hc-1747753796861-1.mp4?v=1747922095312'
         },
-        { type: 'image', src: 'https://picsum.photos/seed/1/300/400' },
+        {
+            type: 'image',
+            src: '/uploads/hc-1747753796861-2.jpg?v=1748452802978'
+        },
         {
             type: 'video',
             src: '/uploads/hc-1747753796861-3.mp4?v=1747919174305'

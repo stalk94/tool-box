@@ -55,8 +55,9 @@ export const palleteStd = {
         main: "rgba(255, 255, 255, 0.05)",
         border: 'rgba(255, 255, 255, 0.15)',
     },
+    // установка цвета Menu, Popper, Dialog
     menu: {
-        main: "rgba(63, 63, 63, 0.5)",
+        main: "#313131",
         select: "rgba(255, 255, 255, 0.1)",
     },
     background: {

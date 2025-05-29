@@ -18,7 +18,7 @@ import EventEmitter from "../app/emiter";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
-import GridTest2 from 'public/export/home/root/index';
+import inputsIndex from 'public/export/index';
 import "../style/edit.css";
 
 
@@ -72,7 +72,14 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             />
         );
     }
-    // вызывается только при добавлении нового сонтента 
+    // получает конкретный импорт превью из ранее экспортированных литералов
+    const getPreview =()=> {
+        const meta = editorContext.meta.get();
+        const path = `${meta.scope}_${meta.name}`;
+
+        if(inputsIndex[path]) return inputsIndex[path];
+        else return ()=> <div>not path import preview</div>;
+    }
     const createDataComponent = (rawProps: ComponentProps, cellId: string): ComponentSerrialize => {
         const type = rawProps['data-type'];
         const id = Date.now();
@@ -257,7 +264,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                     
                     {mod === 'preview'
-                        ? <GridTest2 />
+                        ? getPreview()()
                         : <GridComponentEditor
                             desserealize={desserealize}
                         />
