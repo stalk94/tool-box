@@ -166,10 +166,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         const elActivator = event.activatorEvent.target as HTMLElement;
         const container = elActivator.closest('[ref-id]') as HTMLElement | null;
         cacheDrag.current = container;
-
-        document.querySelectorAll('[ref-id]').forEach(el => {
-            el.classList.remove('editor-selected');
-        });
     }
     const handleDragEnd =(event: DragEndEvent)=> {
         const { active, over } = event;

@@ -20,12 +20,13 @@ type SortableItemProps = {
 export function SortableItem({ id, children, cellId, desserealize }: SortableItemProps) {
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorContext.dragEnabled.use();
+    const RenderElement = React.useMemo(() => desserealize(children), [children]);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
         id,
         data: {
             type: 'sortable',
             cellId,
-            element: children
+            element: RenderElement
         },
         disabled: !dragEnabled        // ✅ глобальный флаг
     });
@@ -173,7 +174,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
                     onChange={console.log}
                 />
                 
-                { desserealize(children) }
+                { RenderElement }
             </div>
             
             { menu }

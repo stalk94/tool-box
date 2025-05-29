@@ -385,7 +385,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
         });
     }, [items, active]);
     
-
+    
     return (
         <div
             ref={ref}

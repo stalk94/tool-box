@@ -44,7 +44,7 @@ export function DraggableToolItem({ id, type, dataType, element }) {
     );
 }
 export function DragItemCopyElement({ activeDragElement }) {
-   
+
     return(
         <div 
             style={{ 
