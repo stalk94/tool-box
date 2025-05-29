@@ -108,7 +108,7 @@ export const editorSlice = create({
         colapsed: false,
         isAbsolute: false,
         position: {
-            x: window.innerWidth - 400,
+            x: 0,       //window.innerWidth - 400,
             y: 50
         }
     }

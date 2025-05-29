@@ -52,7 +52,7 @@ export default function Cell() {
                     whiteSpace: 'nowrap'
                 }}
                 variant="outlined"
-                color="success"
+                color="secondary"
                 data-type="Button"
                 onClick={() =>
                     sharedEmmiter.emit('event', {

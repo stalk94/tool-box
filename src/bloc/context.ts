@@ -70,7 +70,7 @@ export type NestedContextStateType = {
     currentData: SlotDataBus
 }
 
-
+const isClient = typeof window !== 'undefined';
 
 export const editorContext = createState('EDITOR', {
     mod: 'block',
@@ -91,13 +91,13 @@ export const editorContext = createState('EDITOR', {
         colapsed: false,
         isAbsolute: false,
         position: {
-            x: window.innerWidth - 400,
+            x: 0,
             y: 50
         }
     },
-} as EditorContextType, [
+} as EditorContextType, isClient ? [
     useLocalStorage({ restore: true })
-]);
+] : []);
 
 
 export const renderSlice = create([] as LayoutCustom[], {

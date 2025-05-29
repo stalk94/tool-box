@@ -525,7 +525,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
             center={start}
             end={
                 <Inspector
-                    data={globalThis.sharedContext.get()}
+                    data={globalThis?.sharedContext?.get()}
                     onClose={console.log}
                 />
             }

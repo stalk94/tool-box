@@ -1,5 +1,6 @@
 import './globals.css';
 export { generateMetadata } from './[page]/head';
+import EmotionRegistry from './theme/emotion'; 
 
 
 const defaultMetadata = {
@@ -25,7 +26,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </head>
             
             <body>
-                { children }
+                <EmotionRegistry>
+                    { children }
+                </EmotionRegistry>
             </body>
         </html>
     )

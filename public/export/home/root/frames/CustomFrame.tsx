@@ -12,7 +12,7 @@ export function ButtonWrap() {
             style={{}}
             sx={{ whiteSpace: 'nowrap' }}
             variant="outlined"
-            color="textPrimary"
+            color="success"
             fullWidth
             data-type="Button"
             onClick={() =>

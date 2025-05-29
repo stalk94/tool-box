@@ -34,10 +34,7 @@
       "y": 0,
       "w": 4,
       "h": 11,
-      "content": [
-        null,
-        null
-      ],
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -242,7 +239,7 @@
         "props": {
           "children": "Button",
           "variant": "outlined",
-          "color": "success",
+          "color": "secondary",
           "fullWidth": false,
           "startIcon": "none",
           "endIcon": "none",
@@ -525,7 +522,7 @@
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1748488831420,
+    "updatedAt": 1748525775071,
     "preview": "snapshots/home-root.png"
   },
   "size": {

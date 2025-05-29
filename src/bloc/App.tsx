@@ -19,19 +19,11 @@ import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import inputsIndex from 'public/export/index';
+import './modules/index';
 import "../style/edit.css";
 
 
 /////////////////////////////////////////////////////////////////////////////
-if (!window.next) {
-    import('./modules/index').then((mod) => {
-        console.gray('Модуль подгружен:', mod);
-    })
-    .catch((err) => {
-        console.error('❌ Ошибка при загрузке модуля:', err);
-    });
-}
-
 if(!globalThis.EVENT) globalThis.EVENT = new EventEmitter<Events>();
 globalThis.ZOOM = 1; 
 colorLog();
@@ -357,8 +349,6 @@ export default function EditorApp({ setShowBlocEditor }) {
             .catch(() => console.error('🚨 data projects not load'));
     }, [])
     React.useEffect(() => {
-        if (typeof window === 'undefined') return;
-
         const handle = (data: SlotDataBus) => {
             console.green('GET GRID CONTEXT =>', data);
             fileSaveFromDumpRender();
@@ -375,7 +365,6 @@ export default function EditorApp({ setShowBlocEditor }) {
         return () => EVENT.off('addGridContext', handle);
     }, []);
     React.useEffect(() => {
-        if (typeof window === 'undefined') return;
         // 🔁 Очищаем перед установкой нового блока
         renderSlice.set([]);
         cellsSlice.set({});
@@ -413,7 +402,7 @@ export default function EditorApp({ setShowBlocEditor }) {
 
             //console.red('INIT EFFECT', result)
             renderSlice.set(result);
-        }, 50);
+        }, 500);
     }, [meta.name, meta.scope]);
     
 
