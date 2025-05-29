@@ -17,28 +17,31 @@ export type ContextMenuState<T = any> = {
 
 export default function useContextMenu<T = any>(items: ContextMenuItem<T>[]) {
     const [menuState, setMenuState] = React.useState<ContextMenuState<T> | null>(null);
-
-    const handleOpen = (e: React.MouseEvent, data: T) => {
+    
+    
+    const handleOpen = React.useCallback((e: React.MouseEvent, data: T) => {
         e.preventDefault();
-
         setMenuState({
             mouseX: e.clientX,
             mouseY: e.clientY,
             targetData: data,
         });
-    }
-    const handleClose = () => setMenuState(null);
+    }, []);
+    const handleClose = React.useCallback(() => setMenuState(null), []);
 
-    const menu = menuState ? (
-        <Menu
-            open
-            onClose={handleClose}
-            anchorReference="anchorPosition"
-            anchorPosition={{ top: menuState.mouseY, left: menuState.mouseX }}
-        >
-            {items
-                .filter(item => item.showIf?.(menuState.targetData.type) !== false)
-                .map((item, index) => (
+    const menu = React.useMemo(() => {
+        if (!menuState) return null;
+
+        const filtered = items.filter(item => item.showIf?.(menuState.targetData.type) !== false);
+
+        return (
+            <Menu
+                open
+                onClose={handleClose}
+                anchorReference="anchorPosition"
+                anchorPosition={{ top: menuState.mouseY, left: menuState.mouseX }}
+            >
+                {filtered.map((item, index) => (
                     <MenuItem
                         key={index}
                         onClick={() => {
@@ -50,8 +53,9 @@ export default function useContextMenu<T = any>(items: ContextMenuItem<T>[]) {
                         <ListItemText>{item.label}</ListItemText>
                     </MenuItem>
                 ))}
-        </Menu>
-    ) : null;
+            </Menu>
+        );
+    }, [menuState, items, handleClose]);
 
 
     return {

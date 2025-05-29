@@ -6,7 +6,7 @@ import { ComponentSerrialize, Component } from '../type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps, SlotToolBar } from './shim';
 import { Delete, Edit, Star } from '@mui/icons-material';
-import { serrialize } from '../helpers/sanitize';
+import { db } from "../helpers/export";
 
 
 type SortableItemProps = { 
@@ -26,7 +26,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         data: {
             type: 'sortable',
             cellId,
-            element: RenderElement
+            element: children
         },
         disabled: !dragEnabled        // ✅ глобальный флаг
     });
@@ -47,6 +47,10 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 100),
         maxWidth: '100%',
         padding: 1,
+    }
+    const useAddToCollection = (ids: number) => {
+        const name = prompt('Введите key name для компонента (не менее 3х символов)');
+        if (name && name.length > 3) db.set(`blank.${name}`, children);
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code)
@@ -108,34 +112,41 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
     }, [children]);
 
     
-    const { menu, handleOpen } = useContextMenu([
-        { 
-            label: <div style={{color:'gold',fontSize:14}}>export code</div>, 
-            icon: <Star sx={{color:'gold',fontSize:18}} />, 
-            onClick: (id)=> {
-                sharedEmmiter.emit('degidratation.'+id, {
+    const contextMenuItems = React.useMemo(() => [
+        {
+            label: <div style={{ color: 'gold', fontSize: 14 }}>В заготовки</div>,
+            icon: <Star sx={{ color: 'gold', fontSize: 18 }} />,
+            onClick: (id) => useAddToCollection(id),
+            showIf: (type) => type === 'Card'
+        },
+        {
+            label: <div style={{ color: 'gold', fontSize: 14 }}>export code</div>,
+            icon: <Star sx={{ color: 'gold', fontSize: 18 }} />,
+            onClick: (id) => {
+                sharedEmmiter.emit('degidratation.' + id, {
                     call: useDegidratationHandler
-                });
+                })
             }
         },
-        { 
-            label: <div style={{color:'#a8de82',fontSize:14}}>edit</div>, 
-            icon: <Edit sx={{color:'#a8de82',fontSize:18}} />, 
-            onClick: (id)=> EVENT.emit('jsonRender', {
-                call: (data)=> updateComponentProps({
-                    component: { props: children.props }, 
-                    data: {...data}
+        {
+            label: <div style={{ color: '#a8de82', fontSize: 14 }}>edit</div>,
+            icon: <Edit sx={{ color: '#a8de82', fontSize: 18 }} />,
+            onClick: (id) => EVENT.emit('jsonRender', {
+                call: (data) => updateComponentProps({
+                    component: { props: children.props },
+                    data: { ...data }
                 }),
                 data: children.props
-            }), 
+            }),
         },
-        { 
-            label: <div style={{color:'red',fontSize:14}}>Удалить</div>, 
-            icon: <Delete sx={{color:'red',fontSize:18}} />, 
-            onClick: (id)=> iseDeleteComponent(id), 
+        {
+            label: <div style={{ color: 'red', fontSize: 14 }}>Удалить</div>,
+            icon: <Delete sx={{ color: 'red', fontSize: 18 }} />,
+            onClick: (id) => iseDeleteComponent(id),
         },
-    ]);
-    
+    ], [children]);
+    const { menu, handleOpen } = useContextMenu(contextMenuItems);
+
     
 
     return (
@@ -161,7 +172,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
                 <SlotToolBar
                     dataId={children.props['data-id']}
                     type={children.props['data-type']}
-                    onChange={console.log}
+                    children={children}
                 />
                 
                 { RenderElement }

@@ -1,10 +1,11 @@
 import React from 'react';
 import { useDraggable, useDroppable, Modifier } from '@dnd-kit/core';
-import { DropSlotProps, ContextSlotProps, ProxyComponentName } from './type';
+import { DropSlotProps, ContextSlotProps, ProxyComponentName, ComponentSerrialize } from './type';
 import { Box, IconButton } from '@mui/material';
 import { Add, Input } from '@mui/icons-material';
 import MiniRender from './nest-slot/MiniRender';
 import { createStore } from 'statekit-lite';
+import { componentMap } from './modules/helpers/registry';
 
 export const activeSlotState = createStore({} as {
     type: 'slot'
@@ -44,6 +45,26 @@ export function DraggableToolItem({ id, type, dataType, element }) {
     );
 }
 export function DragItemCopyElement({ activeDragElement }) {
+    const desserealize = (component: ComponentSerrialize) => {
+        const { id, props, parent } = component;
+        const type = props["data-type"];
+    
+
+        const Component = componentMap[type];
+        Component.displayName = type;
+        //Component.parent = parent;
+
+        if (!Component) {
+            console.warn(`Компонент типа "${type}" не найден в реестре`);
+            return null;
+        }
+
+        return (
+            <Component
+                { ...props }
+            />
+        );
+    }
 
     return(
         <div 
@@ -54,7 +75,10 @@ export function DragItemCopyElement({ activeDragElement }) {
                 borderRadius: '5px'
             }}
         >
-            { React.cloneElement(activeDragElement) }
+            { React.isValidElement(activeDragElement)
+                ? React.cloneElement(activeDragElement)
+                : desserealize(activeDragElement) 
+            }
         </div>
     )
 }

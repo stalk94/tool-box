@@ -276,7 +276,6 @@ export default function ({ desserealize }) {
                                             <>
                                                 {Array.isArray(layer.content) && layer.content.map((component) => (
                                                     <SortableItem
-                                                        desserealize={desserealize}
                                                         key={component.props['data-id']}
                                                         id={component.props['data-id']}
                                                         cellId={layer.i}

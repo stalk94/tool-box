@@ -152,80 +152,72 @@ export const LinktoolBar =({dataId, subs, onChange})=> {
     );
 }
 
-export const SlotToolBar =({ dataId, type, item })=> {
+export const SlotToolBar =({ dataId, type, children })=> {
+    const selectedContent = infoSlice.select.content.use();
     const [isThisSelect, setSelectThis] = React.useState(false);
-    const selectContent = infoSlice.select.content;
     const listAcess = ['Accordion', 'Tabs', 'BottomNav', 'List', 'PromoBanner'];
     
     if(!listAcess.includes(type)) return;
-    const getOptions = () => {
-        const getNewValue =(selectedProps)=> {
-            if (type === 'Tabs') return `link-${selectedProps.items.length}`;
-            else if(type === 'BottomNav') return {
-                icon: 'Settings',
-                label: 'test'
-            }
-            else if(type === 'List') return {
-                startIcon: 'Settings',
-                primary: 'primary',
-                secondary: 'secondary'
-            }
-            else if(type === 'PromoBanner') return {
-                title: 'Title',
-                buttonText: "ПОДРОБНЕЕ",
-                description: 'custom editable description',
-                images: [`https://placehold.co/600x400/353636/gray?text=PromoImage${selectedProps.items.length}&font=roboto`]
-            }
-            else return {
-                title: `・title-${selectedProps.items.length}`,
-                content: serializeJSX(<Box sx={{ m: 3 }}>content</Box>)
-            }
+
+    const getNewValue = (selectedProps) => {
+        if (type === 'Tabs') return `link-${selectedProps.items.length}`;
+        else if (type === 'BottomNav') return {
+            icon: 'Settings',
+            label: 'test'
         }
-
-        return [
-            {
-                action: () => {
-                    const selectedProps = selectContent.get()?.props;
-
-                    updateComponentProps({
-                        component: { props: selectedProps },
-                        data: { items: selectedProps.items.slice(0, -1) }
-                    })
-                },
-                icon: <Remove sx={{ color: '' }} />
-            },
-            {
-                action: () => {
-                    const selectedProps = selectContent.get()?.props;
-                    const newItem = getNewValue(selectedProps);
-
-                    updateComponentProps({
-                        component: { props: selectedProps },
-                        data: { items: [...selectedProps.items, newItem] }
-                    })
-                },
-                icon: <Add sx={{ color: '' }} />
-            },
-        ];
+        else if (type === 'List') return {
+            startIcon: 'Settings',
+            primary: 'primary',
+            secondary: 'secondary'
+        }
+        else if (type === 'PromoBanner') return {
+            title: 'Title',
+            buttonText: "ПОДРОБНЕЕ",
+            description: 'custom editable description',
+            images: [`https://placehold.co/600x400/353636/gray?text=PromoImage${selectedProps.items.length}&font=roboto`]
+        }
+        else return {
+            title: `・title-${selectedProps.items.length}`,
+            content: serializeJSX(<Box sx={{ m: 3 }}>content</Box>)
+        }
     }
     React.useEffect(()=> {
-        const cur = selectContent.get();
+        const selectContent = infoSlice.select.content.get();
+        const selectDataId = selectContent?.props?.['data-id'];
 
-        if(cur) {
-            const selectDataId = cur?.props?.['data-id'];
-            if(selectDataId === dataId) setSelectThis(true);
-            else setSelectThis(false);
-        }
-    }, [selectContent])
-
+        if(selectDataId === dataId) setSelectThis(true);
+        else setSelectThis(false);
+    }, [children, selectedContent])
+   
 
     return(
         <ContextualToolbar
             visible={isThisSelect}
-            options={getOptions()}
+            options={[
+                {
+                    action: () => {
+                        updateComponentProps({
+                            component: { props: children.props },
+                            data: { items: children.props.items.slice(0, -1) }
+                        })
+                    },
+                    icon: <Remove sx={{ color: '' }} />
+                },
+                {
+                    action: () => {
+                        const newItem = getNewValue(children.props);
+
+                        updateComponentProps({
+                            component: { props: children.props },
+                            data: { items: [...children.props.items, newItem] }
+                        })
+                    },
+                    icon: <Add sx={{ color: '' }} />
+                },
+            ]}
             align='top'
             offsetY={0}
-            sx={{width: 80, height: 30}}
+            sx={{ width: 80, height: 30 }}
         />
     );
 }

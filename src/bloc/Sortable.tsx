@@ -8,16 +8,16 @@ import { updateComponentProps } from './helpers/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./helpers/export";
 import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
+import { desserealize } from './helpers/sanitize';
 
 type SortableItemProps = { 
     id: number
     children: ComponentSerrialize
     cellId: string 
-    desserealize: (serrializeData: ComponentSerrialize)=> Component
 }
 
 
-export function SortableItem({ id, children, cellId, desserealize }: SortableItemProps) {
+export function SortableItem({ id, children, cellId }: SortableItemProps) {
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorContext.dragEnabled.use();
     const RenderElement = React.useMemo(() => desserealize(children), [children]);
@@ -26,12 +26,12 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         data: {
             type: 'sortable',
             cellId,
-            element: RenderElement
+            element: children
         },
         disabled: !dragEnabled        // ✅ глобальный флаг
     });
     
-    
+
     const styleWrapper: React.CSSProperties = {
         boxSizing: 'border-box',
         position: 'relative',
@@ -111,9 +111,8 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
             currentToolPanel: 'styles'
         });
     }
-
     
-    const { menu, handleOpen } = useContextMenu([
+    const contextMenuItems = React.useMemo(() => [
         { 
             label: <div style={{color:'gold',fontSize:14}}>В заготовки</div>, 
             icon: <Star sx={{color:'gold',fontSize:18}} />, 
@@ -145,7 +144,8 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
             icon: <Delete sx={{color:'red',fontSize:18}} />, 
             onClick: (id)=> iseDeleteComponent(id), 
         },
-    ]);
+    ], [children]);
+    const { menu, handleOpen } = useContextMenu(contextMenuItems);
     
     
     return (
@@ -168,10 +168,11 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
                     handleOpen(e, {id, type: children.props['data-type']});
                 }}
             >
+                {/* 💥 баги */}
                 <SlotToolBar
                     dataId={children.props['data-id']}
                     type={children.props['data-type']}
-                    onChange={console.log}
+                    children={children}
                 />
                 
                 { RenderElement }
