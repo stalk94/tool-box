@@ -190,10 +190,15 @@ export default function ({ value, onChange, items, placeholder, ...props }: Base
                 value={selected}
                 onChange={(event)=> handleSelectItem(event.target.value)}
                 displayEmpty
+                style={{
+                    backgroundColor: 'none',
+                    background: 'none',
+                }}
                 sx={{
                     maxHeight: 42,
                     width: '100%',
                     backgroundColor: 'none',
+                    background: 'none',
                     border: '0px',
                     color: theme.palette.text.primary,
                     '.MuiSelect-icon': {

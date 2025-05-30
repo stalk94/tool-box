@@ -1,6 +1,3 @@
-import colorCustom from './color.json';
-
-
 export const palleteStd = {
     input: {
         main: 'rgba(255, 255, 255, 0.05)',
@@ -77,23 +74,9 @@ export const palleteStd = {
 
 
 
-
-const transform =()=> {
-    const result = {};
-
-    Object.keys(palleteStd).map((key)=> {
-        result[key] = {
-            ...palleteStd[key],
-            ...colorCustom[key]
-        }
-    });
-
-    return result;
-}
-
 export const darkPallete = {
     palette: {
         mode: "dark",
-        ...transform()
+        ...palleteStd
     }
 }

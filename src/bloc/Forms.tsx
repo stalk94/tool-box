@@ -338,6 +338,11 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                     key={`accordion-${copyDataContent.current?.key}`}
                     scheme={acSchema}
                     labelPosition="column"
+                    headerStyle={{
+                        fontSize: '12px',
+                        color: 'orange',
+                        paddingLeft: '14px',
+                    }}
                     onSpecificChange={(old, news, keyProps: string)=> {
                         Object.entries(news).forEach(([key, value]) => useEdit(key, value, keyProps))
                     }}

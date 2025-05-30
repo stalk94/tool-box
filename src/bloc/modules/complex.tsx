@@ -786,7 +786,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
 
 
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
-    const [src, setSrc] = React.useState("");
+    const [src, setSrc] = React.useState(undefined);
     const degidratationRef = React.useRef<(call) => void>(() => { });
     const lastFileRef = React.useRef<number | null>(null);
     const {
@@ -1084,11 +1084,11 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
         return (
             <TipTapSlotEditor
                 autoIndex={index}
-                value={value}
+                value={value ?? ''}
                 onChange={(html) => {
                     const copy = { ...items[index] };
                     copy[key] = html;
-                    handleChangeEdit(index, copy)
+                    handleChangeEdit(index, copy);
                 }}
                 placeholder="Текст"
                 className="no-p-margin"

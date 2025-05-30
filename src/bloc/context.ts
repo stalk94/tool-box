@@ -2,6 +2,7 @@ import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ComponentPro
 import { Editor } from '@tiptap/react';
 import { createState, useLocalStorage } from 'statekit-react';
 import { createStore as create } from 'statekit-lite';
+import type { Palette } from '@mui/material/styles';
 
 
 export type PropsSimpleList = {
@@ -16,7 +17,7 @@ export type EditorContextType = {
         scope: string;
         name: string;
     };
-    mod: 'block' | 'grid' | 'preview' | 'storage' | 'slot';     //?? 'slot', 'storage' 
+    mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot';
     dragEnabled: boolean;
     layout: LayoutCustom[];
     size: {
@@ -69,6 +70,14 @@ export type NestedContextStateType = {
     isEnable: boolean,
     currentData: SlotDataBus
 }
+export type SettingsContextStateType = {
+    theme: {
+        currentTheme: string
+        currentGroop: keyof Palette
+        pallete: Palette
+    }
+}
+
 
 const isClient = typeof window !== 'undefined';
 
@@ -107,6 +116,15 @@ export const renderSlice = create([] as LayoutCustom[], {
 export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
     devtools: { name: 'cells' },
     immer: true
+});
+export const settingsSlice = create({
+    theme: {
+        currentTheme: 'dark',
+        currentGroop: 'input'
+    }
+} as SettingsContextStateType, {
+    immer: true,
+    persist: { key: 'settings' }
 });
 
 

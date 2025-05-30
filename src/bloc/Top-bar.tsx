@@ -1,14 +1,15 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
-import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
+import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings } from "@mui/icons-material";
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
-
+import { SelectInput } from 'src/index';
 
 
 const categories = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> },
+    { id: 'settings', label: <Settings/> },
     { id: 'preview', label: <Input style={{fontSize: 24}} /> }
 ];
 const Instrument = () => {

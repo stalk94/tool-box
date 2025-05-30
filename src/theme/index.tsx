@@ -2,6 +2,7 @@ import { createTheme, PaletteOptions, ThemeOptions, Theme } from "@mui/material/
 import { CSSProperties } from "react";
 import { typography, components } from './elements';
 import { darkPallete } from './dark';
+import { taskadePallete } from './taskade';
 import { lightPallete } from './light';
 import { mixins } from './mixins';
 
@@ -86,7 +87,14 @@ export const darkTheme = createTheme({
     palette: darkPallete.palette,
     components: components.components,
 });
+export const taskadeTheme = createTheme({
+    typography: typography.typography,
+    mixins,
+    palette: taskadePallete.palette,
+    components: components.components,
+});
 export const lightTheme = createTheme({
     mixins,
     palette: lightPallete.palette,
+    components: components.components
 });

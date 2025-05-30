@@ -1,6 +1,9 @@
+import colorCustom from './color.json';
+
+/** порт цветов из taskade.com */
 export const palleteStd = {
     input: {
-        main: 'rgba(255, 255, 255, 0.05)',
+        main: '#2C3035',
         border: 'rgba(255, 255, 255, 0.2)',
         error: '#f34f4fcc',
         success: 'rgba(120, 227, 114, 0.6)',
@@ -26,8 +29,8 @@ export const palleteStd = {
 
     // верхняя навигационная панель
     appBar: {
-        main: "rgba(57, 62, 70, 0.35)",
-        border: 'rgba(255, 255, 255, 0.3)'
+        main: "rgba(57, 62, 70, 0.3)",
+        border: 'rgba(255, 255, 255, 0.1)'
     },
     // левая панелька (как в vscode)
     toolNavBar: {
@@ -54,13 +57,13 @@ export const palleteStd = {
     },
     // установка цвета Menu, Popper, Dialog
     menu: {
-        main: "#313131",
+        main: "#17191C",
         select: "rgba(255, 255, 255, 0.1)",
     },
     background: {
-        default: '#222222',                     // базовый цвет фона '#2c303d'
-        sidenav: "#1f283e",                     //? что это
-        paper: "rgba(7, 7, 7, 0.05)",   // с какого цвета начинается
+        default: '#1C1F22',                     
+        sidenav: "#1f283e",                     
+        paper: "#17191C",   
     },
     // app bar цвет navigation link
     navigation: {
@@ -70,13 +73,35 @@ export const palleteStd = {
     text: {
         disabled: 'gray'
     },
+
+    // кнопки
+    primary: {
+        main: '#D12954',
+        contrastText: '#fff',
+    },
+    secondary: {
+        main: '#dc004e',
+        contrastText: '#fff',
+    },
 }
 
 
+const transform =()=> {
+    const result = {};
 
-export const lightPallete = {
+    Object.keys(palleteStd).map((key)=> {
+        result[key] = {
+            ...palleteStd[key],
+            ...colorCustom[key]
+        }
+    });
+
+    return result;
+}
+
+export const taskadePallete = {
     palette: {
-        mode: "light",
-        ...palleteStd
+        mode: "dark",
+        ...transform()
     }
 }

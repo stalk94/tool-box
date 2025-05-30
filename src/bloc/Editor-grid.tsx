@@ -10,6 +10,8 @@ import { Delete, Edit, Star } from '@mui/icons-material';
 import { findFreeSpot, stackHorizont, stackVertical } from './helpers/editor';
 import { DroppableCell } from './Dragable';
 import Container from '@mui/material/Container';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -210,6 +212,7 @@ export default function ({ desserealize }) {
     
 
     return (
+        <ThemeProvider theme={taskadeTheme}>
         <Container 
             sx={{
                 height: (size.height + 10) ?? '99%', 
@@ -228,7 +231,7 @@ export default function ({ desserealize }) {
         >
             {ready &&
             <ResponsiveGridLayout
-                style={{ background: '#222222', height: (size.height - 10) ?? '99%', }}
+                style={{ height: (size.height - 10) ?? '99%', }}
                 className="GRID-EDITOR"
                 layouts={{ lg: editorContext.layout.get() }}                // Схема сетки
                 breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
@@ -305,6 +308,7 @@ export default function ({ desserealize }) {
         </div>
         { menu }
         </Container>
+        </ThemeProvider>
     );
 }
 

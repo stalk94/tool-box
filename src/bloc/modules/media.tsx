@@ -283,7 +283,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
     const { items, fullWidth, 'data-id': dataId, style = {}, ...otherProps } = props;
-    //const { width, height } = useComponentSizeWithSiblings(dataId);
+    const { width, height } = useComponentSizeWithSiblings(dataId);
     
     degidratationRef.current = (call) => {
         const itemsLitears = items.map((item, index) => {
@@ -384,7 +384,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
             return itemCopy;
         });
     }, [items, active]);
-    
+   
     
     return (
         <div

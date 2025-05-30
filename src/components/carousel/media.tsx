@@ -202,7 +202,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
                                 boxSizing: 'border-box',
                                 userSelect: 'none',
                                 justifyContent: 'center',
-                                alignItems: 'center',
+                                alignItems: 'center'
                             }}
                         >
                             { editor ? renderItemEditor(item) : renderItem(item) }

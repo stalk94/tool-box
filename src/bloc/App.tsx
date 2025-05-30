@@ -11,7 +11,9 @@ import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/helpers/registry';
 import LeftToolBar from './Left-bar';
+import LeftToolBarSettings from './Left-bar-settings';
 import GridComponentEditor from './Editor-grid';
+import PreviewTheme from './utils/Preview-theme';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
@@ -247,21 +249,20 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             </DragOverlay>
 
             <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row' }}>
-                <LeftToolBar
-                    desserealize={desserealize}
-                    useDump={dumpRender}
-                />
+                { mod !== 'settings' &&
+                    <LeftToolBar
+                        desserealize={desserealize}
+                        useDump={dumpRender}
+                    />
+                }
+                { mod === 'settings' && <LeftToolBarSettings/> }
 
                 <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                     
-                    {mod === 'preview'
-                        ? getPreview()()
-                        : <GridComponentEditor
-                            desserealize={desserealize}
-                        />
-                    }
-
+                    { mod === 'preview' && getPreview()() }
+                    { (mod === 'block' || mod === 'grid') && <GridComponentEditor desserealize={desserealize} /> }
+                    { mod === 'settings' && <PreviewTheme /> }
                 </div>
             </div>
         </DndContext>

@@ -19,6 +19,7 @@ export type AccordionFormProps = {
     /** единый алиас на позицию лейблов инпутов (что бы каждому в ручную не прописывать)   */
     labelPosition?:  "left" | "right" | "column"
     activeIndex?: number[] | 'all'
+    headerStyle?: React.CSSProperties
 }
 
 
@@ -38,7 +39,7 @@ export type AccordionFormProps = {
  *      }
  * ]
  */
-export default function Form({ scheme, onChange, onSpecificChange, labelPosition, activeIndex }: AccordionFormProps): React.JSX.Element {
+export default function Form({ scheme, onChange, onSpecificChange, labelPosition, activeIndex, headerStyle }: AccordionFormProps): React.JSX.Element {
     const [state, setState] = React.useState<Record<string, Record<string, any>>>({});
 
 
@@ -102,6 +103,7 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
         <Accordion
             activeIndexs={useActive()}
             tabStyle={{ px:0.7, pb:2, border: '1px dotted #8686865b' }}
+            headerStyle={headerStyle}
             items={
                 scheme.map((acform) => ({
                     title: acform.label,
