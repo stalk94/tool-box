@@ -1,6 +1,6 @@
 import React from "react";
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
-import { ThemeProvider, CssBaseline, Palette, Theme, Button, Avatar, Rating, useTheme, Divider } from '@mui/material';
+import { ThemeProvider, CssBaseline, Palette, Theme, Button, Avatar, Rating, useTheme, Divider, Typography } from '@mui/material';
 import Container from '@mui/material/Container';
 import { settingsSlice } from "../context";
 import { writeFile } from 'src/app/plugins';
@@ -22,6 +22,47 @@ const listTheme = {
     dark: darkTheme
 }
 
+const Text =()=> {
+    return(
+        <div style={{ margin: '30px' }}>
+            <Typography
+                variant='h2'
+            >
+                h2 - Заголовок
+            </Typography>
+            <Typography
+                variant='h4'
+            >
+                h4 - Заголовок
+            </Typography>
+            <Typography
+                variant='body1'
+            >
+                body1 (primery)
+            </Typography>
+            <Typography
+                variant='subtitle1'
+            >
+                subtitle1
+            </Typography>
+            <Typography
+                variant='body2'
+            >
+                body2 (secondary)
+            </Typography>
+            <Typography
+                variant='subtitle2'
+            >
+                subtitle2
+            </Typography>
+            <Typography
+                variant='caption'
+            >
+                caption (мелкие пояснения) *inline
+            </Typography>
+        </div>
+    );
+}
 const MenuTest =({ })=> {
     const navLinksTest = [
         { id:'1', label: "Главная", icon: <Home />, comand: (v) => console.log(v) },
@@ -208,7 +249,7 @@ const Colors =()=> {
             </div>
             {colorsButtons.map((color, index) =>
                 <Button style={{ margin: '5px' }} key={index} variant={variant} color={color}>
-                    {color}
+                    { color }
                 </Button>
             )}
             <div style={{marginLeft:'5vw', marginRight: '40vw', marginTop: '5vh'}}>
@@ -246,6 +287,7 @@ const listTest = {
     colors: <Colors />,
     action: inputs,
     menu: <MenuTest />,
+    text: <Text />,
     chekbox: (
         <CheckBoxInput
             onChange={console.log}
