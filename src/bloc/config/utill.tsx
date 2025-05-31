@@ -333,7 +333,7 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
     });
 
    
-    if (propName === 'color') {
+    if (propName === 'color' || propName.includes('color-')) {
         return {
             type: 'toggle',
             id: propName,
@@ -354,6 +354,18 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
             ],
             label: propName,
             value: propValue,
+            labelSx: { fontSize: '14px' }
+        }
+    }
+    else if (propName === 'delay') {
+        return {
+            type: 'number',
+            id: propName,
+            label: propName,
+            value: propValue,
+            min: 1,
+            max: 60,
+            step: 1,
             labelSx: { fontSize: '14px' }
         }
     }

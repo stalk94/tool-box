@@ -43,10 +43,14 @@ export type ComponentRegister = {
     description?: string;
     nest?: ComponentRegisterNestMetaData 
 }
+export type PropResize = {
+    
+}
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
     'data-slot'?: boolean | string | number
+    'data-rnd'?: PropResize
     apiPath?: string
     children ?: string | any
     style ?: React.CSSProperties
@@ -138,6 +142,7 @@ export type DataNested = {
     } 
 }
 export type NestedContext = { 
+    isArea?: boolean
     useBackToEditorBase: (data: DataNested)=> void
     data: DataNested
     nestedComponentsList: Record<ProxyComponentName, {}>        //! это список render components доступных
@@ -150,13 +155,14 @@ export type SlotDataBus = {
     data: DataNested
     idParent: number
     idSlot: number | string
+    isArea?: boolean
 }
 export type ContextSlotProps = {
     nestedComponentsList: Record<ProxyComponentName, true>
     data: DataNested
     idParent: number
     idSlot: number | string
-    type?: 'Frame' | 'Tabs' | 'Accordion'
+    type?: 'Frame' | 'Tabs' | 'Accordion' | 'Area'
 }
 
 

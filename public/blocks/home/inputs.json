@@ -5,7 +5,7 @@
       "x": 0,
       "y": 0,
       "w": 12,
-      "h": 2,
+      "h": 3,
       "props": {
         "classNames": "",
         "style": {}
@@ -102,7 +102,7 @@
   "meta": {
     "scope": "home",
     "name": "inputs",
-    "updatedAt": 1748472364082,
+    "updatedAt": 1748601075060,
     "preview": "snapshots/home-inputs.png"
   },
   "size": {

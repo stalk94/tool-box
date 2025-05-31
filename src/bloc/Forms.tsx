@@ -15,7 +15,7 @@ import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
     const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
-    const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels', 'isChildren'];
+    const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels', 'isChildren', 'autoplay'];
     //const fileKeys = [''];
     
     if(switchKeys.includes(propName)) {
@@ -264,7 +264,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
     );
     const createScheme = (typeComponent: ProxyComponentName, props: Record<string, any>) => {
         if(type === 'props') {
-            const { schema, acSchema } = useFabrickSchemeProps(typeComponent, props, theme);
+            const { schema } = useFabrickSchemeProps(typeComponent, props, theme);
             setSchema(schema);
             setAcSchema([]);
         }

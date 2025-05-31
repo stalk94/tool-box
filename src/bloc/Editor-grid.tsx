@@ -275,7 +275,7 @@ export default function ({ desserealize }) {
                                         items={layer.content.map((cnt) => cnt.props['data-id'])}
                                         strategy={rectSortingStrategy}
                                     >
-                                        {Array.isArray(layer.content) &&
+                                        { Array.isArray(layer.content) &&
                                             <>
                                                 {Array.isArray(layer.content) && layer.content.map((component) => (
                                                     <SortableItem

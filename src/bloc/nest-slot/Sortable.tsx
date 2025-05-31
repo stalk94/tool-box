@@ -7,20 +7,21 @@ import useContextMenu from '@components/context-main';
 import { updateComponentProps, SlotToolBar } from './shim';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "../helpers/export";
-
+import { desserealize } from '../helpers/sanitize';
+import { RndWrapper } from './Rnd';
 
 type SortableItemProps = { 
     id: number
     children: ComponentSerrialize
     cellId: string 
-    desserealize: (serrializeData: ComponentSerrialize)=> Component
+    isArea?: boolean 
 }
 
 
-export function SortableItem({ id, children, cellId, desserealize }: SortableItemProps) {;
+export function SortableItem({ id, children, cellId, isArea }: SortableItemProps) {;
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorSlice.dragEnabled.use();
-    const RenderElement = React.useMemo(() => desserealize(children), [children]);
+    const RenderElement = React.useMemo(() => desserealize(children, {isArea}), [children]);
     const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ 
         id ,
         data: {
@@ -28,7 +29,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
             cellId,
             element: children
         },
-        disabled: !dragEnabled        // ✅ глобальный флаг
+        disabled: (!dragEnabled || isArea)       // ✅ глобальный флаг
     });
     
     
@@ -48,6 +49,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         maxWidth: '100%',
         padding: 1,
     }
+
     const useAddToCollection = (ids: number) => {
         const name = prompt('Введите key name для компонента (не менее 3х символов)');
         if (name && name.length > 3) db.set(`blank.${name}`, children);
@@ -97,11 +99,19 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
     const handleClick = React.useCallback((target: HTMLDivElement) => {
         infoSlice.select.content.set(children);
         
-        requestIdleCallback(()=> {
+        if (editorSlice.currentCell.get()?.i !== cellId) {
+            editorSlice.currentCell.set({ i: cellId });
+            const refCell = document.querySelector(`[data-id=${cellId}]`);
+
+            if(refCell) infoSlice.select.cell.set(refCell);
+            EVENT.emit('onSelectCell', cellId);
+        }
+        
+
+        if(!isArea) requestIdleCallback(()=> {
             target.classList.add('editor-selected');
         });
-        
-        document.querySelectorAll('[ref-id]').forEach(el => {
+        if(!isArea) document.querySelectorAll('[ref-id]').forEach(el => {
             if(el != target) el.classList.remove('editor-selected');
         });
     }, [children]);
@@ -110,7 +120,7 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
             currentToolPanel: 'styles'
         });
     }, [children]);
-
+    
     
     const contextMenuItems = React.useMemo(() => [
         {
@@ -146,38 +156,54 @@ export function SortableItem({ id, children, cellId, desserealize }: SortableIte
         },
     ], [children]);
     const { menu, handleOpen } = useContextMenu(contextMenuItems);
-
+    
     
 
     return (
         <React.Fragment>
-            <div
-                ref-id={id}
-                ref-parent={children.parent}
-                ref={(node) => {
-                    setNodeRef(node);
-                    itemRef.current = node;
-                }}
-                style={styleWrapper}
-                {...attributes}
-                {...(dragEnabled ? listeners : {})}
-                onClick={(e)=> handleClick(e.currentTarget)} 
-                onDoubleClick={(e)=> handleDoubleClick(e.currentTarget)}
-                onContextMenu={(e)=> {
-                    e.stopPropagation();
-                    handleClick(e.currentTarget);
-                    handleOpen(e, {id, type: children.props['data-type']});
-                }}
-            >
-                <SlotToolBar
-                    dataId={children.props['data-id']}
-                    type={children.props['data-type']}
-                    children={children}
-                />
-                
-                { RenderElement }
-            </div>
-            
+            { !isArea &&
+                <div
+                    ref-id={id}
+                    ref-parent={children.parent}
+                    ref={(node) => {
+                        setNodeRef(node);
+                        itemRef.current = node;
+                    }}
+                    style={styleWrapper}
+                    {...attributes}
+                    {...(dragEnabled ? listeners : {})}
+                    onClick={(e)=> handleClick(e.currentTarget)} 
+                    onDoubleClick={(e)=> handleDoubleClick(e.currentTarget)}
+                    onContextMenu={(e)=> {
+                        e.stopPropagation();
+                        handleClick(e.currentTarget);
+                        handleOpen(e, {id, type: children.props['data-type']});
+                    }}
+                >
+                    <SlotToolBar
+                        dataId={children.props['data-id']}
+                        type={children.props['data-type']}
+                        children={children}
+                    />
+                    { RenderElement }
+                </div>
+            }
+            { isArea &&
+                <RndWrapper
+                    onClick={handleClick}
+                    onDoubleClick={handleDoubleClick}
+                    rowProps={children.props}
+                    dataRnd={{ 
+                        x: children.props?.style?.x, 
+                        y: children.props?.style?.y, 
+                        width: children.props?.style?.width ?? (children.props.fullWidth ? '100%' : 'auto'), 
+                        height: "auto" 
+                    }}
+                >
+                    { RenderElement }
+                </RndWrapper>
+            }
+
             { menu }
         </React.Fragment>
     );

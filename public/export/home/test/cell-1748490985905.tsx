@@ -1,16 +1,46 @@
+import { Avatar } from '@mui/material';
+import React from 'react';
+
 export default function Cell() {
     return (
         <>
-            <img
-                src={'/uploads/img-1748491249974.png?1748491256521'}
+            <div
                 style={{
-                    width: '100%',
-                    height: 389,
-                    marginTop: '0%',
-                    marginBottom: '0%'
+                    width: 'fit-content'
                 }}
-                data-type="Image"
-            />
+            >
+                <Avatar
+                    sx={{
+                        width: 52,
+                        height: 52,
+                        bgColor: 'gray'
+                    }}
+                    src={'https://mui.com/static/images/avatar/3.jpg'}
+                    style={{}}
+                    data-type="Avatar"
+                >
+                    undefined
+                </Avatar>
+            </div>
+
+            <div
+                style={{
+                    width: 'fit-content'
+                }}
+            >
+                <Avatar
+                    sx={{
+                        width: 52,
+                        height: 52,
+                        bgColor: 'gray'
+                    }}
+                    src={'/uploads/img-1748534081965.jpg?1748534169640'}
+                    style={{}}
+                    data-type="Avatar"
+                >
+                    undefined
+                </Avatar>
+            </div>
         </>
     );
 }

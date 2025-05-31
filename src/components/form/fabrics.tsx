@@ -4,7 +4,22 @@ import { LabelText, LabelNumber, LabelColor, LabelSlider, LabelSelect, LabelToog
 } from '../input/labels.inputs';
 import { SwitchInput, CheckBoxInput } from '../input/input.any';
 import { Schema, TypeSchema } from './types';
+import { Divider, Typography } from '@mui/material';
 
+
+const DividerWrap = ({ children, ...props }) => (
+    <Divider
+        flexItem
+        variant='fullWidth'
+        { ...props }
+    >
+        <Typography
+            variant='subtitle2'
+        >
+            { children }
+        </Typography>
+    </Divider>
+);
 
 
 export const fabricsInput: Record<TypeSchema, (schema: any) =>  React.JSX.Element> = {
@@ -21,4 +36,5 @@ export const fabricsInput: Record<TypeSchema, (schema: any) =>  React.JSX.Elemen
     file: (schema) => <LabelFileLoader {...schema} />,
     'file-combo': (schema)=> <LabelComboFileLoader {...schema} />,
     autocomplete: (schema) => <LabelAutocomplete {...schema} />,
+    divider: (schema) => <DividerWrap {...schema} />
 }

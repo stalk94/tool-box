@@ -21,7 +21,7 @@ export default function Cell() {
                                         'Roboto Condensed", Arial, sans-serif'
                                 }}
                             >
-                                1
+                                5
                             </span>
                         </span>
                     </span>

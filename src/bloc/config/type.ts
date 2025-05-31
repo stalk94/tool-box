@@ -103,6 +103,11 @@ export type RegistreTypeComponent = 'Button'
     | 'Tabs'
     | 'BottomNav'
     | 'DataTable'
+    | 'Avatar'
+    | 'Frame'
+    | 'Area'
+    | 'Rating'
+    | 'List'
 
     
 export type BoxSide = 'top' | 'right' | 'bottom' | 'left';

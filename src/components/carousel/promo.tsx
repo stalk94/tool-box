@@ -32,7 +32,12 @@ export type PromoSliderProps = {
         description: string
         images: string[]
     }[]
-    button?: React.ReactElement
+    button?: {
+        color?: "inherit" | "primary" | "secondary" | "success" | "error" | "info" | "warning"
+        variant?: "text" | "outlined" | "contained"
+        children?: React.ReactNode | string
+        onClick?: ()=> void
+    }
     style?: SxProps
     styles?: {
         dot?: {
@@ -239,23 +244,14 @@ const Description = ({ data, navigationSlot, button, style }) => {
 export default function PromoSlider({ items, button, styles, style, editor, ...props }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
     const testData = generateTestData();            // моковые данные активны если не передать items
-    const standartButton = (
-        <Button
-            variant='outlined'
-            sx={{
-                mt: 4
-            }}
-        >
-            go to
-        </Button>
-    );
+
 
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
         
         if (props.onChange) props.onChange(active);
     }, [active]);
-
+   
 
     return (
         <>
@@ -268,15 +264,13 @@ export default function PromoSlider({ items, button, styles, style, editor, ...p
                         left: '55%',
                     }}
                 >
-
-                    {editor}
-
+                    { editor }
                 </div>
             }
             <Card
                 actionAreaEnabled
                 sx={{ minHeight: 240, ...style }}
-                {...props}
+                { ...props }
             >
                 <React.Fragment>
                     <Box
@@ -300,7 +294,15 @@ export default function PromoSlider({ items, button, styles, style, editor, ...p
                                 title: styles?.title,
                                 description: styles?.description
                             }}
-                            button={button ?? standartButton}
+                            button={
+                                <Button 
+                                    variant='outlined'
+                                    color='primary'
+                                    sx={{ mt: 4 }}
+                                    { ...button }
+                                    children={button.children ?? 'go to'}
+                                />
+                            }
                             data={(items ?? testData)[active]}
                             navigationSlot={
                                 <IconGroop

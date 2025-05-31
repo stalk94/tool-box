@@ -127,7 +127,8 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
         nestedComponentsList,
         data: data ?? {},
         idParent,
-        idSlot
+        idSlot,
+        isArea: type === 'Area'
     });
     
     const getStyle =()=> {
@@ -142,7 +143,7 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
             style={{
                 transition: 'background 0.15s',
                 width: '100%',
-                height: type === 'Frame' ? '100%' : '',
+                height: (type === 'Frame' || type === 'Area') ? '100%' : '',
                 background: '#00000026',
             }}
         >
@@ -183,6 +184,7 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
                     size={data.size}
                     layouts={data.layout}
                     cellsContent={data.content}
+                    type={type}
                 />
             }
         </div>

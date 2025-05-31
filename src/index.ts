@@ -6,7 +6,7 @@ export * from './components/form';
 export type { Schema } from './components/form/types';
 
 // модалка
-export * from './components/modal';
+export { default as Modal } from './components/modal';
 // формы
 export * from './components/form';
 // карточка
@@ -61,6 +61,3 @@ export type { CarouselProps } from './components/carousel/media';
 // список
 export { default as List } from './components/list/base';
 export type { ListCustomProps } from './components/list/base';
-
-// инструмент инспекции DOM узлов
-export { default as DomInspector } from './components/tools/inspector';

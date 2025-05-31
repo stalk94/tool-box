@@ -419,6 +419,7 @@ export default function EditorApp({ setShowBlocEditor }) {
                     nestedComponentsList={nestedContext.currentData.nestedComponentsList}
                     data={nestedContext.currentData.data}
                     onChange={handleChangeNestedContext}
+                    isArea={nestedContext.currentData?.isArea}
                 />
             }
             { !enableContext && isLoad && 

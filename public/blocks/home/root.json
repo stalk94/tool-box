@@ -5,7 +5,7 @@
       "x": 0,
       "y": 0,
       "w": 5,
-      "h": 25,
+      "h": 17,
       "content": [],
       "moved": false,
       "static": false,
@@ -83,6 +83,20 @@
       "content": [],
       "moved": false,
       "static": false
+    },
+    {
+      "i": "cell-1748696638444",
+      "x": 0,
+      "y": 17,
+      "w": 5,
+      "h": 13,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
     }
   ],
   "content": {
@@ -115,74 +129,69 @@
     ],
     "cell-1746527949939": [
       {
-        "id": 1748450044625,
+        "id": 1748599803700,
         "parent": "cell-1746527949939",
         "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод",
+          "divider": "none",
           "fullWidth": true,
-          "metaName": "CustomFrame",
-          "elevation": 0,
-          "slots": {
-            "0": {
-              "content": {
-                "cell-1748450064933": [
-                  {
-                    "id": 1748450223706,
-                    "parent": "cell-1748450064933",
-                    "props": {
-                      "children": "Button",
-                      "variant": "outlined",
-                      "color": "textPrimary",
-                      "fullWidth": true,
-                      "startIcon": "none",
-                      "endIcon": "none",
-                      "style": {},
-                      "data-id": 1748450223706,
-                      "data-type": "Button"
-                    }
-                  }
-                ]
-              },
-              "layout": [
-                {
-                  "i": "cell-1748450064933",
-                  "x": 0,
-                  "y": 0,
-                  "w": 12,
-                  "h": 12,
-                  "props": {
-                    "classNames": "",
-                    "style": {}
-                  },
-                  "content": [
-                    {
-                      "id": 1748450223706,
-                      "parent": "cell-1748450064933",
-                      "props": {
-                        "children": "Button",
-                        "variant": "outlined",
-                        "color": "textPrimary",
-                        "fullWidth": true,
-                        "startIcon": "none",
-                        "endIcon": "none",
-                        "style": {},
-                        "data-id": 1748450223706,
-                        "data-type": "Button"
-                      }
-                    }
-                  ],
-                  "moved": false,
-                  "static": false
-                }
-              ],
-              "size": {
-                "width": 471,
-                "height": 620
-              }
-            }
+          "leftIcon": "none",
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
           },
-          "style": {},
-          "data-id": 1748450044625,
-          "data-type": "Frame"
+          "data-id": 1748599803700,
+          "data-type": "TextInput"
+        }
+      },
+      {
+        "id": 1748599805644,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "placeholder": "ввод number",
+          "fullWidth": true,
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1748599805644,
+          "data-type": "Number"
+        }
+      },
+      {
+        "id": 1748599807120,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "type": "time",
+          "fullWidth": true,
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1748599807120,
+          "data-type": "Time"
+        }
+      },
+      {
+        "id": 1748599809000,
+        "parent": "cell-1746527949939",
+        "props": {
+          "label": "label",
+          "position": "column",
+          "type": "date",
+          "fullWidth": true,
+          "styles": {},
+          "labelStyle": {
+            "fontSize": 14
+          },
+          "data-id": 1748599809000,
+          "data-type": "Date"
         }
       }
     ],
@@ -273,6 +282,41 @@
           "children": "menu",
           "data-id": 1748467038112,
           "data-type": "Divider"
+        }
+      },
+      {
+        "id": 1748528336763,
+        "parent": "cell-1747227526997",
+        "props": {
+          "fullWidth": true,
+          "isButton": false,
+          "isSecondary": true,
+          "styles": {},
+          "items": [
+            {
+              "startIcon": "Settings",
+              "primary": {
+                "type": "doc",
+                "content": [
+                  {
+                    "type": "paragraph",
+                    "attrs": {
+                      "textAlign": null
+                    },
+                    "content": [
+                      {
+                        "type": "text",
+                        "text": "тест"
+                      }
+                    ]
+                  }
+                ]
+              },
+              "secondary": "secondary"
+            }
+          ],
+          "data-id": 1748528336763,
+          "data-type": "List"
         }
       }
     ],
@@ -517,12 +561,37 @@
           }
         }
       }
+    ],
+    "cell-1748696638444": [
+      {
+        "id": 1748696648661,
+        "parent": "cell-1748696638444",
+        "props": {
+          "fullWidth": true,
+          "width": "100%",
+          "variant-button": "outlined",
+          "color-button": "primary",
+          "children-button": "go to",
+          "items": [
+            {
+              "title": "Title",
+              "buttonText": "ПОДРОБНЕЕ",
+              "description": "custom editable description",
+              "images": [
+                "https://placehold.co/600x400/353636/gray?text=Promoimage&font=roboto"
+              ]
+            }
+          ],
+          "data-id": 1748696648661,
+          "data-type": "PromoBanner"
+        }
+      }
     ]
   },
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1748525775071,
+    "updatedAt": 1748696665486,
     "preview": "snapshots/home-root.png"
   },
   "size": {

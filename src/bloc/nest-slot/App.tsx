@@ -5,7 +5,6 @@ import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStr
 import "react-grid-layout/css/styles.css";
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
-import { componentMap, componentsRegistry } from '../modules/helpers/registry';
 import { serializeJSX } from '../helpers/sanitize';
 
 
@@ -17,7 +16,7 @@ import GridComponentEditor from './Editor-grid';
 
 
 // это редактор блоков сетки
-export default function Block({ useBackToEditorBase, data, nestedComponentsList, onChange }: NestedContext) {
+export default function Block({ useBackToEditorBase, data, nestedComponentsList, onChange, isArea }: NestedContext) {
     globalThis.ZOOM = 1;                                           // в редакторе блоков зум отключаем
     const cacheDrag = React.useRef<HTMLDivElement>(null);
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
@@ -26,25 +25,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
     );
    
     
-    const desserealize = (component: ComponentSerrialize) => {
-        const { id, props, parent } = component;
-        const type = props["data-type"];
-        
-        const Component = componentMap[type];
-        Component.displayName = type;
-
-    
-        if (!Component) {
-            console.warn(`Компонент типа "${type}" не найден в реестре`);
-            return null;
-        }
-        
-        return (
-            <Component
-                { ...props }
-            />
-        );
-    }
     const createDataComponent = (rawProps: ComponentProps, cellId: string): ComponentSerrialize => {
         const type = rawProps['data-type'];
         const id = Date.now();
@@ -67,10 +47,11 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         const data = createDataComponent(props, cellId);
 
         editorSlice.layout.set((prevRender) => {
+            const copy = structuredClone(prevRender);
             const findIndex = prevRender.findIndex((cell) => cell.i === cellId);
 
             if (findIndex !== -1) {
-                const targetCell = prevRender[findIndex];
+                const targetCell = copy[findIndex];
 
                 if (Array.isArray(targetCell.content)) {
                     targetCell.content.push(data);
@@ -78,7 +59,7 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
                 else targetCell.content = [data];
             }
 
-            return prevRender;
+            return copy;
         });
         renderSlice.set(editorSlice.layout.get(true));
 
@@ -179,6 +160,9 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
     }
 
     React.useEffect(()=> {
+        //if(isArea) editorSlice.dragEnabled.set(false);
+        //else editorSlice.dragEnabled.set(true);
+        
         editorSlice.currentCell.set(undefined);
         infoSlice.set({
             container: {
@@ -222,21 +206,20 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             onDragEnd={handleDragEnd}
         >
             <DragOverlay dropAnimation={null}>
-                {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
+                { activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} /> }
             </DragOverlay>
 
             <div style={{width: '100%', height: '100%', display: 'flex', flexDirection: 'row'}}>
                 <LeftToolBar 
                     componentMap={nestedComponentsList}
-                    desserealize={desserealize} 
                     onChange={onChange}
                 />
                 
                 <div style={{width: '80%', height: '100%', display: 'flex', flexDirection: 'column'}}>
                     <ToolBarInfo setShowBlocEditor={useBackToEditorBase} />         
                     <GridComponentEditor
-                        desserealize={desserealize}
                         nestedData={data}
+                        isArea={isArea}
                     />
                     
                 </div>

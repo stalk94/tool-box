@@ -1,4 +1,4 @@
-import { SxProps } from '@mui/material';
+import { DividerProps, SxProps } from '@mui/material';
 import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
     DataPickerInputProps, CheckBoxInputProps, ToogleeInputProps, ColorPickerProps, 
     SelectInputProps, FileLoaderProps, AutoCompleteProps
@@ -6,7 +6,7 @@ import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
 
 
 export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' | 'file' | 'file-combo'
-| 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete';
+| 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete' | 'divider';
 
 
 
@@ -35,6 +35,7 @@ type BaseSchema = {
     id: string
     /** тип инпута */
     type: TypeSchema
+    labelSx?: SxProps
 }
 type TypeToSchema = {
     text: Text
@@ -50,14 +51,11 @@ type TypeToSchema = {
     file: FileLoaderProps 
     autocomplete: AutoCompleteProps
     'file-combo': any
+    divider: DividerProps
 }
 
 
-//export type Schema<T extends TypeSchema = TypeSchema> = BaseSchema & TypeToSchema[T];
-export type Schema<T extends TypeSchema = TypeSchema> = BaseSchema & {
-    type: T
-    labelSx?: SxProps
-} & TypeToSchema[T];
+export type Schema<T extends TypeSchema = TypeSchema> = BaseSchema & TypeToSchema[T];
 
 
 

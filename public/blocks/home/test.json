@@ -3,9 +3,9 @@
     {
       "i": "cell-1748490985905",
       "x": 0,
-      "y": 4,
-      "w": 5,
-      "h": 16,
+      "y": 0,
+      "w": 10,
+      "h": 3,
       "props": {
         "classNames": "",
         "style": {}
@@ -16,10 +16,10 @@
     },
     {
       "i": "cell-1748491021219",
-      "x": 5,
-      "y": 4,
-      "w": 7,
-      "h": 16,
+      "x": 0,
+      "y": 3,
+      "w": 2,
+      "h": 4,
       "props": {
         "classNames": "",
         "style": {}
@@ -30,10 +30,10 @@
     },
     {
       "i": "cell-1748491997153",
-      "x": 4,
-      "y": 20,
-      "w": 4,
-      "h": 12,
+      "x": 10,
+      "y": 0,
+      "w": 1,
+      "h": 3,
       "props": {
         "classNames": "",
         "style": {}
@@ -43,11 +43,81 @@
       "static": false
     },
     {
-      "i": "cell-1748492001453",
-      "x": 0,
-      "y": 20,
-      "w": 4,
-      "h": 12,
+      "i": "cell-1748534416239",
+      "x": 2,
+      "y": 3,
+      "w": 2,
+      "h": 4,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748534420882",
+      "x": 4,
+      "y": 3,
+      "w": 2,
+      "h": 4,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748534429506",
+      "x": 6,
+      "y": 3,
+      "w": 2,
+      "h": 4,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748534439812",
+      "x": 8,
+      "y": 3,
+      "w": 2,
+      "h": 4,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748534447280",
+      "x": 10,
+      "y": 3,
+      "w": 2,
+      "h": 4,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
+    },
+    {
+      "i": "cell-1748534695713",
+      "x": 11,
+      "y": 0,
+      "w": 1,
+      "h": 3,
       "props": {
         "classNames": "",
         "style": {}
@@ -60,97 +130,355 @@
   "content": {
     "cell-1748490985905": [
       {
-        "id": 1748491249974,
+        "id": 1748534080349,
         "parent": "cell-1748490985905",
         "props": {
-          "fullWidth": true,
-          "src": "/uploads/img-1748491249974.png?1748491256521",
-          "file": {},
+          "fullWidth": false,
+          "sizes": 52,
+          "src": "https://mui.com/static/images/avatar/3.jpg",
+          "file": "",
+          "icon": "",
           "data-source": "src",
-          "alt": "Картинка",
-          "data-id": 1748491249974,
-          "data-type": "Image",
-          "style": {
-            "marginTop": "0%",
-            "marginBottom": "0%"
-          }
+          "style": {},
+          "data-id": 1748534080349,
+          "data-type": "Avatar"
+        }
+      },
+      {
+        "id": 1748534081965,
+        "parent": "cell-1748490985905",
+        "props": {
+          "fullWidth": false,
+          "sizes": 52,
+          "src": "/uploads/img-1748534081965.jpg?1748534169640",
+          "file": {},
+          "icon": "",
+          "data-source": "src",
+          "style": {},
+          "data-id": 1748534081965,
+          "data-type": "Avatar"
         }
       }
     ],
     "cell-1748491021219": [
       {
-        "id": 1748491298297,
+        "id": 1748534463358,
         "parent": "cell-1748491021219",
         "props": {
-          "children": "Компания Метпромснаб",
-          "variant": "h5",
           "fullWidth": true,
-          "style": {
-            "display": "flex",
-            "fontWeight": "bold",
-            "marginTop": "8%",
-            "marginLeft": "1%"
-          },
-          "data-id": 1748491298297,
-          "data-type": "Typography",
-          "styles": {
-            "text": {
-              "fontSize": "45",
-              "fontFamily": "Roboto",
-              "color": "rgba(2, 2, 2, 1)"
-            }
+          "data-id": 1748534463358,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "1"
+                  }
+                ]
+              }
+            ]
           }
-        }
-      },
-      {
-        "id": 1748491387679,
-        "parent": "cell-1748491021219",
-        "props": {
-          "children": "Московская компания специализируемся на производстве и продаже товаров для систем вентиляции и ревизионных люков. С 2004 года мы уверенно занимаем лидирующие позиции в отрасли. В нашем интернет-магазине вы найдёте широкий ассортимент продукции с возможностью доставки по всей стране.",
-          "variant": "h5",
-          "fullWidth": true,
-          "style": {
-            "display": "flex",
-            "marginLeft": "3%",
-            "marginTop": "7%"
-          },
-          "data-id": 1748491387679,
-          "data-type": "Typography",
-          "styles": {
-            "text": {
-              "fontSize": "18",
-              "color": "rgba(11, 10, 10, 1)"
-            }
-          }
-        }
-      },
-      {
-        "id": 1748491440733,
-        "parent": "cell-1748491021219",
-        "props": {
-          "children": "Button",
-          "variant": "contained",
-          "color": "error",
-          "fullWidth": true,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {
-            "marginLeft": "10%",
-            "marginRight": "44%",
-            "marginTop": "6%"
-          },
-          "data-id": 1748491440733,
-          "data-type": "Button"
         }
       }
     ],
-    "cell-1748491997153": [],
-    "cell-1748492001453": []
+    "cell-1748491997153": [
+      {
+        "id": 1748534707192,
+        "parent": "cell-1748491997153",
+        "props": {
+          "fullWidth": true,
+          "icon": "ArrowBack",
+          "color": "default",
+          "data-id": 1748534707192,
+          "data-type": "IconButton"
+        }
+      }
+    ],
+    "cell-1748534416239": [
+      {
+        "id": 1748534477094,
+        "parent": "cell-1748534416239",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1748534477094,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "2"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "cell-1748534420882": [
+      {
+        "id": 1748534504435,
+        "parent": "cell-1748534420882",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1748534504435,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "3"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "cell-1748534429506": [
+      {
+        "id": 1748534536036,
+        "parent": "cell-1748534429506",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1748534536036,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "4"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "cell-1748534439812": [
+      {
+        "id": 1748534537690,
+        "parent": "cell-1748534439812",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1748534537690,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "5"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "cell-1748534447280": [
+      {
+        "id": 1748534539160,
+        "parent": "cell-1748534447280",
+        "props": {
+          "fullWidth": true,
+          "data-id": 1748534539160,
+          "data-type": "Text",
+          "children": {
+            "type": "doc",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "marks": [
+                      {
+                        "type": "textStyle",
+                        "attrs": {
+                          "color": null
+                        }
+                      },
+                      {
+                        "type": "fontSize",
+                        "attrs": {
+                          "size": "1rem"
+                        }
+                      },
+                      {
+                        "type": "fontFamily",
+                        "attrs": {
+                          "family": "Roboto Condensed\", Arial, sans-serif"
+                        }
+                      }
+                    ],
+                    "text": "6"
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      }
+    ],
+    "cell-1748534695713": [
+      {
+        "id": 1748534709363,
+        "parent": "cell-1748534695713",
+        "props": {
+          "fullWidth": true,
+          "icon": "Close",
+          "color": "default",
+          "data-id": 1748534709363,
+          "data-type": "IconButton"
+        }
+      }
+    ]
   },
   "meta": {
     "scope": "home",
     "name": "test",
-    "updatedAt": 1748492027106,
+    "updatedAt": 1748534754338,
     "preview": "snapshots/home-test.png"
   },
   "size": {

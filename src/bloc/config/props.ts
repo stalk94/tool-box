@@ -249,13 +249,16 @@ const propsPromoBaner = {
             color: { type: 'color' },
             size: { type: 'slider', min: 14, max: 48, step: 2 }
         }
-    }
+    },
+    'variant-button': ['text', 'outlined', 'contained'],
+    'color-button': ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], 
+    'path-button': { type: 'text' },
+    'children-button': { type: 'text' },
 }
 
 const propsStack = {
     count: { type: 'number', min: 2, max: 8, step: 1 },
 }
-
 
 export default {
     Button: propsButton,

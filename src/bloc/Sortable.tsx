@@ -98,6 +98,14 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
     const handleClick = (target: HTMLDivElement) => {
         infoSlice.select.content.set(children);
 
+        if (editorContext.currentCell.get()?.i !== cellId) {
+            editorContext.currentCell.set({ i: cellId });
+            const refCell = document.querySelector(`[data-id=${cellId}]`);
+
+            if (refCell) infoSlice.select.cell.set(refCell);
+            EVENT.emit('onSelectCell', cellId);
+        }
+
         requestIdleCallback(() => {
             target.classList.add('editor-selected');
         });
@@ -106,7 +114,9 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
             if (el != target) el.classList.remove('editor-selected');
         });
     }
-    const handleDoubleClick = (target: HTMLDivElement) => {
+    const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+        
         EVENT.emit('leftBarChange', {
             currentToolPanel: 'styles'
         });
@@ -160,15 +170,17 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
                 style={styleWrapper}
                 {...attributes}
                 {...(dragEnabled ? listeners : {})}
-                onClick={(e)=> handleClick(e.currentTarget)} 
-                onDoubleClick={(e)=> handleDoubleClick(e.currentTarget)}
+                onClick={(e)=> {
+                    e.stopPropagation();
+                    handleClick(e.currentTarget)
+                }} 
+                onDoubleClick={handleDoubleClick}
                 onContextMenu={(e)=> {
                     e.stopPropagation();
                     handleClick(e.currentTarget);
                     handleOpen(e, {id, type: children.props['data-type']});
                 }}
             >
-                {/* 💥 баги */}
                 <SlotToolBar
                     dataId={children.props['data-id']}
                     type={children.props['data-type']}

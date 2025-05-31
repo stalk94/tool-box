@@ -12,10 +12,10 @@ import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/materia
 import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/media';
 import { exportTipTapValue, toJSXProps, toLiteral, renderComponentSsr } from './export/utils';
-import { positions } from '@mui/system';
+import { ComponentProps } from '../type';
 
 
-type PromoBannerWrapperProps = {
+type PromoBannerWrapperProps = ComponentProps & {
     'data-id': number
     fullWidth: boolean
     style?: React.CSSProperties
@@ -33,14 +33,20 @@ type PromoBannerWrapperProps = {
         title?: React.CSSProperties
         description?: React.CSSProperties
     }
+    'variant-button'?: string
+    'color-button'?: string 
+    'path-button'?: string
+    'children-button'?: string
 }
-type CarouselWrapperProps = CarouselProps & {
+type CarouselWrapperProps = ComponentProps & CarouselProps & {
     'data-id': number
     fullWidth: boolean
     'data-type': 'HorizontCarousel' | 'VerticalCarousel'
     style?: React.CSSProperties
+    delay?: number
+    autoplay?: boolean
 }
-type ImageWrapperProps = HTMLImageElement & {
+type ImageWrapperProps = ComponentProps & {
     'data-id': number
     'data-type': 'Image'
     'data-source': 'src' | string
@@ -49,14 +55,14 @@ type ImageWrapperProps = HTMLImageElement & {
     alt?: string
     style: React.CSSProperties
 }
-type VideoWrapperProps = HTMLVideoElement & {
+type VideoWrapperProps = ComponentProps & {
     'data-id': number
     'data-type': 'Video'
     fullWidth: boolean
     src: string
     style: React.CSSProperties
 }
-type CardWrapperProps = {
+type CardWrapperProps = ComponentProps & {
     'data-id': number
     'data-type': 'Card'
     index?: number
@@ -85,6 +91,7 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
     const {
         src,
         file,
+        isArea,
         'data-id': dataId,
         alt = '',
         'data-source': source,
@@ -92,9 +99,7 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
         style = {},
         ...otherProps
     } = props;
-
     const { width, height } = useComponentSizeWithSiblings(dataId);
-    
 
     const handleUpload = async (file) => {
         setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
@@ -282,7 +287,7 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
 export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
-    const { items, fullWidth, 'data-id': dataId, style = {}, ...otherProps } = props;
+    const { items, fullWidth, 'data-id': dataId, delay, style = {}, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
     degidratationRef.current = (call) => {
@@ -399,6 +404,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
             }}
         >
             <CarouselHorizontal
+                autoplayDelay={delay * 1000}   
                 items={parsedItems}
                 editor={true}
                 { ...otherProps }
@@ -409,7 +415,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
 export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
-    const { 'data-id': dataId, fullWidth, items, ...otherProps } = props;
+    const { 'data-id': dataId, fullWidth, delay, items, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
 
@@ -540,6 +546,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
             }}
         >
             <CarouselVertical
+                autoplayDelay={delay * 1000}
                 items={parsedItems}
                 height={height}         // она будет поделена на slidesToShow (3 default)
                 editor={true}
@@ -555,7 +562,17 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
     const [activeSlide, setActiveSlide] = React.useState(0);
-    const {'data-id': dataId, items, fullWidth, style = {}, ...otherProps} = props;
+    const {
+        items, 
+        fullWidth, 
+        style = {}, 
+        'data-id': dataId, 
+        'variant-button': vb, 
+        'color-button': cb, 
+        'path-button': pb, 
+        'children-button': chb, 
+        ...otherProps
+    } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
 
 
@@ -591,6 +608,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
                                 items={items}
                                 actionAreaEnabled={true}
                                 style={{ height: ${height}, width: '100%' }}
+                                button={ ${toLiteral(createButtonProps())} }
                                 ${toJSXProps(otherProps)}
                             />
                         </div>
@@ -667,6 +685,16 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             </LoaderToolWrapper>
         );
     }
+    const createButtonProps =()=> {
+        const buttonProps = {
+            variant: vb,
+            color: cb,
+            children: chb
+        }
+
+        if(pb && pb.length > 3) buttonProps.onClick =()=> console.log(pb);
+        return buttonProps;
+    }
     const parsedItems = React.useMemo(() => {
         return items.map((item, i) => {
             if (i === active) {
@@ -699,6 +727,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
                 items={parsedItems}
                 style={{...style, height, width}}
                 styles={{...otherProps?.styles}}
+                button={createButtonProps()}
                 actionAreaEnabled={otherProps?.actionAreaEnabled}
             />
         </div>

@@ -6,27 +6,7 @@
       "y": 0,
       "w": 5,
       "h": 24,
-      "content": [
-        {
-          "type": {},
-          "key": null,
-          "props": {
-            "fullWidth": true,
-            "styles": {},
-            "items": [
-              {
-                "startIcon": "Home",
-                "primary": "primary",
-                "secondary": "secondary"
-              }
-            ],
-            "data-id": 1747770501402,
-            "data-type": "List"
-          },
-          "_owner": null,
-          "_store": {}
-        }
-      ],
+      "content": [],
       "moved": false,
       "static": false,
       "props": {
@@ -67,14 +47,45 @@
           "data-id": 1747770501402,
           "data-type": "List"
         }
+      },
+      {
+        "id": 1748709902998,
+        "parent": "cell-1746709723197",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1748709902998,
+          "data-type": "Button"
+        }
       }
     ],
-    "cell-1747763221272": []
+    "cell-1747763221272": [
+      {
+        "id": 1748718445369,
+        "parent": "cell-1747763221272",
+        "props": {
+          "fullWidth": true,
+          "metaName": "AreaFrame",
+          "elevation": 0,
+          "slots": {
+            "0": {}
+          },
+          "style": {},
+          "data-id": 1748718445369,
+          "data-type": "Area"
+        }
+      }
+    ]
   },
   "meta": {
     "scope": "global",
     "name": "grid-1",
-    "updatedAt": 1747770600394,
+    "updatedAt": 1748718446123,
     "preview": "snapshots/global-grid-1.png"
   },
   "size": {

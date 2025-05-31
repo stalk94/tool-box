@@ -1,5 +1,6 @@
 /.vscode
 /node_modules
+/node_modules/.vite
 /package-lock.json
 *storybook.log
 /db
@@ -7,3 +8,4 @@
 /public/uploads
 /.next
 .env
+src/node_modules/.vite/deps/chunk-3CZO2Q2D.js.map

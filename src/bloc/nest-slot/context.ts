@@ -113,5 +113,5 @@ export const editorSlice = create({
         }
     }
 } as EditorContextType, {
-    immer: true
+    immer: false
 });

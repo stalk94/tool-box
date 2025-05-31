@@ -66,16 +66,17 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
                     return null;
                 }
 
-                const finalField = {
-                    ...field,
-                    value: state[field.id],
-                    onChange: (val: any) => handleChange(field.id, val),
-                    position: field.position ?? labelPosition,
-                };
-
                 return (
                     <React.Fragment key={field.id}>
-                        { fabricsInput[field.type](finalField) }
+                        { field.type === 'divider' &&  fabricsInput['divider'](
+                            field
+                        )}
+                        { field.type !== 'divider' && fabricsInput[field.type]({
+                            ...field,
+                            value: state[field.id],
+                            onChange: (val: any) => handleChange(field.id, val),
+                            position: field.position ?? labelPosition,
+                        })}
                     </React.Fragment>
                 );
             })}

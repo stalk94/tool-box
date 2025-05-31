@@ -20,12 +20,12 @@ type NestedData = {
     }
 }
 type NestGridEditor = { 
-    desserealize: (component: ComponentSerrialize)=> Component
     nestedData: NestedData
+    isArea?: boolean 
 }
 
 
-export default function ({ desserealize, nestedData }: NestGridEditor) {
+export default function ({ nestedData, isArea }: NestGridEditor) {
     const [ready, setReady] = React.useState(false);
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки       
     const curCell = editorSlice.currentCell.use();
@@ -171,6 +171,7 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
         }]);
     }
 
+
     React.useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
             const render = editorSlice.layout.get(true);
@@ -201,6 +202,7 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
     }, []);
     React.useEffect(() => {
         if (nestedData.content) cellsSlice.set(nestedData.content);
+        if(isArea && !nestedData?.layout) addNewCell();
 
         if (nestedData?.layout && nestedData?.layout[0]?.i) {
             console.green('init nested layouts:', nestedData.layout);
@@ -234,7 +236,7 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
             }}
             ref={gridContainerRef}
         >
-            {ready && 
+            {ready && !isArea && 
             <ResponsiveGridLayout
                 style={{ background: '#222222' }}
                 className="GRID-EDITOR"
@@ -265,7 +267,8 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
                                 width: '100%',
                                 flexWrap: 'wrap',
                                 alignItems: 'stretch',
-                                alignContent: 'flex-start'
+                                alignContent: 'flex-start',
+                                position: 'relative'
                             }}
                         >
                             <DroppableCell key={layer.i} id={layer.i}>
@@ -278,10 +281,10 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
                                             <>
                                                 {Array.isArray(layer.content) && layer.content.map((component) => (
                                                     <SortableItem
-                                                        desserealize={desserealize}
                                                         key={component.props['data-id']}
                                                         id={component.props['data-id']}
                                                         cellId={layer.i}
+                                                        isArea={isArea}
                                                     >
                                                         { component }
                                                     </SortableItem>
@@ -295,6 +298,28 @@ export default function ({ desserealize, nestedData }: NestGridEditor) {
                     );
                 })}
             </ResponsiveGridLayout>
+            }
+
+            {/* canvas area */}
+            {(isArea && render[0]) &&
+                <DroppableCell id={render[0]?.i}>
+                    <div style={{ width: size.width, height: size.height, position: 'relative' }}>
+                        {render?.map((layer) => (
+                            <React.Fragment key={layer.i}>
+                                {layer?.content && Array.isArray(layer.content) && layer.content.map((component) => (
+                                    <SortableItem
+                                        key={component.props['data-id']}
+                                        id={component.props['data-id']}
+                                        cellId={layer.i}
+                                        isArea={isArea}
+                                    >
+                                        { component }
+                                    </SortableItem>
+                                ))}
+                            </React.Fragment>
+                        ))}
+                    </div>
+                </DroppableCell>
             }
         </div>
     );

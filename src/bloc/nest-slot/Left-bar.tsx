@@ -18,7 +18,7 @@ import { useKeyboardListener } from '../helpers/hooks';
 import { db } from "../helpers/export";
 import { DraggableToolItem } from './Dragable';
 import { componentsRegistry } from "../modules/helpers/registry";
-
+import { desserealize } from '../helpers/sanitize';
 
 
 function AtomsRenderer({ category, setCategory, desserealize }) {
@@ -171,10 +171,9 @@ const useStylesEditor = (elem, onChange, curSub, setSub) => {
 
 // левая панель редактора
 export default function (
-    { desserealize, onChange, componentMap }: 
+    { onChange, componentMap }: 
     {
         componentMap: Record<ProxyComponentName, boolean>
-        desserealize: (component: ComponentSerrialize) => void, 
         onChange: (data: any)=> void 
     }
 ) {

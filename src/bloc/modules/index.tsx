@@ -17,7 +17,7 @@ import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper } from './any
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, 
     HeaderWrapper, BreadcrumbsWrapper, ListWrapper 
 } from './complex';
-import { FrameWrapper } from './blocs';
+import { FrameWrapper, AreaWrapper } from './blocs';
 import { FormAuthOrRegWrapper } from './forms';
 import { sharedContext, sharedEmmiter } from './helpers/shared';
 
@@ -282,11 +282,11 @@ registerComponent({
     component: HorizontalCarouselWrapper,
     defaultProps: {
         fullWidth: true,
+        autoplay: false,
+        loop: false,
         slidesToShow: 3,
         slidesToScroll: 1,
-        autoplay: true,
-        autoplayDelay: 4000,
-        loop: false,
+        delay: 4,
         width: '100%',
         items: [
             { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
@@ -305,11 +305,11 @@ registerComponent({
     component: VerticalCarouselWrapper,
     defaultProps: {
         fullWidth: true,
+        autoplay: false,
+        loop: false,
         slidesToShow: 3,
         slidesToScroll: 1,
-        autoplay: true,
-        autoplayDelay: 4000,
-        loop: false,
+        delay: 4,
         items: [
             { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
             { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
@@ -328,7 +328,10 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         width: '100%',
-        
+        'variant-button': 'outlined',
+        'color-button': 'primary',
+        'path-button': '',
+        'children-button': 'go to',
         items: [{
             title: 'Title',
             buttonText: "ПОДРОБНЕЕ",
@@ -590,6 +593,21 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         metaName: 'CustomFrame',
+        elevation: 0,
+        slots: {
+            0: {}
+        },
+        style: {}
+    },
+    icon: TableRows,
+    category: 'block',
+});
+registerComponent({
+    type: 'Area',
+    component: AreaWrapper,
+    defaultProps: {
+        fullWidth: true,
+        metaName: 'AreaFrame',
         elevation: 0,
         slots: {
             0: {}
