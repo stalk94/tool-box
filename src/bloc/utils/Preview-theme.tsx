@@ -5,7 +5,7 @@ import Container from '@mui/material/Container';
 import { settingsSlice } from "../context";
 import { writeFile } from 'src/app/plugins';
 import { Flag, TextInput, NumberInput, ColorInput, DateInput, ToggleInput, SelectInput, 
-    SliderInput, CheckBoxInput, Accordion, SwitchInput
+    SliderInput, CheckBoxInput, Accordion, SwitchInput, AutoCompleteInput, FileInput, Modal
 } from 'src/index';
 import { colorsList, colorsButtons } from '../config/theme';
 import AppBar from 'src/components/app-bar/Preview';
@@ -15,12 +15,12 @@ import DataTable from 'src/components/data-table';
 import { Column } from 'primereact/column';
 import { Home, Settings } from "@mui/icons-material";
 
-
 const listTheme = {
     taskade: taskadeTheme,
     light: lightTheme,
     dark: darkTheme
 }
+
 
 const Text =()=> {
     return(
@@ -28,12 +28,12 @@ const Text =()=> {
             <Typography
                 variant='h2'
             >
-                h2 - Заголовок
+                h2
             </Typography>
             <Typography
                 variant='h4'
             >
-                h4 - Заголовок
+                h4
             </Typography>
             <Typography
                 variant='body1'
@@ -66,14 +66,14 @@ const Text =()=> {
 const MenuTest =({ })=> {
     const navLinksTest = [
         { id:'1', label: "Главная", icon: <Home />, comand: (v) => console.log(v) },
-        { id:'2', label: "Услуги", icon: <Settings />,
+        { id:'2', label: "Услуги", icon: <Settings />, divider: true,
             children: [
                 { id:'2:1', label: "Услуга 1", comand: (v) => console.log(v) },
                 { id:'2:2', label: "Услуга 2", comand: (v) => console.log(v) },
                 { id:'2:3', label: "Услуга 3", comand: (v) => console.log(v) },
             ]
         },
-        { divider: true },
+        
         { id: '3', label: "Услуги-2",
             children: [
                 { id: '3:1', label: "Услуга 1", icon: <Home />, comand: (v) => console.log(v) },
@@ -84,6 +84,7 @@ const MenuTest =({ })=> {
     ];
     const buttonRef = React.useRef<HTMLButtonElement>(null);
     const [items, setItems] = React.useState(navLinksTest);
+    const [open, setOpen] = React.useState(true);
 
     
     const handlerOnSelect =(item)=> {
@@ -103,18 +104,18 @@ const MenuTest =({ })=> {
         setItems(newElems);
     }
     React.useEffect(()=> {
-        buttonRef.current.click();
-    }, []);
+        if(buttonRef.current) buttonRef.current.click();
+    }, [buttonRef.current]);
  
 
     return(
-        <div style={{margin:'20% 40%'}}>
+        <Modal open={open} setOpen={setOpen}>
             <MenuBase test={true} items={items} onSelect={handlerOnSelect} >
                 <Button ref={buttonRef} variant='outlined' id='TestButton'>
                     open
                 </Button>
             </MenuBase>
-        </div>
+        </Modal>
     );
 }
 const Tabletest =()=> {
@@ -134,15 +135,12 @@ const Tabletest =()=> {
         {name: "William Johnson", country: 'CA', rating: 5, data:'07-21-2020', image: 'https://randomuser.me/api/portraits/men/12.jpg'},
         {name: "Elena Petrova", country: 'RU', rating: 3, data:'02-14-2019', image: 'https://randomuser.me/api/portraits/women/13.jpg'},
         {name: "Mohammed Hassan", country: 'EG', rating: 2, data:'12-09-2025', image: 'https://randomuser.me/api/portraits/men/14.jpg'},
-        {name: "Aisha Khan", country: 'PK', rating: 4, data:'05-18-2024', image: 'https://randomuser.me/api/portraits/women/15.jpg'},
-        {name: "Benjamin Andersson", country: 'SE', rating: 5, data:'08-26-2023', image: 'https://randomuser.me/api/portraits/men/16.jpg'},
-        {name: "Laura García", country: 'AR', rating: 3, data:'10-31-2022', image: 'https://randomuser.me/api/portraits/women/17.jpg'},
-        {name: "Nathan Brown", country: 'AU', rating: 4, data:'06-20-2021', image: 'https://randomuser.me/api/portraits/men/18.jpg'},
-        {name: "Mia Nilsson", country: 'NO', rating: 2, data:'03-25-2020', image: 'https://randomuser.me/api/portraits/women/19.jpg'}
     ];
     return(
         <div style={{ width: '100%', height: '80vh',padding:'5%'}}>
             <DataTable
+                paginator
+                rows={7}
                 virtualScrollerOptions={{ itemSize: 55 }}
                 value={testData}
                 header={
@@ -177,55 +175,8 @@ const Tabletest =()=> {
         </div>
     );
 }
-const inputs = (
-    <div style={{marginLeft: '15vw', marginRight: '15vw', marginTop:'5vh'}}>
-    <TextInput
-        value='test'
-        position='column'
-        label='Text:'
-        onChange={console.log}
-    />
-    <NumberInput
-        position='column'
-        label='Number:'
-        onChange={console.log}
-    />
-    <ColorInput
-        position='column'
-        label='Color:'
-        onChange={console.log}
-    />
-    <DateInput
-        position='column'
-        label='Date:'
-        onChange={console.log}
-    />
-    <ToggleInput
-        position='column'
-        onChange={console.log}
-        items={[
-            { id: 1, label: 'one' },
-            { id: 2, label: 'two' }
-        ]}
-        label={'Toogle:'}
-        sx={{
-            height: '42px'
-        }}
-    />
-    <SelectInput
-        position='column'
-        onChange={console.log}
-        label={'Select:'}
-        items={[
-            { id: '1', label: 'one' },
-            { id: '2', label: 'two' }
-        ]}
-    />
-    </div>
-);
 const Colors =()=> {
     const theme = useTheme();
-    const [variant, setVariant] = React.useState<"text" | "contained" | "outlined">('contained');
     const getGrey =()=> {
         Object.entries(theme.palette.grey).map((key, value)=> 
             <div>
@@ -235,108 +186,201 @@ const Colors =()=> {
     }
 
     return(
-        <div>
-            <div style={{marginBottom: '50px', paddingRight: '40%'}}>
-                <ToggleInput
-                    value={variant}
-                    onChange={(v)=> setVariant(v)}
-                    items={[
-                        { id:'text', label:'text' },
-                        { id:'outlined', label:'outlined' },
-                        { id:'contained', label:'contained' },
-                    ]}
-                />
+        <div style={{display:'flex',flexDirection:'column', marginTop: '10px'}}>
+            <div>
+                {colorsButtons.map((color, index) =>
+                    <Button style={{ margin: '5px' }} key={index} variant={"contained"} color={color}>
+                        { color }
+                    </Button>
+                )}
             </div>
-            {colorsButtons.map((color, index) =>
-                <Button style={{ margin: '5px' }} key={index} variant={variant} color={color}>
-                    { color }
-                </Button>
-            )}
-            <div style={{marginLeft:'5vw', marginRight: '40vw', marginTop: '5vh'}}>
-                <TextInput
-                    value='test'
-                    position='column'
-                    label='Text:'
-                    onChange={console.log}
-                />
+            <div>
+                {colorsButtons.map((color, index) =>
+                    <Button style={{ margin: '5px' }} key={index} variant={"outlined"} color={color}>
+                        { color }
+                    </Button>
+                )}
+            </div>
+            <div>
+                {colorsButtons.map((color, index) =>
+                    <Button style={{ margin: '5px' }} key={index} variant={"text"} color={color}>
+                        { color }
+                    </Button>
+                )}
             </div>
         </div>
     );
 }
-const listTest = {
-    background: <></>,
-    input: inputs,
-    table: <Tabletest />,
-    accordion: (
-        <div style={{marginLeft: '15vw', marginRight: '15vw', marginTop:'5vh'}}>
-            <Accordion
+const Preview =()=> {
+    const inputsBase = (
+        <div style={{ margin: 'auto' }}>
+            <TextInput
+                value='test'
+                position='column'
+                label='Text:'
+                onChange={console.log}
+            />
+            <NumberInput
+                position='column'
+                label='Number:'
+                onChange={console.log}
+            />
+            <ColorInput
+                position='column'
+                label='Color:'
+                onChange={console.log}
+            />
+            <FileInput
+                position='column'
+                label='File:'
+                onUpload={console.log}
+            />
+        </div>
+    );
+    const inputsDop = (
+        <div style={{ margin: 'auto' }}>
+            <DateInput
+                position='column'
+                label='Date:'
+                onChange={console.log}
+            />
+            <DateInput
+                type='time'
+                position='column'
+                label='Time:'
+                onChange={console.log}
+            />
+            <SelectInput
+                position='column'
+                onChange={console.log}
+                label={'Select:'}
                 items={[
-                    {
-                        header: 'header-1',
-                        content: <div>content</div>
-                    },
-                    {
-                        header: 'header-2',
-                        content: <div>content</div>
-                    }
+                    { id: '1', label: 'one' },
+                    { id: '2', label: 'two' }
                 ]}
-                activeIndexs={[0]}
+            />
+            <AutoCompleteInput
+                position='column'
+                label={'AutoComplete:'}
+                onChange={console.log}
+                options={['one', 'two']}
             />
         </div>
-    ),
-    colors: <Colors />,
-    action: inputs,
-    menu: <MenuTest />,
-    text: <Text />,
-    chekbox: (
-        <CheckBoxInput
-            onChange={console.log}
-            label={'check'}
-        />
-    ),
-    switch: (
-        <SwitchInput
-            onChange={console.log}
-            label={'on/off'}
-        />
-    ),
-    slider: (
-        <SliderInput
-            onChange={console.log}
-            value={20}
-        />
-    ),
-    appBar: (
-        <div style={{marginTop: '5vh'}}>
+    );
+    const inputsAny = (
+        <div style={{ margin: 'auto' }}>
+             <ToggleInput
+                position='column'
+                onChange={console.log}
+                items={[
+                    { id: 1, label: 'one' },
+                    { id: 2, label: 'two' },
+                    { id: 2, label: 'tree' }
+                ]}
+                label={'Toogle:'}
+                sx={{
+                    height: '42px'
+                }}
+            />
+            <CheckBoxInput
+                onChange={console.log}
+                label={'check'}
+            />
+            <SwitchInput
+                onChange={console.log}
+                label={'on/off'}
+            />
+            <SliderInput
+                onChange={console.log}
+                value={20}
+                label='Slider'
+                position="column"
+            />
+        </div>
+    );
+
+    return(
+        <div 
+            style={{
+                display: 'flex',
+                flexDirection: 'column'
+            }}
+        >
             <AppBar />
-            <div style={{textAlign:'center', marginTop: '1vh'}}>
-                CONTENT
-            </div>
-        </div>
-    ),
-    card: (
-        <div style={{marginLeft: '15vw', marginRight: '15vw', marginTop:'5vh'}}>
-            <CardPreview 
-                text='This impressive paella is a perfect party dish and a fun meal to coo together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.'
-            />
-        </div>
-    ),
-    divider: (
-        <div style={{marginLeft: '15vw', marginRight: '15vw', marginTop:'5vh'}}>
-            <Divider
-                flexItem
-                variant="fullWidth"
-                children='test'
-            />
-            <div style={{height: '5vh',marginRight: '35vw'}}>
-                <Divider
-                    
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}
+            >
+                <Colors/>
+                <Divider sx={{ml:1}}
+                    flexItem
                     variant="fullWidth"
                     orientation="vertical"
                 />
+                <Text />
+            </div>
+            <Divider
+                flexItem
+                variant="fullWidth"
+                children='divider'
+            />
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}
+            >
+                { inputsBase }
+                <Divider
+                    flexItem
+                    variant="fullWidth"
+                    orientation="vertical"
+                />
+                { inputsDop }
+                <Divider
+                    flexItem
+                    variant="fullWidth"
+                    orientation="vertical"
+                />
+                { inputsAny }
+            </div>
+            <Divider sx={{mt:3}}
+                flexItem
+                variant="fullWidth"
+                children='divider'
+            />
+            <div
+                style={{
+                    display: 'flex',
+                    flexDirection: 'row'
+                }}
+            >
+                <div style={{margin:'auto', width: '25%',marginTop: '3%'}}>
+                    <Accordion
+                        items={[
+                            {
+                                header: 'header-1',
+                                content: <div>content</div>
+                            },
+                            {
+                                header: 'header-2',
+                                content: <div>content</div>
+                            }
+                        ]}
+                        activeIndexs={[0]}
+                    />
+                </div>
+                <div style={{ margin:'auto', marginTop: '3%', width: '50%', height: '30%' }}>
+                    <CardPreview
+                        imageHeight={200}
+                        text='This impressive paella is a perfect party dish and a fun meal to coo together with your guests. Add 1 cup of frozen peas along with the mussels,if you like.'
+                    />
+                </div>
             </div>
         </div>
-    ),
+    );
 }
 
 
@@ -363,7 +407,10 @@ export default function PreviewThemeSettings() {
     }
     const handleThemeEdit =(data: Palette)=> {
         setThemeData((old)=> {
-            old.palette = data;
+            Object.entries(data).map(([key, value])=> {
+                old.palette[key] = value;
+            });
+
             return { ...old };
         });
     }
@@ -403,7 +450,9 @@ export default function PreviewThemeSettings() {
                         flexDirection: 'column'
                     }}
                 > 
-                    { listTest[currentGroop] }
+                    { currentGroop === 'table' && <Tabletest /> }
+                    { currentGroop === 'menu' && <MenuTest/> }
+                    { currentGroop !== 'table' && <Preview /> }
                 </div>
             </Container>
         </ThemeProvider>

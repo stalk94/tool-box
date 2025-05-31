@@ -5,9 +5,8 @@ export const palleteStd = {
     input: {
         main: '#2C3035',
         border: 'rgba(255, 255, 255, 0.2)',
-        error: '#f34f4fcc',
-        success: 'rgba(120, 227, 114, 0.6)',
         placeholder: '#808080',
+        label: '#808080'
     },
     chekbox: {
         main: 'rgba(255, 255, 255, 0.05)',
@@ -65,13 +64,9 @@ export const palleteStd = {
         sidenav: "#1f283e",                     
         paper: "#17191C",   
     },
-    // app bar цвет navigation link
+    // цвет навигационных кнопок (app bar)
     navigation: {
         main: "rgba(255, 255, 255, 0.8)"
-    },
-    // что это
-    text: {
-        disabled: 'gray'
     },
 
     // кнопки

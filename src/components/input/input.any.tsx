@@ -265,6 +265,8 @@ export function TooglerInput({ items, value, label, onChange, ...props }: Toogle
                         border: `1px solid ${theme.palette.input.border}`,
                         height: props?.style?.height ?? 36,
                         ...props?.styles?.button,
+                        overflowWrap: 'normal',
+                        wordBreak: 'keep-all',
                         "&.Mui-selected": {
                             //backgroundColor: "red", // Цвет фона выделенной кнопки
                             //color: "white", // Цвет текста выделенной кнопки

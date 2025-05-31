@@ -64,7 +64,7 @@ export function Label({ id, children, styles, sx }: InputLabelProps) {
                 mt: 'auto',
                 mb: 'auto',
                 opacity: 0.9,
-                color: theme.palette.text.secondary,
+                color: theme.palette.input.label ??theme.palette.text.secondary,
                 fontFamily: '"Roboto Condensed", Arial, sans-serif',
                 ...sx,
                 ...transform()
@@ -84,16 +84,16 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
         const colors = theme.palette.input;
         const editorBorderColor = styles?.form?.borderColor;
 
-        if (props.error) return `1px ${border} ${colors.error}`;
-        else if (props.success) return `1px ${border} ${colors.success}`;
+        if (props.error) return `1px ${border} ${theme.palette.error.dark}`;
+        else if (props.success) return `1px ${border} ${theme.palette.success.dark}`;
         else return `1px ${border} ${editorBorderColor ?? colors.border}`;
     }
     // цвет бордера при фокусе в зависимости от состояния (error, sucess, disabled)
     const useColorBorderFocus = () => {
         const colors = theme.palette.input;
 
-        if (props.error) return lighten(colors.error, 0.2);
-        else if (props.success) return lighten(colors.success, 0.2);
+        if (props.error) return lighten(theme.palette.error.light, 0.2);
+        else if (props.success) return lighten(theme.palette.success.light, 0.2);
         else return lighten(colors.border, 0.3);
     }
     // цвет фона в зависимости от состояния (error, sucess, disabled)
@@ -101,8 +101,8 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
         const colors = theme.palette.input;
         const styleBcg = styles?.form?.background;
 
-        if (props.error) return alpha(colors.error, 0.05);
-        else if (props.success) return alpha(colors.success, 0.05);
+        if (props.error) return alpha(theme.palette.error.light, 0.05);
+        else if (props.success) return alpha(theme.palette.success.light, 0.05);
         else if(styleBcg && styleBcg !== 'none') return styleBcg;
         else return colors.main;
     }
@@ -110,10 +110,11 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
     // ? можно сделать отключение выделения через глобал темы
     const useBackgroundColorFocus = () => {
         const colors = theme.palette.input;
+        const opacity = theme.palette.action.focusOpacity;
 
-        if (props.error) return alpha(colors.error, 0.2);
-        else if (props.success) return alpha(colors.success, 0.2);
-        else return alpha(colors.border, 0.15);
+        if (props.error) return alpha(theme.palette.error.light, 0.2);
+        else if (props.success) return alpha(theme.palette.success.light, 0.2);
+        else return alpha(theme.palette.action.focus, opacity);
     }
     // эксперементальная
     const useElevation =()=> {

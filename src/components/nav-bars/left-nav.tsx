@@ -5,16 +5,17 @@ import { BoxProps, List, ListItemButton, ListItemIcon, ListItemText, Collapse, D
 import { ExpandLess, ExpandMore, FiberManualRecord } from "@mui/icons-material";
 import { NavLinkItem } from '../menu/type';
 import Menu from '../menu/index';
-import { start } from "slate";
+
 
 
 type SidebarMenuProps = {
     collapsed: boolean
     onChange?: (item: NavLinkItem)=> void
     items: NavLinkItem[]
-    sx?: {}
+    sx?: React.CSSProperties
     isFocusSelected?: boolean 
-    selected: any
+    selected?: any
+    listStyle?: React.CSSProperties
 }
 type LeftNavigationProps = SidebarMenuProps & BoxProps & {
     type: 'box' | 'drawer'
@@ -178,7 +179,7 @@ export function SidebarMenu({ collapsed, items, sx, onChange, isFocusSelected, s
                                                         key={childIndex}
                                                         sx={{ 
                                                             pl: 4, 
-                                                            backgroundColor: selectedItem === child.id ? colorSelect : "transparent" 
+                                                            backgroundColor: selectedItem === child.id ? theme.palette.action.active : "transparent" 
                                                         }}
                                                         onClick={() => {
                                                             handleItemClick(child, item.id);
@@ -288,7 +289,7 @@ export default function BaseLeftSideBar({ collapsed, start, items, onChange, end
                 items={merge()}
                 onChange={onChange}
                 isFocusSelected={props.isFocusSelected}
-                listStyle={{p: 0}}
+                listStyle={{padding: 0}}
             />
             {/* низ */}
             { end &&

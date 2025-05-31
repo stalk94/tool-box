@@ -33,7 +33,6 @@ const BasePanel =()=> {
     );
 }
 const ThemePanel =()=> {
-    const pallete = settingsSlice.theme.pallete.use();
     const currentGroop = settingsSlice.theme.currentGroop.use();
     const [data, setData] = React.useState<Record<string, string>>({});     // default
     const [schema, setSchema] = React.useState<Schema[]>([]);
@@ -47,8 +46,8 @@ const ThemePanel =()=> {
         });
     }
     const getToolPalette =()=> {
-        const exclude = ['mode', 'contrastThreshold', 'getContrastText', 'augmentColor', 'tonalOffset'];
-        const keys = [...Object.keys(pallete), 'colors'];
+        const exclude = ['mode', 'contrastThreshold', 'getContrastText', 'augmentColor', 'tonalOffset', 'navigation'];
+        const keys = [...Object.keys(settingsSlice.theme.pallete.get(true)), 'colors'];
         return keys.filter((key)=> ![...exclude, ...colorsList].includes(key));
     }
     const createSchemeColors = (data: Record<string, string>, type?:'slider'): Schema[] => {
@@ -84,10 +83,12 @@ const ThemePanel =()=> {
         });
     }
     const handleEdit =(key:string, value:string, nested?:string)=> {
+        const pallete = settingsSlice.theme.pallete.get(true);
         const copy = cloneDeep(pallete);
 
         if(!nested) {
-            copy[currentGroop][key] = value;
+            if(key === 'divider') copy[currentGroop] = value;
+            else copy[currentGroop][key] = value;
         }
         else {
             if(nested === 'actionsColor' || nested === 'actionsOpacity'){
@@ -99,6 +100,7 @@ const ThemePanel =()=> {
         EVENT.emit('themeEdit', copy);
     }
     React.useEffect(()=> {
+        const pallete = settingsSlice.theme.pallete.get(true);
         const cur = pallete[currentGroop];
 
         if(cur && currentGroop !== 'colors' && currentGroop !== 'action') {
@@ -106,6 +108,16 @@ const ThemePanel =()=> {
                 setAcordeon([]);
                 setData(cur);
                 setSchema(createSchemeColors(cur));
+            }
+            else if(typeof cur === 'string') {
+                setAcordeon([]);
+                setSchema([{
+                    type: 'color',
+                    value: cur,
+                    label: currentGroop,
+                    id: currentGroop,
+                    labelSx: { fontSize: '12px' }
+                }]);
             }
         }
         else if(currentGroop === 'action') {

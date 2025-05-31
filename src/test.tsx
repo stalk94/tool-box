@@ -13,6 +13,7 @@ import Editor from './bloc/App';
 import { store } from 'statekit-react';
 import './bloc/modules/index';
 
+
 const App = () => {
     const savedTheme = localStorage.getItem('theme');
     const [darkMode, setDarkMode] = React.useState(savedTheme === 'light' ? false: true);

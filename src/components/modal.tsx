@@ -22,7 +22,7 @@ export default function SimpleDialog({ open, setOpen, children }: ModalProps) {
         >
             <DialogTitle>
                 <IconButton
-                    color="inherit"
+                    color="navigation"
                     onClick={handleClose}
                     aria-label="close"
                     sx={{ 

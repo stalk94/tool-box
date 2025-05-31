@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, ComponentProps } from 'react';
-import { alpha, darken, Theme } from "@mui/material/styles";
+import { alpha, darken, lighten, Theme } from "@mui/material/styles";
 import { DataTable, DataTableValueArray } from "primereact/datatable";
 import styled, { css } from 'styled-components';
 import Skeleton from '@mui/material/Skeleton';
@@ -124,14 +124,14 @@ const StyledTableWrapper = styled.div<{
         padding: 0.1rem;
     }
     .p-paginator .p-paginator-page {
-        background: ${({ theme }) => theme.thead.background };
+        background: ${({ theme }) => theme.paginator.background };
         color: ${({ theme }) => theme.body.textColor};
         padding: 0.5rem;
         font-size: 14px;
         color: ${({ theme }) => theme.thead.textColor};
     }
     .p-paginator .p-paginator-page.p-highlight {
-        background: ${({ theme }) => darken(theme.thead.background, 0.2)};
+        background: ${({ theme }) => darken(theme.paginator.background, 0.3)};
         opacity: 0.8;
         border-color: ${({ theme }) => alpha(theme.body.borderColor, 0.4)};
         font-weight: bold;
@@ -220,6 +220,9 @@ export default function DataTableCustom({ value, children, header, footer, fontS
                 background: theadBcg,
                 textColor: theadColor,
                 ...styles?.thead
+            },
+            paginator: {
+                background: theme.palette?.input?.main
             }
         }
 

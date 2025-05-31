@@ -100,7 +100,7 @@ export default function({ linkItems, onClick }: Props) {
                 <React.Fragment>
                     <IconButton
                         edge="end"
-                        color="inherit"
+                        color="navigation"
                         aria-label="menu"
                         sx={{ mx: 0.5 }}
                     >

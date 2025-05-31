@@ -10,6 +10,7 @@ import { mixins } from './mixins';
 declare module '@mui/material/styles' {
     interface Mixins {
         responsivePadding: CSSProperties
+        scrollbar: any
     }
     interface Palette {
         input: {
@@ -42,6 +43,17 @@ declare module '@mui/material/styles' {
         navigation: {
             main: string
         }
+        toolNavBar: {
+            main: string
+            select: string
+            icon: string
+            badgeText: string
+            badgeBcg: string
+        }
+        menu: {
+            main: string
+            select: string
+        }
     }
 
     interface TypeBackground {
@@ -54,7 +66,6 @@ declare module '@mui/material/styles' {
     }
 
     interface PaletteOptions {
-       
         placeholder?: {
             main: string;
         };
@@ -66,16 +77,6 @@ declare module '@mui/material/styles' {
         navigation: {
             main: string
         }
-    }
-    interface Theme {
-        elements: typeof elements;
-    }
-}
-
-// расщирения интерфейсов buttons
-declare module '@mui/material/Button' {
-    interface ButtonPropsColorOverrides {
-        navigation: true;
     }
 }
 

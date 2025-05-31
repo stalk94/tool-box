@@ -20,7 +20,7 @@ export type AutoCompleteProps = Omit<AutocompleteProps<any, boolean, boolean, bo
 
 
 export default function AutoCompleteInput({ options, value, onChange, placeholder, ...props }: AutoCompleteProps) {
-    const [curvalue, setCurValue] = React.useState(value ?? 'none');
+    const [curvalue, setCurValue] = React.useState(value ?? '');
     const theme = useTheme();
     const placeholderStyle = {
         fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
@@ -69,7 +69,7 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
 
             <Autocomplete
                 { ...filteredProps() }
-                popupIcon={<ExpandMore/>}
+                popupIcon={<ExpandMore sx={{fontSize:20}}/>}
                 value={curvalue}
                 options={options ?? []}
                 fullWidth

@@ -1,7 +1,8 @@
 import React from 'react';
 import { Button, ButtonProps } from '@mui/material';
 import { ArrowDropDown } from '@mui/icons-material';
-import ItemsList, { NavLinkItem } from '../menu/list';
+import ItemsList from '../menu/list';
+import { NavLinkItem } from '../menu/type';
 import Menu from '../menu';
 
 

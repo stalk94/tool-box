@@ -26,6 +26,8 @@ export type SideBarAndToolPanelProps = {
     width?: string | number
     /** настройки стиля обшего контейнера */
     sx: SxProps
+    style?: React.CSSProperties
+    selected?: any
 }
 
 
@@ -71,12 +73,12 @@ export default function SideBarAndToolPanel({ schemaNavBar, center, start, end, 
             <BaseLeftSideBar
                 type="drawer"
                 collapsed={true}
-                onChange={onChangeNavigation}
+                onChange={(item)=> onChangeNavigation(item)}
                 isFocusSelected={true}
                 start={schemaNavBar?.start}
                 items={schemaNavBar.items}
                 end={schemaNavBar.end}
-                selected={props.selected}
+                selected={props?.selected}
             />
 
             {/* ANCHOR - рабочая область */}

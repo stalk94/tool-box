@@ -37,8 +37,12 @@ export default function ({ ...props }: Props) {
                     </Typography>
                 </CardContent>
             ]}
+        />
+    );
+}
 
-            footer={[
+/** 
+ *  footer={[
                 <Button key='btn1' size="small" variant='outlined' color="info">
                     small
                 </Button>,
@@ -49,6 +53,4 @@ export default function ({ ...props }: Props) {
                     large
                 </Button>
             ]}
-        />
-    );
-}
+ */

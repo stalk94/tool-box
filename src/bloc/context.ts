@@ -120,7 +120,8 @@ export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
 export const settingsSlice = create({
     theme: {
         currentTheme: 'dark',
-        currentGroop: 'input'
+        currentGroop: 'input',
+        pallete: {}
     }
 } as SettingsContextStateType, {
     immer: true,
