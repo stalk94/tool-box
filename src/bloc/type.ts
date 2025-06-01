@@ -180,3 +180,12 @@ export type DropSlotProps = {
     children: React.ReactNode
     onAdd: (component: Component)=> void
 }
+
+////////////////////////////////////////////////////////////////////////////////
+// 
+//////////////////////////////////////////////////////////////////////////////// 
+export type Structur = {
+    allImports: Set<string>;
+    allComponents: string[];
+    jsxByCell: Record<string, string>;
+}

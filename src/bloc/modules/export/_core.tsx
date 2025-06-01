@@ -1,7 +1,36 @@
+import React from 'react';
+import { LayoutCustom, DataNested, Structur } from '../../type';
+import { createRoot } from 'react-dom/client';
+import MiniRender from '../../nest-slot/MiniRender';
+
+
+export async function useRenderNestedContext(layout: LayoutCustom[], size, type): Promise<string|Structur> {
+    const container = document.createElement('div'); // НЕ добавляем в DOM
+    const root = createRoot(container);
+
+    const result = await new Promise<string>((resolve) => {
+        root.render(
+            <MiniRender
+                type={type}
+                layouts={layout}
+                size={size}
+                onReadyLiteral={(code) => {
+                    resolve(code);
+                }}
+            />
+        );
+    });
+
+    root.unmount();
+
+    return result;
+}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 //          headles render function
 ////////////////////////////////////////////////////////////////////////////////////////////////////
-function dedupeImports(lines: string[]): string[] {
+export function dedupeImports(lines: string[]): string[] {
     const importMap: Record<string, Set<string>> = {};
     const otherLines: string[] = [];
 
@@ -41,11 +70,11 @@ function dedupeImports(lines: string[]): string[] {
 
 
 export function generateLiteralFromCells(virtualResults: Record<string, string[]>) {
-    const allImports = new Set();
-    const allFunctions: string[] = [];
+    const allImports = new Set<string>();
+    const allComponents: string[] = [];
+    const jsxByCell: Record<string, string> = {};
     const seenIds = new Set<number>();
     const nameCounter: Record<string, number> = {};
-    const jsxByCell: Record<string, string> = {};
 
 
     for (const [key, componentCodes] of Object.entries(virtualResults)) {
@@ -81,7 +110,7 @@ export function generateLiteralFromCells(virtualResults: Record<string, string[]
                     `export function ${uniqueName}`
                 );
 
-                allFunctions.push(replaced);
+                allComponents.push(replaced);
                 jsxLines.push(`<${uniqueName} />`);
             } 
             else if (fullBody.startsWith('<')) {
@@ -98,17 +127,12 @@ export function generateLiteralFromCells(virtualResults: Record<string, string[]
 
     return {
         allImports,
-        allFunctions,
-        nameCounter,
-        seenIds,
+        allComponents,
         jsxByCell
     }
 }
-export function generateRenderGridFileSafe(
-    virtualResults: Record<string, string[]>,
-    layouts: { i: string; [key: string]: any }[]
-): string {
-    const {allImports, allFunctions, jsxByCell} = generateLiteralFromCells(virtualResults);
+export function generateRenderGridFileSafe(virtualResults: Record<string, string[]>, layouts: { i: string; [key: string]: any }[]): string {
+    const {allImports, allComponents, jsxByCell} = generateLiteralFromCells(virtualResults);
    
 
     const cellJSX = layouts.map((layer)=> {
@@ -138,7 +162,7 @@ export function generateRenderGridFileSafe(
         const ResponsiveGridLayout = WidthProvider(Responsive);
 
 
-        ${allFunctions.join('\n\n')}
+        ${allComponents.join('\n\n')}
 
 
         export default function RenderGrid() {

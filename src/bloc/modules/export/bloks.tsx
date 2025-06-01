@@ -1,32 +1,10 @@
 import React from 'react';
-import { LayoutCustom, DataNested } from '../../type';
-import { createRoot } from 'react-dom/client'
+import { LayoutCustom, DataNested, Structur } from '../../type';
 import { exportLiteralToFile } from "../../helpers/export";
-import MiniRender from '../../nest-slot/MiniRender';
+import { useRenderNestedContext, dedupeImports } from './_core';
 
 
 const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-export async function useRender(layout: LayoutCustom[], size, type): Promise<string> {
-    const container = document.createElement('div'); // НЕ добавляем в DOM
-    const root = createRoot(container);
-
-    const result = await new Promise<string>((resolve) => {
-        root.render(
-            <MiniRender
-                type={type}
-                layouts={layout}
-                size={size}
-                onReadyLiteral={(code) => {
-                    resolve(code);
-                }}
-            />
-        );
-    });
-
-    root.unmount();
-
-    return result;
-}
 export function toJSXProps(obj: Record<string, any>): string {
     return Object.entries(obj || {})
         .map(([key, value]) => {
@@ -97,7 +75,7 @@ export default function exported(
                 exportLiteralToFile(
                     [meta.scope, `${meta.name}/acordeonSlots`], 
                     `SlotGrid_${index}`,
-                    await useRender(elem.layout, elem.size)
+                    await useRenderNestedContext(elem.layout, elem.size, 'Acordeon')
                 );
             }
         });
@@ -202,7 +180,7 @@ export function exportedTabs(
                 exportLiteralToFile(
                     [meta.scope, `${meta.name}/tabsSlots`], 
                     name,
-                    await useRender(elem.layout, elem.size)
+                    await useRenderNestedContext(elem.layout, elem.size, 'Tabs')
                 );
             }
         });
@@ -262,7 +240,7 @@ export function exportedFrame(
         exportLiteralToFile(
             [meta.scope, `${meta.name}/frames`],
             name,
-            await useRender(slot.layout, slot.size, 'Frame')
+            await useRenderNestedContext(slot.layout, slot.size, 'Frame')
         );
     }
     const prerender = renderSlotsLinks(metaName??'StackGrid');
@@ -298,16 +276,27 @@ export function exportedArea(
         }
     }
     const renderSlot = async(name: string)=> {
+        const { allComponents, allImports, jsxByCell }: Structur = await useRenderNestedContext(slot.layout, slot.size, 'Area');
+
         exportLiteralToFile(
             [meta.scope, `${meta.name}/canvas`],
-            name,
-            await useRender(slot.layout, slot.size, 'Area')
+            name, 
+            (`
+                ${ dedupeImports([...allImports]).join('\n') }
+
+                ${allComponents.join('\n\n')}
+
+                export default function AreaCanvas() {
+                    return(<>${jsxByCell[slot.layout[0].i]}</>)
+                }
+            `)
         );
     }
     const prerender = renderSlotsLinks(metaName??'Canvas');
-    //renderSlot(metaName??'Canvas');
-    useRender(slot.layout, slot.size, 'Area').then(console.log)
+    renderSlot(metaName??'Canvas');
+    
 
+    
     return (`
         import React from 'react';
         ${prerender.imports}
@@ -317,7 +306,11 @@ export function exportedArea(
 
             return (
                 <div
-                    style={{ width: '100%', display: 'block' }}
+                    style={{
+                        width: ${slot.size.width - 5}, 
+                        height: ${slot.size.height - 5}, 
+                        position: 'relative' 
+                    }}
                 >
                     ${prerender.body}
                 </div>
@@ -402,7 +395,6 @@ export function exportedBottomNav(
         }
     `);
 }
-
 export function exportedTable(
     data: {[key:string]: any}[],
     columns: {field: string}[],

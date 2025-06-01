@@ -300,7 +300,7 @@ export default function PromoSlider({ items, button, styles, style, editor, ...p
                                     color='primary'
                                     sx={{ mt: 4 }}
                                     { ...button }
-                                    children={button.children ?? 'go to'}
+                                    children={button?.children ?? 'go to'}
                                 />
                             }
                             data={(items ?? testData)[active]}

@@ -57,6 +57,7 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 	}
 }
 export const exportLiteralToFile = async (path: string[], fileName: string, fileData: string) => {
+	
 	const body = {
 		folder: `public/export/${path[0]}/${path[1]}`,
 		filename: `${fileName}.tsx`,

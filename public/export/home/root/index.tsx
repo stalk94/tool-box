@@ -4,6 +4,7 @@ import cell_1747227526997 from './cell-1747227526997.tsx';
 import cell_1747227527273 from './cell-1747227527273.tsx';
 import cell_1747750856603 from './cell-1747750856603.tsx';
 import cell_1747755864668 from './cell-1747755864668.tsx';
+import cell_1748696638444 from './cell-1748696638444.tsx';
 import React from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
@@ -21,7 +22,7 @@ export default function RenderGrid() {
                         x: 0,
                         y: 0,
                         w: 5,
-                        h: 25,
+                        h: 17,
                         moved: false,
                         static: false,
                         props: { style: {}, classNames: '' }
@@ -72,6 +73,16 @@ export default function RenderGrid() {
                         y: 20,
                         w: 4,
                         h: 12,
+                        props: { classNames: '', style: {} },
+                        moved: false,
+                        static: false
+                    },
+                    {
+                        i: 'cell-1748696638444',
+                        x: 0,
+                        y: 17,
+                        w: 5,
+                        h: 13,
                         props: { classNames: '', style: {} },
                         moved: false,
                         static: false
@@ -181,6 +192,22 @@ export default function RenderGrid() {
                 }}
             >
                 {cell_1747755864668()}
+            </div>
+
+            <div
+                key={'cell-1748696638444'}
+                style={{
+                    overflowX: 'hidden',
+                    overflowY: 'auto',
+                    height: '100%',
+                    display: 'inline-flex',
+                    width: '100%',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch',
+                    alignContent: 'flex-start'
+                }}
+            >
+                {cell_1748696638444()}
             </div>
         </ResponsiveGridLayout>
     );

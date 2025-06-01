@@ -37,6 +37,11 @@ export function PromoBannerWrap() {
                 items={items}
                 actionAreaEnabled={true}
                 style={{ height: 290, width: '100%' }}
+                button={{
+                    variant: undefined,
+                    color: undefined,
+                    children: undefined
+                }}
                 width="100%"
                 data-type="PromoBanner"
                 styles={{

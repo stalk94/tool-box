@@ -71,8 +71,16 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         const meta = editorContext.meta.get();
         const path = `${meta.scope}_${meta.name}`;
 
-        if(inputsIndex[path]) return inputsIndex[path];
-        else return ()=> <div>not path import preview</div>;
+        if(inputsIndex[path]) return (
+            <div style={{marginTop: '65px'}}>
+                { inputsIndex[path]() }
+            </div>
+        );
+        else return (
+            <div style={{marginTop: '65px', marginLeft: '30px'}}>
+                not path import preview
+            </div>
+        );
     }
     const createDataComponent = (rawProps: ComponentProps, cellId: string): ComponentSerrialize => {
         const type = rawProps['data-type'];
@@ -260,7 +268,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                 <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                     
-                    { mod === 'preview' && getPreview()() }
+                    { mod === 'preview' && getPreview() }
                     { (mod === 'block' || mod === 'grid') && <GridComponentEditor desserealize={desserealize} /> }
                     { mod === 'settings' && <PreviewTheme /> }
                 </div>
