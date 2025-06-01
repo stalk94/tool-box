@@ -7,6 +7,7 @@ import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStr
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from '../helpers/editor';
 import { DroppableCell } from './Dragable';
+import { RulerX, RulerY } from '../utils/Rullers';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -151,6 +152,7 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
     const addNewCell = () => {
         const defaultW = 12;
         const defaultH = 2;
+        const id = `cell-${Date.now()}`;
         const spot = findFreeSpot(defaultW, defaultH, render, 12);
 
         if (!spot) {
@@ -158,7 +160,7 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
             return;
         }
         addCellData([{
-            i: `cell-${Date.now()}`,
+            i: id,
             x: spot.x,
             y: spot.y,
             w: defaultW,
@@ -169,8 +171,9 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
             },
             content: []
         }]);
-    }
 
+        return id;
+    }
 
     React.useEffect(() => {
         const resizeObserver = new ResizeObserver(() => {
@@ -201,21 +204,6 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
         }
     }, []);
     React.useEffect(() => {
-        if (nestedData.content) cellsSlice.set(nestedData.content);
-        if(isArea && !nestedData?.layout) addNewCell();
-
-        if (nestedData?.layout && nestedData?.layout[0]?.i) {
-            console.green('init nested layouts:', nestedData.layout);
-            editorSlice.layout.set(structuredClone(nestedData.layout));
-            renderSlice.set(nestedData.layout);
-        }
-
-        if (nestedData.size) {
-            editorSlice.size.width.set(Math.round(nestedData.size.width));
-            editorSlice.size.height.set(Math.round(nestedData.size.height));
-        }
-    }, [nestedData]);
-    React.useEffect(() => {
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
 
@@ -224,10 +212,29 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
             EVENT.off('addCell', addNewCell);
         }
     }, []);
+    React.useEffect(() => {
+        if (nestedData.content) cellsSlice.set(nestedData.content);
+
+        // активная ячейка для canvas
+        if(isArea && !nestedData?.layout) editorSlice.currentCell.set({i: addNewCell()});
+        else if(isArea) editorSlice.currentCell.set(nestedData?.layout[0]);
+        
+        if (nestedData?.layout && nestedData?.layout[0]?.i) {
+            console.green('init nested layouts:', nestedData.layout);
+            editorSlice.layout.set(structuredClone(nestedData.layout));
+            editorSlice.currentCell.set(nestedData?.layout[0]);
+            renderSlice.set(nestedData.layout);
+        }
+
+        if (nestedData.size) {
+            editorSlice.size.width.set(Math.round(nestedData.size.width));
+            editorSlice.size.height.set(Math.round(nestedData.size.height));
+        }
+    }, [nestedData]);
     
     
     return (
-        <div 
+        <div className="editor-container"
             style={{ 
                 margin: 5,
                 maxWidth: size?.width ?? '100%', 
@@ -236,6 +243,7 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
             }}
             ref={gridContainerRef}
         >
+           
             {ready && !isArea && 
             <ResponsiveGridLayout
                 style={{ background: '#222222' }}
@@ -303,7 +311,7 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
             {/* canvas area */}
             {(isArea && render[0]) &&
                 <DroppableCell id={render[0]?.i}>
-                    <div style={{ width: size.width, height: size.height, position: 'relative' }}>
+                    <div className='CanvasArea' style={{ width: size.width, height: size.height, position: 'relative' }}>
                         {render?.map((layer) => (
                             <React.Fragment key={layer.i}>
                                 {layer?.content && Array.isArray(layer.content) && layer.content.map((component) => (

@@ -143,21 +143,3 @@ export const desserealize = (component: ComponentSerrialize, data?: Record<strin
         );
     }
 }
-
-
-/** преобразователь в относительные размеры (%) */
-export function getRelativeStylePercent(style, parentWidth, parentHeight) {
-    return {
-        ...style,
-        position: 'absolute',
-        top: (style.y / parentHeight) * 100 + '%',
-        left: (style.x / parentWidth) * 100 + '%',
-        width: typeof style.width === 'number'
-            ? (style.width / parentWidth) * 100 + '%'
-            : style.width,
-        height: typeof style.height === 'number'
-            ? (style.height / parentHeight) * 100 + '%'
-            : style.height,
-        zIndex: style.y,
-    };
-}

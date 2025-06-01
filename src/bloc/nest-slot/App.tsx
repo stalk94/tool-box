@@ -6,13 +6,18 @@ import "react-grid-layout/css/styles.css";
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
 import { serializeJSX } from '../helpers/sanitize';
+import { getMaxBottomCoordinate } from '../helpers/editor';
 
 
 import { DragItemCopyElement } from './Dragable';
 import { ToolBarInfo } from './Top-bar';
 import LeftToolBar from './Left-bar';
 import GridComponentEditor from './Editor-grid';
-
+if (import.meta.hot) {
+    import.meta.hot.accept(() => {
+        import.meta.hot!.data.nestedApp = true;
+    });
+}
 
 
 // это редактор блоков сетки
@@ -31,6 +36,19 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
 
         if (rawProps.ref) delete rawProps.ref;
         const cleanedProps = serializeJSX(rawProps);
+
+        // для canvas компонентам надо позицию определить и скорректировать настройки стартовые
+        if(isArea) {
+            const container = document.querySelector('.CanvasArea');
+            if(container) {
+                const yCoordinate = getMaxBottomCoordinate(container);
+                cleanedProps.style = {
+                    x: 0,
+                    y: yCoordinate,
+                    ...cleanedProps.style
+                }
+            }
+        }
 
         return {
             id,
@@ -160,10 +178,6 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
     }
 
     React.useEffect(()=> {
-        //if(isArea) editorSlice.dragEnabled.set(false);
-        //else editorSlice.dragEnabled.set(true);
-        
-        editorSlice.currentCell.set(undefined);
         infoSlice.set({
             container: {
                 width: 0,
@@ -178,19 +192,23 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             project: {}
         });
         
-        //infoSlice.project.set(data);
         editorSlice.dragEnabled.set(true);
 
         return ()=> {
+            if(import.meta.hot?.data?.nestedApp) {
+                import.meta.hot.data.nestedApp = false;
+                return;
+            }
+
             cellsSlice.set({});
             renderSlice.set([]);
             editorSlice.layout.set([]);
             editorSlice.currentCell.set(undefined);
             infoSlice.select.content.set(null);
+            console.log('unmount nested app');
         }
     }, []);
     
-
 
     return(
         <DndContext 
@@ -227,15 +245,3 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
         </DndContext>
     );
 }
-
-
-
-/**
- *  const findIndex = ctx.layout.get({noproxy: true}).findIndex((el)=> el.i === cellId);
-                    if(findIndex !== -1) {
-                        ctx.layout.set((old)=> {
-                            old[findIndex].content?.push(component);
-                            return old;
-                        });
-                    }
- */

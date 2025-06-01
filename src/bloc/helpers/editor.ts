@@ -12,7 +12,6 @@ export function getComponentById(id: number): Component | undefined {
     
     return result;
 }
-
 export function getUniqueBlockName(baseName: string, existingNames: string[]): string {
     let name = baseName;
     let counter = 1;
@@ -25,7 +24,9 @@ export function getUniqueBlockName(baseName: string, existingNames: string[]): s
     return name;
 }
 
-
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//       создание ячеек
+/////////////////////////////////////////////////////////////////////////////////////////////////
 export function canPlace(
     x: number,
     y: number,
@@ -118,4 +119,39 @@ export const stackVertical = (countH: number, containerHeight: number, rowHeight
         h: cellH,
         content: []
     }));
+}
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////////
+//       dom function
+/////////////////////////////////////////////////////////////////////////////////////////////////
+export function getMaxBottomCoordinate(container: Element) {
+    const children = container.children;
+    let maxBottom = 0;
+
+    [...children].forEach((el) => {
+        const bottom = el.getBoundingClientRect().y;
+
+        if (bottom > maxBottom) {
+            maxBottom = bottom;
+        }
+    });
+
+    return maxBottom;
+}
+/** преобразователь в относительные размеры (%) */
+export function getRelativeStylePercent(style, parentWidth, parentHeight) {
+    return {
+        ...style,
+        position: 'absolute',
+        top: (style.y / parentHeight) * 100 + '%',
+        left: (style.x / parentWidth) * 100 + '%',
+        width: typeof style.width === 'number'
+            ? (style.width / parentWidth) * 100 + '%'
+            : style.width,
+        height: typeof style.height === 'number'
+            ? (style.height / parentHeight) * 100 + '%'
+            : style.height,
+        zIndex: style.y,
+    };
 }

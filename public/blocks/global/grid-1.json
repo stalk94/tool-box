@@ -66,17 +66,113 @@
     ],
     "cell-1747763221272": [
       {
-        "id": 1748718445369,
+        "id": 1748734255067,
         "parent": "cell-1747763221272",
         "props": {
           "fullWidth": true,
           "metaName": "AreaFrame",
           "elevation": 0,
           "slots": {
-            "0": {}
+            "0": {
+              "content": {
+                "cell-1748735036249": [
+                  {
+                    "id": 1748739904991,
+                    "parent": "cell-1748735036249",
+                    "props": {
+                      "children": "Button",
+                      "variant": "outlined",
+                      "color": "primary",
+                      "fullWidth": true,
+                      "startIcon": "none",
+                      "endIcon": "none",
+                      "style": {
+                        "x": 0,
+                        "y": 0
+                      },
+                      "data-id": 1748739904991,
+                      "data-type": "Button"
+                    }
+                  },
+                  {
+                    "id": 1748739905834,
+                    "parent": "cell-1748735036249",
+                    "props": {
+                      "children": "Button",
+                      "variant": "outlined",
+                      "color": "primary",
+                      "fullWidth": true,
+                      "startIcon": "none",
+                      "endIcon": "none",
+                      "style": {
+                        "x": 0,
+                        "y": 52.9375
+                      },
+                      "data-id": 1748739905834,
+                      "data-type": "Button"
+                    }
+                  }
+                ]
+              },
+              "layout": [
+                {
+                  "i": "cell-1748735036249",
+                  "x": 0,
+                  "y": 0,
+                  "w": 12,
+                  "h": 2,
+                  "props": {
+                    "classNames": "",
+                    "style": {}
+                  },
+                  "content": [
+                    {
+                      "id": 1748739904991,
+                      "parent": "cell-1748735036249",
+                      "props": {
+                        "children": "Button",
+                        "variant": "outlined",
+                        "color": "primary",
+                        "fullWidth": true,
+                        "startIcon": "none",
+                        "endIcon": "none",
+                        "style": {
+                          "x": 0,
+                          "y": 0
+                        },
+                        "data-id": 1748739904991,
+                        "data-type": "Button"
+                      }
+                    },
+                    {
+                      "id": 1748739905834,
+                      "parent": "cell-1748735036249",
+                      "props": {
+                        "children": "Button",
+                        "variant": "outlined",
+                        "color": "primary",
+                        "fullWidth": true,
+                        "startIcon": "none",
+                        "endIcon": "none",
+                        "style": {
+                          "x": 0,
+                          "y": 52.9375
+                        },
+                        "data-id": 1748739905834,
+                        "data-type": "Button"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "size": {
+                "width": 658,
+                "height": 595
+              }
+            }
           },
           "style": {},
-          "data-id": 1748718445369,
+          "data-id": 1748734255067,
           "data-type": "Area"
         }
       }
@@ -85,7 +181,7 @@
   "meta": {
     "scope": "global",
     "name": "grid-1",
-    "updatedAt": 1748718446123,
+    "updatedAt": 1748739908860,
     "preview": "snapshots/global-grid-1.png"
   },
   "size": {

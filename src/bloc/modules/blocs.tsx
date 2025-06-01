@@ -4,8 +4,9 @@ import { DropSlot, ContextSlot } from '../Dragable';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { ComponentSerrialize, Component, ComponentProps } from '../type';
 import { editorContext } from "../context";
-import { exportedFrame } from './export/Acordeon';
+import { exportedFrame, exportedArea } from './export/bloks';
 import { Paper } from '@mui/material';
+import { getRelativeStylePercent } from '../helpers/editor';
 
 
 type FrameWrapperProps = ComponentProps & {
@@ -101,13 +102,16 @@ export const AreaWrapper = React.forwardRef((props: AreaProps, ref) => {
     const { 'data-id': dataId, fullWidth, style={}, metaName, slots, ...otherProps } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
+
     degidratationRef.current = (call) => {
         let metaNameParsed;
         if(metaName && metaName.length > 3) metaNameParsed = metaName;
 
-        const code = (`
-            
-        `);
+        const code = exportedArea(
+            editorContext.meta.get(),
+            slots[0],
+            metaNameParsed
+        );
         
         call(code);
     }

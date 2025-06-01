@@ -152,7 +152,7 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
                     position: 'absolute',
                     top: '50%',
                     left: '45%',
-                    zIndex: 4,
+                    zIndex: 9999,
                 }}
             >
                 <IconButton

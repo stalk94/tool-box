@@ -2,8 +2,9 @@ import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
 import { LayoutCustom, ComponentSerrialize } from '../type';
-import { desserealize, getRelativeStylePercent } from '../helpers/sanitize';
-import { generateRenderGridFileSafe } from './shim';
+import { desserealize } from '../helpers/sanitize';
+import { getRelativeStylePercent } from '../helpers/editor';
+import { generateRenderGridFileSafe, generateLiteralFromCells } from '../modules/export/_core';
 
 
 type MiniRenderSlotProps = {
@@ -51,11 +52,14 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
             resultCellsRender[cell.i] = cellResults;
         }));
 
-        const fileCode = generateRenderGridFileSafe(resultCellsRender, layouts);
-        onReadyLiteral(fileCode);
+        if(type !== 'Area') {
+            const fileCode = generateRenderGridFileSafe(resultCellsRender, layouts);
+            onReadyLiteral(fileCode);
+        }
+        else onReadyLiteral(generateLiteralFromCells(resultCellsRender));
     }
     const useAbsolute =(component: ComponentSerrialize)=> {
-        if(type === 'Area') return({
+        if(type === 'Area' && size.width && size.height) return({
             style: getRelativeStylePercent(
                 component.props?.style,
                 size.width,
@@ -66,7 +70,7 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
     React.useEffect(()=> {
         if(onReadyLiteral) degidrateAll();
     }, []);
-    
+
 
     return(
         <div style={{ position: 'relative' }}>
@@ -82,7 +86,6 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
                     isDraggable={false}                                         // Отключить перетаскивание
                     isResizable={false}                                         // Отключить изменение размера
                     margin={margin}
-                    //onLayoutChange={console.log}
                 >
                     { layouts?.map((layer) => {
                         return (
@@ -119,7 +122,7 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
                 </ResponsiveGridLayout>
             }
 
-            { type === 'Area' &&
+            { type === 'Area' && size.width && size.height &&
                 <div style={{ width: size.width-5, height: size.height-5, position: 'relative' }}>
                     { layouts?.map((layer) => (
                         <React.Fragment key={layer.i}>

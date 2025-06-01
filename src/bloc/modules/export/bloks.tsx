@@ -1,19 +1,19 @@
 import React from 'react';
-import { jsxJsonToString, formatJsx, renderJsonToLiteral, renderComponentSsr, renderComponentSsrPrerender } from './utils';
-import { Component, DataNested } from '../../type';
+import { LayoutCustom, DataNested } from '../../type';
 import { createRoot } from 'react-dom/client'
 import { exportLiteralToFile } from "../../helpers/export";
 import MiniRender from '../../nest-slot/MiniRender';
 
 
 const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
-export async function useRender(layout: LayoutCustom[], size): Promise<string> {
+export async function useRender(layout: LayoutCustom[], size, type): Promise<string> {
     const container = document.createElement('div'); // НЕ добавляем в DOM
     const root = createRoot(container);
 
     const result = await new Promise<string>((resolve) => {
         root.render(
             <MiniRender
+                type={type}
                 layouts={layout}
                 size={size}
                 onReadyLiteral={(code) => {
@@ -22,7 +22,6 @@ export async function useRender(layout: LayoutCustom[], size): Promise<string> {
             />
         );
     });
-
 
     root.unmount();
 
@@ -263,7 +262,7 @@ export function exportedFrame(
         exportLiteralToFile(
             [meta.scope, `${meta.name}/frames`],
             name,
-            await useRender(slot.layout, slot.size)
+            await useRender(slot.layout, slot.size, 'Frame')
         );
     }
     const prerender = renderSlotsLinks(metaName??'StackGrid');
@@ -287,6 +286,46 @@ export function exportedFrame(
         }
     `);
 }
+export function exportedArea(
+    meta: { scope: string, name: string },
+    slot: DataNested,
+    metaName?: string
+) {
+    const renderSlotsLinks =(name: string)=> {
+        return {
+            body: `<${name} />`,
+            imports: `import ${name} from './canvas/${name}';`
+        }
+    }
+    const renderSlot = async(name: string)=> {
+        exportLiteralToFile(
+            [meta.scope, `${meta.name}/canvas`],
+            name,
+            await useRender(slot.layout, slot.size, 'Area')
+        );
+    }
+    const prerender = renderSlotsLinks(metaName??'Canvas');
+    //renderSlot(metaName??'Canvas');
+    useRender(slot.layout, slot.size, 'Area').then(console.log)
+
+    return (`
+        import React from 'react';
+        ${prerender.imports}
+        
+
+        export default function CanvasArea() {
+
+            return (
+                <div
+                    style={{ width: '100%', display: 'block' }}
+                >
+                    ${prerender.body}
+                </div>
+            );
+        }
+    `);
+}
+
 
 // individual
 export function exportedBottomNav(

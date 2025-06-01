@@ -8,7 +8,7 @@ import { SxProps } from '@mui/material';
 import { useEvent, useCtxBufer } from './helpers/shared';
 import { triggerFlyFromComponent } from './helpers/anim';
 import { iconsList } from '../../components/tools/icons';
-import render, { sliderRender } from './export/Inputs';
+import render, { sliderRender } from './export/inputs';
 
 
 

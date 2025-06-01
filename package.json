@@ -2,6 +2,7 @@
   "name": "front-boirplate",
   "version": "1.0.0",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "next start",
     "dev": "vite",

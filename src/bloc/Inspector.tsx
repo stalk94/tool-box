@@ -81,10 +81,10 @@ export default function InspectorPanel ({ data, onClose }) {
         }
 
         if (!state?.colapsed?.value) {
-            editorContext.inspector?.position?.set({ x: window.innerWidth - 60, y: 50 });
+            editorContext.inspector?.position?.set({ x: window.innerWidth - 60, y: 70 });
         }
         else {
-            editorContext.inspector?.position?.set({ x: window.innerWidth - 400, y: 50 });
+            editorContext.inspector?.position?.set({ x: window.innerWidth - 400, y: 70 });
         }
     }, [state?.colapsed]);
     React.useEffect(()=> {

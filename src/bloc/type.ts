@@ -43,14 +43,12 @@ export type ComponentRegister = {
     description?: string;
     nest?: ComponentRegisterNestMetaData 
 }
-export type PropResize = {
-    
-}
+
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
     'data-slot'?: boolean | string | number
-    'data-rnd'?: PropResize
+    isArea?: boolean
     apiPath?: string
     children ?: string | any
     style ?: React.CSSProperties

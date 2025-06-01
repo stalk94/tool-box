@@ -5,7 +5,7 @@ import { updateComponentProps } from '../helpers/updateComponentProps';
 import { infoSlice, editorContext } from "../context";
 import { useDebounced } from 'src/components/hooks/debounce';
 import TipTapSlotEditor from './tip-tap';
-import { exportText, exportTypography } from './export/Text';
+import { exportText, exportTypography } from './export/text';
 
 
 type TextWrapperProps = {

@@ -426,9 +426,9 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         { divider: <Divider sx={{borderColor: 'rgba(128, 128, 129, 0.266)',my:1.2}}/> },
         { id: 'component', label: 'Библиотека', icon: <Extension /> },
         { divider: true },
-        { id: 'atoms', label: 'Атомы', icon: <FaReact size={24}/> },
-        { divider: true },
         { id: 'styles', label: 'Настройки', icon: <Palette /> },
+        { divider: true },
+        { id: 'atoms', label: 'Атомы', icon: <FaReact size={22}/> },
         { divider: true },
         //{ id: 'slot', label: 'cell', icon: <TbCell size={24} style={{margin: 3}} /> }
     ];

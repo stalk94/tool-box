@@ -14,6 +14,7 @@ type IconButtonWrapperProps = IconButtonProps & {
 type ButtonWrapperProps = ButtonProps & {
     'data-id': number
     'data-type': 'Button'
+    isArea?: boolean
     fullWidth: boolean
     style: React.CSSProperties
     startIcon: string
@@ -63,7 +64,7 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
 });
 export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
-    const { startIcon, endIcon, children, style, 'data-id': dataId, ...otherProps } = props;
+    const { startIcon, endIcon, children, style, 'data-id': dataId, isArea, ...otherProps } = props;
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
     
@@ -100,7 +101,7 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
             endIcon={EndIcon ? <EndIcon /> : undefined}
             sx={{ whiteSpace: 'nowrap' }}
             style={style}
-            {...otherProps}
+            { ...otherProps }
         >
             {children}
         </Button>

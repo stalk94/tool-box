@@ -78,8 +78,8 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
             ref={ref}
             elevation={2}
             sx={{
-                height:'5%', 
-                minHeight: 44,
+                height: '5%', 
+                minHeight: 45,
                 width: width, 
                 background:'rgb(58, 58, 58)',
                 border: '1px solid #cdcbcb36',
@@ -88,6 +88,8 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                 alignItems: 'center',
                 px: 2,
                 ml: 0.5,
+                zIndex: 999,
+                position: 'fixed',
             }}
         >
             <Box sx={{ml:1}}>

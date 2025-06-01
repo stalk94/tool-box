@@ -12,6 +12,7 @@ import { DroppableCell } from './Dragable';
 import Container from '@mui/material/Container';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
+import { RulerX, RulerY } from './utils/Rullers';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -28,7 +29,7 @@ export default function ({ desserealize }) {
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
     const render = renderSlice.use();
     const curCell = editorContext.currentCell.use();                        // текушая выбранная ячейка
-    
+
 
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         renderSlice.set((prevRender) => {
@@ -100,7 +101,7 @@ export default function ({ desserealize }) {
             currentToolPanel: 'component'
         });
 
-        
+
         if (curCell?.i !== layer.i) {
             editorContext.currentCell.set({ i: layer.i });
             infoSlice.select.cell.set(e.currentTarget);
@@ -174,13 +175,13 @@ export default function ({ desserealize }) {
     }, []);
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
-        
+
         const resizeObserver = new ResizeObserver(() => {
             if (!gridContainerRef.current) return;
 
             const parentHeight = gridContainerRef.current.clientHeight;
             const containerWidth = gridContainerRef.current.offsetWidth;
-            
+
             if (containerWidth > 0) {
                 infoSlice.container.height.set(parentHeight);
                 infoSlice.container.width.set(containerWidth);
@@ -201,7 +202,7 @@ export default function ({ desserealize }) {
             if (ref) resizeObserver.unobserve(ref); // ⬅️ важно: unobserve тот же ref
         }
     }, [meta, project]);
-    
+
     const { menu, handleOpen } = useContextMenu([
         {
             label: <div style={{ color: 'red', fontSize: 14 }}>Удалить cell</div>,
@@ -209,105 +210,111 @@ export default function ({ desserealize }) {
             onClick: (id) => delCellData(id),
         },
     ]);
-    
+
 
     return (
         <ThemeProvider theme={taskadeTheme}>
-        <Container 
-            sx={{
-                height: (size.height + 10) ?? '99%', 
-                overflowY: 'hidden'
-            }}
-        >
-        <div
-            style={{ 
-                margin: 1,
-                maxWidth: size.width ?? '100%', 
-                height: '99%',
-                border: '1px dashed #fbfbfa26',
-                overflowY: 'auto',
-            }}
-            ref={gridContainerRef}
-        >
-            {ready &&
-            <ResponsiveGridLayout
-                style={{ height: (size.height - 10) ?? '99%', }}
-                className="GRID-EDITOR"
-                layouts={{ lg: editorContext.layout.get() }}                // Схема сетки
-                breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-                cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
-                rowHeight={rowHeight}
-                compactType={null}                                          // Отключение автоматической компоновки
-                preventCollision={true}
-                isDraggable={mod === 'grid' && true}                // перетаскивание
-                isResizable={mod === 'grid' && true}                // изменение размера
-                margin={margin}
-                onLayoutChange={handleChangeLayout}
+            {/* линейки */}
+            <div className="ruler-container">
+                <RulerX containerRef={gridContainerRef} />
+                <RulerY containerRef={gridContainerRef} />
+            </div>
+
+            <Container sx={{
+                    height: (size.height + 10) ?? '99%',
+                    overflowY: 'hidden',
+                    marginTop: '65px',
+                }}
             >
-                { render?.map((layer) => {
-                    return(
-                        <div 
-                            onClick={(e) => handleClickCell(e, layer)}
-                            onContextMenu={(e)=> {
-                                handleClickCell(e, layer);
-                                handleOpen(e, {id: layer.i});
-                            }}
-                            data-id={layer.i} 
-                            key={layer.i}
-                            className={layer?.props?.classNames}
-                            style={{
-                                ...layer?.props?.style,
-                                overflowX: 'hidden',
-                                overflowY: 'auto',
-                                border: `1px dashed ${curCell?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
-                                background: curCell?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
-                                height: '100%',
-                                display: 'inline-flex',
-                                width: '100%',
-                                flexWrap: 'wrap',
-                                alignItems: 'stretch',
-                                alignContent: 'flex-start'
-                            }}
+                <div ref={gridContainerRef}
+                    style={{
+                        margin: 1,
+                        maxWidth: size.width ?? '100%',
+                        height: '99%',
+                        border: '1px dashed #fbfbfa26',
+                        overflowY: 'auto',
+                    }}
+                >
+
+                    {ready &&
+                        <ResponsiveGridLayout
+                            style={{ height: (size.height - 10) ?? '99%', }}
+                            className="GRID-EDITOR"
+                            layouts={{ lg: editorContext.layout.get() }}                // Схема сетки
+                            breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
+                            cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
+                            rowHeight={rowHeight}
+                            compactType={null}                                          // Отключение автоматической компоновки
+                            preventCollision={true}
+                            isDraggable={mod === 'grid' && true}                // перетаскивание
+                            isResizable={mod === 'grid' && true}                // изменение размера
+                            margin={margin}
+                            onLayoutChange={handleChangeLayout}
                         >
-                            <DroppableCell key={layer.i} id={layer.i}>
-                                {EDITOR &&
-                                    <SortableContext
-                                        items={layer.content.map((cnt) => cnt.props['data-id'])}
-                                        strategy={rectSortingStrategy}
+                            {render?.map((layer) => {
+                                return (
+                                    <div
+                                        onClick={(e) => handleClickCell(e, layer)}
+                                        onContextMenu={(e) => {
+                                            handleClickCell(e, layer);
+                                            handleOpen(e, { id: layer.i });
+                                        }}
+                                        data-id={layer.i}
+                                        key={layer.i}
+                                        className={layer?.props?.classNames}
+                                        style={{
+                                            ...layer?.props?.style,
+                                            overflowX: 'hidden',
+                                            overflowY: 'auto',
+                                            border: `1px dashed ${curCell?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
+                                            background: curCell?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
+                                            height: '100%',
+                                            display: 'inline-flex',
+                                            width: '100%',
+                                            flexWrap: 'wrap',
+                                            alignItems: 'stretch',
+                                            alignContent: 'flex-start'
+                                        }}
                                     >
-                                        { Array.isArray(layer.content) &&
-                                            <>
-                                                {Array.isArray(layer.content) && layer.content.map((component) => (
-                                                    <SortableItem
-                                                        key={component.props['data-id']}
-                                                        id={component.props['data-id']}
-                                                        cellId={layer.i}
-                                                    >
-                                                        { component }
-                                                    </SortableItem>
-                                                ))}
-                                            </>
+                                        <DroppableCell key={layer.i} id={layer.i}>
+                                            {EDITOR &&
+                                                <SortableContext
+                                                    items={layer.content.map((cnt) => cnt.props['data-id'])}
+                                                    strategy={rectSortingStrategy}
+                                                >
+                                                    {Array.isArray(layer.content) &&
+                                                        <>
+                                                            {Array.isArray(layer.content) && layer.content.map((component) => (
+                                                                <SortableItem
+                                                                    key={component.props['data-id']}
+                                                                    id={component.props['data-id']}
+                                                                    cellId={layer.i}
+                                                                >
+                                                                    {component}
+                                                                </SortableItem>
+                                                            ))}
+                                                        </>
+                                                    }
+                                                </SortableContext>
+                                            }
+                                        </DroppableCell>
+
+                                        {/* ANCHOR - Вне редактора */}
+                                        {(!EDITOR && Array.isArray(layer.content)) &&
+                                            layer.content.map((component, index) =>
+                                                <React.Fragment key={component.props['data-id']}>
+                                                    {desserealize(component)}
+                                                </React.Fragment>
+                                            )
                                         }
-                                    </SortableContext>
-                                }
-                            </DroppableCell>
-                            
-                            {/* ANCHOR - Вне редактора */}
-                            { (!EDITOR && Array.isArray(layer.content)) && 
-                                layer.content.map((component, index) => 
-                                    <React.Fragment key={component.props['data-id']}>
-                                        { desserealize(component) }
-                                    </React.Fragment>
-                                )
-                            }
-                        </div>
-                    );
-                })}
-            </ResponsiveGridLayout>
-            }
-        </div>
-        { menu }
-        </Container>
+                                    </div>
+                                );
+                            })}
+                        </ResponsiveGridLayout>
+                    }
+                </div>
+                { menu }
+            </Container>
         </ThemeProvider>
     );
 }
