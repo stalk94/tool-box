@@ -1,11 +1,10 @@
-import { Events } from "./global.js";
-
 class EventEmitter<T extends Record<string, (...args: any[]) => void>> {
     events: Record<keyof T, T[keyof T][]> = {} as Record<keyof T, T[keyof T][]>;
 
     on<K extends keyof T>(eventName: K, fn: T[K]) {
         if (!this.events[eventName]) this.events[eventName] = [];
         this.events[eventName].push(fn);
+
         return () => {
             this.events[eventName] = this.events[eventName].filter((eventFn) => fn !== eventFn);
         };
@@ -22,11 +21,13 @@ class EventEmitter<T extends Record<string, (...args: any[]) => void>> {
         if (fn) {
             const index = this.events[eventName].findIndex((f) => f === fn || f.toString() === fn.toString());
             if (index !== -1) this.events[eventName].splice(index, 1);
-        } else {
+        } 
+        else {
             delete this.events[eventName];
         }
     }
 }
+
 
 export default class ExtendedEmitter<T extends Record<string, (...args: any[]) => void>> extends EventEmitter<T> {
     private _globalListeners: ((eventName: keyof T, payload: Parameters<T[keyof T]>[0]) => void)[] = [];
@@ -34,7 +35,8 @@ export default class ExtendedEmitter<T extends Record<string, (...args: any[]) =
     onAny(fn: (eventName: keyof T, payload: Parameters<T[keyof T]>[0]) => void): () => void {
         if (!this._globalListeners.includes(fn)) {
             this._globalListeners.push(fn);
-        } else {
+        } 
+        else {
             console.warn('Повторная подписка');
         }
 
@@ -49,7 +51,8 @@ export default class ExtendedEmitter<T extends Record<string, (...args: any[]) =
         for (const listener of this._globalListeners) {
             try {
                 listener(eventName, args[0]); // по умолчанию передаётся первый аргумент
-            } catch (e) {
+            } 
+            catch (e) {
                 console.warn(`[ExtendedEmitter] Ошибка в глобальном слушателе:`, e);
             }
         }

@@ -2,6 +2,7 @@ import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ComponentPro
 import { Editor } from '@tiptap/react';
 import { createState, useLocalStorage } from 'statekit-react';
 import { createStore as create } from 'statekit-lite';
+import { ssePlugin } from 'statekit-lite';
 import type { Palette } from '@mui/material/styles';
 
 
