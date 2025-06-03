@@ -324,7 +324,11 @@ const Preview =()=> {
             <Divider
                 flexItem
                 variant="fullWidth"
-                children='divider'
+                children={
+                    <Typography variant='subtitle2'>
+                        divider
+                    </Typography>
+                }
             />
             <div
                 style={{
@@ -337,6 +341,17 @@ const Preview =()=> {
                     flexItem
                     variant="fullWidth"
                     orientation="vertical"
+                    children={
+                        <Typography
+                            variant='subtitle2'
+                            style={{ 
+                                writingMode: 'vertical-rl', 
+                                transform: 'rotate(180deg)',
+                            }}
+                        >
+                            divider
+                        </Typography>
+                    }
                 />
                 { inputsDop }
                 <Divider
@@ -349,7 +364,11 @@ const Preview =()=> {
             <Divider sx={{mt:3}}
                 flexItem
                 variant="fullWidth"
-                children='divider'
+                children={
+                    <Typography variant='subtitle2'>
+                        divider
+                    </Typography>
+                }
             />
             <div
                 style={{

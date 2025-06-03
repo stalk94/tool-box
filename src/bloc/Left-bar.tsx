@@ -76,7 +76,7 @@ const RenderListProject = ({ currentCat }) => {
         const meta = editorContext.meta.get();
         const scope = getAllBlockFromScope();
         const existingNames = scope.map(el => el.name);
-        const uniqueName = getUniqueBlockName(trigger, existingNames);
+        const uniqueName = getUniqueBlockName(trigger.replace(/[^\w]/g, ''), existingNames);
 
         if (typeof window === 'undefined') return;
 

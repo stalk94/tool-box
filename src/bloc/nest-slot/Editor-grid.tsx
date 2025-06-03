@@ -7,6 +7,8 @@ import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStr
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from '../helpers/editor';
 import { DroppableCell } from './Dragable';
+import { ThemeProvider, CssBaseline } from '@mui/material';
+import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from '../utils/Rullers';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -234,101 +236,110 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
     
     
     return (
-        <div className="editor-container"
-            style={{ 
-                margin: 5,
-                maxWidth: size?.width ?? '100%', 
-                height: size?.height ?? '100%',
-                border: '1px dashed #fbfbfa26'
-            }}
-            ref={gridContainerRef}
-        >
-           
-            {ready && !isArea && 
-            <ResponsiveGridLayout
-                style={{ background: '#222222' }}
-                className="GRID-EDITOR"
-                layouts={{ lg: editorSlice.layout.get(true) }}                // Схема сетки
-                breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-                cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
-                rowHeight={20}
-                compactType={null}                                          // Отключение автоматической компоновки
-                preventCollision={true}
-                isDraggable={mod === 'grid' && true}                // Отключить перетаскивание
-                isResizable={mod === 'grid' && true}                // Отключить изменение размера
-                margin={margin}
-                onLayoutChange={handleChangeLayout}
-            >
-                { render?.map((layer) => {
-                    if(layer?.i) return(
-                        <div 
-                            onClick={(e) => handleClickCell(e, layer)}
-                            data-id={layer.i} 
-                            key={layer.i}
-                            style={{
-                                overflowX: 'hidden',
-                                overflowY: 'auto',
-                                border: `1px dashed ${curCell?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
-                                background: curCell?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
-                                height: '100%',
-                                display: 'inline-flex',
-                                width: '100%',
-                                flexWrap: 'wrap',
-                                alignItems: 'stretch',
-                                alignContent: 'flex-start',
-                                position: 'relative'
-                            }}
-                        >
-                            <DroppableCell key={layer.i} id={layer.i}>
-                                {(EDITOR && layer?.content) &&
-                                    <SortableContext
-                                        items={layer.content?.map((cnt) => cnt.props['data-id'])}
-                                        strategy={rectSortingStrategy}
-                                    >
-                                        {layer?.content && Array.isArray(layer.content) &&
-                                            <>
-                                                {Array.isArray(layer.content) && layer.content.map((component) => (
-                                                    <SortableItem
-                                                        key={component.props['data-id']}
-                                                        id={component.props['data-id']}
-                                                        cellId={layer.i}
-                                                        isArea={isArea}
-                                                    >
-                                                        { component }
-                                                    </SortableItem>
-                                                ))}
-                                            </>
-                                        }
-                                    </SortableContext>
-                                }
-                            </DroppableCell>
-                        </div>
-                    );
-                })}
-            </ResponsiveGridLayout>
-            }
+        <ThemeProvider theme={taskadeTheme}>
+            <div className="ruler-container">
+                <RulerX containerRef={gridContainerRef} />
+                <RulerY containerRef={gridContainerRef} />
+            </div>
 
-            {/* canvas area */}
-            {(isArea && render[0]) &&
-                <DroppableCell id={render[0]?.i}>
-                    <div className='CanvasArea' style={{ width: size.width, height: size.height, position: 'relative' }}>
-                        {render?.map((layer) => (
-                            <React.Fragment key={layer.i}>
-                                {layer?.content && Array.isArray(layer.content) && layer.content.map((component) => (
-                                    <SortableItem
-                                        key={component.props['data-id']}
-                                        id={component.props['data-id']}
-                                        cellId={layer.i}
-                                        isArea={isArea}
-                                    >
-                                        { component }
-                                    </SortableItem>
-                                ))}
-                            </React.Fragment>
-                        ))}
-                    </div>
-                </DroppableCell>
-            }
-        </div>
+            <div className="editor-container"
+                style={{
+                    margin: 5,
+                    maxWidth: size?.width ?? '100%',
+                    height: size?.height ?? '100%',
+                    border: '1px dashed #fbfbfa26',
+                    marginTop: '20px',
+                    marginLeft: '30px'
+                }}
+                ref={gridContainerRef}
+            >
+
+                {ready && !isArea &&
+                    <ResponsiveGridLayout
+                        style={{ background: '#222222' }}
+                        className="GRID-EDITOR"
+                        layouts={{ lg: editorSlice.layout.get(true) }}                // Схема сетки
+                        breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
+                        cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
+                        rowHeight={20}
+                        compactType={null}                                          // Отключение автоматической компоновки
+                        preventCollision={true}
+                        isDraggable={mod === 'grid' && true}                // Отключить перетаскивание
+                        isResizable={mod === 'grid' && true}                // Отключить изменение размера
+                        margin={margin}
+                        onLayoutChange={handleChangeLayout}
+                    >
+                        {render?.map((layer) => {
+                            if (layer?.i) return (
+                                <div
+                                    onClick={(e) => handleClickCell(e, layer)}
+                                    data-id={layer.i}
+                                    key={layer.i}
+                                    style={{
+                                        overflowX: 'hidden',
+                                        overflowY: 'auto',
+                                        border: `1px dashed ${curCell?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
+                                        background: curCell?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
+                                        height: '100%',
+                                        display: 'inline-flex',
+                                        width: '100%',
+                                        flexWrap: 'wrap',
+                                        alignItems: 'stretch',
+                                        alignContent: 'flex-start',
+                                        position: 'relative'
+                                    }}
+                                >
+                                    <DroppableCell key={layer.i} id={layer.i}>
+                                        {(EDITOR && layer?.content) &&
+                                            <SortableContext
+                                                items={layer.content?.map((cnt) => cnt.props['data-id'])}
+                                                strategy={rectSortingStrategy}
+                                            >
+                                                {layer?.content && Array.isArray(layer.content) &&
+                                                    <>
+                                                        {Array.isArray(layer.content) && layer.content.map((component) => (
+                                                            <SortableItem
+                                                                key={component.props['data-id']}
+                                                                id={component.props['data-id']}
+                                                                cellId={layer.i}
+                                                                isArea={isArea}
+                                                            >
+                                                                {component}
+                                                            </SortableItem>
+                                                        ))}
+                                                    </>
+                                                }
+                                            </SortableContext>
+                                        }
+                                    </DroppableCell>
+                                </div>
+                            );
+                        })}
+                    </ResponsiveGridLayout>
+                }
+
+                {/* canvas area */}
+                {(isArea && render[0]) &&
+                    <DroppableCell id={render[0]?.i}>
+                        <div className='CanvasArea' style={{ width: size.width, height: size.height, position: 'relative' }}>
+                            {render?.map((layer) => (
+                                <React.Fragment key={layer.i}>
+                                    {layer?.content && Array.isArray(layer.content) && layer.content.map((component) => (
+                                        <SortableItem
+                                            key={component.props['data-id']}
+                                            id={component.props['data-id']}
+                                            cellId={layer.i}
+                                            isArea={isArea}
+                                        >
+                                            {component}
+                                        </SortableItem>
+                                    ))}
+                                </React.Fragment>
+                            ))}
+                        </div>
+                    </DroppableCell>
+                }
+            </div>
+        </ThemeProvider>
     );
 }

@@ -125,6 +125,20 @@
       "content": [],
       "moved": false,
       "static": false
+    },
+    {
+      "i": "cell-1748955376101",
+      "x": 0,
+      "y": 7,
+      "w": 5,
+      "h": 25,
+      "props": {
+        "classNames": "",
+        "style": {}
+      },
+      "content": [],
+      "moved": false,
+      "static": false
     }
   ],
   "content": {
@@ -473,12 +487,29 @@
           "data-type": "IconButton"
         }
       }
+    ],
+    "cell-1748955376101": [
+      {
+        "id": 1748955387152,
+        "parent": "cell-1748955376101",
+        "props": {
+          "fullWidth": true,
+          "metaName": "AreaFrame",
+          "elevation": 0,
+          "slots": {
+            "0": {}
+          },
+          "style": {},
+          "data-id": 1748955387152,
+          "data-type": "Area"
+        }
+      }
     ]
   },
   "meta": {
     "scope": "home",
     "name": "test",
-    "updatedAt": 1748534754338,
+    "updatedAt": 1748960099099,
     "preview": "snapshots/home-test.png"
   },
   "size": {

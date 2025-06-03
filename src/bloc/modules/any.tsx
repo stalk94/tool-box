@@ -111,6 +111,10 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
                         contentEditable={globalThis.EDITOR && selected?.props?.['data-id'] === dataId}
                         suppressContentEditableWarning
                         onBlur={handleBlur}
+                        style={!fullWidth ? {
+                            writingMode: 'vertical-rl', 
+                            transform: 'rotate(180deg)',
+                        } : {}}
                     >
                         { children }
                      </Typography>

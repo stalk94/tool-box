@@ -1087,15 +1087,12 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
                 value={value ?? ''}
                 onChange={(html) => {
                     const copy = { ...items[index] };
-                    copy[key] = html;
+                    copy[key] = html ?? '';
                     handleChangeEdit(index, copy);
                 }}
                 placeholder="Текст"
                 className="no-p-margin"
                 isEditable={EDITOR}
-                initialInsert={{
-                    text: '',
-                }}
             />
         )
     }
@@ -1154,7 +1151,7 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
-    const parsedItems = React.useMemo(() => parse(), [items]);
+    const parsedItems = React.useMemo(() => parse(), [items, isSecondary]);
     
 
     return (

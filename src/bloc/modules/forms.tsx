@@ -1,51 +1,28 @@
 import React from 'react';
 import { ComponentSerrialize, Component, ComponentProps } from '../type';
 import { FormAuthOrReg, Form } from '../../index';
-import { useComponentSizeWithSiblings } from './helpers/hooks';
+import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr } from './export/utils';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 
 type FormAuthOrRegWrapperProps = ComponentProps & {
-
+    pathClickButton?: string
 }
 
 
 
 export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, style, items, apiPath, fullWidth, ...otherProps } = props;
-    const { width, height, container } = useComponentSizeWithSiblings(dataId);
+    const { 
+        'data-id': dataId, 
+        style, 
+        items, 
+        apiPath, 
+        fullWidth, 
+        pathClickButton, 
+        ...otherProps 
+    } = props;
 
-    const handleChange = (index: number, data: string) => {
-        const copy = [...items];
 
-        if (copy[index]) {
-            copy[index] = data;
-
-            updateComponentProps({
-                component: { props },
-                data: { items: [...copy] }
-            });
-        }
-    }
-    
-
-    degidratationRef.current = (call) => {
-        const code = (`
-            
-        `);
-
-        call(code);
-    }
-    React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
-        sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.' + dataId, handler);
-
-        return () => {
-            sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.' + dataId, handler);
-        }
-    }, []);
     const sx = {
         display: "flex",
         justifyContent: "space-between",
@@ -69,6 +46,60 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
     ];
 
 
+    const handleChange = (index: number, data: string) => {
+        const copy = [...items];
+
+        if (copy[index]) {
+            copy[index] = data;
+
+            updateComponentProps({
+                component: { props },
+                data: { items: [...copy] }
+            });
+        }
+    }
+    degidratationRef.current = (call) => {
+        const code = (`
+            import { FormAuthOrReg } from '@lib/index';
+
+            export default function AuthForm() {
+                return(
+                    <FormAuthOrReg
+                        onClickRegistration={(data)=> {
+                            sharedEmmiter.emit('event', {
+                                id: ${dataId},
+                                data: data,
+                                type: 'clickRegistration'
+                            });
+                        })}
+                        onClickOauthButton={(type)=> {
+                            sharedEmmiter.emit('event', {
+                                id: ${dataId},
+                                data: { type: type },
+                                type: 'clickOauth'
+                            });
+                        })}
+                        schemeAuthForm={${toObjectLiteral(testSchemeBaseInput)}}
+                        schemeOauth={${toObjectLiteral(schemeOauthTest)}}
+                    />
+                );
+            }
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        const handler = (data) => degidratationRef.current(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+
+
     return (
         <div
             ref={ref}
@@ -77,8 +108,8 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
             style={{ ...style, width: '100%', display: 'block' }}
         >
             <FormAuthOrReg
-                //onClickRegistration={console.log}
-                //onClickOauthButton={console.log}
+                onClickRegistration={(data)=> console.log(pathClickButton, data)}
+                onClickOauthButton={console.log}
                 schemeAuthForm={testSchemeBaseInput}
                 schemeOauth={schemeOauthTest}
             />

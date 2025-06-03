@@ -76,7 +76,7 @@ const ColorWindow =({ color, onChange, sx })=> (
 
 export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showCopy, variant='popup', ...props }: ColorPickerProps) {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-    const [color, setColor] = useState<RgbaColor>(parseRgba(value));
+    const [color, setColor] = useState<RgbaColor>(parseRgba(value ?? ''));
     const [modalOpen, setModalOpen] = useState(false);
     const theme = useTheme();
 
