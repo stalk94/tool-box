@@ -1,4 +1,4 @@
-import { ComponentSerrialize, LayoutCustom, ProxyComponentName, Component } from '../type';
+import { ComponentSerrialize, LayoutCustom, Guides } from '../type';
 import { Editor } from '@tiptap/react';
 import { createStore as create } from 'statekit-lite';
 
@@ -77,6 +77,7 @@ export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
     immer: true
 });
 
+
 export const infoSlice = create({
     container: {
         width: 0,
@@ -92,7 +93,6 @@ export const infoSlice = create({
 } as InfoStateType, {
     immer: true
 });
-
 export const editorSlice = create({
     mod: 'block',
     dragEnabled: true,
@@ -113,5 +113,11 @@ export const editorSlice = create({
         }
     }
 } as EditorContextType, {
+    immer: false
+});
+export const guidesSlice = create({
+    x: [],
+    y: []
+} as Guides, {
     immer: false
 });

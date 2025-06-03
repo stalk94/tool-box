@@ -9,7 +9,7 @@ import { FaReact } from 'react-icons/fa';
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
 import { TooglerInput } from '../../components/input/input.any';
 import LeftSideBarAndTool from '../../components/nav-bars/tool-left'
-import { updateComponentProps } from './shim';
+import { updateComponentProps } from './helpers/shim';
 import Forms from '../Forms';
 import Inspector from '../Inspector';
 import { componentGroups, componentAtom } from '../config/category';
@@ -170,13 +170,7 @@ const useStylesEditor = (elem, onChange, curSub, setSub) => {
 
 
 // левая панель редактора
-export default function (
-    { onChange, componentMap }: 
-    {
-        componentMap: Record<ProxyComponentName, boolean>
-        onChange: (data: any)=> void 
-    }
-) {
+export default function ({ onChange, componentMap }: {componentMap: Record<ProxyComponentName, boolean>, onChange: (data: any)=> void}) {
     const select = infoSlice.select;
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'component' | 'atoms' | 'styles'>('component');

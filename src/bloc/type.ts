@@ -131,9 +131,14 @@ export type ScopeData = {
 /////////////////////////////////////////////////////////////////////////////
 //          вложенный контекст (+ виртуализация)
 ////////////////////////////////////////////////////////////////////////////
+export type Guides = {
+    x: number[]
+    y: number[]
+}
 export type DataNested = { 
     content: Record<string, ComponentSerrialize[]>
     layout: LayoutCustom[]
+    guides?: Guides
     size: { 
         width: number
         height: number 

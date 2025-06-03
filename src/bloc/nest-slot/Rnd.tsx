@@ -1,7 +1,9 @@
 import React from 'react';
 import { Rnd } from 'react-rnd';
-import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
-import { updateComponentProps } from './shim';
+import { editorSlice, infoSlice, renderSlice, cellsSlice, guidesSlice } from "./context";
+import { updateComponentProps } from './helpers/shim';
+import { snapToGuides } from './helpers/guides';
+
 
 
 export function RndWrapper({ dataRnd, onClick, onDoubleClick, rowProps, children }) {
@@ -36,6 +38,8 @@ export function RndWrapper({ dataRnd, onClick, onDoubleClick, rowProps, children
             ref-id={rowProps['data-id']}
             size={size}
             position={position}
+            dragGrid={[10, 10]}
+            resizeGrid={[10, 10]} 
             bounds="parent"
             style={{
                 position: 'absolute',
@@ -63,14 +67,20 @@ export function RndWrapper({ dataRnd, onClick, onDoubleClick, rowProps, children
                 
             }}
             onDragStop={(e, d) => {
-                setPosition({x: d.x, y: d.y, z: d.y});
+                const guides = guidesSlice.get();
+
+                const snappedX = snapToGuides(d.x, guides.x);
+                const snappedY = snapToGuides(d.y, guides.y);
+                setPosition({ x: snappedX, y: snappedY, z: position.z });
                 
                 updateComponentProps({
                     component: { props: rowProps },
                     data: {
-                        style: { 
-                            ...rowProps.style, 
-                            ...{y: d.y, x: d.x, zIndex: d.y } 
+                        style: {
+                            ...rowProps.style,
+                            x: snappedX,
+                            y: snappedY,
+                            zIndex: position.z,
                         }
                     }
                 });

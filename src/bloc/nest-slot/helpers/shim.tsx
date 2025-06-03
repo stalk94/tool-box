@@ -1,8 +1,8 @@
 import React from 'react';
 import { Box, IconButton, Paper } from '@mui/material';
 import { Power, LinkOff, Add, Remove } from '@mui/icons-material';
-import { serializeJSX } from '../helpers/sanitize';
-import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
+import { serializeJSX } from '../../helpers/sanitize';
+import { editorSlice, infoSlice, renderSlice, cellsSlice } from "../context";
 
 
 export function updateComponentProps({ component, data, rerender = true }) {

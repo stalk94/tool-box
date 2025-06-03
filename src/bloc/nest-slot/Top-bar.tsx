@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input } from "@mui/icons-material";
-import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
+import { editorSlice, infoSlice, renderSlice, cellsSlice, guidesSlice } from "./context";
 import NumberInput from "src/components/input/number";
 
 
@@ -62,6 +62,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         setShowBlocEditor({
             content: cellsSlice.get(),
             layout: renderSlice.get(),
+            guides: guidesSlice.get(),
             size: {
                 width: editorSlice.size.width.get(),
                 height: editorSlice.size.height.get()

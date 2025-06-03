@@ -3,7 +3,7 @@ import { NestedContext, ComponentSerrialize, ComponentProps, DataRegisterCompone
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
-import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
+import { editorSlice, infoSlice, renderSlice, cellsSlice, guidesSlice } from "./context";
 import { createComponentFromRegistry } from '../helpers/createComponentRegistry';
 import { serializeJSX } from '../helpers/sanitize';
 import { getMaxBottomCoordinate } from '../helpers/editor';
@@ -203,6 +203,10 @@ export default function Block({ useBackToEditorBase, data, nestedComponentsList,
             cellsSlice.set({});
             renderSlice.set([]);
             editorSlice.layout.set([]);
+            guidesSlice.set({
+                x: [],
+                y: []
+            });
             editorSlice.currentCell.set(undefined);
             infoSlice.select.content.set(null);
             console.log('unmount nested app');

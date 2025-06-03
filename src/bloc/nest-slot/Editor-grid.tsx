@@ -1,8 +1,8 @@
 import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import { LayoutCustom, ComponentSerrialize, Component } from '../type';
-import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";;
+import { LayoutCustom, ComponentSerrialize, DataNested } from '../type';
+import { editorSlice, infoSlice, renderSlice, cellsSlice, guidesSlice } from "./context";;
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { canPlace, findFreeSpot } from '../helpers/editor';
@@ -14,23 +14,16 @@ import { RulerX, RulerY } from '../utils/Rullers';
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
-type NestedData = {
-    content: Record<string, ComponentSerrialize[]>
-    layout?: LayoutCustom[]
-    size: {
-        width: number
-        height: number
-    }
-}
+
 type NestGridEditor = { 
-    nestedData: NestedData
+    nestedData: DataNested
     isArea?: boolean 
 }
 
 
 export default function ({ nestedData, isArea }: NestGridEditor) {
     const [ready, setReady] = React.useState(false);
-    const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки       
+    const gridContainerRef = React.useRef<HTMLDivElement>(null);                            // ref на главный контейнер редактора сетки       
     const curCell = editorSlice.currentCell.use();
     const render = renderSlice.use();
     const size = editorSlice.size.use();
@@ -216,6 +209,8 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
     }, []);
     React.useEffect(() => {
         if (nestedData.content) cellsSlice.set(nestedData.content);
+        // 📏 направляющие
+        if (nestedData.guides) guidesSlice.set(nestedData.guides);
 
         // активная ячейка для canvas
         if(isArea && !nestedData?.layout) editorSlice.currentCell.set({i: addNewCell()});
@@ -238,8 +233,8 @@ export default function ({ nestedData, isArea }: NestGridEditor) {
     return (
         <ThemeProvider theme={taskadeTheme}>
             <div className="ruler-container">
-                <RulerX containerRef={gridContainerRef} />
-                <RulerY containerRef={gridContainerRef} />
+                <RulerX containerRef={gridContainerRef} guides={guidesSlice} />
+                <RulerY containerRef={gridContainerRef} guides={guidesSlice} />
             </div>
 
             <div className="editor-container"
