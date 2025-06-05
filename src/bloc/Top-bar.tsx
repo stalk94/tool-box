@@ -3,7 +3,7 @@ import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton,
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings } from "@mui/icons-material";
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
-import { SelectInput } from 'src/index';
+
 
 
 const categories = [

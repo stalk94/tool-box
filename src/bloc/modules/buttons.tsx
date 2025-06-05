@@ -25,11 +25,10 @@ type ButtonWrapperProps = ButtonProps & {
 
 
 export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 'data-id': dataId, icon, children, fullWidth, style, ...otherProps } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : Settings;
 
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = exportedMuiIconButton(
             dataId,
             icon ? <Icon/> : null,
@@ -40,7 +39,9 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
         call(code);
     }
     React.useEffect(()=> {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+        
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.'+dataId, handler);
 
@@ -48,7 +49,7 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.'+dataId, handler);
         }
-    }, []);
+    }, [props]);
 
     
     return (
@@ -56,6 +57,12 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
             ref={ref}
             data-type="IconButton"
             style={style}
+            onClick={()=> {
+                sharedEmmiter.emit('event', {
+                    id: dataId,
+                    type: 'onClick'
+                });
+            }}
             { ...otherProps }
         >
             <Icon />
@@ -63,13 +70,12 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
     );
 });
 export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { startIcon, endIcon, children, style, 'data-id': dataId, isArea, ...otherProps } = props;
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
     
     
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = exportedMuiButton(
             dataId,
             StartIcon ? <StartIcon/> : null,
@@ -82,7 +88,9 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
         call(code);
     }
     React.useEffect(()=> {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.'+dataId, handler);
 
@@ -90,7 +98,7 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.'+dataId, handler);
         }
-    }, []);
+    }, [props]);
     
 
     return (
@@ -101,9 +109,15 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
             endIcon={EndIcon ? <EndIcon /> : undefined}
             sx={{ whiteSpace: 'nowrap' }}
             style={style}
+            onClick={()=> {
+                sharedEmmiter.emit('event', {
+                    id: dataId,
+                    type: 'onClick'
+                });
+            }}
             { ...otherProps }
         >
-            {children}
+            { children }
         </Button>
     );
 });

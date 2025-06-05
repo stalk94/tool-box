@@ -2,9 +2,9 @@ import { parse } from '@babel/parser';
 import traverse from '@babel/traverse';
 import generate from '@babel/generator';
 import type { File } from '@babel/types';
-import { LayoutCustom } from '../../type';
+import { LayoutCustom, LayoutsBreackpoints } from '../../type';
 import { exportLiteralToFile, addModuleToIndex } from "../../helpers/export";
-import { Component } from '../../type';
+import { ComponentSerrialize } from '../../type';
 
 
 export function mergeImports(importLines: string[]): string[] {
@@ -131,15 +131,15 @@ export function getComponentLiteral(code: string): string {
 
 
 export default function exportsGrid(
-    render: LayoutCustom[],
+    layouts: LayoutsBreackpoints,
+    contents: Record<string, ComponentSerrialize[]>,
     scope: string,
-    name: string,
-    style?: React.CSSProperties,
+    name: string
 ) {
     const singleList = ['Breadcrumbs', 'AppBar'];
     const individualList = ['Tabs', 'BottomNav', 'DataTable', 'HorizontCarousel', 'VerticalCarousel', 'PromoBanner', 'List'];
     
-    const renderComponents = async(content: Component[], cell: LayoutCustom) => {
+    const renderComponents = async(content: ComponentSerrialize[]) => {
         const imports: string[] = [];
         const bodysInOrder: string[] = [];
         const singletonsimports: string[] = [];
@@ -216,12 +216,12 @@ export default function exportsGrid(
         const results: Record<string, string> = {};
 
         await Promise.all(
-            render.map(async (layout) => {
+            layouts.lg.map(async (layout) => {
                 if (!Array.isArray(layout.content)) return;
-                const content = layout.content;
                 const cellid = layout.i;
 
-                const result = await renderComponents(content, layout);
+                const result = await renderComponents(contents[cellid]);
+                console.log(result)
 
                 if (result.cells) {
                     const path = await exportLiteralToFile([scope, name], cellid, result.cells);
@@ -255,7 +255,7 @@ export default function exportsGrid(
         let imports = ``;
         let cells = ``;
 
-        render.map((layout, index) => {
+        layouts.lg.map((layout, index) => {
             const find = paths.find((elem)=> elem.cellId === layout.i);
 
             if(find) {
@@ -287,7 +287,7 @@ export default function exportsGrid(
     }
     const renderLiteralGrid = async()=> {
         const result = await renderLiteralLayouts();
-        
+
 
         const literal = (`
             ${result.imports}
@@ -297,19 +297,29 @@ export default function exportsGrid(
             const ResponsiveGridLayout = WidthProvider(Responsive);
 
             export default function RenderGrid() {
+                const [currentBreakpoint, setBreackpoint] = React.useState('lg');
+                const layouts = {
+                    lg: ${objectArrayToJsLiteralWithoutContent(layouts.lg)},
+                    md: ${objectArrayToJsLiteralWithoutContent(layouts.md)},
+                    sm: ${objectArrayToJsLiteralWithoutContent(layouts.sm)},
+                    xs:  ${objectArrayToJsLiteralWithoutContent(layouts.xs)}
+                }
+
+                
                 return (
                     <ResponsiveGridLayout
                         style={{ }}
                         className="GRID-EDITOR"
-                        layouts={{ lg: ${objectArrayToJsLiteralWithoutContent(render)} }}                                          
-                        breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-                        cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
+                        layouts={{ [currentBreakpoint]: layouts[currentBreakpoint] }}                                         
+                        breakpoints={{ lg: 1200, md: 950, sm: 590, xs: 480 }}        // Ширина экрана для переключения
+                        cols={{ lg: 12, md: 10, sm: 8, xs: 6 }}                      // Количество колонок для каждого размера
                         rowHeight={20}
-                        compactType={null}                                          // Отключение автоматической компоновки
+                        compactType={null}                                            // Отключение автоматической компоновки
                         preventCollision={true}
                         isDraggable={false}             
                         isResizable={false}             
                         margin={[5, 5]}
+                        onBreakpointChange={(br)=> setBreackpoint(br)}
                     >
                         ${result.cells}
                     </ResponsiveGridLayout>

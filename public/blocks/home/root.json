@@ -1,104 +1,166 @@
 {
-  "layout": [
-    {
-      "i": "cell-1746527949939",
-      "x": 0,
-      "y": 0,
-      "w": 5,
-      "h": 17,
-      "content": [],
-      "moved": false,
-      "static": false,
-      "props": {
-        "style": {},
-        "classNames": ""
-      }
-    },
-    {
-      "i": "cell-1747227523825",
-      "x": 5,
-      "y": 0,
-      "w": 3,
-      "h": 11,
-      "content": [],
-      "moved": false,
-      "static": false,
-      "props": {
-        "style": {},
-        "classNames": ""
-      }
-    },
-    {
-      "i": "cell-1747227526997",
-      "x": 8,
-      "y": 0,
-      "w": 4,
-      "h": 11,
-      "content": [],
-      "moved": false,
-      "static": false,
-      "props": {
-        "style": {},
-        "classNames": ""
-      }
-    },
-    {
-      "i": "cell-1747227527273",
-      "x": 5,
-      "y": 11,
-      "w": 3,
-      "h": 21,
-      "content": [],
-      "moved": false,
-      "static": false,
-      "props": {
-        "style": {},
-        "classNames": ""
-      }
-    },
-    {
-      "i": "cell-1747750856603",
-      "x": 8,
-      "y": 11,
-      "w": 4,
-      "h": 9,
-      "props": {
-        "classNames": "",
-        "style": {}
+  "layouts": {
+    "lg": [
+      {
+        "w": 5,
+        "h": 17,
+        "x": 0,
+        "y": 0,
+        "i": "cell-1746527949939",
+        "moved": false,
+        "static": false
       },
-      "content": [],
-      "moved": false,
-      "static": false
-    },
-    {
-      "i": "cell-1747755864668",
-      "x": 8,
-      "y": 20,
-      "w": 4,
-      "h": 12,
-      "props": {
-        "classNames": "",
-        "style": {}
+      {
+        "w": 3,
+        "h": 11,
+        "x": 9,
+        "y": 0,
+        "i": "cell-1747227526997",
+        "moved": false,
+        "static": false
       },
-      "content": [],
-      "moved": false,
-      "static": false
-    },
-    {
-      "i": "cell-1748696638444",
-      "x": 0,
-      "y": 17,
-      "w": 5,
-      "h": 13,
-      "props": {
-        "classNames": "",
-        "style": {}
+      {
+        "w": 3,
+        "h": 21,
+        "x": 5,
+        "y": 11,
+        "i": "cell-1747227527273",
+        "moved": false,
+        "static": false
       },
-      "content": [],
-      "moved": false,
-      "static": false
-    }
-  ],
+      {
+        "w": 4,
+        "h": 9,
+        "x": 8,
+        "y": 11,
+        "i": "cell-1747750856603",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 4,
+        "h": 12,
+        "x": 8,
+        "y": 20,
+        "i": "cell-1747755864668",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 5,
+        "h": 13,
+        "x": 0,
+        "y": 17,
+        "i": "cell-1748696638444",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 4,
+        "h": 11,
+        "x": 5,
+        "y": 0,
+        "i": "cell-1749131869369",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "md": [
+      {
+        "w": 5,
+        "h": 17,
+        "x": 0,
+        "y": 0,
+        "i": "cell-1746527949939",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 5,
+        "h": 11,
+        "x": 5,
+        "y": 0,
+        "i": "cell-1747227526997",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 2,
+        "h": 12,
+        "x": 5,
+        "y": 11,
+        "i": "cell-1747227527273",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 3,
+        "h": 7,
+        "x": 5,
+        "y": 23,
+        "i": "cell-1747750856603",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 3,
+        "h": 12,
+        "x": 7,
+        "y": 11,
+        "i": "cell-1747755864668",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 5,
+        "h": 13,
+        "x": 0,
+        "y": 17,
+        "i": "cell-1748696638444",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "sm": [
+      {
+        "w": 6,
+        "h": 17,
+        "x": 0,
+        "y": 0,
+        "i": "cell-1746527949939",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 8,
+        "h": 10,
+        "x": 0,
+        "y": 17,
+        "i": "cell-1747227526997",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 2,
+        "h": 17,
+        "x": 6,
+        "y": 0,
+        "i": "cell-1747227527273",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 8,
+        "h": 5,
+        "x": 0,
+        "y": 27,
+        "i": "cell-1747750856603",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "xs": []
+  },
   "content": {
     "cell-1747910002163": [
       {
@@ -129,84 +191,18 @@
     ],
     "cell-1746527949939": [
       {
-        "id": 1748599803700,
+        "id": 1749024601759,
         "parent": "cell-1746527949939",
         "props": {
-          "label": "label",
-          "position": "column",
-          "placeholder": "ввод",
-          "divider": "none",
           "fullWidth": true,
-          "leftIcon": "none",
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
+          "metaName": "AreaFrame",
+          "elevation": 0,
+          "slots": {
+            "0": {}
           },
-          "data-id": 1748599803700,
-          "data-type": "TextInput"
-        }
-      },
-      {
-        "id": 1748599805644,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "placeholder": "ввод number",
-          "fullWidth": true,
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1748599805644,
-          "data-type": "Number"
-        }
-      },
-      {
-        "id": 1748599807120,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "type": "time",
-          "fullWidth": true,
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1748599807120,
-          "data-type": "Time"
-        }
-      },
-      {
-        "id": 1748599809000,
-        "parent": "cell-1746527949939",
-        "props": {
-          "label": "label",
-          "position": "column",
-          "type": "date",
-          "fullWidth": true,
-          "styles": {},
-          "labelStyle": {
-            "fontSize": 14
-          },
-          "data-id": 1748599809000,
-          "data-type": "Date"
-        }
-      }
-    ],
-    "cell-1747227523825": [
-      {
-        "id": 1748457868541,
-        "parent": "cell-1747227523825",
-        "props": {
-          "fullWidth": true,
-          "src": "/placeholder.jpg",
-          "file": "",
-          "data-source": "src",
-          "alt": "Картинка",
-          "data-id": 1748457868541,
-          "data-type": "Image"
+          "style": {},
+          "data-id": 1749024601759,
+          "data-type": "Area"
         }
       }
     ],
@@ -225,36 +221,6 @@
           "data-id": 1748468671736,
           "data-type": "Avatar",
           "variant": "circular"
-        }
-      },
-      {
-        "id": 1748470271342,
-        "parent": "cell-1747227526997",
-        "props": {
-          "fullWidth": false,
-          "variant": "",
-          "size": "small",
-          "color": "",
-          "icon": "",
-          "label": "chip",
-          "style": {},
-          "data-id": 1748470271342,
-          "data-type": "Chip"
-        }
-      },
-      {
-        "id": 1748468972253,
-        "parent": "cell-1747227526997",
-        "props": {
-          "children": "Button",
-          "variant": "outlined",
-          "color": "secondary",
-          "fullWidth": false,
-          "startIcon": "none",
-          "endIcon": "none",
-          "style": {},
-          "data-id": 1748468972253,
-          "data-type": "Button"
         }
       },
       {
@@ -285,38 +251,33 @@
         }
       },
       {
-        "id": 1748528336763,
+        "id": 1748470271342,
         "parent": "cell-1747227526997",
         "props": {
+          "fullWidth": false,
+          "variant": "",
+          "size": "small",
+          "color": "",
+          "icon": "",
+          "label": "chip 22",
+          "style": {},
+          "data-id": 1748470271342,
+          "data-type": "Chip"
+        }
+      },
+      {
+        "id": 1749140334962,
+        "parent": "cell-1747227526997",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "color": "primary",
           "fullWidth": true,
-          "isButton": false,
-          "isSecondary": true,
-          "styles": {},
-          "items": [
-            {
-              "startIcon": "Settings",
-              "primary": {
-                "type": "doc",
-                "content": [
-                  {
-                    "type": "paragraph",
-                    "attrs": {
-                      "textAlign": null
-                    },
-                    "content": [
-                      {
-                        "type": "text",
-                        "text": "тест"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "secondary": "secondary"
-            }
-          ],
-          "data-id": 1748528336763,
-          "data-type": "List"
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1749140334962,
+          "data-type": "Button"
         }
       }
     ],
@@ -334,7 +295,7 @@
           "items": [
             {
               "type": "image",
-              "src": "/uploads/hc-1747753800232-0.png?v=1747921919228"
+              "src": "/uploads/vc-1747753800232-0.png?v=1748969014443"
             },
             {
               "type": "video",
@@ -448,154 +409,17 @@
         }
       }
     ],
-    "cell-1747750856603": [
-      {
-        "id": 1747753796861,
-        "parent": "cell-1747750856603",
-        "props": {
-          "fullWidth": true,
-          "slidesToShow": 3,
-          "slidesToScroll": 1,
-          "autoplay": true,
-          "autoplayDelay": 4000,
-          "loop": false,
-          "width": "100%",
-          "items": [
-            {
-              "type": "image",
-              "src": "/uploads/hc-1747753796861-0.jpg?v=1748458014816"
-            },
-            {
-              "type": "video",
-              "src": "/uploads/hc-1747753796861-1.mp4?v=1747922095312"
-            },
-            {
-              "type": "image",
-              "src": "/uploads/hc-1747753796861-2.jpg?v=1748452802978"
-            },
-            {
-              "type": "video",
-              "src": "/uploads/hc-1747753796861-3.mp4?v=1747919174305"
-            },
-            {
-              "type": "image",
-              "src": "/uploads/hc-1747753796861-4.png?v=1747919152340"
-            },
-            {
-              "type": "image",
-              "src": "/uploads/hc-1747753796861-5.png?v=1747919776830"
-            }
-          ],
-          "data-id": 1747753796861,
-          "data-type": "HorizontCarousel"
-        }
-      }
-    ],
-    "cell-1747755864668": [
-      {
-        "id": 1747840618502,
-        "parent": "cell-1747755864668",
-        "props": {
-          "fullWidth": true,
-          "width": "100%",
-          "items": [
-            {
-              "title": "Title",
-              "buttonText": "ПОДРОБНЕЕ",
-              "description": {
-                "type": "doc",
-                "content": [
-                  {
-                    "type": "paragraph",
-                    "attrs": {
-                      "textAlign": null
-                    },
-                    "content": [
-                      {
-                        "type": "text",
-                        "text": "custom editable "
-                      },
-                      {
-                        "type": "text",
-                        "marks": [
-                          {
-                            "type": "textStyle",
-                            "attrs": {
-                              "color": "rgba(227, 24, 24, 1)"
-                            }
-                          }
-                        ],
-                        "text": "descriptidon "
-                      },
-                      {
-                        "type": "text",
-                        "text": "112"
-                      }
-                    ]
-                  }
-                ]
-              },
-              "images": [
-                "/uploads/pb-1747840618502-0.png?v=1747926095536"
-              ]
-            },
-            {
-              "title": "Title",
-              "buttonText": "ПОДРОБНЕЕ",
-              "description": "custom editable description",
-              "images": [
-                "/uploads/pb-1747840618502-1.png?v=1748479618872"
-              ]
-            }
-          ],
-          "data-id": 1747840618502,
-          "data-type": "PromoBanner",
-          "styles": {
-            "dot": {
-              "size": "24",
-              "activeColor": "rgba(30, 63, 222, 1)"
-            }
-          },
-          "style": {
-            "marginLeft": "0%"
-          }
-        }
-      }
-    ],
-    "cell-1748696638444": [
-      {
-        "id": 1748696648661,
-        "parent": "cell-1748696638444",
-        "props": {
-          "fullWidth": true,
-          "width": "100%",
-          "variant-button": "outlined",
-          "color-button": "primary",
-          "children-button": "go to",
-          "items": [
-            {
-              "title": "Title",
-              "buttonText": "ПОДРОБНЕЕ",
-              "description": "custom editable description",
-              "images": [
-                "https://placehold.co/600x400/353636/gray?text=Promoimage&font=roboto"
-              ]
-            }
-          ],
-          "data-id": 1748696648661,
-          "data-type": "PromoBanner"
-        }
-      }
-    ]
+    "cell-1747750856603": []
   },
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1748696665486,
+    "updatedAt": 1749150954542,
     "preview": "snapshots/home-root.png"
   },
   "size": {
     "width": 1200,
-    "height": 800
+    "height": 800,
+    "breackpoint": "lg"
   }
 }

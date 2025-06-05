@@ -36,7 +36,6 @@ type TextWrapperProps = TextInputProps & {
 
 // styles 
 export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -54,7 +53,7 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
 
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'text',
             leftIcon,
@@ -67,7 +66,9 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+        
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -75,7 +76,7 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     
 
     return (

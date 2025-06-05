@@ -1,4 +1,4 @@
-import { Component, LayoutCustom } from '../type';
+import { Component, LayoutCustom, Breakpoint } from '../type';
 import { renderSlice } from "../context";
 
 
@@ -22,6 +22,27 @@ export function getUniqueBlockName(baseName: string, existingNames: string[]): s
     }
 
     return name;
+}
+export function getNearestLayout(current: Breakpoint, layouts: Record<Breakpoint, LayoutCustom[]>): LayoutCustom[] | undefined {
+    const breakpointOrder: Breakpoint[] = ['xl', 'lg', 'md', 'sm', 'xs'];
+    if (layouts?.[current]?.[0]) return layouts[current];
+
+    const currentIndex = breakpointOrder.indexOf(current);
+    if (currentIndex === -1) return [];
+
+    // сначала ищем вниз (меньшие breakpoints)
+    for (let i = currentIndex - 1; i >= 0; i--) {
+        const layout = layouts[breakpointOrder[i]];
+        if (layout?.[0]) return layout;
+    }
+
+    // потом вверх (большие breakpoints)
+    for (let i = currentIndex + 1; i < breakpointOrder.length; i++) {
+        const layout = layouts[breakpointOrder[i]];
+        if (layout?.[0]) return layout;
+    }
+
+    return [];
 }
 
 /////////////////////////////////////////////////////////////////////////////////////////////////

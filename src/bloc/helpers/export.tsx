@@ -15,12 +15,12 @@ const API_DB = isVite ? '' : '/api/db';
 // ----------------------------------------------------------------------------
 
 export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: string, type: 'error'|'success')=> void) => {
-	const layouts = editorContext.layout.get();
+	const layouts = editorContext.layouts.get();
 	const size = editorContext.size.get();
 	
 
 	const data = {
-		layout: layouts,		// текушая сетка
+		layouts: layouts,					// сетки
 		content: cellsSlice.get(true),		// список компонентов в ячейках
 		meta: {
 			scope,
@@ -30,7 +30,8 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 		},
 		size: {
 			width: size.width,
-			height: size.height
+			height: size.height,
+			breackpoint: size.breackpoint
 		}
 	};
 
@@ -56,6 +57,46 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 		if(clb) clb('Блок сохранён', 'success');
 	}
 }
+export const createBlockToFile = async (scope: string, name: string) => {
+	const size = editorContext.size.get();
+	
+	const data = {
+		layouts: {lg: [], md: [], sm: [], xs: []},
+		content: {},
+		meta: {
+			scope,
+			name,
+			updatedAt: Date.now()
+		},
+		size: {
+			width: size.width,
+			height: size.height,
+			breackpoint: size.breackpoint
+		}
+	};
+
+	const body = {
+		folder: `public/blocks/${scope}`,
+		filename: `${name}.json`,
+		content: JSON.stringify(data, null, 2)
+	};
+
+	//! надо полифил на next и слшать этот маршрут
+	const res = await fetch(`${API_BASE}/write-file`, {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify(body)
+	});
+
+	if (!res.ok) {
+		console.error('❌ Ошибка при сохранении блока');
+	} 
+	else {
+		console.log('✔️ Блок создан');
+	}
+}
+
+
 export const exportLiteralToFile = async (path: string[], fileName: string, fileData: string) => {
 	
 	const body = {
@@ -78,7 +119,6 @@ export const exportLiteralToFile = async (path: string[], fileName: string, file
 		return `/${path[1]}/${fileName}.tsx`;
 	}
 }
-/** добавляет в главный index.tsx записи */
 export const addModuleToIndex = async(strImport: string) => {
 	const res = await fetch(`${API_BASE}/get-index`);
 	const text = await res.text();
@@ -117,51 +157,13 @@ export const addModuleToIndex = async(strImport: string) => {
 		else console.log('✅ index file change');
 	}
 }
-export const createBlockToFile = async (scope: string, name: string) => {
-	const size = editorContext.size.get();
-	
-	const data = {
-		layout: [],
-		content: {},
-		meta: {
-			scope,
-			name,
-			updatedAt: Date.now(),
-			preview: ''
-		},
-		size: {
-			width: size.width,
-			height: size.height
-		}
-	};
 
-	const body = {
-		folder: `public/blocks/${scope}`,
-		filename: `${name}.json`,
-		content: JSON.stringify(data, null, 2)
-	};
-
-	//! надо полифил на next и слшать этот маршрут
-	const res = await fetch(`${API_BASE}/write-file`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body)
-	});
-
-	if (!res.ok) {
-		console.error('❌ Ошибка при сохранении блока');
-	} 
-	else {
-		console.log('✔️ Блок создан');
-	}
-}
 
 export const fetchFolders = async (): Promise<string[]> => {
     const res = await fetch(`${API_BASE}/list-folders`);
     if (!res.ok) throw new Error('Ошибка загрузки');
     return res.json();
 }
-
 export const db = {
 	async set(key: string, value: any) {
 		const res = await fetch(`${API_DB}/write`, {
@@ -180,3 +182,4 @@ export const db = {
 		return data;
 	}
 }
+

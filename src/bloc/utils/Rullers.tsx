@@ -20,7 +20,7 @@ type RulerProps = {
 }
 const mockGuidesSlice = createStore({
     x: [],
-    y: [20]
+    y: []
 });
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -98,7 +98,7 @@ const GuidesRender = ({ guides, scroll, axis, length, color='cyan', containerRef
                             background: color,
                             [isX ? 'width' : 'height']: 1,
                             [isX ? 'height' : 'width']: '100%',
-                            opacity: 1,
+                            opacity: 0.5,
                             pointerEvents: 'none',
                         }}
                     />

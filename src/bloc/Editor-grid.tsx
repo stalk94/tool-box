@@ -1,13 +1,12 @@
 import React from "react";
-import { LayoutCustom, BlocData } from './type';
-import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
-import "react-grid-layout/css/styles.css";
+import { LayoutCustom, Breakpoint } from './type';
+import GridLayout, { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
 import useContextMenu from '@components/context-main';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { Delete, Edit, Star } from '@mui/icons-material';
-import { findFreeSpot, stackHorizont, stackVertical } from './helpers/editor';
+import { findFreeSpot, stackHorizont, stackVertical, getNearestLayout } from './helpers/editor';
 import { DroppableCell } from './Dragable';
 import Container from '@mui/material/Container';
 import { ThemeProvider, CssBaseline } from '@mui/material';
@@ -20,7 +19,6 @@ const margin: [number, number] = [5, 5];
 
 
 export default function ({ desserealize }) {
-    const rowHeight = 20;
     const [ready, setReady] = React.useState(false);
     const size = editorContext.size.use();
     const mod = editorContext.mod.use();
@@ -29,9 +27,14 @@ export default function ({ desserealize }) {
     const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
     const render = renderSlice.use();
     const curCell = editorContext.currentCell.use();                        // текушая выбранная ячейка
+    const settings = editorContext.settings.use();
+    const layouts = editorContext.layouts.use();
+    const currentBreakpoint = editorContext.size.breackpoint.use();
 
 
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
+        const breackpoint = editorContext.size.breackpoint.get();
+
         renderSlice.set((prevRender) => {
             const cellIndex = prevRender.findIndex(item => item.i === cellId);
 
@@ -50,9 +53,9 @@ export default function ({ desserealize }) {
             return old;
         });
 
-        editorContext.layout.set((layer) => {
+        editorContext.layouts[breackpoint]?.set((layer) => {
             layer = layer.map((lay) => {
-                lay.content.splice(componentIndex, 1);
+                lay.content?.splice?.(componentIndex, 1);
                 return lay;
             });
         });
@@ -81,19 +84,11 @@ export default function ({ desserealize }) {
         removeComponentFromCell(cellId, index);
         infoSlice.select.content.set(null);
     }
-    const handleChangeLayout = (layoutList: LayoutCustom[]) => {
-        editorContext.layout?.set((prev) =>
-            prev.map((cell) => {
-                const updatedLayout = layoutList.find((l) => l.i === cell.i);
+    const handleChangeLayout = (layout: LayoutCustom[]) => {
+        const breackpoint = editorContext.size.breackpoint.get();
+        console.red('layout change: ', layout);
 
-                if (updatedLayout) Object.keys(updatedLayout).map((key) => {
-                    if (key !== 'content') cell[key] = updatedLayout[key];
-                });
-                cell.content = [];
-
-                return cell;
-            })
-        );
+        editorContext.layouts[breackpoint].set(layout);
     }
     const handleClickCell = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, layer: LayoutCustom) => {
         // (event) переключение на панель компонентов
@@ -109,8 +104,9 @@ export default function ({ desserealize }) {
         }
     }
     const delCellData = (idCell: string) => {
+        const breackpoint = editorContext.size.breackpoint.get();
         renderSlice.set((prev) => prev.filter((cell) => cell.i !== idCell));
-        editorContext.layout.set((prev) => prev.filter((cell) => cell.i !== idCell));
+        editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
 
         // Удаляем содержимое из кэша
         cellsSlice.set((old) => {
@@ -119,6 +115,7 @@ export default function ({ desserealize }) {
         });
     }
     const addCellData = (cells: any[], clean?: 'all' | string) => {
+        const breackpoint = editorContext.size.breackpoint.get();
         if (clean === 'all') render.map((cell) => delCellData(cell.i));
         else if (clean && clean !== 'all') delCellData(clean);
 
@@ -129,7 +126,7 @@ export default function ({ desserealize }) {
                 prev.push(cell);
                 return prev;
             });
-            editorContext.layout.set((prev) => {
+            editorContext.layouts[breackpoint]?.set((prev) => {
                 prev.push(cell);
             });
             cellsSlice.set((old) => {
@@ -162,11 +159,10 @@ export default function ({ desserealize }) {
     }
 
     React.useEffect(() => {
+        console.gray('grid render');
         if (typeof window === 'undefined') return;
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
-
-        //renderSlice.set(consolidation(layouts ?? []));
 
         return () => {
             document.removeEventListener('keydown', handleDeleteKeyPress);
@@ -175,7 +171,7 @@ export default function ({ desserealize }) {
     }, []);
     React.useEffect(() => {
         if (typeof window === 'undefined') return;
-
+        
         const resizeObserver = new ResizeObserver(() => {
             if (!gridContainerRef.current) return;
 
@@ -185,6 +181,7 @@ export default function ({ desserealize }) {
             if (containerWidth > 0) {
                 infoSlice.container.height.set(parentHeight);
                 infoSlice.container.width.set(containerWidth);
+                console.log('ready')
                 setReady(true);
             }
 
@@ -201,8 +198,13 @@ export default function ({ desserealize }) {
             resizeObserver.disconnect();
             if (ref) resizeObserver.unobserve(ref); // ⬅️ важно: unobserve тот же ref
         }
-    }, [meta, project]);
+    }, [meta, project, size]);
 
+
+    const currentLayout = React.useMemo(()=> 
+        getNearestLayout(currentBreakpoint, layouts), 
+        [currentBreakpoint, layouts]
+    );
     const { menu, handleOpen } = useContextMenu([
         {
             label: <div style={{ color: 'red', fontSize: 14 }}>Удалить cell</div>,
@@ -210,7 +212,7 @@ export default function ({ desserealize }) {
             onClick: (id) => delCellData(id),
         },
     ]);
-
+    
 
     return (
         <ThemeProvider theme={taskadeTheme}>
@@ -235,23 +237,26 @@ export default function ({ desserealize }) {
                         overflowY: 'auto',
                     }}
                 >
-
                     {ready &&
                         <ResponsiveGridLayout
-                            style={{ height: (size.height - 10) ?? '99%', }}
+                            style={{ height: (size.height - 10) ?? '99%' }}
                             className="GRID-EDITOR"
-                            layouts={{ lg: editorContext.layout.get() }}                // Схема сетки
-                            breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-                            cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
-                            rowHeight={rowHeight}
-                            compactType={null}                                          // Отключение автоматической компоновки
-                            preventCollision={true}
+                            layouts={{ [currentBreakpoint]: currentLayout }}
+                            breakpoints={{ lg: 1100, md: 950, sm: 590, xs: 480 }}
+                            cols={{ lg: 12, md: 10, sm: 8, xs: 6 }}
+                            rowHeight={settings.rowHeight}
+                            compactType={settings.gridCompact ? undefined : null}       // Отключение автоматической компоновки
+                            preventCollision={settings.gridCompact ? false : true}
                             isDraggable={mod === 'grid' && true}                // перетаскивание
                             isResizable={mod === 'grid' && true}                // изменение размера
                             margin={margin}
-                            onLayoutChange={handleChangeLayout}
+                            onDragStop={handleChangeLayout}
+                            onResizeStop={handleChangeLayout}
+                            onBreakpointChange={(br)=> editorContext.size.breackpoint.set(br)}
                         >
-                            {render?.map((layer) => {
+                            { currentLayout.map((layer) => {
+                                const content = cellsSlice[layer.i].get();
+                                
                                 return (
                                     <div
                                         onClick={(e) => handleClickCell(e, layer)}
@@ -279,18 +284,18 @@ export default function ({ desserealize }) {
                                         <DroppableCell key={layer.i} id={layer.i}>
                                             {EDITOR &&
                                                 <SortableContext
-                                                    items={layer.content.map((cnt) => cnt.props['data-id'])}
+                                                    items={content ? content.map((cnt) => cnt.props['data-id']) : []}
                                                     strategy={rectSortingStrategy}
                                                 >
-                                                    {Array.isArray(layer.content) &&
+                                                    {Array.isArray(content) &&
                                                         <>
-                                                            {Array.isArray(layer.content) && layer.content.map((component) => (
+                                                            {Array.isArray(content) && content.map((component) => (
                                                                 <SortableItem
                                                                     key={component.props['data-id']}
                                                                     id={component.props['data-id']}
                                                                     cellId={layer.i}
                                                                 >
-                                                                    {component}
+                                                                    { component }
                                                                 </SortableItem>
                                                             ))}
                                                         </>

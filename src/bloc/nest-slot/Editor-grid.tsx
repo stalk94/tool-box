@@ -15,13 +15,8 @@ const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
 
-type NestGridEditor = { 
-    nestedData: DataNested
-    isArea?: boolean 
-}
 
-
-export default function ({ nestedData, isArea }: NestGridEditor) {
+export default function ({ nestedData, isArea }: { nestedData: DataNested, isArea?: boolean }) {
     const [ready, setReady] = React.useState(false);
     const gridContainerRef = React.useRef<HTMLDivElement>(null);                            // ref на главный контейнер редактора сетки       
     const curCell = editorSlice.currentCell.use();

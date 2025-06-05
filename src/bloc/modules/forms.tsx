@@ -11,7 +11,6 @@ type FormAuthOrRegWrapperProps = ComponentProps & {
 
 
 export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => { });
     const { 
         'data-id': dataId, 
         style, 
@@ -40,10 +39,6 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
         { placeholder: 'min 6 simbol', type: 'password', sx: { mt: 2 } },
         { placeholder: 'min 6 simbol', type: 'password2', sx: { mt: 2 } }
     ];
-    const schemeOauthTest = [
-        { type: 'google', button: { sx, color: 'primary' } },
-        { type: 'facebook', button: { sx, color: 'primary' } }
-    ];
 
 
     const handleChange = (index: number, data: string) => {
@@ -58,7 +53,12 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
             });
         }
     }
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
+        const schemeOauth = [
+            { type: 'google', button: { sx, color: 'primary' } },
+            { type: 'facebook', button: { sx, color: 'primary' } }
+        ];
+
         const code = (`
             import { FormAuthOrReg } from '@lib/index';
 
@@ -80,7 +80,7 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
                             });
                         })}
                         schemeAuthForm={${toObjectLiteral(testSchemeBaseInput)}}
-                        schemeOauth={${toObjectLiteral(schemeOauthTest)}}
+                        schemeOauth={${toObjectLiteral(schemeOauth)}}
                     />
                 );
             }
@@ -89,7 +89,9 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -97,7 +99,7 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
 
     return (
@@ -108,10 +110,25 @@ export const FormAuthOrRegWrapper = React.forwardRef((props: FormAuthOrRegWrappe
             style={{ ...style, width: '100%', display: 'block' }}
         >
             <FormAuthOrReg
-                onClickRegistration={(data)=> console.log(pathClickButton, data)}
-                onClickOauthButton={console.log}
+                onClickRegistration={(data) => {
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        data: data,
+                        type: 'clickRegistration'
+                    });
+                }}
+                onClickOauthButton={(type) => {
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        data: { type: type },
+                        type: 'clickOauth'
+                    });
+                }}
                 schemeAuthForm={testSchemeBaseInput}
-                schemeOauth={schemeOauthTest}
+                schemeOauth={[
+                    { type: 'google', button: { sx, color: 'primary' } },
+                    { type: 'facebook', button: { sx, color: 'primary' } }
+                ]}
             />
         </div>
     );

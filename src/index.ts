@@ -61,3 +61,6 @@ export type { CarouselProps } from './components/carousel/media';
 // список
 export { default as List } from './components/list/base';
 export type { ListCustomProps } from './components/list/base';
+
+// панель для инструментов
+export { default as Bar } from './components/nav-bars/bar';

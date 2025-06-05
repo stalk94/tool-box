@@ -2,7 +2,7 @@
 import colorLog from '../app/helpers/console';
 import React from "react";
 import { useSnackbar } from 'notistack';
-import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, SlotDataBus, DataNested } from './type';
+import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, SlotDataBus, DataNested, LayoutsBreackpoints } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
@@ -18,6 +18,7 @@ import { saveBlockToFile, fetchFolders } from "./helpers/export";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
+import RightBar from './utils/Right-bar';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import inputsIndex from 'public/export/index';
@@ -73,7 +74,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
         if(inputsIndex[path]) return (
             <div style={{marginTop: '65px'}}>
-                { inputsIndex[path]() }
+                
             </div>
         );
         else return (
@@ -144,14 +145,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             }
             
             return prev;
-        });
-        editorContext.layout.set((prev) => {
-            prev.map((lay) => {
-                if (lay.i === cellId) {
-                    lay.content = arrayMove(lay.content, oldIndex, newIndex);
-                }
-                return lay;
-            });
         });
         cellsSlice.set((old) => {
             old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
@@ -267,6 +260,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
                 <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
+                    <RightBar />
                     
                     { mod === 'preview' && getPreview() }
                     { (mod === 'block' || mod === 'grid') && <GridComponentEditor desserealize={desserealize} /> }
@@ -349,6 +343,30 @@ export default function EditorApp({ setShowBlocEditor }) {
             console.error("❗❗❗ fetchFolders error:", e);
         }
     }
+    const consolidationRender =(content: Record<string, ComponentSerrialize[]>, layouts: LayoutsBreackpoints)=> {
+        const breackpoint = editorContext.size.breackpoint.get();
+
+        // 🎯 Собираем renderSlice
+        const result = layouts[breackpoint].map((layer) => {
+            const cellContent = content[layer.i] ?? [];
+
+            const children = cellContent
+                .map((componentData) => {
+                    const Element = componentMap[componentData.props['data-type']];
+
+                    if (!Element) return null;
+                    else return componentData;
+                })
+                .filter(Boolean);
+
+            return {
+                ...layer,
+                content: children,
+            }
+        });
+
+        renderSlice.set(result);
+    }
 
     React.useLayoutEffect(() => {
         console.gray('layout effect');
@@ -356,7 +374,7 @@ export default function EditorApp({ setShowBlocEditor }) {
         useGetDataFileDir()
             .then(() => setIsLoad(true))
             .catch(() => console.error('🚨 data projects not load'));
-    }, [])
+    }, []);
     React.useEffect(() => {
         const handle = (data: SlotDataBus) => {
             console.green('GET GRID CONTEXT =>', data);
@@ -374,11 +392,11 @@ export default function EditorApp({ setShowBlocEditor }) {
         return () => EVENT.off('addGridContext', handle);
     }, []);
     React.useEffect(() => {
-        // 🔁 Очищаем перед установкой нового блока
+        // Очищаем перед установкой нового блока
         renderSlice.set([]);
         cellsSlice.set({});
-        editorContext.layout.set([]);
-        editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
+        editorContext.layouts.set({lg:[], md:[], sm:[], xs:[]});
+        editorContext.size.set({ width: 1200, height: 800, breackpoint: 'lg' });
         infoSlice.select.content.set(null);
         
         setTimeout(() => {
@@ -386,33 +404,23 @@ export default function EditorApp({ setShowBlocEditor }) {
             if(!data) return;
 
             const content = data.content ?? {};
-            const layout = data.layout ?? [];
+            const layouts = { lg:[], md:[], sm:[], xs:[], ...data.layouts };
+            const size = { width: 1200, height: 800, breackpoint: 'lg', ...data.size };
 
             // Устанавливаем
-            cellsSlice.set(data.content);
-            editorContext.layout.set(layout);
-            editorContext.size.set(data.size ?? { width: 0, height: 0, breackpoint: 'lg' });
+            cellsSlice.set(content);
+            editorContext.layouts.set(layouts);
+            editorContext.size.set(size);
 
-            // 🎯 Собираем renderSlice
-            const result = layout.map((layer) => {
-                const cellContent = content[layer.i] ?? [];
-                const children = cellContent.map((cmp) => {
-                    const C = componentMap[cmp.props['data-type']];
-                    if (!C) return null;
-
-                    return cmp;
-                }).filter(Boolean);
-
-                return {
-                    ...layer,
-                    content: children,
-                };
-            });
-
-            //console.red('INIT EFFECT', result)
-            renderSlice.set(result);
+            consolidationRender(content, layouts);
         }, 500);
     }, [meta.name, meta.scope]);
+    editorContext.size.breackpoint.useWatch((value)=> {
+        console.green('change breackpoint: ', value);
+        const layouts = editorContext.layouts.get();
+        
+        //consolidationRender(cellsSlice.get(true), layouts);
+    });
     
 
 
@@ -440,3 +448,16 @@ export default function EditorApp({ setShowBlocEditor }) {
         </>
     );
 }
+
+
+
+/** 
+ *  editorContext.layouts[breackpoint]?.set((prev) => {
+            prev.map((lay) => {
+                if (lay.i === cellId) {
+                    lay.content = arrayMove(lay.content, oldIndex, newIndex);
+                }
+                return lay;
+            });
+        });
+ */

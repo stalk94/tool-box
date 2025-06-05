@@ -2,19 +2,16 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
-import { ComponentSerrialize, Component } from './type';
+import { SortableItemProps } from './type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps } from './helpers/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./helpers/export";
 import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
 import { desserealize } from './helpers/sanitize';
+import { statikRender } from './helpers/output';
 
-type SortableItemProps = { 
-    id: number
-    children: ComponentSerrialize
-    cellId: string 
-}
+
 
 
 export function SortableItem({ id, children, cellId }: SortableItemProps) {
@@ -50,7 +47,8 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
         padding: 1
     }
     const useDegidratationHandler = (code: string) => {
-        console.log(code)
+        console.log(code);
+        statikRender(code, children);
     }
     const iseDeleteComponent = (ids: number) => {
         const removeCoponentFromCells =(componentIndex: number)=> {
@@ -105,6 +103,10 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
             if (refCell) infoSlice.select.cell.set(refCell);
             EVENT.emit('onSelectCell', cellId);
         }
+        EVENT.emit('leftBarChange', {
+            currentToolPanel: 'styles',
+            force: true
+        });
 
         requestIdleCallback(() => {
             target.classList.add('editor-selected');

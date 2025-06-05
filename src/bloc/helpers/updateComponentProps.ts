@@ -14,7 +14,6 @@ type Params = {
 // ВАЖНАЯ ФУНКЦИЯ ЖИЗНЕННОГО ЦИКЛА
 ///////////////////////////////////////////////////////////////////////////////////
 export function updateComponentProps({ component, data, rerender = true }: Params) {
-    console.blue('update component props')
     const id = component?.props?.['data-id'];
     const cellId = editorContext.currentCell.get()?.i;
     

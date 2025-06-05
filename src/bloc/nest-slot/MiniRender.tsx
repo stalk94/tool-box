@@ -1,22 +1,12 @@
 import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import { LayoutCustom, ComponentSerrialize, Structur } from '../type';
+import { ComponentSerrialize, MiniRenderSlotProps } from '../type';
 import { desserealize } from '../helpers/sanitize';
 import { getRelativeStylePercent } from '../helpers/editor';
 import { generateRenderGridFileSafe, generateLiteralFromCells } from '../modules/export/_core';
 
 
-type MiniRenderSlotProps = {
-    type?: 'Frame' | 'Area'
-    layouts: LayoutCustom[]
-    size: {
-        width: number 
-        height: number 
-    }
-    cellsContent: Record<string, ComponentSerrialize[]>
-    onReadyLiteral?: (code: string | Structur )=> void
-}
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [1, 1];
 

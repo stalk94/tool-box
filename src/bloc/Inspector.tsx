@@ -19,21 +19,7 @@ export default function InspectorPanel ({ data, onClose }) {
     const draggingRef = React.useRef(false);
     const offsetRef = React.useRef({ x: 0, y: 0 });
     
-    const styleAbs = {
-        position: 'fixed',
-        top: state?.position?.y ?? 0,
-        //left: state?.position?.x ?? 0,
-        right: 0,
-        zIndex: 1500,
-        width: width,
-        maxHeight: '30vh',
-        background: '#1e1e1e',
-        color: 'white',
-        overflow: 'auto',
-        resize: 'both',
-        display: 'flex',
-        flexDirection: 'column',
-    }
+
     const style = {
         zIndex: 1500,
         width: '100%',
@@ -41,7 +27,6 @@ export default function InspectorPanel ({ data, onClose }) {
         background: '#1e1e1e',
         color: 'white',
         overflow: 'auto',
-        resize: 'both',
         display: 'flex',
         flexDirection: 'column',
     }
@@ -121,29 +106,8 @@ export default function InspectorPanel ({ data, onClose }) {
     }, []);
    
     
-    if(!state?.colapsed && state?.isAbsolute) return (
-        <div 
-            onMouseDown={onMouseDown} 
-            style={{
-                position: 'fixed',
-                top: state.position.y,
-                right: 0,
-                zIndex: 1500,
-                width: 60,
-                height: 30,
-                borderRadius: 10,
-                border: '1px solid gray'
-            }}
-        >
-            <IconButton size="small" onClick={() => editorContext.inspector.colapsed.set((collapsed)=> !collapsed)}>
-                <ExpandMore sx={{ color: '#aaa', fontSize:16 }} />
-            </IconButton>
-        </div>
-    );
-    else return (
-        <Paper 
-            sx={state?.isAbsolute ? styleAbs : style }
-        >
+    return (
+        <Paper sx={ style }>
             <Box
                 onMouseDown={onMouseDown}
                 sx={{
@@ -156,23 +120,12 @@ export default function InspectorPanel ({ data, onClose }) {
                     borderTop: '1px solid #5555559d',
                 }}
             >
-                <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                    <IconButton sx={{ml:1}} size="small" onClick={() => editorContext.inspector.isAbsolute.set(o => !o)}>
-                        {state?.isAbsolute
-                            ? <AiOutlinePushpin style={{ color: '#aaa', fontSize:14 }} />
-                            : <IoMove style={{ color: '#aaa', fontSize:12 }} />
-                        }
-                    </IconButton>
-                </Box>
-                <Box>
+                <Box sx={{ display: 'flex',  ml:'auto' }}>
                     <IconButton size="small" onClick={() => editorContext.inspector.colapsed.set((collapsed)=> !collapsed)}>
                         {!state?.colapsed
                             ? <ExpandMore sx={{ color: '#aaa', fontSize:14 }} />
                             : <ExpandLess sx={{ color: '#aaa', fontSize:14 }} />
                         }
-                    </IconButton>
-                    <IconButton size="small" onClick={onClose}>
-                        <Close sx={{ color: '#aaa', fontSize:14 }} />
                     </IconButton>
                 </Box>
             </Box>

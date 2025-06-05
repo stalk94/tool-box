@@ -1,12 +1,12 @@
 import React from 'react';
 import CardContent from '@mui/material/CardContent';
 import { Avatar, Button,  IconButton, Typography, useTheme, TypographyProps } from '@mui/material';
-import Card, { Props } from './base';
+import Card from './base';
 import { Header, MediaImage } from './atomize';
 
 
 
-export default function ({ ...props }: Props) {
+export default function ({ ...props }) {
     return(
         <Card {...props}
             children={[

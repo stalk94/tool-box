@@ -1,4 +1,4 @@
-import { ComponentSerrialize, LayoutCustom, SlotDataBus, Component, ComponentProps, ScopeData } from './type';
+import { ComponentSerrialize, LayoutCustom, LayoutsBreackpoints, SlotDataBus, Component, ComponentProps, ScopeData } from './type';
 import { Editor } from '@tiptap/react';
 import { createState, useLocalStorage } from 'statekit-react';
 import { createStore as create } from 'statekit-lite';
@@ -6,25 +6,23 @@ import { ssePlugin } from 'statekit-lite';
 import type { Palette } from '@mui/material/styles';
 
 
-export type PropsSimpleList = {
-    defaultValue?: 'number'
-    size?: 'medium' | 'small' | 'large'
-    src?: 'string'
-    max?: 'number'
-    [key: string] : any
-}
 export type EditorContextType = {
+    mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot'
+    dragEnabled: boolean
+    layouts: LayoutsBreackpoints
     meta: {
-        scope: string;
-        name: string;
-    };
-    mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot';
-    dragEnabled: boolean;
-    layout: LayoutCustom[];
+        scope: string
+        name: string
+    }
     size: {
         width: number
         height: number
-        breackpoint: string
+        /** текуший выбранный breackpoint */
+        breackpoint: 'lg' | 'md' | 'sm' | 'xs'
+    }
+    settings: {
+        gridCompact: boolean
+        rowHeight: number
     }
     inspector: {
         lastData: any
@@ -35,12 +33,11 @@ export type EditorContextType = {
             y: number
         }
     }
-    buffer?: ComponentSerrialize,
+    buffer?: ComponentSerrialize
     currentCell?: LayoutCustom
     curentNestedContext?: {
         parentComponentId: number | string
-        
-    },
+    }
 }
 export type InfoStateType = {
     container: {
@@ -64,7 +61,6 @@ export type InfoStateType = {
         task: any[];
     };
     project: Record<string, ScopeData[]>
-    contentAllRefs?: any;
     activeEditorTipTop: Editor
 }
 export type NestedContextStateType = {
@@ -85,14 +81,23 @@ const isClient = typeof window !== 'undefined';
 export const editorContext = createState('EDITOR', {
     mod: 'block',
     dragEnabled: true,
+    settings: {
+        gridCompact: false,
+        rowHeight: 20
+    },
     meta: {
         scope: 'test',
         name: 'test-block',
     },
-    layout: [],
+    layouts: {
+        lg: [], 
+        md: [], 
+        sm: [], 
+        xs: []
+    },
     size: { 
-        width: 1000, 
-        height: 600, 
+        width: 1200, 
+        height: 800, 
         breackpoint: 'lg' 
     },
     currentCell: {},

@@ -20,7 +20,6 @@ import { getUniqueBlockName } from "./helpers/editor";
 import { LeftToolPanelProps, ProxyComponentName, Component } from './type';
 import { useKeyboardListener } from './helpers/hooks';
 import { db } from "./helpers/export";
-import exportGrid from './modules/export/Grid';
 import { DraggableToolItem } from './Dragable';
 
 
@@ -108,50 +107,61 @@ const RenderListProject = ({ currentCat }) => {
                     >
                         <Add /> add block
                     </Button>
+
                     { getAllBlockFromScope()?.map((blockData, index) =>
-                        <Box
-                            sx={{
-                                display: 'flex',
-                                flexDirection: 'row',
-                                my: 0.7,
-                                cursor:'pointer',
-                                borderBottom: `1px dotted ${meta.name === blockData.name ? '#ffffff61' : '#83818163'}`,
-                                opacity: meta.name === blockData.name ? 1 : 0.6,
-                                '&:hover': {
-                                    backgroundColor: '#e0e0e022',
-                                }
-                            }}
-                            onClick={() => {
-                                if (editorContext.meta.name.get() === blockData.name) return;
-                                editorContext.meta.name.set(blockData.name);
-                            }}
-                            key={index}
-                        >
-                            <Typography 
-                                variant='inherit' 
-                                style={{fontSize:'15px', color:'white'}}
+                        <Box key={index} sx={{ display: 'flex', flexDirection: 'row', width:'100%' }}>
+                            <button style={{opacity: meta.name === blockData.name ? 1 : 0.5}} 
+                                className={`
+                                    rounded-md px-2 text-gray-200 
+                                    hover:bg-stone-600 hover:text-zinc-400 
+                                    transition-colors duration-150 cursor-pointer
+                                `}
                             >
-                                <span style={{color: getColor(blockData.name), marginRight:'5px'}}>
-                                    {`[${ getKeyNameSize(blockData.name) }]`}
-                                </span>
-                               
-                                <span style={{marginLeft:'5px', color:'white'}}>{ blockData.name }</span>
-                            </Typography>
-                            <button
-                                style={{
+                               <Settings sx={{ fontSize: '16px' }} />
+                            </button>
+                                
+                            <Box
+                                sx={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    my: 0.7,
+                                    width:'100%',
                                     cursor: 'pointer',
-                                    color: meta.name === blockData.name ? '#C9C9C9' : '#c9c5c5c7',
-                                    background: 'transparent',
-                                    marginLeft: 'auto',
-                                    borderRadius: '4px',
-                                    border: 'none',
+                                    borderBottom: `1px dotted ${meta.name === blockData.name ? '#ffffff61' : '#83818163'}`,
+                                    opacity: meta.name === blockData.name ? 1 : 0.5,
+                                    '&:hover': {
+                                        backgroundColor: '#e0e0e022',
+                                    }
+                                }}
+                                onClick={() => {
+                                    if (editorContext.meta.name.get() === blockData.name) return;
+                                    editorContext.meta.name.set(blockData.name);
                                 }}
                             >
-                                { meta.name === blockData.name
-                                    ? <RadioButtonChecked sx={{ fontSize: '16px'}} />
-                                    : <RadioButtonUnchecked sx={{ fontSize: '16px'}} />
-                                }
-                            </button>
+                                <Typography
+                                    variant='inherit'
+                                    style={{ fontSize: '15px', color: 'white' }}
+                                >
+                                    <span style={{ marginLeft: '5px', color: 'white' }}>
+                                        { blockData.name }
+                                    </span>
+                                </Typography>
+                                <button
+                                    style={{
+                                        cursor: 'pointer',
+                                        color: meta.name === blockData.name ? '#C9C9C9' : '#c9c5c5c7',
+                                        background: 'transparent',
+                                        marginLeft: 'auto',
+                                        borderRadius: '4px',
+                                        border: 'none',
+                                    }}
+                                >
+                                    {meta.name === blockData.name
+                                        ? <RadioButtonChecked sx={{ fontSize: '16px' }} />
+                                        : <RadioButtonUnchecked sx={{ fontSize: '16px' }} />
+                                    }
+                                </button>
+                            </Box>
                         </Box>
                     )}
                     { popover }
@@ -161,7 +171,6 @@ const RenderListProject = ({ currentCat }) => {
     );
 }
 const RenderProjectTopPanel = () => {
-    const meta = editorContext.meta.use();
     const { popover, handleOpen, trigger } = usePopUpName();
     const [value, setValue] = React.useState(editorContext.meta?.scope?.get());
     
@@ -414,13 +423,14 @@ const useSlot = (slot, curSub, setSub, onChange) => {
 export default function ({ useDump, desserealize }: LeftToolPanelProps) {
     const meta = editorContext.meta;
     const select = infoSlice.select;
+    const [force, setForce] = React.useState(0);
     const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'slot'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('misc');
     const [currentAtom, setCurrentAtom] = React.useState<string>('blank');
 
-   
+    
     const menuItems = [
         { id: 'project', label: 'управление', icon: <AccountTree />, style: {paddingTop:2} },
         { divider: <Divider sx={{borderColor: 'rgba(128, 128, 129, 0.266)',my:1.2}}/> },
@@ -438,8 +448,9 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
-    const handleExportGrid = () => exportGrid(
-        renderSlice.get(),
+    const handleExportGrid = () => console.log(
+        editorContext.layouts.get(),
+        cellsSlice.get(),
         meta.scope.get(),
         meta.name.get()
     );
@@ -455,10 +466,13 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
             if (data.curentComponent) {
                 requestIdleCallback(()=> select.content.set(data.curentComponent));
             }
-            if (data?.currentToolPanel) setCurrentToolPanel(data.currentToolPanel);
+            if (data?.currentToolPanel) {
+                if(data.force) setForce(p => p++);
+                setTimeout(()=> setCurrentToolPanel(data.currentToolPanel), 0);
+            }
             if (data?.curSubpanel) setSubPanel(data.curSubpanel);
         }
-
+        
         EVENT.on('leftBarChange', handler);
         return () => EVENT.off('leftBarChange', handler);
     }, []);
@@ -491,7 +505,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         });
     }
 
-    const panelRenderers = {
+    const panelRenderers = React.useMemo(()=> ({
         project: () => ({
             start: ( <RenderProjectTopPanel /> ),
             children: ( <RenderListProject currentCat={'all'}/> ) 
@@ -500,11 +514,8 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         styles: () => useStylesEditor(select.content, useComponentUpdateFromEditorForm, curSubpanel, setSubPanel),
         atoms: () => useAtoms(currentAtom, setCurrentAtom, desserealize),
         slot: ()=> useSlot(select.slot, curSlotPanel, setCurSlotPanel, useComponentSlotUpdateFromEditorForm)
-    }
-    const { start, children } = panelRenderers[currentToolPanel]
-        ? panelRenderers[currentToolPanel]()
-        : { start: null, children: null };
-
+    }), [force, select, currentToolPanel, currentTool, curSubpanel]);
+    const { start, children } = panelRenderers[currentToolPanel]();
     
 
     return (

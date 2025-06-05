@@ -2,7 +2,7 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
-import { ComponentSerrialize, Component } from '../type';
+import type { SortableItemProps } from '../type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps, SlotToolBar } from './helpers/shim';
 import { Delete, Edit, Star } from '@mui/icons-material';
@@ -10,12 +10,6 @@ import { db } from "../helpers/export";
 import { desserealize } from '../helpers/sanitize';
 import { RndWrapper } from './Rnd';
 
-type SortableItemProps = { 
-    id: number
-    children: ComponentSerrialize
-    cellId: string 
-    isArea?: boolean 
-}
 
 
 export function SortableItem({ id, children, cellId, isArea }: SortableItemProps) {;

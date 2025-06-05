@@ -33,6 +33,8 @@ declare global {
 //                    COMPONENTS
 //////////////////////////////////////////////////////////////////////////
 export type ProxyComponentName = RegistreTypeComponent;
+export type Breakpoint = 'lg' | 'md' | 'sm' | 'xs';
+
 
 export type ComponentRegister = {
     type: string;
@@ -43,7 +45,6 @@ export type ComponentRegister = {
     description?: string;
     nest?: ComponentRegisterNestMetaData 
 }
-
 export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
@@ -78,17 +79,8 @@ export type DataRegisterComponent = {
 }
 
 //////////////////////////////////////////////////////////////////////////////
-//                        
+//          type editor components                    
 //////////////////////////////////////////////////////////////////////////////
-export type LayoutCustom = Layout & {
-    /** массив компонентов */
-    content?: ComponentSerrialize[]
-    /** стилизация ячейки */
-    props?: {
-        style?: React.CSSProperties
-        classNames?: string
-    }
-}
 export type GridEditorProps = {
     setLayout: (old: Layout[])=> void
     layout: LayoutCustom[]
@@ -105,21 +97,60 @@ export type LeftToolPanelProps = {
     useDump: () => void
     desserealize: (component: ComponentSerrialize) => void
 }
-
+export type PropsSimpleList = {
+    defaultValue?: 'number'
+    size?: 'medium' | 'small' | 'large'
+    src?: 'string'
+    max?: 'number'
+    [key: string] : any
+}
+export type SortableItemProps = { 
+    id: number
+    children: ComponentSerrialize
+    cellId: string 
+    isArea?: boolean            // только для nested context
+}
+export type MiniRenderSlotProps = {
+    type?: 'Frame' | 'Area'
+    layouts: LayoutCustom[]
+    size: {
+        width: number 
+        height: number 
+    }
+    cellsContent: Record<string, ComponentSerrialize[]>
+    onReadyLiteral?: (code: string | Structur )=> void
+}
 
 /////////////////////////////////////////////////////////////////////////////
 //          Data Formats
 /////////////////////////////////////////////////////////////////////////////
+export type LayoutCustom = Layout & {
+    /** массив компонентов */
+    content?: ComponentSerrialize[]
+    /** стилизация ячейки */
+    props?: {
+        style?: React.CSSProperties
+        classNames?: string
+    }
+}
+export type LayoutsBreackpoints = {
+    lg: LayoutCustom[]
+    md: LayoutCustom[]
+    sm: LayoutCustom[]
+    xs: LayoutCustom[]
+}
 export type BlocData = {
+    /** список всех cell и serialize data component в них */
     content: Record<string, ComponentSerrialize[]>
-    layout: LayoutCustom[]
+    /** сетки */
+    layouts: LayoutsBreackpoints
     meta: {
         scope: string
         name: string
         updatedAt: number
     }
     size: {
-        breackpoint: 'lg' | 'md' | 'xs' | 'lm'
+        breackpoint: 'lg' | 'md' | 'xs' | 'sm'
         width: number
         height: number
     }
@@ -128,6 +159,7 @@ export type ScopeData = {
     name: string 
     data: BlocData
 }
+
 /////////////////////////////////////////////////////////////////////////////
 //          вложенный контекст (+ виртуализация)
 ////////////////////////////////////////////////////////////////////////////
@@ -187,7 +219,7 @@ export type DropSlotProps = {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// 
+//          export
 //////////////////////////////////////////////////////////////////////////////// 
 export type Structur = {
     allImports: Set<string>;

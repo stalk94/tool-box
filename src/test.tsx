@@ -1,5 +1,7 @@
 import 'primereact/resources/primereact.min.css'; 
-import 'primeicons/primeicons.css';   
+import 'primeicons/primeicons.css';  
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css'; 
 import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import { createRoot } from 'react-dom/client';

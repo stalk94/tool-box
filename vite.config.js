@@ -3,13 +3,14 @@ import react from '@vitejs/plugin-react';
 import tsconfigPaths from 'vite-tsconfig-paths';
 import writeFilePlugin from './server/vite-write';
 import quickDbPlugin from './server/vite-db.js';
+import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
 
 export default defineConfig({
     root: 'src',
     publicDir: '../public',
-    plugins: [react(), writeFilePlugin(), quickDbPlugin(), tsconfigPaths()],
+    plugins: [react(), tailwindcss(), writeFilePlugin(), quickDbPlugin(), tsconfigPaths()],
     server: {
         port: 3001
     },
@@ -21,7 +22,7 @@ export default defineConfig({
             '@system': path.resolve(__dirname, 'src/app')
         }
     },
-     define: {
+    define: {
         'process.env.NODE_ENV': JSON.stringify('production'),
         'process.env': '{}'
     },
