@@ -2,6 +2,8 @@ import React from 'react';
 import { LayoutCustom, DataNested, Structur } from '../../type';
 import { exportLiteralToFile } from "../../helpers/export";
 import { useRenderNestedContext, dedupeImports } from './_core';
+import { toObjectLiteral } from './utils';
+
 
 
 const capitalizeFirst = (str: string) => str.charAt(0).toUpperCase() + str.slice(1);
@@ -36,11 +38,6 @@ export default function exported(
     slots: Record<string, DataNested>,
     style: React.CSSProperties
 ) {
-    const toObjectLiteral = (obj) => {
-        return Object.entries(obj || {})
-            .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-            .join(', ');
-    }
     const renderSlotsLinks =()=> {
         const result = {
             imports: [],
@@ -132,12 +129,21 @@ export default function exported(
 export function exportedTabs(
     meta: { scope: string, name: string },
     items: string[],
-    textColor: "inherit" | "secondary" | "primary" | undefined,
-    slots: Record<string, DataNested>
+    isHorizontal: boolean,
+    selectColor: string,
+    color: string,
+    slots: Record<string, DataNested>,
+    style: React.CSSProperties
 ) {
     const renderTab =()=> {
         return items ? items.map((elem, index) => (`
             <Tab
+                sx={{
+                    color: ${color},
+                    '&.Mui-selected': {
+                        color: ${selectColor},
+                    }
+                }}
                 key={${index}}
                 label={"${elem}"}
             />
@@ -166,6 +172,14 @@ export function exportedTabs(
             imports: `${result.imports.join('\n')}`
         }
     }
+    const colorSelect = (
+        selectColor ? `sx={{
+                            '& .MuiTabs-indicator': {
+                                backgroundColor: ${selectColor}
+                            },
+                        }}` 
+                    : ''
+    );
     // tabsSlots/TabsSlotGrid_0
     const renderSlots = async()=> {
         const ls = Object.values(slots).map(data=> ({
@@ -202,18 +216,19 @@ export function exportedTabs(
 
             return (
                 <div
-                    style={{ width: '100%', display: 'block' }}
+                    style={{ ${toObjectLiteral(style)} }}
                 >
                     <Tabs
                         value={curent}
                         onChange={(event: React.SyntheticEvent, newValue: number) => {
                             setCurent(newValue);
                         }}
+                        orientation={${isHorizontal ? 'horizontal' : 'vertical'}}
                         variant="scrollable"
                         scrollButtons={true}
                         allowScrollButtonsMobile={true}
-                        textColor={ ${JSON.stringify(textColor)} }
                         aria-label="tabs"
+                        ${colorSelect}
                     >
                         ${renderTab().join('\n')}
                     </Tabs>
@@ -294,7 +309,6 @@ export function exportedArea(
     }
     const prerender = renderSlotsLinks(metaName??'Canvas');
     renderSlot(metaName??'Canvas');
-    
 
     
     return (`

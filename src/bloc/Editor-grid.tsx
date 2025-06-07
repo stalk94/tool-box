@@ -109,35 +109,41 @@ export default function ({ desserealize }) {
         editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
 
         // Удаляем содержимое из кэша
-        cellsSlice.set((old) => {
-            delete old[idCell];
-            return old;
-        });
+        //cellsSlice.set((old) => {
+        //    delete old[idCell];
+        //    return old;
+        //});
     }
     const addCellData = (cells: any[], clean?: 'all' | string) => {
-        const breackpoint = editorContext.size.breackpoint.get();
         if (clean === 'all') render.map((cell) => delCellData(cell.i));
         else if (clean && clean !== 'all') delCellData(clean);
 
         cells.map((cell, index) => {
             cell.i = cell.i ?? `cell-${Date.now() + index}`;
 
+            ['lg', 'md', 'sm', 'xs'].forEach((breackpoint)=> 
+                editorContext.layouts[breackpoint]?.set((prev) => {
+                    prev.push(cell);
+                })
+            );
             renderSlice.set((prev) => {
                 prev.push(cell);
                 return prev;
-            });
-            editorContext.layouts[breackpoint]?.set((prev) => {
-                prev.push(cell);
             });
             cellsSlice.set((old) => {
                 old[cell.i] = [];
                 return old;
             });
+
+            editorContext.currentCell.set({ i: cell.i });
         });
     }
     const addNewCell = () => {
+        const breackpoint = editorContext.size.breackpoint.get();
         const defaultW = 3;
         const defaultH = 2;
+        
+        const render = editorContext.layouts[breackpoint].get();
         const spot = findFreeSpot(defaultW, defaultH, render, 12);
 
         if (!spot) {
@@ -253,6 +259,7 @@ export default function ({ desserealize }) {
                             onDragStop={handleChangeLayout}
                             onResizeStop={handleChangeLayout}
                             onBreakpointChange={(br)=> editorContext.size.breackpoint.set(br)}
+                            resizeHandles={['se', 'ne', 'sw', 'nw']}
                         >
                             { currentLayout.map((layer) => {
                                 const content = cellsSlice[layer.i].get();

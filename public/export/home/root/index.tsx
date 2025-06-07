@@ -1,10 +1,13 @@
+import cell_1746527949939 from './cell-1746527949939.tsx';
+import cell_1747227526997 from './cell-1747227526997.tsx';
+import cell_1747227527273 from './cell-1747227527273.tsx';
 import React from 'react';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
 export default function RenderGrid() {
-    const [currentBreakpoint, setBreackpoint] = React.useState<'lg' | 'md' | 'sm' | 'xs'>('lg');
+    const [currentBreakpoint, setBreackpoint] = React.useState('lg');
     const layouts = {
         lg: [
             {
@@ -182,6 +185,54 @@ export default function RenderGrid() {
             isResizable={false}
             margin={[5, 5]}
             onBreakpointChange={br => setBreackpoint(br)}
-        ></ResponsiveGridLayout>
+        >
+            <div
+                key={'cell-1746527949939'}
+                style={{
+                    overflowX: 'hidden',
+                    overflowY: 'auto',
+                    height: '100%',
+                    display: 'inline-flex',
+                    width: '100%',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch',
+                    alignContent: 'flex-start'
+                }}
+            >
+                {cell_1746527949939()}
+            </div>
+
+            <div
+                key={'cell-1747227526997'}
+                style={{
+                    overflowX: 'hidden',
+                    overflowY: 'auto',
+                    height: '100%',
+                    display: 'inline-flex',
+                    width: '100%',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch',
+                    alignContent: 'flex-start'
+                }}
+            >
+                {cell_1747227526997()}
+            </div>
+
+            <div
+                key={'cell-1747227527273'}
+                style={{
+                    overflowX: 'hidden',
+                    overflowY: 'auto',
+                    height: '100%',
+                    display: 'inline-flex',
+                    width: '100%',
+                    flexWrap: 'wrap',
+                    alignItems: 'stretch',
+                    alignContent: 'flex-start'
+                }}
+            >
+                {cell_1747227527273()}
+            </div>
+        </ResponsiveGridLayout>
     );
 }

@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Paper, IconButton, Box, Typography, Button } from '@mui/material';
 import { Close, DragIndicator, ExpandMore, ExpandLess, Code, } from '@mui/icons-material';
-import { JsonViewer } from '@textea/json-viewer';
 import { editorContext } from "./context";
 import { AiOutlinePushpin } from "react-icons/ai";
 import { IoMove } from "react-icons/io5";
@@ -18,7 +17,7 @@ export default function InspectorPanel ({ data, onClose }) {
     const [width, setWidth] = useState(400);
     const draggingRef = React.useRef(false);
     const offsetRef = React.useRef({ x: 0, y: 0 });
-    
+
 
     const style = {
         zIndex: 1500,
@@ -30,6 +29,7 @@ export default function InspectorPanel ({ data, onClose }) {
         display: 'flex',
         flexDirection: 'column',
     }
+
     const onMouseDown = (e: React.MouseEvent) => {
         draggingRef.current = true;
         const position = state.position;
@@ -135,7 +135,19 @@ export default function InspectorPanel ({ data, onClose }) {
                 <>
                     <div ref={renderRef}/>
                     { mod === 'json' &&
-                        <JsonViewer
+                        <div>
+
+                        </div>
+                    }
+                </>
+            )}
+        </Paper>
+    );
+}
+
+
+/**
+ * <JsonViewer
                             style={{
                                 fontSize: '12px',
                                 fontFamily: 'monospace',
@@ -163,9 +175,4 @@ export default function InspectorPanel ({ data, onClose }) {
                             rootName={false}
                             theme="dark"
                         />
-                    }
-                </>
-            )}
-        </Paper>
-    );
-}
+ */

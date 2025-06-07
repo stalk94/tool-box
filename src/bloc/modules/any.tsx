@@ -1,30 +1,66 @@
 import React from 'react';
 import { lighten } from '@mui/system';
-import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps, Rating, RatingProps, Typography } from '@mui/material';
+import { Divider, DividerProps, Chip, ChipProps, Avatar, AvatarProps, Rating, RatingProps, Typography, Badge } from '@mui/material';
 import { uploadFile } from 'src/app/plugins';
-import { iconsList } from '../../components/tools/icons';
+import { iconsList, icons } from '../../components/tools/icons';
 import { fill, empty } from '../../components/tools/icons-rating';
 import { ComponentProps } from '../type';
 import { updateComponentProps } from '../helpers/updateComponentProps';
-import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr } from './export/utils';
+import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr, toLiteral } from './export/utils';
+import TipTapSlotEditor from './tip-tap';
 import { infoSlice, editorContext} from "../context";
+import { ToggleInput, HoverPopover, List } from '@lib/index';
 
 
-type DividerWrapperProps = DividerProps & ComponentProps;
+type DividerWrapperProps = DividerProps & ComponentProps & {
+    'border-color': string
+    'border-style': 'dashed' | 'dotted' | 'solid'
+}
 type ChipWrapperProps = ChipProps & ComponentProps;
 type RatingWrapperProps = RatingProps & ComponentProps & {
-    iconName: 'Star' | ' Favorite' | 'ThumbUp' | 'Cafe' | 'Brain' | 'Fire' | 'none'
+    iconName: ' Favorite' | 'ThumbUp' | 'Cafe' | 'Brain' | 'Fire' | 'none'
+    isHalf: boolean
     apiPath?: string
     color?: string
 }
 type AvatarWrapperProps = AvatarProps & ComponentProps & {
     'data-source' : 'src' | 'icon' | 'children'
 }
+type ListWrapperProps = {
+    'data-id': number
+    'data-type': 'List'
+    showLabels: boolean
+    style: React.CSSProperties
+    fullWidth: boolean
+    isButton?: boolean
+    isSecondary?: boolean
+    styles?: {
+        primary?: React.CSSProperties
+        secondary?: {
+            color?: string
+            fontSize?: number 
+        }
+        icon?: {
+            color?: string
+            fontSize?: number 
+        }
+    }
+}
 
 
 
 export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref) => {
-    const { 'data-id': dataId, isChildren, children, fullWidth, variant, style, ...otherProps } = props;
+    const { 
+        'data-id': dataId, 
+        'border-style': borderStyle,
+        'border-color': borderColor,
+        isChildren, 
+        children, 
+        fullWidth, 
+        variant, 
+        style, 
+        ...otherProps 
+    } = props;
     const selected = infoSlice.select.content.use();
     
 
@@ -37,6 +73,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
         });
     }
     const exportCode = (call) => {
+        const sxLiteral = toObjectLiteral({ borderStyle, borderColor });
         const styleLiteral = toObjectLiteral({
             paddingTop: !isChildren && '4px',
             width: fullWidth ? '100%' : '',
@@ -64,6 +101,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
                         orientation={"${fullWidth ? 'horizontal' : 'vertical'}"}
                         variant={"${variant ?? 'fullWidth'}"}
                         style={{ ${styleLiteral} }}
+                        sx={{ ${sxLiteral} }}
                     >
                         ${ renderChild() }
                     </Divider>
@@ -103,8 +141,12 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
                 orientation={fullWidth ? 'horizontal' : 'vertical'}
                 variant={variant}
                 flexItem={fullWidth}
-                style={{ ...style }}
-                {...otherProps}
+                sx={{
+                    borderStyle,
+                    borderColor
+                }}
+                style={ style }
+                { ...otherProps }
             >
                 {isChildren
                     ? <Typography
@@ -117,7 +159,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
                             transform: 'rotate(180deg)',
                         } : {}}
                     >
-                        {children}
+                        { children }
                     </Typography>
                     : undefined
                 }
@@ -130,7 +172,7 @@ export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {
     const Icon = icon && iconsList[icon] ? iconsList[icon] : undefined;
 
     const exportCode = (call) => {
-        const ri = Icon ? `icon={ ${renderComponentSsr(<Icon />)} }` : '';
+        const ricon = Icon ? `icon={ ${renderComponentSsr(<Icon />)} }` : '';
 
         const code = (`
             import React from 'react';
@@ -144,7 +186,7 @@ export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {
                         onDelete={console.log}              // сделает возможность удаления
                         clickable={false}                   // кликабельность 
                         label={"${label}"}
-                        ${ ri }
+                        ${ ricon }
                         ${ toJSXProps(otherProps) }
                     />
                 );
@@ -177,35 +219,7 @@ export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {
         <Chip 
             component="a"
             icon={Icon ? <Icon /> : undefined}
-            label={
-                <div
-                    style={{
-                        border: '1px solid transparent',
-                        outline: 'none',
-                    }}
-                    onClick={(e) => e.stopPropagation()}
-                    onBlur={(e) => {
-                        if(!globalThis.EDITOR) return;
-
-                        e.currentTarget.style.border = '1px solid transparent';
-                        e.currentTarget.style.background = 'none';
-                        e.currentTarget.style.padding = '0px';
-                        handleChangeEdit('label', e.currentTarget.innerText);
-                    }}
-                    contentEditable={globalThis.EDITOR}
-                    suppressContentEditableWarning
-                    onFocus={(e) => {
-                        if(!globalThis.EDITOR) return;
-
-                        e.currentTarget.style.padding = '5px';
-                        e.currentTarget.style.borderRadius = '8px';
-                        e.currentTarget.style.background = '#0000008';
-                        e.currentTarget.style.border = '1px solid #3b8ee2b1';
-                    }}
-                >
-                    { label }
-                </div>
-            }
+            label={ label }
             { ...otherProps }
         />
     );
@@ -213,8 +227,19 @@ export const ChipWrapper = React.forwardRef((props: ChipWrapperProps, ref) => {
 export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) => {
     const lastFileRef = React.useRef<number | null>(null);
     const [imgSrc, setImgSrc] = React.useState<string>();
-
-    const {'data-source': source, 'data-id': dataId, children, src, file, sizes, icon, fullWidth, ...otherProps } = props;
+    const {
+        'data-source': source, 
+        'data-id': dataId, 
+        children, 
+        src, 
+        file, 
+        sizes, 
+        icon, 
+        fullWidth, 
+        isArea, 
+        style,
+        ...otherProps 
+    } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : undefined;
 
 
@@ -239,7 +264,6 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
 
             export default function AvatarWrap() {
                 return(
-                    <div style={{${fullWidth ? 'width: "100%"' : 'width: "fit-content"'}}}>
                     <Avatar
                         sx={{ 
                             width: ${sizes}, 
@@ -247,11 +271,16 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
                             bgColor: 'gray'
                         }}
                         src={"${imgSrc ?? ''}"}
+                        style={{
+                            ${toObjectLiteral({
+                                ...style,
+                                width: fullWidth ? "100%" : "fit-content",
+                            })}
+                        }}
                         ${ toJSXProps(otherProps) }
                     >
                         ${ child }
                     </Avatar>
-                    </div>
                 );
             }
         `);
@@ -269,7 +298,7 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, [props]);
+    }, [props, imgSrc]);
     React.useEffect(() => {
         if(!EDITOR) return;
 
@@ -299,26 +328,36 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
     
 
     return (
-        <Avatar 
-            src={imgSrc}
-            sx={{ 
-                width: sizes, 
-                height: sizes
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type='Avatar'
+            style={{
+                ...style,
+                width: fullWidth ? "100%" : "fit-content",
             }}
-            children={
-                (source === 'children')
-                    ? children ? children : 'H'
-                    : Icon ? <Icon/> : undefined
-            }
-            { ...otherProps }
-        />
+        >
+            <Avatar 
+                src={imgSrc}
+                sx={{ 
+                    width: sizes, 
+                    height: sizes
+                }}
+                children={
+                    (source === 'children')
+                        ? children ? children : 'H'
+                        : Icon ? <Icon/> : undefined
+                }
+                { ...otherProps }
+            />
+        </div>
     );
 });
 export const RatingWrapper = React.forwardRef((props: RatingWrapperProps, ref) => {
-    const { 'data-id': dataId, iconName, apiPath, colors='#ff3d47', fullWidth, style, ...otherProps } = props;
+    const { 'data-id': dataId, iconName, apiPath, colors='#ff3d47', fullWidth, isHalf, style, ...otherProps } = props;
 
-    const IconFill = iconName && fill[iconName] ? iconsList[iconName] : undefined;
-    const IconEmpty = iconName && empty[iconName] ? empty[iconName] : undefined;
+    const IconFill = (iconName && fill[iconName]) ? iconsList[iconName] : undefined;
+    const IconEmpty = (iconName && empty[iconName]) ? empty[iconName] : undefined;
 
     const exportCode = (call) => {
         const icf = IconFill ? `icon={${renderComponentSsr(<IconFill fontSize="inherit" />)}}` : '';
@@ -349,6 +388,7 @@ export const RatingWrapper = React.forwardRef((props: RatingWrapperProps, ref) =
                 return(
                     <div style={{ ${styleLiteral} }}>
                         <Rating
+                            precision={${isHalf ? 0.5 : 1}}
                             sx={{
                                 '& .MuiRating-iconFilled': {
                                     color: "${lighten(colors, 0.2)}",
@@ -398,6 +438,7 @@ export const RatingWrapper = React.forwardRef((props: RatingWrapperProps, ref) =
             <Rating
                 icon={IconFill && <IconFill fontSize="inherit" />}
                 emptyIcon={IconEmpty && <IconEmpty fontSize="inherit" />}
+                precision={isHalf ? 0.5 : 1}
                 sx={{
                     '& .MuiRating-iconFilled': {
                         color: lighten(colors, 0.2),
@@ -414,6 +455,160 @@ export const RatingWrapper = React.forwardRef((props: RatingWrapperProps, ref) =
                     });
                 }}
                 { ...otherProps }
+            />
+        </div>
+    );
+});
+
+
+export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
+    const {'data-id': dataId, style, isButton, isSecondary, fullWidth, items} = props;
+
+
+    const handleChangeEdit = (index: number, data: {primary:string,secondary:string,startIcon:string}) => {
+        const copy = JSON.parse(JSON.stringify(items));
+
+        if (items[index]) {
+            copy[index] = data;
+
+            updateComponentProps({
+                component: { props },
+                data: { items: copy }
+            });
+        }
+    }
+    const iconEditable = (item: {primary:string,secondary:string,startIcon:string}, index: number) => {
+        const categorys = Object.keys(icons);
+
+        const resultRender = categorys.map((keyNameCategory)=> {
+            const items = Object.keys(icons[keyNameCategory]).map((iconKeyName)=> {
+                const Icon = iconsList[iconKeyName];
+                
+                return {
+                    id: iconKeyName,
+                    label: Icon ? <Icon style={{ fontSize:14 }}/> : null
+                }
+            });
+
+            return(
+                <div onClick={(e)=> e.stopPropagation()} key={keyNameCategory} style={{display:'flex',flexDirection:'column'}}>
+                    <Typography variant='subtitle2' sx={{textDecoration: 'underline',my:1}}>
+                        { keyNameCategory }
+                    </Typography>
+                    <ToggleInput
+                        items={items}
+                        onChange={(value)=> handleChangeEdit(index, {
+                            ...item,
+                            startIcon: value
+                        })}
+                    />
+                </div>
+            );
+        });
+
+        const Icon = iconsList[item.startIcon];
+
+        return (
+            <HoverPopover 
+                content={
+                    <div>
+                        { resultRender }
+                    </div>
+                }
+            >
+                <Icon />
+            </HoverPopover>
+        );
+    }
+    const textEditable = (key: 'primary'|'secondary', value: string, index: number) => {
+        return (
+            <TipTapSlotEditor
+                autoIndex={index}
+                value={value ?? ''}
+                onChange={(html) => {
+                    const copy = { ...items[index] };
+                    copy[key] = html ?? '';
+                    handleChangeEdit(index, copy);
+                }}
+                placeholder="Текст"
+                className="no-p-margin"
+                isEditable={EDITOR}
+            />
+        )
+    }
+    const parse = () => {
+        return items.map((item, index)=> {
+            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconEditable(item, index) : null;
+            
+            return ({
+                startIcon: Icon ? Icon : undefined,
+                primary: textEditable('primary', item.primary, index),
+                secondary: isSecondary ? textEditable('secondary', item.secondary, index) : undefined
+            });
+        });
+    }
+    const exportCode = (call) => {
+        const stylePrerender = {...style, width: fullWidth ? "100%" : "fit-content"};
+        const itemsLitears = items.map((item, index)=> {
+            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconsList[item.startIcon] : null;
+            
+            return ({
+                startIcon: Icon ? {__raw: renderComponentSsr(<Icon />).trim() } : undefined,
+                primary: { __raw: `(${exportTipTapValue(item.primary).trim()})` },
+                secondary: isSecondary ? { __raw: `(${exportTipTapValue(item.secondary).trim()})` } : undefined
+            });
+        });
+        
+
+        const code = (`
+            import React from 'react';
+            import { List } from '@lib/index';
+
+            export default function ListWrap() {
+                const items = ${toLiteral(itemsLitears)};
+
+                
+                return(
+                    <div style={ ${toLiteral(stylePrerender)} }>
+                        <List
+                            onClick={${isButton ? '(index: number, item)=> console.log(index)' : 'undefined'}}
+                            items={items}
+                        />
+                    </div>
+                );
+            }
+        `);
+
+        call(code);
+    }
+    React.useEffect(() => {
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, [props]);
+    const parsedItems = React.useMemo(() => parse(), [items, isSecondary]);
+    
+
+    return (
+        <div
+            ref={ref}
+            data-id={dataId}
+            data-type='List'
+            style={{
+                ...style,
+                width: fullWidth ? "100%" : "fit-content"
+            }}
+        >
+            <List
+                onClick={isButton && console.log}
+                items={parsedItems}
             />
         </div>
     );

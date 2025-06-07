@@ -56,6 +56,7 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
         <IconButton
             ref={ref}
             data-type="IconButton"
+            aria-label={`button-${icon}`}
             style={style}
             onClick={()=> {
                 sharedEmmiter.emit('event', {

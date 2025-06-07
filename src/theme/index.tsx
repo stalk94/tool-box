@@ -80,6 +80,19 @@ declare module '@mui/material/styles' {
     }
 }
 
+//////////////////////////////////////////////////////
+//      overides component props
+//////////////////////////////////////////////////////
+declare module '@mui/material/Button' {
+    interface ButtonPropsSizeOverrides {
+        mini: true;
+    }
+}
+declare module '@mui/material/IconButton' {
+    interface IconButtonPropsSizeOverrides {
+        mini: true;
+    }
+}
 
 
 export const darkTheme = createTheme({

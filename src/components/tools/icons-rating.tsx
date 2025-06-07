@@ -16,21 +16,17 @@ import {
 } from '@mui/icons-material';
 
 
-
+/////////////////////////////////////////////////////
+//     для Rating
+/////////////////////////////////////////////////////
 export const fill = {
-    Star: <Star />,
-    Favorite: <Favorite />,
-    ThumbUp: <ThumbUp />,
-    Cafe: <LocalCafe />,
-    Brain: <Psychology />,
-    Fire: <Whatshot />,
+    none: Star,
+    Favorite: Favorite,
+    ThumbUp: ThumbUp
 }
 
 export const empty = {
-    Star: <StarBorder />,
-    Favorite: <FavoriteBorder />,
-    ThumbUp: <ThumbUpOffAlt />,
-    Cafe: <LocalCafeOutlined />,
-    Brain: <PsychologyOutlined />,
-    Fire: <WhatshotOutlined />,
+    none: StarBorder,
+    Favorite: FavoriteBorder,
+    ThumbUp: ThumbUpOffAlt
 }

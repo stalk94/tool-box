@@ -20,7 +20,7 @@ export const AVAILABLE_CLASSNAMES = ['rounded'];
 const propsButton = {
     variant: ['text', 'outlined', 'contained'], // Стиль кнопки
     color: ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], // Цвета
-    size: ['small', 'medium', 'large'], // Размеры
+    size: ['mini', 'small', 'medium', 'large'], // Размеры
     disabled: [true, false], // Отключение кнопки
     fullWidth: [true, false], // Растянуть на 100%
     //type: ['button', 'submit', 'reset'], // Тип HTML-кнопки
@@ -59,30 +59,32 @@ const propsTypography = {
     align: ['left', 'center', 'right', 'justify'], // Выравнивание текста 'inherit', 
     color: ['initial', 'textPrimary', 'textSecondary', 'error', 'primary', 'secondary', 'inherit'], // Цвет текста
     noWrap: [true, false], // Отключить перенос строк
-    display: ['initial', 'inline', 'block', 'inline-block', 'flex', 'inline-flex', 'grid', 'inline-grid'], // Свойство display для управления отображением
-    styles: {
-        text: {
-            color: { type: 'color' },
-            fontSize: { type: 'slider', min: 8, max: 48, step: 1 },
-            fontFamily: { type: 'autocomplete', options: globalThis.FONT_OPTIONS },
-            textAlign: { type: 'toggle', items: [
-                { id: 'none', label: 'none' },
-                { id: 'left', label: 'left' },
-                { id: 'center', label: 'center' },
-                { id: 'right', label: 'right' },
-                { id: 'justify', label: 'justify' }
-            ] }
-        }
+    fontFamily: { type: 'autocomplete', options: globalThis.FONT_OPTIONS },
+    fontSize: { type: 'slider', min: 8, max: 48, step: 1 },
+    //display: ['initial', 'inline', 'block', 'inline-block', 'flex', 'inline-flex', 'grid', 'inline-grid'], // Свойство display для управления отображением
+    textAlign: {
+        type: 'toggle', items: [
+            { id: 'left', label: 'left' },
+            { id: 'center', label: 'center' },
+            { id: 'right', label: 'right' },
+            { id: 'justify', label: 'justify' }
+        ]
     }
 }
 const propsDivider = {
     variant: ["inset", "fullWidth", "middle"],
+    'border-style': ['solid', 'dashed', 'dotted'],
     color: ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'],
     orientation: ["horizontal", "vertical"]
 }
 const propsChip = {
     variant: ['filled', 'outlined'],
 
+}
+const propsRating = {
+    colors: { type: 'color' },
+    apiPath: { type: 'text' },
+    isHalf: { type: 'switch' }
 }
 const propsBottomNav = {
     showLabels: [true, false],
@@ -259,6 +261,10 @@ const propsPromoBaner = {
 const propsStack = {
     count: { type: 'number', min: 2, max: 8, step: 1 },
 }
+const propsCarousel = {
+    slidesToShow: { type: 'number', min: 1, max: 8, step: 1 }
+}
+
 
 export default {
     Button: propsButton,
@@ -282,5 +288,8 @@ export default {
     Chip: propsChip,
     BottomNav: propsBottomNav,
     PromoBanner: propsPromoBaner,
-    Stack: propsStack
+    Stack: propsStack,
+    Rating: propsRating,
+    HorizontCarousel: propsCarousel,
+    VerticalCarousel: propsCarousel,
 }

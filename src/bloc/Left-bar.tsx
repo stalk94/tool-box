@@ -21,6 +21,7 @@ import { LeftToolPanelProps, ProxyComponentName, Component } from './type';
 import { useKeyboardListener } from './helpers/hooks';
 import { db } from "./helpers/export";
 import { DraggableToolItem } from './Dragable';
+import exportsGrid from "./modules/export/Grid";
 
 
 const RenderListProject = ({ currentCat }) => {
@@ -105,7 +106,7 @@ const RenderListProject = ({ currentCat }) => {
                         color="success"
                         onClick={handleOpen}
                     >
-                        <Add /> add block
+                        <Add /> add page
                     </Button>
 
                     { getAllBlockFromScope()?.map((blockData, index) =>
@@ -423,7 +424,7 @@ const useSlot = (slot, curSub, setSub, onChange) => {
 export default function ({ useDump, desserealize }: LeftToolPanelProps) {
     const meta = editorContext.meta;
     const select = infoSlice.select;
-    const [force, setForce] = React.useState(0);
+    const [force, useForce] = React.useReducer((i)=> i+1, 0);
     const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'component' | 'atoms' | 'styles' | 'slot'>('project');
@@ -448,7 +449,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
-    const handleExportGrid = () => console.log(
+    const handleExportGrid = () => exportsGrid(
         editorContext.layouts.get(),
         cellsSlice.get(),
         meta.scope.get(),
@@ -467,7 +468,7 @@ export default function ({ useDump, desserealize }: LeftToolPanelProps) {
                 requestIdleCallback(()=> select.content.set(data.curentComponent));
             }
             if (data?.currentToolPanel) {
-                if(data.force) setForce(p => p++);
+                if(data.force) useForce();
                 setTimeout(()=> setCurrentToolPanel(data.currentToolPanel), 0);
             }
             if (data?.curSubpanel) setSubPanel(data.curSubpanel);

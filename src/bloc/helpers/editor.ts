@@ -1,16 +1,18 @@
-import { Component, LayoutCustom, Breakpoint } from '../type';
-import { renderSlice } from "../context";
+import { ComponentSerrialize, LayoutCustom, Breakpoint } from '../type';
+import { renderSlice, cellsSlice } from "../context";
 
 
-export function getComponentById(id: number): Component | undefined {
-    let result;
 
-    renderSlice.get().forEach((layer) => {  
-        const find = layer.content?.find?.((elem)=> elem.props['data-id'] === id);
-        if(find) result = find;
-    });
-    
-    return result;
+export function getComponentById(idToFind: number): ComponentSerrialize | undefined {
+    const rawCache = cellsSlice.get();
+
+    for (const layerKey in rawCache) {
+        const list = rawCache[layerKey];
+        const found = list.find((obj) => obj.id === idToFind);
+        if (found) return found;
+    }
+
+    return undefined;
 }
 export function getUniqueBlockName(baseName: string, existingNames: string[]): string {
     let name = baseName;
@@ -24,7 +26,7 @@ export function getUniqueBlockName(baseName: string, existingNames: string[]): s
     return name;
 }
 export function getNearestLayout(current: Breakpoint, layouts: Record<Breakpoint, LayoutCustom[]>): LayoutCustom[] | undefined {
-    const breakpointOrder: Breakpoint[] = ['xl', 'lg', 'md', 'sm', 'xs'];
+    const breakpointOrder: Breakpoint[] = ['lg', 'md', 'sm', 'xs'];
     if (layouts?.[current]?.[0]) return layouts[current];
 
     const currentIndex = breakpointOrder.indexOf(current);

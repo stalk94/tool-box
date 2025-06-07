@@ -122,7 +122,7 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
     );
 }
 // data - данные сетки слота
-export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type }: ContextSlotProps) {
+export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type, style }: ContextSlotProps) {
     const handle = () => EVENT.emit('addGridContext', {
         nestedComponentsList,
         data: data ?? {},
@@ -143,8 +143,10 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
             style={{
                 transition: 'background 0.15s',
                 width: '100%',
-                height: (type === 'Frame' || type === 'Area') ? '100%' : '',
+                position: (type === 'Accordion') ? 'relative' : 'static',
+                height: (type === 'Frame' || type === 'Area') ? '100%' : 'fit-content',
                 background: '#00000026',
+                marginTop: (type === 'Accordion') && 10,
             }}
         >
             <Box

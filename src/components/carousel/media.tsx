@@ -23,6 +23,7 @@ export type CarouselProps = {
 export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) => {
     const pointer = useRef({ startX: 0, dragging: false });
     const containerRef = useRef<HTMLDivElement>(null);
+    const [cellHeight, setCellHeight] = useState<number>();
     const [currentIndex, setCurrentIndex] = useState(0);
     const [slideWidth, setSlideWidth] = useState(0);
     const x = useMotionValue(0);
@@ -33,7 +34,6 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
         loop = false,
         slidesToShow = 3,
         slidesToScroll = 1,
-        ...otherProps
     } = props;
     
     
@@ -84,7 +84,8 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
                 style={{ 
                     ...item?.style,
                     width: '100%', 
-                    height: height ?? '100%'
+                    height: height ?? '100%',
+                    objectFit: 'cover',
                 }} 
             />
         );
@@ -112,22 +113,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
             </div>
         );
     }
-    const renderItemEditor = (item: SourceIremType) => {
-        if (item.type === 'image') return(item.src);
-        else if (item.type === 'video') return(item.src);
-        else return(
-            <div
-                style={{ 
-                    ...item?.style,
-                    width: '100%', 
-                    height: height ?? '100%', 
-                }} 
-            >
-                { item.src }
-            </div>
-        );
-    }
-
+    
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
@@ -143,7 +129,23 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
         update();
         window.addEventListener('resize', update);
         return () => window.removeEventListener('resize', update);
-    }, [currentIndex, slidesToShow]);
+    }, [currentIndex, slidesToShow, props]);
+    //! нужно для ssr вычислить размеры
+    useEffect(()=> {
+        if (typeof window === 'undefined') return;
+        
+        if (!height && props['data-parent']) {
+            const parentCell = document.querySelector(`[data-id="${props['data-parent']}"]`);
+            if (parentCell) {
+                setCellHeight(parentCell.getBoundingClientRect().height - 4);
+            }
+            // самостоятельно вычислить размеры
+            else if(!parentCell) {
+                const boundParent = containerRef.current.parentElement.getBoundingClientRect();
+                setCellHeight(boundParent.height - 4);
+            }
+        }
+    }, [props]);
     useEffect(() => {
         if (typeof window === 'undefined') return;
         if (editor || !autoplay || items.length <= slidesToShow) return;
@@ -160,7 +162,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
 
         return ()=> clearInterval(interval);
     }, [currentIndex, autoplay, autoplayDelay, items.length, slidesToShow, slidesToScroll, loop]);
-
+    
 
     return (
         <>
@@ -177,7 +179,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
 
             <div
                 ref={containerRef}
-                style={{ width: '100%', overflow: 'hidden' }}
+                style={{ width: '100%', maxHeight: '100%', overflow: 'hidden' }}
                 onPointerDown={onPointerDown}
                 onPointerMove={onPointerMove}
                 onPointerUp={onPointerUp}
@@ -198,6 +200,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
                             style={{
                                 flex: `0 0 ${100 / slidesToShow}%`,
                                 maxWidth: `${100 / slidesToShow}%`,
+                                height: (height ?? cellHeight) ?? '100%',
                                 padding: 4,
                                 boxSizing: 'border-box',
                                 userSelect: 'none',
@@ -205,7 +208,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
                                 alignItems: 'center'
                             }}
                         >
-                            { editor ? renderItemEditor(item) : renderItem(item) }
+                            { editor ? item.src : renderItem(item) }
                         </div>
                     ))}
                 </motion.div>
@@ -250,12 +253,11 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
 
 
 
-export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) => {
+export const CarouselVertical = ({ editor, ...props }: CarouselProps) => {
     const pointer = useRef({ startY: 0, dragging: false });
     const containerRef = useRef<HTMLDivElement>(null);
-    const [calculateHeightSlide, setHeight] = useState(height ?? 300);
-    const [currentIndex, setCurrentIndex] = useState(0);
     const [slideHeight, setSlideHeight] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(0);
     const y = useMotionValue(0);
     const {
         items = [],
@@ -264,10 +266,9 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
         loop = false,
         slidesToShow = 3,
         slidesToScroll = 1,
-        ...otherProps
     } = props;
     
-
+    
     const goTo = (index: number) => {
         let safeIndex = index;
 
@@ -316,8 +317,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
                     width: '100%', 
                     paddingTop: 4,
                     paddingBottom: 4,
-                    height: calculateHeightSlide, 
-                    //height: '100%',
+                    height: slideHeight, 
                 }} 
             />
         );
@@ -329,7 +329,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
                     objectFit: 'cover',
                     ...item?.style,
                     width: '100%', 
-                    height: calculateHeightSlide, 
+                    height: slideHeight, 
                     margin: 'auto', 
                     paddingTop: 4,
                     paddingBottom: 4,
@@ -355,7 +355,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
             <div
                 style={{
                     width: '100%', 
-                    height: height / slidesToShow,
+                    height: slideHeight,
                 }}
             >
                 { item.src }
@@ -365,7 +365,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
             <div
                 style={{
                     width: '100%', 
-                    height: height / slidesToShow,
+                    height: slideHeight,
                 }}
             >
                 { item.src }
@@ -376,7 +376,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
                 style={{ 
                     ...item?.style,
                     width: '100%', 
-                    height: height / slidesToShow, 
+                    height: slideHeight, 
                 }} 
             >
                 { item.src }
@@ -384,13 +384,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
         );
     }
 
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
 
-        if(height) {
-            setHeight(height / slidesToShow);
-        }
-    }, [height]);
     useEffect(() => {
         if (typeof window === 'undefined') return;
 
@@ -398,7 +392,6 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
             if (containerRef.current) {
                 const fullHeight = containerRef.current.offsetHeight;
                 const perSlide = fullHeight / slidesToShow;
-                //setHeight(fullHeight);
                 setSlideHeight(perSlide);
                 animate(y, -currentIndex * perSlide, { type: 'spring', stiffness: 250 });
             }
@@ -407,7 +400,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
         update();
         window.addEventListener('resize', update);
         return () => window.removeEventListener('resize', update);
-    }, [currentIndex, height, slidesToShow]);
+    }, [currentIndex, slidesToShow, props]);
     useEffect(() => {
         if (typeof window === 'undefined') return;
         if (editor || !autoplay || items.length <= slidesToShow) return;
@@ -450,8 +443,6 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
             >
                 <motion.div
                     style={{
-                        //display: 'flex',
-                        //flexDirection: 'column',
                         y,
                         cursor: 'grab',
                         userSelect: 'none',
@@ -464,7 +455,7 @@ export const CarouselVertical = ({ height, editor, ...props }: CarouselProps) =>
                             key={i}
                             style={{
                                 flex: `0 0 ${100 / slidesToShow}%`,
-                                maxHeight: calculateHeightSlide,
+                                maxHeight: slideHeight,
                                 boxSizing: 'border-box',
                                 display: 'flex',           
                                 justifyContent: 'center',

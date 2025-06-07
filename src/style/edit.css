@@ -116,3 +116,24 @@
   height: calc(100% - 50px);
   pointer-events: none;
 }
+
+/* ручки ячеек grid layout */
+.react-resizable-handle {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='26' height='26'><path fill='%232196f3' d='M25 18h-2v2h2v2h-2v2h2v-6zm-4 4h-2v2h2v-2z'/></svg>");
+  z-index: 999999;
+  background-size: 240% 240%;
+  transition: background 0.2s ease;
+  color: red;
+  border-radius: 5px;
+}
+.react-resizable-handle::after {
+  mask: url('/path/to/your-icon.svg') no-repeat center;
+  -webkit-mask: url('/path/to/your-icon.svg') no-repeat center;
+  mask-size: contain;
+  -webkit-mask-size: contain;
+}
+.react-resizable-handle:hover {
+  background-color: rgba(33, 149, 243, 0.3);
+   width: 22;
+   height: 22;
+}

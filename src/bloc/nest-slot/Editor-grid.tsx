@@ -258,6 +258,7 @@ export default function ({ nestedData, isArea }: { nestedData: DataNested, isAre
                         isResizable={mod === 'grid' && true}                // Отключить изменение размера
                         margin={margin}
                         onLayoutChange={handleChangeLayout}
+                        resizeHandles={['se', 'ne', 'sw', 'nw']}
                     >
                         {render?.map((layer) => {
                             if (layer?.i) return (

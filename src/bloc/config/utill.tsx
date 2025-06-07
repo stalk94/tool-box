@@ -4,6 +4,7 @@ import { FormatAlignCenter, FormatAlignJustify, FormatAlignLeft, FormatAlignRigh
     ViewColumn, ViewList, ViewQuilt, ViewArray, ViewCarousel, ViewComfy, ViewCompact, 
     ViewModule, ViewAgenda, Widgets
 } from "@mui/icons-material";
+import { fill, empty } from '../../components/tools/icons-rating';
 import { iconsList } from '../../components/tools/icons';
 import { RegistreTypeComponent } from './type';
 import { Schema, AccordionScnema } from '../../index';
@@ -67,7 +68,7 @@ const decorize = (keyListStyle: string, keyListVariant: string) => {
 
 
 // --------------------------------------------------------------------------------
-export const getColors = (theme: Theme) => {
+export const getColors = (theme: Theme, isRgbValue?:boolean) => {
     const palette = theme.palette;
 
     const color = {
@@ -84,8 +85,8 @@ export const getColors = (theme: Theme) => {
     return Object.keys(color).map((key) => {
         return {
             label: <div style={ { width: '20px', height: '20px', background: color[key] } }/>,
-        id: key
-    }
+            id: isRgbValue ? color[key] : key
+        }
     });
 }
 export const fabrickStyleScheme = (listType: 'flex' | 'text', sourceStyle: any) => {
@@ -333,25 +334,33 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
     });
 
    
-    if (propName === 'color' || propName.includes('color-')) {
+    if (propName === 'color' || propName.includes('color-') || propName.includes('-color')) {
         return {
             type: 'toggle',
             id: propName,
-            items: getColors(theme),
+            items: getColors(theme, typeComponent === 'Tabs'),
             label: propName,
             value: propValue,
             labelSx: { fontSize: '14px' }
         }
     }
     else if (propName === 'size') {
+        const items = [
+            { id: 'small', label: <var style={{ fontStyle: 'italic' }} > sm </var> },
+            { id: 'medium', label: <var style={{ fontWeight: 400 }}> md </var> },
+            { id: 'large', label: <var style={{ fontWeight: 'bold' }}> lg </var> }
+        ];
+        if(typeComponent === 'Button' || typeComponent === 'IconButton') {
+            items.unshift({
+                id: 'mini', 
+                label: <var style={{ fontStyle: 'italic' }} > mini </var>
+            });
+        }
+
         return {
             type: 'toggle',
             id: propName,
-            items: [
-                { id: 'small', label: <var style={{ fontStyle: 'italic' }} > sm </var> },
-                { id: 'medium', label: <var style={{ fontWeight: 400 }}> md </var> },
-                { id: 'large', label: <var style={{ fontWeight: 'bold' }}> lg </var> }
-            ],
+            items: items,
             label: propName,
             value: propValue,
             labelSx: { fontSize: '14px' }
@@ -403,6 +412,25 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
             labelSx: { fontSize: '14px' },
             value: propValue,
             items: items
+        }
+    }
+    else if(propName === 'iconName') {
+        const mapItems = Object.entries(fill).map(([key, value]) => {
+            const Tag = value;
+            
+            return {
+                id: key,
+                label: <Tag/>
+            }
+        });
+
+        return {
+            type: 'toggle',
+            id: propName,
+            items: mapItems,
+            label: propName,
+            value: propValue,
+            labelSx: { fontSize: '14px' }
         }
     }
     // индвивидуальные пропсы для типов

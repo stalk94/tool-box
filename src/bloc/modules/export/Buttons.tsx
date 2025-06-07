@@ -66,6 +66,7 @@ export function exportedMuiIconButton(
             return (
                 <IconButton
                     style={{ ${toObjectLiteral(style)} }}
+                    aria-label={button-${icon}}
                     onClick={()=> sharedEmmiter.emit('event', {
                         id: ${id},
                         type: 'click'

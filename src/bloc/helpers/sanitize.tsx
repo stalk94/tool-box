@@ -124,11 +124,8 @@ export const desserealize = (component: ComponentSerrialize, data?: Record<strin
     if(component) {
         const { props, parent } = component;
         const type = props["data-type"];
-        //console.log(component)
         const Component = componentMap[type];
         Component.displayName = type;
-        Component.parent = parent ?? data?.parent;
-
 
         if (!Component) {
             console.warn(`Компонент типа "${type}" не найден в реестре`);
@@ -137,6 +134,7 @@ export const desserealize = (component: ComponentSerrialize, data?: Record<strin
 
         return (
             <Component
+                data-parent={parent ?? data.parent}
                 {...props}
                 {...data}
             />

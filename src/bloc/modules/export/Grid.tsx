@@ -140,6 +140,7 @@ export default function exportsGrid(
     const individualList = ['Tabs', 'BottomNav', 'DataTable', 'HorizontCarousel', 'VerticalCarousel', 'PromoBanner', 'List'];
     
     const renderComponents = async(content: ComponentSerrialize[]) => {
+        if(!content) return;
         const imports: string[] = [];
         const bodysInOrder: string[] = [];
         const singletonsimports: string[] = [];
@@ -217,17 +218,15 @@ export default function exportsGrid(
 
         await Promise.all(
             layouts.lg.map(async (layout) => {
-                if (!Array.isArray(layout.content)) return;
                 const cellid = layout.i;
 
                 const result = await renderComponents(contents[cellid]);
-                console.log(result)
 
-                if (result.cells) {
+                if (result?.cells) {
                     const path = await exportLiteralToFile([scope, name], cellid, result.cells);
                     results[cellid] = path;
                 }
-                if (result.singletons) {
+                if (result?.singletons) {
                     const sharedPath = await exportLiteralToFile(
                         [scope, 'shared'],
                         cellid,
@@ -255,6 +254,7 @@ export default function exportsGrid(
         let imports = ``;
         let cells = ``;
 
+        // ANCHOR - layout grid literal
         layouts.lg.map((layout, index) => {
             const find = paths.find((elem)=> elem.cellId === layout.i);
 

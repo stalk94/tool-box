@@ -20,15 +20,12 @@ type TypographyWrapperProps = TypographyProps & {
     'data-type': 'Typography'
     fullWidth: boolean
     children: string
-    styles?: {
-        text: React.CSSProperties
-    }
+    fontFamily: string
 }
 
 
 
 export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { children, 'data-id': dataId, style, fullWidth, ...otherProps } = props;
    
     const onChange = useDebounced((data) => {
@@ -37,7 +34,7 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
             data: { children: data }
         });
     }, 1000);
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = exportText(
             children,
             { width: '100%', ...style },
@@ -46,7 +43,9 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -54,11 +53,12 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
 
     return(
         <div 
+            ref={ref}
             data-id={dataId} 
             data-type="Text" 
             style={{ width: '100%', ...style }}
@@ -70,7 +70,7 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
                 className="no-p-margin"
                 isEditable={EDITOR}
                 initialInsert={{
-                    text: 'Title',
+                    text: 'text',
                     fontSize: '1rem',
                     fontFamily: 'Roboto Condensed", Arial, sans-serif',
                     fontWeight: '500',
@@ -80,8 +80,7 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     );
 });
 export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
-    const { children, 'data-id': dataId, styles, style, fullWidth, ...otherProps } = props;
+    const { children, 'data-id': dataId, style, fullWidth, fontFamily, textAlign, ...otherProps } = props;
     const [text, setText] = React.useState(children);
     const selected = infoSlice.select.content.use();
     
@@ -93,7 +92,7 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
             data: { children: newText }
         });
     }
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = exportTypography(
             text ?? children,
             { width: '100%', display:'block', ...styles?.text, fontSize: styles?.text?.fontSize + 'px' },
@@ -104,7 +103,9 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -112,13 +113,14 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     React.useEffect(() => {
+        if(!EDITOR) return;
+
         if(children) setText(children);
     }, [children]);
     
     
-
     return(
         <Typography
             ref={ref} 
@@ -128,8 +130,18 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
             suppressContentEditableWarning
             onBlur={handleBlur}
             { ...otherProps }
-            style={style}
-            sx={{ width: '100%', display:'block', ...styles?.text, fontSize: styles?.text?.fontSize + 'px' }}
+            sx={{ 
+                width: '100%', 
+                whiteSpace: 'normal',     // перенос строк разрешён
+                wordBreak: 'keep-all',    // слова не разбиваются
+                overflowWrap: 'normal',
+                display: 'block'
+            }}
+            style={{
+                ...style,
+                fontFamily,
+                textAlign
+            }}
         >
             { text ?? children }
         </Typography>

@@ -85,7 +85,6 @@ type CardWrapperProps = ComponentProps & {
 
 
 export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [imgSrc, setImgSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
     const {
@@ -113,7 +112,7 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
             data: { src: `${url}?${Date.now()}` } 
         });
     }
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = renderImage(
             imgSrc, 
             {
@@ -127,7 +126,9 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -135,8 +136,10 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props, imgSrc]);
     React.useEffect(() => {
+        if(!EDITOR) return;
+
         if (file instanceof File) {
             const id = file.lastModified;
             
@@ -171,7 +174,6 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
     );
 });
 export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [videoSrc, setVideoSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
     const { 
@@ -189,7 +191,7 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
 
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = renderVideo(
             videoSrc,
             {
@@ -211,7 +213,9 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -219,7 +223,7 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props, videoSrc]);
     const handleUpload = async (file: File) => {
         setVideoSrc('https://i.gifer.com/YCZH.gif'); // временная заглушка
 
@@ -241,6 +245,8 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
         }
     }
     React.useEffect(() => {
+        if(!EDITOR) return;
+
         if (file instanceof File) {
             const id = file.lastModified;
             
@@ -285,12 +291,10 @@ export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => 
 
 
 export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
-    const { items, fullWidth, 'data-id': dataId, delay, style = {}, ...otherProps } = props;
-    const { width, height } = useComponentSizeWithSiblings(dataId);
+    const { items, fullWidth, 'data-id': dataId, delay, style = {}, slidesToShow, ...otherProps } = props;
     
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const itemsLitears = items.map((item, index) => {
             if(item.type !== 'content') return ({
                 ...item
@@ -323,6 +327,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
                             <CarouselHorizontal
                                 items={items}
                                 style={{ }}
+                                slidesToShow={${items.length > slidesToShow ? slidesToShow : items.length}}
                                 ${toJSXProps(otherProps)}
                             />
                         </div>
@@ -333,7 +338,9 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -341,7 +348,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
     const handleChangeReloadContent = (index: number, data: string | undefined, type?: 'image'|'video') => {
         if (items[index]) {
@@ -357,7 +364,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
         }
     }
     const parsedItems = React.useMemo(() => {
-        return items.map((item, i) => {
+        if(EDITOR) return items.map((item, i) => {
             const itemCopy = { ...item };
 
             if(item.type === 'image' || item.type ==='video') {
@@ -379,7 +386,8 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
                             style={{ 
                                 ...item?.style,
                                 width: '100%', 
-                                height: '100%'
+                                height: '100%',
+                                objectFit: 'cover'
                             }} 
                         />
                     </LoaderToolWrapper>
@@ -405,21 +413,21 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
         >
             <CarouselHorizontal
                 autoplayDelay={delay * 1000}   
-                items={parsedItems}
-                editor={true}
+                slidesToShow={items.length > slidesToShow ? slidesToShow : items.length}
+                items={EDITOR ? parsedItems : items}
+                editor={EDITOR}
                 { ...otherProps }
             />
         </div>
     );
 });
 export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
     const { 'data-id': dataId, fullWidth, delay, items, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
 
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const itemsLitears = items.map((item, index) => {
             if(item.type !== 'content') return ({
                 ...item
@@ -463,7 +471,9 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -471,7 +481,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     const handleChangeReloadContent = (index: number, data: string | undefined, type?: 'image'|'video') => {
         if (items[index]) {
             const newItems = JSON.parse(JSON.stringify(items));
@@ -529,7 +539,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
 
             return itemCopy;
         });
-    }, [items, active, height]);
+    }, [items, active, height, otherProps.slidesToShow]);
 
     
     return(
@@ -547,9 +557,8 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
         >
             <CarouselVertical
                 autoplayDelay={delay * 1000}
-                items={parsedItems}
-                height={height}         // она будет поделена на slidesToShow (3 default)
-                editor={true}
+                items={EDITOR ? parsedItems : items}
+                editor={EDITOR}
                 { ...otherProps }
             />
         </div>
@@ -559,7 +568,6 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
 
 
 export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [active, setActive] = React.useState(0);
     const [activeSlide, setActiveSlide] = React.useState(0);
     const {
@@ -576,7 +584,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
     const { width, height } = useComponentSizeWithSiblings(dataId);
 
 
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const itemsLitears = items.map((item, index) => {
             return ({
                 images: item.images,
@@ -619,7 +627,9 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -627,7 +637,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     const handleChangeEdit = (index: number, data: any) => {
         if (items[index]) {
             const newItems = [...items];
@@ -696,7 +706,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         return buttonProps;
     }
     const parsedItems = React.useMemo(() => {
-        return items.map((item, i) => {
+        if(EDITOR) return items.map((item, i) => {
             if (i === active) {
                 return {
                     images: [...item.images],
@@ -733,6 +743,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         </div>
     );
 });
+//! 
 export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
     const degidratationRef = React.useRef<(call) => void>(() => {});
     const lastFileRef = React.useRef<number | null>(null);
@@ -750,7 +761,7 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
 
     const [imgSrc, setImgSrc] = React.useState<string>();
     const componentId = props['data-id'];
-    //const { width, height } = useComponentSizeWithSiblings(componentId);
+    
 
     const onChange = (slot, data) => {
         updateComponentProps({

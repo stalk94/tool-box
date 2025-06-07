@@ -49,6 +49,7 @@ export type ComponentProps = {
     'data-id': number
     'data-type': ProxyComponentName
     'data-slot'?: boolean | string | number
+    'data-parent': string
     isArea?: boolean
     apiPath?: string
     children ?: string | any

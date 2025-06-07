@@ -13,9 +13,9 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
 import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
-import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper } from './any';
+import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper, ListWrapper } from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, 
-    HeaderWrapper, BreadcrumbsWrapper, ListWrapper 
+    HeaderWrapper, BreadcrumbsWrapper
 } from './complex';
 import { FrameWrapper, AreaWrapper } from './blocs';
 import { FormAuthOrRegWrapper } from './forms';
@@ -44,6 +44,7 @@ registerComponent({
     defaultProps: {
         children: 'Button',
         variant: 'outlined',
+        size: 'medium',
         color: 'primary',
         fullWidth: true,
         startIcon: 'none',
@@ -58,8 +59,9 @@ registerComponent({
     component: IconButtonWrapper,
     defaultProps: {
         fullWidth: true,
-        icon: 'Add',
+        size: 'medium',
         color: 'default',
+        icon: 'Add',
     },
     icon: AdsClick,
     category: 'interactive',
@@ -350,9 +352,11 @@ registerComponent({
     type: 'Typography',
     component: TypographyWrapper,
     defaultProps: {
-        children: 'Заголовок',
-        variant: 'h5',
         fullWidth: true,
+        fontFamily: 'Roboto',
+        variant: 'h5',
+        textAlign: 'start',
+        children: 'Заголовок',
         style: {
             display: 'flex',  
         }
@@ -374,11 +378,11 @@ registerComponent({
     component: RatingWrapper,
     defaultProps: {
         fullWidth: true,
+        isHalf: false,
         size: 'medium',
         iconName: 'none',
         apiPath: 'api/test',
-        colors: '#ff3d47',
-        precision: 1
+        colors: '#ff3d47'
     },
     icon: StarsOutlined,
     category: 'misc',
@@ -390,8 +394,9 @@ registerComponent({
         fullWidth: true,
         isChildren: false,
         variant: 'fullWidth',
-        width: '100%',
-        children: 'text'
+        'border-style': 'solid',
+        'border-color': null,
+        children: 'divider'
     },
     icon: LinearScale,
     category: 'misc',
@@ -416,11 +421,11 @@ registerComponent({
     component: ChipWrapper,
     defaultProps: {
         fullWidth: true,
+        label: 'chip',
         variant: '',
         size: 'small',
         color: '',
         icon: '',
-        label: 'chip',
         style: {}
     },
     icon: Label,
@@ -514,14 +519,21 @@ registerComponent({
     category: 'complex',
 });
 registerComponent({
-    type: 'FormAuth',
-    component: FormAuthOrRegWrapper,
+    type: 'BottomNav',
+    component: BottomNavWrapper,
     defaultProps: {
         fullWidth: true,
-        metaName: 'FormAuth',
-        style: {}
+        showLabels: false,
+        elevation: 1,
+        labelSize: 16,
+        iconSize: 24,
+        items: [
+            {icon: 'Home', label: 'home'},
+            {icon: 'Add', label: 'add'},
+            {icon: 'Add', label: 'test'}
+        ]
     },
-    icon: EditNote,
+    icon: Repartition,
     category: 'complex',
 });
 
@@ -553,6 +565,9 @@ registerComponent({
     component: TabsWrapper,
     defaultProps: {
         fullWidth: true,
+        isHorizontal: true,
+        color: '',
+        'select-color': '',
         metaName: 'CustomTabs',
         // ! ВСЕГДА ОБЬЕКТ 
         slots: {
@@ -564,24 +579,6 @@ registerComponent({
             'one',
             'two',
             'three'
-        ]
-    },
-    icon: Repartition,
-    category: 'block',
-});
-registerComponent({
-    type: 'BottomNav',
-    component: BottomNavWrapper,
-    defaultProps: {
-        fullWidth: true,
-        showLabels: false,
-        elevation: 1,
-        labelSize: 16,
-        iconSize: 24,
-        items: [
-            {icon: 'Home', label: 'home'},
-            {icon: 'Add', label: 'add'},
-            {icon: 'Add', label: 'test'}
         ]
     },
     icon: Repartition,
@@ -615,5 +612,16 @@ registerComponent({
         style: {}
     },
     icon: TableRows,
+    category: 'block',
+});
+registerComponent({
+    type: 'FormAuth',
+    component: FormAuthOrRegWrapper,
+    defaultProps: {
+        fullWidth: true,
+        metaName: 'FormAuth',
+        style: {}
+    },
+    icon: EditNote,
     category: 'block',
 });

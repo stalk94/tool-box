@@ -46,6 +46,35 @@ export const typography: ThemeOptions = {
 /** предустановки компонентов (!никаких явно заданных цветов) */
 export const components: ThemeOptions = {
     components: {
+        MuiButton: {
+            variants: [
+                {
+                    props: { size: 'mini' },
+                    style: {
+                        padding: '2px 6px',
+                        fontSize: '0.7rem',
+                        minHeight: '24px',
+                        minWidth: '48px',
+                        lineHeight: 1.2,
+                    },
+                },
+            ],
+        },
+        MuiIconButton: {
+            variants: [
+                {
+                    props: { size: 'mini' },
+                    style: {
+                        width: 24,
+                        height: 24,
+                        padding: 2,
+                        '& svg': {
+                            fontSize: '1rem',
+                        },
+                    },
+                },
+            ],
+        },
         MuiInputBase: {
             styleOverrides: {
                 root: {

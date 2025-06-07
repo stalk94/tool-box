@@ -1,11 +1,10 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
-import { Accordion, AccordionProps, HoverPopover, List, ListCustomProps } from '../../index';
+import { Accordion, AccordionProps, HoverPopover } from '../../index';
 import { icons, iconsList } from '@components/tools/icons';
 import { Box, Tabs, Button, Tab, BottomNavigation, BottomNavigationAction, Paper, TabsProps, Typography } from '@mui/material';
 import { ComponentProps, DataNested } from '../type';
 import { triggerFlyFromComponent } from './helpers/anim';
-import { useEvent, useCtxBufer } from './helpers/shared';
 import DataTable, { DataSourceTableProps } from './sources/storage';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { AppBar, Start, LinearNavigation, MobailBurger, Breadcrumbs, ToggleInput } from '../../index';
@@ -14,32 +13,11 @@ import { uploadFile } from 'src/app/plugins';
 import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/bloks';
 import renderAppBar, { exportBreadCrumbs } from './export/shared';
 import { DropSlot, ContextSlot } from '../Dragable';
-import TipTapSlotEditor from './tip-tap';
-import { exportTipTapValue, renderComponentSsr, toLiteral } from './export/utils';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { editorContext } from "../context";
 
 
-type ListWrapperProps = ListCustomProps & {
-    'data-id': number
-    'data-type': 'List'
-    showLabels: boolean
-    style: React.CSSProperties
-    fullWidth: boolean
-    isButton?: boolean
-    isSecondary?: boolean
-    styles?: {
-        primary?: React.CSSProperties
-        secondary?: {
-            color?: string
-            fontSize?: number 
-        }
-        icon?: {
-            color?: string
-            fontSize?: number 
-        }
-    }
-}
+
 type BottomNavWrapperProps = {
     'data-id': number
     'data-type': 'BottomNav'
@@ -79,6 +57,10 @@ type AccordionWrapperProps = AccordionProps & ComponentProps & {
 type TabsWrapperProps = TabsProps & {
     'data-id': number
     'data-type': 'Tabs'
+    'select-color': string
+    metaName?: string,
+    color: string
+    isHorizontal: boolean
     items: string[]
     fullWidth?: boolean
     slots: Record<string, DataNested>
@@ -123,8 +105,8 @@ type HeaderWrapperProps = {
 }
 
 
+//! режим вне редактора
 export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => { });
     const { 'data-id': dataId, style, metaName, items, styles, activeIndexs, slots, fullWidth, ...otherProps } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
@@ -141,7 +123,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         }
     }
     const parse = () => {
-        return items.map((item, index) => {
+        if(EDITOR) return items.map((item, index) => {
             const text = item.title?.props?.children ?? item.title;
 
             const EditComponent = () => (
@@ -166,7 +148,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
                         e.currentTarget.style.border = '1px solid #3b8ee2b1';
                     }}
                 >
-                    {text}
+                    { text }
                 </div>
             );
             const SlotContent = () => (
@@ -178,7 +160,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
                         ...slots[index],
                         size: {
                             width: container.width, 
-                            height:container.height/4
+                            height:container.height
                         }
                     }}
                     nestedComponentsList={{
@@ -190,13 +172,13 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
 
             return ({
                 title: <EditComponent />,
-                content: <SlotContent />,
+                content: <div style={{minHeight:40}}><SlotContent /></div>,
             });
         });
     }
     const parsedItems = React.useMemo(() => parse(), [props, width]);
 
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = render(
             editorContext.meta.get(),
             activeIndexs,
@@ -209,7 +191,9 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -217,7 +201,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     
 
     return (
@@ -237,26 +221,47 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         </div>
     );
 });
+//! режим вне редактора
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
-    const degidratationRef = React.useRef<(call) => void>(() => { });
-    const { 'data-id': dataId, style, items, metaName, slots, fullWidth, textColor, ...otherProps } = props;
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
+    const { 
+        'data-id': dataId, 
+        'select-color': selectColor,
+        color,
+        style, 
+        isHorizontal, 
+        items, 
+        metaName, 
+        slots, 
+        fullWidth, 
+        ...otherProps 
+    } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
 
-    degidratationRef.current = (call) => {
+
+    const exportCode = (call) => {
         const code = exportedTabs(
             editorContext.meta.get(),
             items,
-            textColor,
-            slots
+            isHorizontal,
+            selectColor,
+            color,
+            slots,
+            { 
+                ...style, 
+                width: isHorizontal ? '100%' : 'fit-content', 
+                maxWidth: isHorizontal ? '100%' : '20%',
+                height: '100%', 
+                display: 'block' 
+            }
         );
 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -264,10 +269,8 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-        emiter('onChange', newValue);
-        //storage(newValue);
         setValue(newValue);
         triggerFlyFromComponent(String(dataId));
     }
@@ -320,21 +323,38 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             ref={ref}
             data-id={dataId}
             data-type='Tabs'
-            style={{ ...style, width: '100%', display: 'block' }}
-            {...otherProps}
+            style={{ 
+                ...style, 
+                width: isHorizontal ? '100%' : 'fit-content', 
+                maxWidth: isHorizontal ? '100%' : '20%',
+                height: height ?? '100%', 
+                display: 'block' 
+            }}
+            { ...otherProps }
         >
             <Tabs
                 value={value}
                 onChange={handleChange}
+                orientation={isHorizontal ? 'horizontal' : 'vertical'}
                 variant="scrollable"
                 scrollButtons={true}
                 allowScrollButtonsMobile={true}
-                textColor={textColor}
                 indicatorColor={'primary'}
                 aria-label="tabs"
+                sx={{
+                    '& .MuiTabs-indicator': {
+                        backgroundColor: selectColor
+                    },
+                }}
             >
                 { parsedItems && parsedItems.map((elem, index) =>
                     <Tab
+                        sx={{
+                            color: color,
+                            '&.Mui-selected': {
+                                color: selectColor,
+                            },
+                        }}
                         key={index}
                         label={elem}
                     />
@@ -565,7 +585,6 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
         { test: 3, name: 'гриша' },
         { test: 5, name: 'вася' },
     ]);
-    const degidratationRef = React.useRef<(call) => void>(() => { });
     const lastFileRef = React.useRef<number | null>(null);
     const {
         'data-id': dataId,
@@ -583,7 +602,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
     const { width, height } = useComponentSizeWithSiblings(dataId);
 
 
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const inferColumns = (data: any[]) => {
             const result = [];
             const first = data[0];
@@ -606,7 +625,7 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
             styles,
             otherProps
         );
-        console.log(code)
+        
         call(code);
     }
     const handleUpload = (file: File) => {
@@ -672,7 +691,9 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
         }
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -680,8 +701,10 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     React.useEffect(() => {
+        if(!EDITOR) return;
+
         if (file instanceof File) {
             const id = file.lastModified;
 
@@ -942,8 +965,6 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
     );
 });
 export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => { });
-    const [linkStyleState, setState] = React.useState({});
     const {
         'data-id': dataId,
         style,
@@ -954,8 +975,17 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
         ...otherProps
     } = props;
 
+    const meta = editorContext.meta.get();
+    const exportCode = (call) => {
+        const linkStyleState = {
+            fontFamily: style?.fontFamily,
+            fontSize: style?.fontSize,
+            fontWeight: style?.fontWeight,
+            fontStyle: style?.fontStyle,
+            textDecoration: style?.textDecoration,
+            textDecorationStyle: style?.textDecorationStyle,
+        };
 
-    degidratationRef.current = (call) => {
         const code = exportBreadCrumbs(
             separator,
             linkStyleState,
@@ -965,7 +995,9 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -973,19 +1005,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
-    React.useEffect(() => {
-        setState({
-            fontFamily: style?.fontFamily,
-            fontSize: style?.fontSize,
-            fontWeight: style?.fontWeight,
-            fontStyle: style?.fontStyle,
-            textDecoration: style?.textDecoration,
-            textDecorationStyle: style?.textDecorationStyle,
-        });
-
-    }, [style]);
-
+    }, [props]);
 
 
     return (
@@ -999,174 +1019,28 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
                 marginLeft: style.marginLeft,
                 marginTop: style.marginTop
             }}
-            {...otherProps}
+            { ...otherProps }
         >
             <Breadcrumbs
                 isMobile={!fullWidth}
                 separator={separator}
-                pathname={pathname ?? 'test/room/any'}
+                pathname={`test/${meta.scope}/${meta.name}`}
                 push={(href) => console.log(href)}
-                linkStyle={linkStyleState}
+                linkStyle={{
+                    fontFamily: style?.fontFamily,
+                    fontSize: style?.fontSize,
+                    fontWeight: style?.fontWeight,
+                    fontStyle: style?.fontStyle,
+                    textDecoration: style?.textDecoration,
+                    textDecorationStyle: style?.textDecorationStyle,
+                }}
                 Link={({ href, children }) =>
                     <div
                         onClick={() => console.log(href)}
                     >
-                        {children}
+                        { children }
                     </div>
                 }
-            />
-        </div>
-    );
-});
-
-
-export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => { });
-    const {'data-id': dataId, style, isButton, isSecondary, fullWidth, items} = props;
-
-
-    const handleChangeEdit = (index: number, data: {primary:string,secondary:string,startIcon:string}) => {
-        const copy = JSON.parse(JSON.stringify(items));
-
-        if (items[index]) {
-            copy[index] = data;
-
-            updateComponentProps({
-                component: { props },
-                data: { items: copy }
-            });
-        }
-    }
-    const iconEditable = (item: {primary:string,secondary:string,startIcon:string}, index: number) => {
-        const categorys = Object.keys(icons);
-
-        const resultRender = categorys.map((keyNameCategory)=> {
-            const items = Object.keys(icons[keyNameCategory]).map((iconKeyName)=> {
-                const Icon = iconsList[iconKeyName];
-                
-                return {
-                    id: iconKeyName,
-                    label: Icon ? <Icon style={{ fontSize:14 }}/> : null
-                }
-            });
-
-            return(
-                <div onClick={(e)=> e.stopPropagation()} key={keyNameCategory} style={{display:'flex',flexDirection:'column'}}>
-                    <Typography variant='subtitle2' sx={{textDecoration: 'underline',my:1}}>
-                        { keyNameCategory }
-                    </Typography>
-                    <ToggleInput
-                        items={items}
-                        onChange={(value)=> handleChangeEdit(index, {
-                            ...item,
-                            startIcon: value
-                        })}
-                    />
-                </div>
-            );
-        });
-
-        const Icon = iconsList[item.startIcon];
-
-        return (
-            <HoverPopover 
-                content={
-                    <div>
-                        { resultRender }
-                    </div>
-                }
-            >
-                <Icon />
-            </HoverPopover>
-        );
-    }
-    const textEditable = (key: 'primary'|'secondary', value: string, index: number) => {
-        return (
-            <TipTapSlotEditor
-                autoIndex={index}
-                value={value ?? ''}
-                onChange={(html) => {
-                    const copy = { ...items[index] };
-                    copy[key] = html ?? '';
-                    handleChangeEdit(index, copy);
-                }}
-                placeholder="Текст"
-                className="no-p-margin"
-                isEditable={EDITOR}
-            />
-        )
-    }
-    const parse = () => {
-        return items.map((item, index)=> {
-            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconEditable(item, index) : null;
-            
-            return ({
-                startIcon: Icon ? Icon : undefined,
-                primary: textEditable('primary', item.primary, index),
-                secondary: isSecondary ? textEditable('secondary', item.secondary, index) : undefined
-            });
-        });
-    }
-    degidratationRef.current = (call) => {
-        const stylePrerender = {...style, width: fullWidth ? "100%" : "fit-content"};
-        const itemsLitears = items.map((item, index)=> {
-            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconsList[item.startIcon] : null;
-            
-            return ({
-                startIcon: Icon ? {__raw: renderComponentSsr(<Icon />).trim() } : undefined,
-                primary: { __raw: `(${exportTipTapValue(item.primary).trim()})` },
-                secondary: isSecondary ? { __raw: `(${exportTipTapValue(item.secondary).trim()})` } : undefined
-            });
-        });
-        
-
-        const code = (`
-            import React from 'react';
-            import { List } from '@lib/index';
-
-            export default function ListWrap() {
-                const items = ${toLiteral(itemsLitears)};
-
-                
-                return(
-                    <div style={ ${toLiteral(stylePrerender)} }>
-                        <List
-                            onClick={${isButton ? '(index: number, item)=> console.log(index)' : 'undefined'}}
-                            items={items}
-                        />
-                    </div>
-                );
-            }
-        `);
-
-        call(code);
-    }
-    React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
-        sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.' + dataId, handler);
-
-        return () => {
-            sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.' + dataId, handler);
-        }
-    }, []);
-    const parsedItems = React.useMemo(() => parse(), [items, isSecondary]);
-    
-
-    return (
-        <div
-            ref={ref}
-            data-id={dataId}
-            data-type='List'
-            style={{
-                ...style,
-                width: fullWidth ? "100%" : "fit-content"
-            }}
-        >
-            <List
-                onClick={isButton && console.log}
-                items={parsedItems}
             />
         </div>
     );

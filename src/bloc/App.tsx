@@ -15,6 +15,7 @@ import LeftToolBarSettings from './Left-bar-settings';
 import GridComponentEditor from './Editor-grid';
 import PreviewTheme from './utils/Preview-theme';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
+import { getComponentById } from "./helpers/editor";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
@@ -51,7 +52,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         
         const Component = componentMap[type];
         Component.displayName = type;
-        //Component.parent = parent;
     
         if (!Component) {
             console.warn(`Компонент типа "${type}" не найден в реестре`);
@@ -61,6 +61,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         return (
             <Component
                 { ...props }
+                data-parent={parent}
                 ref={(el) => {
                     if (el) refs.current[id] = el;
                 }}
@@ -74,7 +75,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
         if(inputsIndex[path]) return (
             <div style={{marginTop: '65px'}}>
-                
+                { inputsIndex[path]() }
             </div>
         );
         else return (
@@ -262,7 +263,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                     <RightBar />
                     
-                    { mod === 'preview' && getPreview() }
                     { (mod === 'block' || mod === 'grid') && <GridComponentEditor desserealize={desserealize} /> }
                     { mod === 'settings' && <PreviewTheme /> }
                 </div>
@@ -300,21 +300,10 @@ export default function EditorApp({ setShowBlocEditor }) {
 
         return found.data;
     }
-    const findById = (idToFind: number): ComponentSerrialize | undefined => {
-        const rawCache = cellsSlice.get();
-
-        for (const layerKey in rawCache) {
-            const list = rawCache[layerKey];
-            const found = list.find((obj) => obj.id === idToFind);
-            if (found) return found;
-        }
-
-        return undefined;
-    }
     const handleChangeNestedContext = (editData: DataNested) => {
         const idComponent = nestedContextSlice.currentData.idParent.get();
         const idSlot = nestedContextSlice.currentData.idSlot.get();
-        const findComponentSerrialize = findById(idComponent);
+        const findComponentSerrialize = getComponentById(idComponent);
         console.red('CHANGE CONTEXT:', editData);
 
         if (findComponentSerrialize) updateComponentProps({
