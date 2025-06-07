@@ -248,11 +248,16 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             color,
             slots,
             { 
-                ...style, 
-                width: isHorizontal ? '100%' : 'fit-content', 
-                maxWidth: isHorizontal ? '100%' : '20%',
-                height: '100%', 
-                display: 'block' 
+                 ...style, 
+                width: '100%',
+                height: height ?? '100%',
+                display: 'flex',
+                flexDirection: isHorizontal ? 'column' : 'row',
+                flexGrow: 1,
+                flexShrink: 1,
+                flexBasis: 0,
+                minWidth: 0,
+                minHeight: 0
             }
         );
 
@@ -325,10 +330,15 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             data-type='Tabs'
             style={{ 
                 ...style, 
-                width: isHorizontal ? '100%' : 'fit-content', 
-                maxWidth: isHorizontal ? '100%' : '20%',
-                height: height ?? '100%', 
-                display: 'block' 
+                width: '100%',
+                height: height ?? '100%',
+                display: 'flex',
+                flexDirection: isHorizontal ? 'column' : 'row',
+                flexGrow: 1,
+                flexShrink: 1,
+                flexBasis: 0,
+                minWidth: 0,
+                minHeight: 0
             }}
             { ...otherProps }
         >
@@ -342,6 +352,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 indicatorColor={'primary'}
                 aria-label="tabs"
                 sx={{
+                    maxWidth: isHorizontal ? '100%' : '30%',
                     '& .MuiTabs-indicator': {
                         backgroundColor: selectColor
                     },
@@ -350,6 +361,10 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 { parsedItems && parsedItems.map((elem, index) =>
                     <Tab
                         sx={{
+                            textAlign: 'center',
+                            whiteSpace: 'normal',
+                            wordBreak: 'keep-all',
+                            overflowWrap: 'normal',
                             color: color,
                             '&.Mui-selected': {
                                 color: selectColor,
@@ -361,6 +376,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 )}
             </Tabs>
             {/* Слоты */}
+
             <ContextSlot
                 type='Tabs'
                 idParent={dataId}
@@ -377,6 +393,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                     Typography: true
                 }}
             />
+        
         </div>
     );
 });

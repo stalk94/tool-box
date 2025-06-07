@@ -144,7 +144,7 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
                 transition: 'background 0.15s',
                 width: '100%',
                 position: (type === 'Accordion') ? 'relative' : 'static',
-                height: (type === 'Frame' || type === 'Area') ? '100%' : 'fit-content',
+                height: (type === 'Frame' || type === 'Area' || type === 'Tabs') ? '100%' : 'fit-content',
                 background: '#00000026',
                 marginTop: (type === 'Accordion') && 10,
             }}

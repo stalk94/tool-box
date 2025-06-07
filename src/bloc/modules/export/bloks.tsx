@@ -139,6 +139,10 @@ export function exportedTabs(
         return items ? items.map((elem, index) => (`
             <Tab
                 sx={{
+                    textAlign: 'center',
+                    whiteSpace: 'normal',
+                    wordBreak: 'keep-all',
+                    overflowWrap: 'normal',
                     color: ${color},
                     '&.Mui-selected': {
                         color: ${selectColor},
@@ -174,6 +178,7 @@ export function exportedTabs(
     }
     const colorSelect = (
         selectColor ? `sx={{
+                            maxWidth: ${isHorizontal} ? '100%' : '30%',
                             '& .MuiTabs-indicator': {
                                 backgroundColor: ${selectColor}
                             },
