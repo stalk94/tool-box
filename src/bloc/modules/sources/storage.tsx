@@ -1,44 +1,73 @@
 import React from 'react';
+import * as XLSX from 'xlsx';
+import { hash } from 'spark-md5';
+import { ColumnEditorOptions } from 'primereact/column';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataTable, DataTableProps } from '../../../index';
 import { Column, ColumnBodyOptions } from 'primereact/column';
-import { useHookstate } from '@hookstate/core';
 import { db } from "../../helpers/export";
 import { TextInput, NumberInput, PasswordInput, LoginInput, 
     DateInput, SliderInput, ToggleInput, SwitchInput, CheckBoxInput,
     SelectInput, AutoCompleteInput, FileInput
 } from '../../../index';
-import * as XLSX from 'xlsx';
+import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { saveAs } from 'file-saver';
-import { loadTableData } from './providers';
+import { loadTableData, createSupabaseJsonbTableAdapter } from './providers';
+import { Button } from '@mui/material';
 
 
+////////////////////////////////////////////////////////////////////
+export type TableDataFormat = Record<string, any>[];
+/** ! структура таблицы supabase должна быть `key - primary key, type string`, `value - jsonb type` */
+export type SupabaseAuthData = {
+    /** key являюгийся первичным ключем, идентификатором row в таблице supabase */
+    key: string
+    url: string
+    tableName?: string
+    anonKey: string
+    pollingInterval?: number
+}
 export type DataSourceTableProps = DataTableProps & {
     dataId: string | number
     style?: React.CSSProperties
-    header?: null       // пока отключен
-    footer?: null       // пока отключен
-    sourceType?: 'json' | 'google' | 'json-url' | 'db'
+    sourceType?: 'json' | 'google' | 'json-url' | 'db' | 'supabase'
+    config?: SupabaseAuthData
     refreshInterval?: number;           // интервал в миллисекундах
-    source: string                      // URL или JSON-строка или key db (data.users.user)
+    source?: string | []                    // URL или JSON-строка или key db (data.users.user)
+    file?: any
     // клик по row
+    onChange: (data: TableDataFormat)=> void
     onSelect: (data: Record<string, any>)=> void
 }
 type ColumnData = {
     field: string 
     header: string
 }
+////////////////////////////////////////////////////////////////////
 
 
-
-export default function StorageDataTable({ style, refreshInterval, dataId, sourceType, source, onChange, footer, ...props }: DataSourceTableProps) {
+export default function StorageDataTable({ 
+    style, 
+    refreshInterval, 
+    dataId, 
+    sourceType, 
+    source, 
+    onChange, 
+    header, 
+    footer, 
+    file,
+    config, 
+    ...props 
+}: DataSourceTableProps) {
+    const adapter = React.useRef<ReturnType<typeof createSupabaseJsonbTableAdapter> | null>(null);
+    const lastPushHash = React.useRef<string | null>(null);
+    const lastFileRef = React.useRef<number | null>(null);
     const [data, setData] = React.useState([]);
     const [columns, setColumns] = React.useState<ColumnData[]>([]);         // схема колонок
     const [loading, setLoading] = React.useState(false);
     
 
-    // генератор схемы колонок из data, если нет схемы
-    const inferColumns = (data: any[]) => {
+    const inferColumns = (data: TableDataFormat) => {
         const result = [];
         const first = data[0];
 
@@ -51,8 +80,104 @@ export default function StorageDataTable({ style, refreshInterval, dataId, sourc
 
         return result;
     }
+    const syncAndSetData = (newData: TableDataFormat) => {
+        setData(newData);
+        onChange(newData);
+        
+        if (sourceType === 'supabase') {
+            lastPushHash.current = hash(JSON.stringify(newData));
+            adapter.current?.update(newData);
+        }
+    }
+    const handleUpload = (file: File) => {
+        const ext = file.name.split('.').pop()?.toLowerCase();
+
+        const handleJSONImport = (file: File) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const json = JSON.parse(reader.result as string);
+                    if (Array.isArray(json)) syncAndSetData(json);
+                    else alert('Ожидается массив объектов в JSON');
+                }
+                catch (err) { alert('Ошибка чтения JSON'); }
+            }
+            reader.readAsText(file);
+        }
+        const handleCSVImport = (file: File) => {
+            const reader = new FileReader();
+            reader.onload = () => {
+                const text = reader.result as string;
+                const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+
+                if (lines.length === 0) return;
+
+                const headers = lines[0].split(',');
+                const parsedData = lines.slice(1).map(line => {
+                    const values = line.split(',');
+                    const row: Record<string, any> = {};
+                    headers.forEach((h, i) => {
+                        row[h] = values[i];
+                    });
+                    return row;
+                });
+
+                syncAndSetData(parsedData);
+            };
+            reader.readAsText(file);
+        }
+        const handleExcelImport = (file: File) => {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target!.result as ArrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const parsedData = XLSX.utils.sheet_to_json(worksheet);
+
+                syncAndSetData(parsedData);
+            }
+            reader.readAsArrayBuffer(file);
+        }
+
+        if (ext === 'json') {
+            handleJSONImport(file);
+        } else if (ext === 'csv') {
+            handleCSVImport(file);
+        } else if (ext === 'xlsx' || ext === 'xls') {
+            handleExcelImport(file);
+        } else {
+            alert('Неподдерживаемый формат');
+        }
+    }
     const handleClick =(field: string, rowIndex: number | 'auto')=> {
         console.log(field, rowIndex);
+    }
+    const handleAddRow = () => {
+        setData((old) => {
+            const copyData = { ...old[0] };
+
+            Object.keys(copyData).map((key) => {
+                copyData[key] = '';
+            });
+            const update = [...old, copyData];
+
+            syncAndSetData(update);
+            return update;
+        });
+    }
+    const handleAddField = () => {
+        const newField = prompt('Название нового поля');
+        if (!newField || data[0][newField]) return;
+
+        const updated = data.map((row) => ({
+            ...row,
+            [newField]: '',
+        }));
+
+        if (updated.length === 0) updated.push({ [newField]: '' })
+        syncAndSetData([...updated]);
     }
     const exportCSV = () => {
         const escapeCSV = (value: any) => {
@@ -102,36 +227,7 @@ export default function StorageDataTable({ style, refreshInterval, dataId, sourc
         a.click();
         URL.revokeObjectURL(url);
     }
-
-    const load = React.useCallback(async () => {
-        setLoading(true);
-        const loadData = await loadTableData(sourceType, source);
-
-        if(sourceType === 'google' || sourceType === 'db' || sourceType === 'json') {
-            setData(loadData);
-        }
-        
-        setLoading(false);
-    }, [sourceType, source]);
-    React.useEffect(()=> {
-        load(); // первичная загрузка
-
-        if (!refreshInterval || refreshInterval < 1000) return;
-
-        const id = setInterval(() => {
-            load();
-        }, refreshInterval);
-
-        return () => clearInterval(id);
-    }, [dataId, source]);
-    React.useEffect(()=> {
-        if (data.length > 0) {
-            const inferred = inferColumns(data);
-            setColumns(inferred);
-        }
-    }, [data]);
-
-    const textEditor = (options) => {
+    const textEditor = (options: ColumnEditorOptions) => {
         return (
            <input
                 style={{
@@ -148,29 +244,131 @@ export default function StorageDataTable({ style, refreshInterval, dataId, sourc
            />
         );
     }
-    const copy =()=> {
-        const list = {
-            xslx: exportExcel,
-            csv: exportCSV,
-            json: exportJSON
-        }
 
-        if(footer) {
-            const copy = footer.props.children.map((elem)=> {
-                const clone = React.cloneElement(elem, {
-                    onClick: ()=> list[clone.props.children]()
-                });
-          
-                return clone;
-            });
-            
-            return React.cloneElement(footer, {
-                children: copy
-            });
-            
+
+    const load = React.useCallback(async () => {
+        setLoading(true);
+
+        if(sourceType === 'google' || sourceType === 'db' || sourceType === 'json') {
+            const loadData = await loadTableData(sourceType, source);
+            setData(loadData);
+            setLoading(false);
         }
-    }
-    
+        else if (!adapter.current && sourceType === 'supabase' && config && typeof config === 'object') {
+            const { key, url, anonKey, pollingInterval, tableName } = config;
+
+            const inst = createSupabaseJsonbTableAdapter({
+                key,
+                supabaseUrl: url,
+                supabaseKey: anonKey,
+                tableName,
+                pollingInterval,
+                onDataChange: (rows) => {
+                    if(EDITOR) {
+                        const incomingHash = hash(JSON.stringify(rows));
+                        if (incomingHash === lastPushHash.current) return;
+                    }
+
+                    setData(rows);
+                    onChange(rows);
+                }
+            });
+
+            adapter.current = inst;
+            inst.fetch().then(()=> {
+                setLoading(false);
+            });
+        }
+    }, [sourceType, source, config]);
+    const headerEditorRender = React.useCallback(() => {
+        if (EDITOR) return (
+            <div style={{ fontSize: 12, color: 'gray', height: 30, display: 'flex', flexDirection: 'row', padding: 3 }}>
+                <div className='buttontable'
+                    style={{ marginLeft: 10, cursor: 'pointer', color: 'silver' }}
+                    onClick={handleAddField}
+                >
+                    <AddBox sx={{ fontSize: 24 }} />
+                </div>
+                <div className='buttontable'
+                    style={{ marginLeft: 15, cursor: 'pointer', color: 'silver' }}
+                    onClick={handleAddRow}
+                >
+                    <PlaylistAdd sx={{ fontSize: 26 }} />
+                </div>
+            </div>
+        );
+        else return header;
+    }, [data]);
+    const footerEditorRender = React.useCallback(() => {
+        if (EDITOR) return (
+            <div style={{ display: 'flex', marginLeft: 'auto' }}>
+                <Button
+                    variant='outlined'
+                    color='navigation'
+                    size='small'
+                    sx={{ p: 0.2, m: 0, mr: 0.3, opacity: 0.6, fontSize: 10 }}
+                    onClick={exportCSV}
+                >
+                    csv
+                </Button>
+                <Button
+                    variant='outlined'
+                    color='navigation'
+                    size='small'
+                    sx={{ p: 0.2, m: 0, mr: 0.3, opacity: 0.6, fontSize: 10 }}
+                    onClick={exportExcel}
+                >
+                    xslx
+                </Button>
+                <Button
+                    variant='outlined'
+                    color='navigation'
+                    size='small'
+                    sx={{ p: 0.2, m: 0, mr: 0.3, opacity: 0.6, fontSize: 10 }}
+                    onClick={exportJSON}
+                >
+                    json
+                </Button>
+            </div>
+        );
+        else return header;
+    }, [data]);
+
+
+    React.useEffect(()=> {
+        load();                     // первичная загрузка и init
+        if (!refreshInterval || refreshInterval < 1000) return;
+
+        const id = setInterval(load, refreshInterval);
+
+        return () => clearInterval(id);
+    }, [dataId, source, config]);
+    React.useEffect(()=> {
+        if (data.length > 0) {
+            const inferred = inferColumns(data);
+            setColumns(inferred);
+        }
+    }, [data]);
+    React.useEffect(() => {
+        if (!EDITOR) return;
+
+        if (file instanceof File) {
+            const id = file.lastModified;
+
+            if (id !== lastFileRef.current) {
+                lastFileRef.current = id;
+                handleUpload(file);
+            }
+        }
+    }, [file]);
+    React.useEffect(() => {
+        return () => {
+            adapter.current?.destroy?.();
+            adapter.current = null;
+        };
+    }, []);
+
+
 
     return(
         <DataTable
@@ -180,35 +378,37 @@ export default function StorageDataTable({ style, refreshInterval, dataId, sourc
             value={data}
             fontSizeHead='14px'
             emptyMessage='empty'
-            footer={copy()}
+            footer={footerEditorRender()}
+            header={headerEditorRender()}
             { ...props }
         >
-            <Column
-                key="actions"
-                body={(rowData, colProps) => (
-                    <button
-                        style={{
-                            background: 'transparent',
-                            border: 'none',
-                            color: 'red',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                        }}
-                        onClick={() => {
-                            const updated = data.filter((_, idx) => idx !== colProps.rowIndex);
-                            setData(updated);
-                            onChange(updated);
-                        }}
-                    >
-                        ×
-                    </button>
-                )}
-                style={{ width: '30px', textAlign: 'center' }}
-            />
+            { EDITOR &&
+                <Column
+                    key="actions"
+                    body={(rowData, colProps) => (
+                        <button
+                            style={{
+                                background: 'transparent',
+                                border: 'none',
+                                color: 'red',
+                                cursor: 'pointer',
+                                fontWeight: 'bold',
+                            }}
+                            onClick={() => {
+                                const updated = data.filter((_, idx) => idx !== colProps.rowIndex);
+                                syncAndSetData(updated);
+                            }}
+                        >
+                            ×
+                        </button>
+                    )}
+                    style={{ width: '30px', textAlign: 'center' }}
+                />
+            }
             { columns.map((col, i) => (
                 <Column 
                     //sortable
-                    editor={textEditor}
+                    editor={EDITOR && textEditor}
                     key={col.field} 
                     field={col.field} 
                     header={
@@ -216,11 +416,12 @@ export default function StorageDataTable({ style, refreshInterval, dataId, sourc
                             { col.field }
                         </div>
                     }
-                    onCellEditComplete = {(e) => {
-                        const updated = [...data];
-                        updated[e.rowIndex][e.field] = e.newValue;
-                        setData(updated);
-                        onChange(updated);
+                    onCellEditComplete = {async (e) => {
+                        if(EDITOR) {
+                            const updated = [...data];
+                            updated[e.rowIndex][e.field] = e.newValue;
+                            syncAndSetData(updated);
+                        }
                     }}
                     body={(rowData, colProps) => {
                         return (

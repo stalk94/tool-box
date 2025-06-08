@@ -1,7 +1,6 @@
 import { CarouselHorizontal } from '@lib/index';
 import React from 'react';
 
-
 export function CarouselHorizontalWrap() {
     const items = [
         { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
@@ -37,8 +36,6 @@ export function CarouselHorizontalWrap() {
 export default function Cell() {
     return (
         <>
-            <CarouselHorizontalWrap />
-
             <CarouselHorizontalWrap />
         </>
     );

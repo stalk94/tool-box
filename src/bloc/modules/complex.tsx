@@ -1,23 +1,20 @@
 import React from 'react';
-import * as XLSX from 'xlsx';
 import { Accordion, AccordionProps, HoverPopover } from '../../index';
 import { icons, iconsList } from '@components/tools/icons';
 import { Box, Tabs, Button, Tab, BottomNavigation, BottomNavigationAction, Paper, TabsProps, Typography } from '@mui/material';
 import { ComponentProps, DataNested } from '../type';
 import { triggerFlyFromComponent } from './helpers/anim';
-import DataTable, { DataSourceTableProps } from './sources/storage';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { AppBar, Start, LinearNavigation, MobailBurger, Breadcrumbs, ToggleInput } from '../../index';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
-import render, { exportedTabs, exportedBottomNav, exportedTable } from './export/bloks';
+import render, { exportedTabs, exportedBottomNav } from './export/bloks';
 import renderAppBar, { exportBreadCrumbs } from './export/shared';
 import { DropSlot, ContextSlot } from '../Dragable';
-import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { editorContext } from "../context";
 
 
-
+////////////////////////////////////////////////////////////////////////////////
 type BottomNavWrapperProps = {
     'data-id': number
     'data-type': 'BottomNav'
@@ -67,25 +64,6 @@ type TabsWrapperProps = TabsProps & {
     fullWidth?: boolean
     slots: Record<string, DataNested>
 }
-type TableSourcesProps = DataSourceTableProps & ComponentProps & {
-    'data-type': 'DataTable'
-    fullWidth: boolean
-    style: React.CSSProperties
-    styles: {
-        body: React.CSSProperties & {
-            background: string
-            borderColor: string
-            textColor: string
-        }
-        header: React.CSSProperties & {
-            background: string
-        }
-        thead: React.CSSProperties & {
-            background: string
-            textColor: string
-        }
-    }
-}
 type HeaderWrapperProps = {
     'data-id': string | number
     'data-type': 'AppBar'
@@ -102,9 +80,9 @@ type HeaderWrapperProps = {
     linkItems: []
     elevation: number
 }
+////////////////////////////////////////////////////////////////////////////////
 
 
-//! режим вне редактора
 export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, ref) => {
     const { 'data-id': dataId, style, metaName, items, styles, activeIndexs, slots, fullWidth, ...otherProps } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
@@ -122,7 +100,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         }
     }
     const parse = () => {
-        if(EDITOR) return items.map((item, index) => {
+        return items.map((item, index) => {
             const text = item.title?.props?.children ?? item.title;
 
             const EditComponent = () => (
@@ -170,13 +148,11 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             );
 
             return ({
-                title: <EditComponent />,
+                title: EDITOR ? <EditComponent /> : text,
                 content: <div style={{minHeight:40}}><SlotContent /></div>,
             });
         });
     }
-    const parsedItems = React.useMemo(() => parse(), [props, width]);
-
     const exportCode = (call) => {
         const code = render(
             editorContext.meta.get(),
@@ -186,7 +162,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             slots,
             { ...style, width: '100%', display: 'block' }
         );
-
+        
         call(code);
     }
     React.useEffect(() => {
@@ -201,7 +177,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, [props]);
-    
+    const parsedItems = React.useMemo(() => parse(), [props, width]);
 
     return (
         <div
@@ -220,7 +196,6 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
         </div>
     );
 });
-//! режим вне редактора
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
     const { 
@@ -248,7 +223,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             color,
             slots,
             { 
-                 ...style, 
+                ...style, 
                 width: '100%',
                 height: height ?? '100%',
                 display: 'flex',
@@ -293,7 +268,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     }
     const parse = () => {
         if (items) return items.map((item, index) => {
-            return(
+            if(EDITOR) return(
                 <span
                     style={{
                         border: '1px solid transparent',
@@ -318,6 +293,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                     { typeof item === 'string' ? item : '' }
                 </span>
             );
+            else return items;
         });
     }
     const parsedItems = React.useMemo(() => parse(), [items]);
@@ -402,7 +378,6 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
 
 export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, ref) => {
     const [value, setValue] = React.useState(0);
-    const degidratationRef = React.useRef<(call) => void>(() => { });
     const { 
         'data-id': dataId, 
         style, 
@@ -416,7 +391,7 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
     } = props;
     
     
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = exportedBottomNav(
             items,
             style,
@@ -438,7 +413,9 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -446,7 +423,7 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     const handleChange = (event: React.SyntheticEvent, newValue: number) => {
         setValue(newValue);
         triggerFlyFromComponent(String(dataId));
@@ -538,12 +515,13 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
     }
     const parse = () => {
         if (items) return items.map((item, index) => {
-            const Icon = (item.icon && iconsList[item.icon]) ? iconEditable(item, index) : null;
-            const label = item.label ? labelEditable(item, index) : undefined;
+            const Icon = (item.icon && iconsList[item.icon]) ? iconsList[item.icon] : undefined;
+            const IconEditable = (item.icon && iconsList[item.icon]) ? iconEditable(item, index) : null;
+            const editable = item.label ? labelEditable(item, index) : undefined;
             
             return {
-                icon: Icon ? Icon : undefined,
-                label
+                icon: EDITOR ? IconEditable : (Icon ? <Icon/> : undefined),
+                label: EDITOR ? editable : item.label
             }
         });
     }
@@ -593,235 +571,6 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
                 )}
             </BottomNavigation>
         </Paper>
-    );
-});
-export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref) => {
-    const [data, setData] = React.useState([
-        { test: 1, name: 'никалай' },
-        { test: 3, name: 'степан' },
-        { test: 5, name: 'олег' },
-        { test: 3, name: 'гриша' },
-        { test: 5, name: 'вася' },
-    ]);
-    const lastFileRef = React.useRef<number | null>(null);
-    const {
-        'data-id': dataId,
-        style,
-        header,
-        footer,
-        sourceType,
-        source,
-        fullWidth,
-        fontSizeHead,
-        file,
-        styles,
-        ...otherProps
-    } = props;
-    const { width, height } = useComponentSizeWithSiblings(dataId);
-
-
-    const exportCode = (call) => {
-        const inferColumns = (data: any[]) => {
-            const result = [];
-            const first = data[0];
-
-            Object.keys(first).map((key) => {
-                if (key.length > 0 && key !== 'id') result.push({
-                    field: key,
-                    header: key.toUpperCase(),
-                })
-            });
-
-            return result;
-        }
-
-        const code = exportedTable(
-            data,
-            inferColumns(data),
-            fontSizeHead,
-            {...style, display: 'block', width: '100%'},
-            styles,
-            otherProps
-        );
-        
-        call(code);
-    }
-    const handleUpload = (file: File) => {
-        const ext = file.name.split('.').pop()?.toLowerCase();
-
-        const handleJSONImport = (file: File) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                try {
-                    const json = JSON.parse(reader.result as string);
-                    if (Array.isArray(json)) setData(json);
-                    else alert('Ожидается массив объектов в JSON');
-                } 
-                catch (err) { alert('Ошибка чтения JSON'); }
-            }
-            reader.readAsText(file);
-        }
-        const handleCSVImport = (file: File) => {
-            const reader = new FileReader();
-            reader.onload = () => {
-                const text = reader.result as string;
-                const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-
-                if (lines.length === 0) return;
-
-                const headers = lines[0].split(',');
-                const parsedData = lines.slice(1).map(line => {
-                    const values = line.split(',');
-                    const row: Record<string, any> = {};
-                    headers.forEach((h, i) => {
-                        row[h] = values[i];
-                    });
-                    return row;
-                });
-
-                setData(parsedData);
-            };
-            reader.readAsText(file);
-        }
-        const handleExcelImport = (file: File) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const data = new Uint8Array(e.target!.result as ArrayBuffer);
-                const workbook = XLSX.read(data, { type: 'array' });
-
-                const sheetName = workbook.SheetNames[0];
-                const worksheet = workbook.Sheets[sheetName];
-                const parsedData = XLSX.utils.sheet_to_json(worksheet);
-
-                setData(parsedData);
-            }
-            reader.readAsArrayBuffer(file);
-        }
-
-        if (ext === 'json') {
-            handleJSONImport(file);
-        } else if (ext === 'csv') {
-            handleCSVImport(file);
-        } else if (ext === 'xlsx' || ext === 'xls') {
-            handleExcelImport(file);
-        } else {
-            alert('Неподдерживаемый формат');
-        }
-    }
-    React.useEffect(() => {
-        if(!EDITOR) return;
-
-        const handler = (data) => exportCode(data.call);
-        sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.' + dataId, handler);
-
-        return () => {
-            sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.' + dataId, handler);
-        }
-    }, [props]);
-    React.useEffect(() => {
-        if(!EDITOR) return;
-
-        if (file instanceof File) {
-            const id = file.lastModified;
-
-            if (id !== lastFileRef.current) {
-                lastFileRef.current = id;
-                handleUpload(file);
-            }
-        }
-    }, [file]);
-    const handleAddRow = () => {
-        setData((old)=> {
-            const copyData = { ...old[0] };
-
-            Object.keys(copyData).map((key) => {
-                copyData[key] = '';
-            });
-
-            return [...old, copyData];
-        });
-    }
-    const handleAddField = () => {
-        const newField = prompt('Название нового поля');
-        if (!newField || data[0][newField]) return;
-        
-        const updated = data.map((row) => ({
-            ...row,
-            [newField]: '',
-        }));
-        if (updated.length === 0) updated.push({ [newField]: '' })
-        setData([...updated]);
-
-        console.log(updated);
-    }
-    
-
-    return (
-        <div
-            ref={ref}
-            data-id={dataId}
-            data-type='DataTable'
-            style={{ ...style, width: '100%' }}
-            fontSizeHead={fontSizeHead}
-        >
-             <DataTable
-                style={{
-                    maxHeight: '100%',
-                    overflowX: 'auto'
-                }}
-                header={
-                    <div style={{ fontSize: 12, color: 'gray', height: 30, display: 'flex', flexDirection: 'row', padding: 3 }}>
-                        <div className='buttontable' 
-                            style={{ marginLeft: 10, cursor: 'pointer', color: 'silver' }} 
-                            onClick={handleAddField}
-                        >
-                            <AddBox sx={{ fontSize: 24 }} />
-                        </div>
-                        <div className='buttontable' 
-                            style={{ marginLeft: 15, cursor: 'pointer', color: 'silver' }} 
-                            onClick={handleAddRow}
-                        >
-                            <PlaylistAdd sx={{ fontSize: 26 }} />
-                        </div>
-                    </div>
-                }
-                footer={
-                    <div style={{display:'flex',marginLeft:'auto'}}>
-                        <Button 
-                            variant='outlined'
-                            color='navigation'
-                            size='small' 
-                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
-                        >
-                            csv
-                        </Button>
-                        <Button 
-                            variant='outlined'
-                            color='navigation'
-                            size='small' 
-                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
-                        >
-                            xslx
-                        </Button>
-                        <Button 
-                            variant='outlined'
-                            color='navigation'
-                            size='small' 
-                            sx={{p:0.2, m:0, mr:0.3,opacity:0.6, fontSize:10}}
-                        >
-                            json
-                        </Button>
-                    </div>
-                }
-                onChange={setData}
-                style={{width: '100%', maxHeight: height}}
-                source={data}
-                sourceType='json'
-                { ...otherProps }
-            />
-        </div>
     );
 });
 

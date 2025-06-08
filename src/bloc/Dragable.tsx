@@ -131,14 +131,27 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
         isArea: type === 'Area'
     });
     
-    const getStyle =()=> {
-        if(type && type ==='Frame') return {
-            position: 'absolute'
-        }
-    }
-    
 
-    return (
+    if(!EDITOR) return (
+        <div
+            style={{
+                width: '100%',
+                position: (type === 'Accordion') ? 'relative' : 'static',
+                height: (type === 'Frame' || type === 'Area' || type === 'Tabs') ? '100%' : 'fit-content',
+                marginTop: (type === 'Accordion') && 10,
+            }}
+        >
+            { data.layout && data.layout[0] &&
+                <MiniRender
+                    size={data.size}
+                    layouts={data.layout}
+                    cellsContent={data.content}
+                    type={type}
+                />
+            }
+        </div>
+    );
+    else return (
         <div
             style={{
                 transition: 'background 0.15s',

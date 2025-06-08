@@ -58,6 +58,7 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
         });
     }
     React.useEffect(()=> {
+        if(!EDITOR) return;
         if(onReadyLiteral) degidrateAll();
     }, []);
 

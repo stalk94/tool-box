@@ -75,7 +75,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
         if(inputsIndex[path]) return (
             <div style={{marginTop: '65px'}}>
-               
+                { inputsIndex[path]() }
             </div>
         );
         else return (

@@ -1,4 +1,5 @@
 import { db } from "../../helpers/export";
+import { createClient } from '@supabase/supabase-js';
 const testId = '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE';
 
 
@@ -66,4 +67,107 @@ export async function loadTableData(sourceType: 'json' | 'google' | 'json-url' |
     catch (err) {
         return [];
     }
+}
+
+
+export async function testSupabaseConnection(url: string, key: string, table?: string) {
+    const supabase = createClient(url, key);
+
+    try {
+        const { error } = await supabase.from(table ?? 'kv_store').select('*').limit(1);
+
+        if (error) {
+            console.warn('Supabase доступен, но ошибка:', error.message);
+            return false;
+        }
+
+        return true;
+    } 
+    catch (e) {
+        console.error('Нет соединения с Supabase:', e);
+        return false;
+    }
+}
+export function createSupabaseJsonbTableAdapter(config: {
+    key: string;
+    supabaseUrl: string;
+    supabaseKey: string;
+    tableName?: string;             // default: 'kv_table'
+    pollingInterval?: number;       // ❗️в мс, напр. 5000 = 5с
+    onDataChange: (rows: Record<string, any>[]) => void;
+}) {
+    const table = config.tableName ?? 'kv_table';
+    const supabase = createClient(config.supabaseUrl, config.supabaseKey);
+
+    let currentData: Record<string, any>[] = [];
+    let pollingTimer: NodeJS.Timeout | null = null;
+    let subscribed = false;
+
+    const fetch = async () => {
+        const { data, error } = await supabase
+            .from(table)
+            .select('value')
+            .eq('key', config.key)
+            .single();
+
+        if (!error && data?.value) {
+            currentData = data.value;
+
+            if(Array.isArray(currentData)) config.onDataChange(currentData);
+            else if(typeof currentData === 'object') config.onDataChange([currentData]);
+            else console.red('❗ load data supabase is not corrected');
+        }
+    }
+
+    const update = async (newData: Record<string, any>[]) => {
+        currentData = newData;
+        await supabase
+            .from(table)
+            .upsert({ key: config.key, value: newData }, { onConflict: 'key' });
+    }
+    const subscribe = () => {
+        if (subscribed) return;
+        subscribed = true;
+
+        supabase
+            .channel(`table:${table}:${config.key}`)
+            .on(
+                'postgres_changes',
+                {
+                    event: 'UPDATE',
+                    schema: 'public',
+                    table,
+                    filter: `key=eq.${config.key}`,
+                },
+                (payload) => {
+                    const newValue = payload.new?.value;
+                    if (newValue) {
+                        currentData = newValue;
+                        config.onDataChange(currentData);
+                    }
+                }
+            )
+            .subscribe();
+    }
+
+    const startPolling = () => {
+        if (pollingTimer) clearInterval(pollingTimer);
+        pollingTimer = setInterval(() => {
+            fetch();
+        }, config.pollingInterval);
+    }
+    const stop = () => {
+        if (pollingTimer) clearInterval(pollingTimer);
+    }
+
+    // Автовключение
+    if (config.pollingInterval) startPolling();
+    else subscribe();
+
+    return {
+        fetch,
+        update,
+        getData: () => currentData,
+        stopPolling: stop,
+    };
 }

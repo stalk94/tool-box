@@ -1,7 +1,6 @@
 import { CarouselVertical } from '@lib/index';
 import React from 'react';
 
-
 export function CarouselVerticalWrap() {
     const items = [
         { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
@@ -41,8 +40,6 @@ export function CarouselVerticalWrap() {
 export default function Cell() {
     return (
         <>
-            <CarouselVerticalWrap />
-
             <CarouselVerticalWrap />
         </>
     );

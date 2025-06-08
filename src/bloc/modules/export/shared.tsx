@@ -98,7 +98,7 @@ export function exportBreadCrumbs(
     linkStyle: React.CSSProperties,
     style: React.CSSProperties
 ) {
-    const separatorrender = separator ? renderComponentSsr(separator) : 'undefined';
+    const separatorrender = separator ? separator : 'undefined';
     const toObjectLiteral = (obj) => {
         return Object.entries(obj || {})
             .filter(([, value]) => value !== undefined)
@@ -130,7 +130,7 @@ export function exportBreadCrumbs(
                     <Breadcrumbs
                         nameMap={nameMap}
                         pathname={pathname}
-                        separator={ ${separatorrender} }
+                        separator={ "${separatorrender}" }
                         push={(href)=> handlePush(href)}
                         linkStyle={{ ${toObjectLiteral(linkStyle)} }}
                         Link={({href, children})=> 

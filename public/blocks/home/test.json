@@ -1,15 +1,89 @@
 {
   "layouts": {
-    "lg": [],
-    "md": [],
-    "sm": [],
-    "xs": []
+    "lg": [
+      {
+        "i": "cell-1749374108447",
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 2,
+        "props": {
+          "classNames": "",
+          "style": {}
+        },
+        "content": []
+      }
+    ],
+    "md": [
+      {
+        "w": 7,
+        "h": 18,
+        "x": 0,
+        "y": 0,
+        "i": "cell-1749374108447",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "sm": [
+      {
+        "i": "cell-1749374108447",
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 2,
+        "props": {
+          "classNames": "",
+          "style": {}
+        },
+        "content": []
+      }
+    ],
+    "xs": [
+      {
+        "i": "cell-1749374108447",
+        "x": 0,
+        "y": 0,
+        "w": 3,
+        "h": 2,
+        "props": {
+          "classNames": "",
+          "style": {}
+        },
+        "content": []
+      }
+    ]
   },
-  "content": {},
+  "content": {
+    "cell-1749374108447": [
+      {
+        "id": 1749377072930,
+        "parent": "cell-1749374108447",
+        "props": {
+          "fullWidth": true,
+          "sourceType": "supabase",
+          "data-source": "table",
+          "header": "",
+          "file": "",
+          "source": "14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE",
+          "refreshInterval": 25000,
+          "data-id": 1749377072930,
+          "data-type": "DataTable",
+          "config": {
+            "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoZ3Jjb2NhZHdzZWp3b2R2enFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MzY5NTksImV4cCI6MjA2NDIxMjk1OX0.ijFGDKECfWYBULzTDUtIJMFaAJN1N-70ygQSzMONQIg",
+            "url": "https://bhgrcocadwsejwodvzql.supabase.co",
+            "tableName": "kv_store",
+            "key": "user-5421748935"
+          }
+        }
+      }
+    ]
+  },
   "meta": {
     "scope": "home",
     "name": "test",
-    "updatedAt": 1749142550923
+    "updatedAt": 1749390334848,
+    "preview": "snapshots/home-test.png"
   },
   "size": {
     "width": 960,

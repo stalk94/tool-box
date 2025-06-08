@@ -270,6 +270,9 @@ const propsCarousel = {
 const propsTabs = {
     alignTab: ['start', 'center', 'end']
 }
+const propsDataTable = {
+    sourceType: ['json', 'supabase']
+}
 
 
 export default {
@@ -300,4 +303,5 @@ export default {
     VerticalCarousel: propsCarousel,
     Breadcrumbs: breadCrumbsProps,
     Tabs: propsTabs,
+    DataTable: propsDataTable,
 }

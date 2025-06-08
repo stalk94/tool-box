@@ -110,13 +110,11 @@ export default function exported(
         export default function AcordionWrap() {
 
             return (
-                <div
-                    style={{ ${toObjectLiteral(style)} }}
-                >
+                <div style={{ ${toObjectLiteral(style)} }}>
                     <Accordion
                         activeIndexs={[${(activeIndexs??[]).toString()}]}
-                        tabStyle={{ ${toObjectLiteral(styles?.body)} }}
-                        headerStyle={{ ${toObjectLiteral(styles?.title)} }}
+                        tabStyle={{ ${styles?.body ? toObjectLiteral(styles?.body) : ''} }}
+                        headerStyle={{ ${styles?.title ? toObjectLiteral(styles?.title): ''} }}
                         items={[
                             ${render().join(',\n')}
                         ]}
@@ -144,9 +142,9 @@ export function exportedTabs(
                     whiteSpace: 'normal',
                     wordBreak: 'keep-all',
                     overflowWrap: 'normal',
-                    color: ${color},
+                    color: "${color}",
                     '&.Mui-selected': {
-                        color: ${selectColor},
+                        color: "${selectColor}",
                     }
                 }}
                 key={${index}}
@@ -181,7 +179,7 @@ export function exportedTabs(
         selectColor ? `sx={{
                             maxWidth: ${isHorizontal} ? '100%' : '30%',
                             '& .MuiTabs-indicator': {
-                                backgroundColor: ${selectColor}
+                                backgroundColor: "${selectColor}"
                             },
                         }}` 
                     : ''
@@ -229,8 +227,8 @@ export function exportedTabs(
                         onChange={(event: React.SyntheticEvent, newValue: number) => {
                             setCurent(newValue);
                         }}
-                        orientation={${isHorizontal ? 'horizontal' : 'vertical'}}
-                        variant={${isHorizontal ? "scrollable" : 'standard'}}
+                        orientation={${isHorizontal ? "'horizontal'" : "'vertical'" }}
+                        variant={${isHorizontal ? "'scrollable'" : "'standard'" }}
                         scrollButtons={true}
                         allowScrollButtonsMobile={true}
                         aria-label="tabs"

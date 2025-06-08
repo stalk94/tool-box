@@ -8,6 +8,7 @@ import { ComponentProps } from '../type';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr, toLiteral } from './export/utils';
 import TipTapSlotEditor from './tip-tap';
+import { toJsx } from './helpers/format';
 import { infoSlice, editorContext} from "../context";
 import { ToggleInput, HoverPopover, List } from '@lib/index';
 
@@ -537,13 +538,22 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
         )
     }
     const parse = () => {
-        return items.map((item, index)=> {
+        if(EDITOR) return items.map((item, index)=> {
             const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconEditable(item, index) : null;
             
             return ({
                 startIcon: Icon ? Icon : undefined,
                 primary: textEditable('primary', item.primary, index),
                 secondary: isSecondary ? textEditable('secondary', item.secondary, index) : undefined
+            });
+        });
+        else return items.map((item, index)=> {
+            const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconsList[item.startIcon] : null;
+
+            return ({
+                startIcon: Icon ? Icon : undefined,
+                primary: toJsx(item.primary),
+                secondary: isSecondary ? toJsx(item.secondary) : undefined
             });
         });
     }

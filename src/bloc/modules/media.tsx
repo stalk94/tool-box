@@ -4,7 +4,6 @@ import Imgix from 'react-imgix';
 import { LoaderToolWrapper } from './sources/image-toolbar';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
 import { CarouselHorizontal, PromoBanner, Card, Header, MediaImage, CarouselVertical, CarouselProps } from '../../index';
-import { MediaImage as Media } from '../../components/carts/atomize';
 import { StarBorder, Settings } from '@mui/icons-material';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
@@ -13,6 +12,7 @@ import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/media';
 import { exportTipTapValue, toJSXProps, toLiteral, renderComponentSsr } from './export/utils';
 import { ComponentProps } from '../type';
+import { toJsx } from './helpers/format';
 
 
 type PromoBannerWrapperProps = ComponentProps & {
@@ -716,6 +716,11 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             }
             return item;
         });
+        else return items.map((item, i) => ({
+            images: item.images,
+            title: toJsx(item.title),
+            description: toJsx(item.description),
+        }));
     }, [items, active]);
     
     
@@ -732,7 +737,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             }}
         >
             <PromoBanner
-                editor={createImageWrapper(parsedItems[active].images[activeSlide], active)}
+                editor={EDITOR && createImageWrapper(parsedItems[active].images[activeSlide], active)}
                 onChange={setActive}
                 items={parsedItems}
                 style={{...style, height, width}}

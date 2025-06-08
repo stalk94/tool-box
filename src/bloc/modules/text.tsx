@@ -8,6 +8,7 @@ import TipTapSlotEditor from './tip-tap';
 import { exportText, exportTypography } from './export/text';
 
 
+
 type TextWrapperProps = {
     'data-id': number
     'data-type': 'Text'
@@ -95,8 +96,12 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
     const exportCode = (call) => {
         const code = exportTypography(
             text ?? children,
-            { width: '100%', display:'block', ...styles?.text, fontSize: styles?.text?.fontSize + 'px' },
-            style,
+            { width: '100%', display: 'block' },
+            {
+                ...style,
+                fontFamily,
+                textAlign
+            },
             otherProps
         );
 

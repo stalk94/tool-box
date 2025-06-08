@@ -14,9 +14,10 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
 } from './inputs';
 import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
 import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper, ListWrapper } from './any';
-import { TabsWrapper, BottomNavWrapper, AccordionWrapper, DataTableWrapper, 
+import { TabsWrapper, BottomNavWrapper, AccordionWrapper, 
     HeaderWrapper, BreadcrumbsWrapper
 } from './complex';
+import { DataTableWrapper } from './tables';
 import { FrameWrapper, AreaWrapper } from './blocs';
 import { FormAuthOrRegWrapper } from './forms';
 import { sharedContext, sharedEmmiter } from './helpers/shared';
@@ -479,10 +480,10 @@ registerComponent({
     component: DataTableWrapper,
     defaultProps: {
         fullWidth: true,
-        sourceType: 'google',
-        'data-source': 'table',
+        sourceType: 'json',
+        source: [{test: 1, name: 'test'}],
+        header: '',
         file: '',
-        source: '14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE',
         refreshInterval: 25000
     },
     icon: BackupTable,
