@@ -1,19 +1,16 @@
 import React from 'react';
 import * as XLSX from 'xlsx';
 import { hash } from 'spark-md5';
-import { ColumnEditorOptions } from 'primereact/column';
 import CircularProgress from '@mui/material/CircularProgress';
 import { DataTable, DataTableProps } from '../../../index';
 import { Column, ColumnBodyOptions } from 'primereact/column';
 import { db } from "../../helpers/export";
-import { TextInput, NumberInput, PasswordInput, LoginInput, 
-    DateInput, SliderInput, ToggleInput, SwitchInput, CheckBoxInput,
-    SelectInput, AutoCompleteInput, FileInput
-} from '../../../index';
 import { AddBox, PlaylistAdd } from '@mui/icons-material';
 import { saveAs } from 'file-saver';
 import { loadTableData, createSupabaseJsonbTableAdapter } from './providers';
 import { Button } from '@mui/material';
+import { detectFieldType, FieldType } from '../helpers/format';
+import EditorTableData, { FormAddColumn } from './EditorTableData';
 
 
 ////////////////////////////////////////////////////////////////////
@@ -28,6 +25,7 @@ export type SupabaseAuthData = {
     pollingInterval?: number
 }
 export type DataSourceTableProps = DataTableProps & {
+    mod?: 'edit' | 'binding'
     dataId: string | number
     style?: React.CSSProperties
     sourceType?: 'json' | 'google' | 'json-url' | 'db' | 'supabase'
@@ -57,6 +55,7 @@ export default function StorageDataTable({
     footer, 
     file,
     config, 
+    mod,
     ...props 
 }: DataSourceTableProps) {
     const adapter = React.useRef<ReturnType<typeof createSupabaseJsonbTableAdapter> | null>(null);
@@ -65,28 +64,34 @@ export default function StorageDataTable({
     const [data, setData] = React.useState([]);
     const [columns, setColumns] = React.useState<ColumnData[]>([]);         // схема колонок
     const [loading, setLoading] = React.useState(false);
+    const [addModal, setAddModal] = React.useState<React.ReactElement|undefined>();
     
 
     const inferColumns = (data: TableDataFormat) => {
-        const result = [];
-        const first = data[0];
+        if (data.length > 0) {
+            const result = [];
+            const first = data[0];
 
-        Object.keys(first).map((key) => {
-            if(key.length > 0 && key !== 'id') result.push({
-                field: key,
-                header: key.toUpperCase(),
-            })
-        });
+            Object.keys(first).map((key) => {
+                if(key.length > 0 && key !== 'id') result.push({
+                    field: key,
+                    header: key.toUpperCase(),
+                    type: detectFieldType(data.map(row => row[key]))
+                });
+            });
 
-        return result;
+            setColumns(result);
+        }
+        else setColumns([]);
     }
-    const syncAndSetData = (newData: TableDataFormat) => {
+    const syncAndSetData = (newData: TableDataFormat, infer?: boolean) => {
         setData(newData);
         onChange(newData);
         
         if (sourceType === 'supabase') {
             lastPushHash.current = hash(JSON.stringify(newData));
             adapter.current?.update(newData);
+            if(infer) inferColumns(newData);
         }
     }
     const handleUpload = (file: File) => {
@@ -97,7 +102,7 @@ export default function StorageDataTable({
             reader.onload = () => {
                 try {
                     const json = JSON.parse(reader.result as string);
-                    if (Array.isArray(json)) syncAndSetData(json);
+                    if (Array.isArray(json)) syncAndSetData(json, true);
                     else alert('Ожидается массив объектов в JSON');
                 }
                 catch (err) { alert('Ошибка чтения JSON'); }
@@ -122,7 +127,7 @@ export default function StorageDataTable({
                     return row;
                 });
 
-                syncAndSetData(parsedData);
+                syncAndSetData(parsedData, true);
             };
             reader.readAsText(file);
         }
@@ -136,7 +141,7 @@ export default function StorageDataTable({
                 const worksheet = workbook.Sheets[sheetName];
                 const parsedData = XLSX.utils.sheet_to_json(worksheet);
 
-                syncAndSetData(parsedData);
+                syncAndSetData(parsedData, true);
             }
             reader.readAsArrayBuffer(file);
         }
@@ -159,7 +164,15 @@ export default function StorageDataTable({
             const copyData = { ...old[0] };
 
             Object.keys(copyData).map((key) => {
-                copyData[key] = '';
+                const find = columns.find((p)=> p.header === key);
+                if(find) {
+                    if(find.type === 'number') copyData[key] = 0;
+                    else if(find.type === 'boolean') copyData[key] = false;
+                    else if(find.type === 'object') copyData[key] = {};
+                    else if(find.type === 'array') copyData[key] = [];
+                    else copyData[key] = '';
+                }
+                else copyData[key] = '';
             });
             const update = [...old, copyData];
 
@@ -168,16 +181,37 @@ export default function StorageDataTable({
         });
     }
     const handleAddField = () => {
-        const newField = prompt('Название нового поля');
-        if (!newField || data[0][newField]) return;
+        const handle = (find: false|{key:string, type:FieldType}) => {
+            console.log(find)
+            if(find === false) {
+                setAddModal(undefined);
+                return;
+            }
 
-        const updated = data.map((row) => ({
-            ...row,
-            [newField]: '',
-        }));
+            let value;
+            if(find.type === 'number') value = 0;
+            else if(find.type === 'boolean') value = false;
+            else if(find.type === 'object') value = {};
+            else if(find.type === 'array') value = [];
+            else value = '';
 
-        if (updated.length === 0) updated.push({ [newField]: '' })
-        syncAndSetData([...updated]);
+            setData((old) => { 
+                const updated = old.map((row) => ({
+                    ...row,
+                    [find.key]: value,
+                }));
+                
+                syncAndSetData([...updated], true);
+                return old;
+            });
+            setAddModal(undefined);
+        }
+
+        setAddModal(
+            <FormAddColumn
+                setClose={handle}
+            />
+        );
     }
     const exportCSV = () => {
         const escapeCSV = (value: any) => {
@@ -227,23 +261,6 @@ export default function StorageDataTable({
         a.click();
         URL.revokeObjectURL(url);
     }
-    const textEditor = (options: ColumnEditorOptions) => {
-        return (
-           <input
-                style={{
-                    border: 'none',
-                    outline: 'none',
-                    boxShadow: 'none',
-                    background: 'none',
-                    color: 'orange',
-                    maxWidth: 100,
-                    textAlign: 'center',
-                }}
-                value={options.value}
-                onChange={(e) => options.editorCallback(e.target.value)}
-           />
-        );
-    }
 
 
     const load = React.useCallback(async () => {
@@ -252,6 +269,7 @@ export default function StorageDataTable({
         if(sourceType === 'google' || sourceType === 'db' || sourceType === 'json') {
             const loadData = await loadTableData(sourceType, source);
             setData(loadData);
+            inferColumns(loadData);
             setLoading(false);
         }
         else if (!adapter.current && sourceType === 'supabase' && config && typeof config === 'object') {
@@ -271,6 +289,7 @@ export default function StorageDataTable({
 
                     setData(rows);
                     onChange(rows);
+                    inferColumns(rows);
                 }
             });
 
@@ -343,12 +362,6 @@ export default function StorageDataTable({
 
         return () => clearInterval(id);
     }, [dataId, source, config]);
-    React.useEffect(()=> {
-        if (data.length > 0) {
-            const inferred = inferColumns(data);
-            setColumns(inferred);
-        }
-    }, [data]);
     React.useEffect(() => {
         if (!EDITOR) return;
 
@@ -382,7 +395,7 @@ export default function StorageDataTable({
             header={headerEditorRender()}
             { ...props }
         >
-            { EDITOR &&
+            { (EDITOR && mod !== 'binding') &&
                 <Column
                     key="actions"
                     body={(rowData, colProps) => (
@@ -396,7 +409,7 @@ export default function StorageDataTable({
                             }}
                             onClick={() => {
                                 const updated = data.filter((_, idx) => idx !== colProps.rowIndex);
-                                syncAndSetData(updated);
+                                syncAndSetData(updated, true);
                             }}
                         >
                             ×
@@ -407,13 +420,20 @@ export default function StorageDataTable({
             }
             { columns.map((col, i) => (
                 <Column 
-                    //sortable
-                    editor={EDITOR && textEditor}
-                    key={col.field} 
+                    key={col.field + i} 
+                    sortable={(mod === 'binding' || !EDITOR)}
+                    editor={(o)=> (EDITOR && mod !== 'binding') && (
+                        <EditorTableData
+                            value={o.value}
+                            onChange={o.editorCallback}
+                            type={col.type}
+                        />
+                    )}
                     field={col.field} 
                     header={
                         <div style={{ whiteSpace: 'normal', wordBreak: 'break-word', textAlign: 'center' }}>
                             { col.field }
+                            { addModal }
                         </div>
                     }
                     onCellEditComplete = {async (e) => {

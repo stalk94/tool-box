@@ -138,7 +138,6 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, [props]);
-    console.red(isErrorConnection);
 
 
     return (
@@ -160,11 +159,12 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
                     source={source}
                     config={verifyConfig}
                     onSelect={() => {}}
+                    file={file}
                     fontSizeHead={fontSizeHead}
                     onChange={(changeData)=> console.gray('change data:', changeData)}
                     style={{
                         width: '100%', 
-                        maxHeight:  height ?? '100%',
+                        height:  height ?? '100%',
                         overflowX: 'auto'
                     }}
                 />
