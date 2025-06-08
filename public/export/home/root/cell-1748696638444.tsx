@@ -1,14 +1,11 @@
-import { CarouselVertical } from '@lib/index';
+import { CarouselHorizontal } from '@lib/index';
 import React from 'react';
 
 
-export function CarouselVerticalWrap() {
+export function CarouselHorizontalWrap() {
     const items = [
         { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
-        {
-            type: 'image',
-            src: '/uploads/vc-1749310314466-1.png?v=1749331176276'
-        },
+        { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
         { type: 'image', src: 'https://picsum.photos/seed/1/300/400' },
         { type: 'image', src: 'https://picsum.photos/seed/1/600/400' },
         { type: 'video', src: 'https://www.w3schools.com/html/mov_bbb.mp4' },
@@ -21,18 +18,17 @@ export function CarouselVerticalWrap() {
                 display: 'block',
                 width: '100%',
                 overflow: 'hidden',
-                position: 'relative',
-                height: 100
+                position: 'relative'
             }}
         >
-            <CarouselVertical
+            <CarouselHorizontal
                 items={items}
                 style={{}}
-                height={100}
-                data-parent="cell-1747227527273"
                 slidesToShow={3}
+                data-parent="cell-1748696638444"
                 slidesToScroll={1}
-                data-type="VerticalCarousel"
+                width="100%"
+                data-type="HorizontCarousel"
             />
         </div>
     );
@@ -41,9 +37,9 @@ export function CarouselVerticalWrap() {
 export default function Cell() {
     return (
         <>
-            <CarouselVerticalWrap />
+            <CarouselHorizontalWrap />
 
-            <CarouselVerticalWrap />
+            <CarouselHorizontalWrap />
         </>
     );
 }

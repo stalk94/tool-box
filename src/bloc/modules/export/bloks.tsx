@@ -139,6 +139,7 @@ export function exportedTabs(
         return items ? items.map((elem, index) => (`
             <Tab
                 sx={{
+                    margin: 'auto',
                     textAlign: 'center',
                     whiteSpace: 'normal',
                     wordBreak: 'keep-all',
@@ -229,7 +230,7 @@ export function exportedTabs(
                             setCurent(newValue);
                         }}
                         orientation={${isHorizontal ? 'horizontal' : 'vertical'}}
-                        variant="scrollable"
+                        variant={${isHorizontal ? "scrollable" : 'standard'}}
                         scrollButtons={true}
                         allowScrollButtonsMobile={true}
                         aria-label="tabs"

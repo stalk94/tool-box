@@ -13,7 +13,7 @@ import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/
 
 // составляет индивидуальную схему пропсов
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
-    const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label'];
+    const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label', 'separator'];
     const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
     const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels', 'isChildren', 'isSecondary', 'isButton', 'autoplay', 'isHorizontal'];
     //const fileKeys = [''];

@@ -39,6 +39,7 @@ type BottomNavWrapperProps = {
 type BreadcrumbsWrapperProps = {
     'data-id': number
     'data-type': 'Breadcrumbs'
+    fontSize: number
     fullWidth: boolean
     style: React.CSSProperties
     pathname: string
@@ -58,6 +59,7 @@ type TabsWrapperProps = TabsProps & {
     'data-id': number
     'data-type': 'Tabs'
     'select-color': string
+    alignTab: 'start' | 'center' | 'end'
     metaName?: string,
     color: string
     isHorizontal: boolean
@@ -94,9 +96,6 @@ type HeaderWrapperProps = {
     styles: {
         logo: React.CSSProperties
         navigation: React.CSSProperties
-    }
-    slots: {
-
     }
     logo: string
     file: string
@@ -234,6 +233,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
         metaName, 
         slots, 
         fullWidth, 
+        alignTab,
         ...otherProps 
     } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
@@ -294,7 +294,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
     const parse = () => {
         if (items) return items.map((item, index) => {
             return(
-                <div
+                <span
                     style={{
                         border: '1px solid transparent',
                         outline: 'none',
@@ -316,7 +316,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                     }}
                 >
                     { typeof item === 'string' ? item : '' }
-                </div>
+                </span>
             );
         });
     }
@@ -338,7 +338,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 flexShrink: 1,
                 flexBasis: 0,
                 minWidth: 0,
-                minHeight: 0
+                minHeight: 0,
             }}
             { ...otherProps }
         >
@@ -346,13 +346,12 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 value={value}
                 onChange={handleChange}
                 orientation={isHorizontal ? 'horizontal' : 'vertical'}
-                variant="scrollable"
-                scrollButtons={true}
+                variant={isHorizontal ? "scrollable" : 'standard'}
+                scrollButtons="auto"
                 allowScrollButtonsMobile={true}
                 indicatorColor={'primary'}
                 aria-label="tabs"
                 sx={{
-                    maxWidth: isHorizontal ? '100%' : '30%',
                     '& .MuiTabs-indicator': {
                         backgroundColor: selectColor
                     },
@@ -361,10 +360,12 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                 { parsedItems && parsedItems.map((elem, index) =>
                     <Tab
                         sx={{
-                            textAlign: 'center',
+                            margin: 'auto',
+                            //textAlign: 'center',
+                            alignItems: alignTab,
                             whiteSpace: 'normal',
                             wordBreak: 'keep-all',
-                            overflowWrap: 'normal',
+                            overflowWrap: 'break-word',
                             color: color,
                             '&.Mui-selected': {
                                 color: selectColor,
@@ -827,7 +828,6 @@ export const DataTableWrapper = React.forwardRef((props: TableSourcesProps, ref)
 
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState(undefined);
-    const degidratationRef = React.useRef<(call) => void>(() => { });
     const lastFileRef = React.useRef<number | null>(null);
     const {
         ['data-id']: dataId,
@@ -837,13 +837,12 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
         file,
         linkItems,
         elevation,
-        slots,
         ...otherProps
     } = props;
     const { height } = useComponentSizeWithSiblings(dataId);
 
 
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = renderAppBar(
             src,
             {
@@ -866,7 +865,7 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
         );
 
         call(code);
-    };
+    }
     const handlerClickNavigation = (path: 'string') => {
         console.log(path);
     }
@@ -918,7 +917,9 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
         else setSrc(logo);
     }, [logo]);
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -926,7 +927,7 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
 
     return (
@@ -987,7 +988,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
         style,
         pathname,
         separator,
-        nameMap,
+        fontSize,
         fullWidth,
         ...otherProps
     } = props;
@@ -1045,7 +1046,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
                 push={(href) => console.log(href)}
                 linkStyle={{
                     fontFamily: style?.fontFamily,
-                    fontSize: style?.fontSize,
+                    fontSize: fontSize ?? style?.fontSize,
                     fontWeight: style?.fontWeight,
                     fontStyle: style?.fontStyle,
                     textDecoration: style?.textDecoration,

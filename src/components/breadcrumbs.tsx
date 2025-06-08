@@ -61,16 +61,27 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
     const commonSx = (isLast: boolean) => ({
         textTransform: 'capitalize',
         fontWeight: isLast ? 500 : 400,
-        opacity: isLast ? 1 : 0.7,
+        opacity: isLast ? 0.7 : 1,
         ...linkStyle
     });
     const crumbs = useBreadcrumbs(pathname, {
         nameMap,
-        base: { label: <Home sx={commonSx(false)} />, href: '/' },
+        base: { 
+            label: (
+                <Home 
+                    sx={{
+                        ...commonSx(false), 
+                        fontSize: linkStyle.fontSize + 6
+                    }} 
+                />
+            ),
+            href: '/' 
+        },
     });
 
-    //? может не сработать
     React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+
         if(isMounted.current) {
             const checkOverflow = () => {
                 if (!parentRef.current) return;
@@ -124,25 +135,40 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
             ref={parentRef}
             aria-label="breadcrumb"
             separator={separator}
-            sx={{ m: 1 }}
+            sx={{ 
+                m: 1,
+                '& .MuiBreadcrumbs-separator': {
+                    opacity: 0.7
+                },
+            }}
         >
             { crumbs.map((segment, index) =>
                 segment.isLast ? (
                     <Typography
                         ref={(el) => (itemRefs.current[index] = el!)}
                         key={segment.href}
-                        color="text.primary"
-                        sx={commonSx(true)}
+                        sx={{
+                            color: "text.secondary",
+                            ...commonSx(true),
+                            fontWeight: 'bold'
+                        }}
                     >
                         { segment.label }
                     </Typography>
                 ) : (
                         <Link key={segment.href} href={segment.href}>
                             <Typography
-                                sx={commonSx(false)}
+                                sx={{
+                                    color: 'text.primary',
+                                    ...commonSx(false),
+                                    '&:hover': {
+                                        cursor: 'pointer',
+                                        opacity: 0.7
+                                    },
+                                }}
                                 ref={(el) => (itemRefs.current[index] = el!)}
                             >
-                                {segment.label}
+                                { segment.label }
                             </Typography>
                         </Link>
                 )

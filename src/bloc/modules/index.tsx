@@ -512,6 +512,8 @@ registerComponent({
     component: BreadcrumbsWrapper,
     defaultProps: {
         fullWidth: true,
+        fontSize: 16,
+        separator: '/',
         pathname: 'test/room/any',
         style: {}
     },
@@ -566,6 +568,7 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         isHorizontal: true,
+        alignTab: 'center',
         color: '',
         'select-color': '',
         metaName: 'CustomTabs',

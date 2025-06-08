@@ -258,11 +258,17 @@ const propsPromoBaner = {
     'children-button': { type: 'text' },
 }
 
+const breadCrumbsProps = {
+    fontSize: { type: 'slider', min: 8, max: 48, step: 1 },
+}
 const propsStack = {
     count: { type: 'number', min: 2, max: 8, step: 1 },
 }
 const propsCarousel = {
     slidesToShow: { type: 'number', min: 1, max: 8, step: 1 }
+}
+const propsTabs = {
+    alignTab: ['start', 'center', 'end']
 }
 
 
@@ -292,4 +298,6 @@ export default {
     Rating: propsRating,
     HorizontCarousel: propsCarousel,
     VerticalCarousel: propsCarousel,
+    Breadcrumbs: breadCrumbsProps,
+    Tabs: propsTabs,
 }
