@@ -73,3 +73,5 @@ export const componentBaseSettings = {
         icon: Settings,
     },
 }
+
+export const specialComponents = ['AppBar', 'Breadcrumbs', 'Footer'];

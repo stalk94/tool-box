@@ -1078,51 +1078,13 @@
         }
       }
     ],
-    "cell-1749325618003": [
-      {
-        "id": 1749326034054,
-        "parent": "cell-1749325618003",
-        "props": {
-          "fullWidth": true,
-          "logo": "",
-          "file": "",
-          "data-source": "src",
-          "linkItems": [
-            {
-              "id": "test",
-              "label": "test"
-            },
-            {
-              "id": "settings",
-              "label": "settings"
-            }
-          ],
-          "slots": {},
-          "data-id": 1749326034054,
-          "data-type": "AppBar"
-        }
-      }
-    ],
-    "cell-1749326085236": [
-      {
-        "id": 1749340701346,
-        "parent": "cell-1749326085236",
-        "props": {
-          "fullWidth": true,
-          "fontSize": 16,
-          "separator": "●",
-          "pathname": "test/room/any",
-          "style": {},
-          "data-id": 1749340701346,
-          "data-type": "Breadcrumbs"
-        }
-      }
-    ]
+    "cell-1749325618003": [],
+    "cell-1749326085236": []
   },
   "meta": {
     "scope": "home",
     "name": "root",
-    "updatedAt": 1749340708946,
+    "updatedAt": 1749421092410,
     "preview": "snapshots/home-root.png"
   },
   "size": {

@@ -149,7 +149,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
                 style={ style }
                 { ...otherProps }
             >
-                {isChildren
+                { isChildren
                     ? <Typography
                         variant='subtitle2'
                         contentEditable={globalThis.EDITOR && selected?.props?.['data-id'] === dataId}

@@ -12,7 +12,7 @@ import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { updateComponentProps, updateCelltProps } from './helpers/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
-import { componentGroups, componentAtom } from './config/category';
+import { componentGroups, componentAtom, specialComponents } from './config/category';
 import { createBlockToFile, fetchFolders } from "./helpers/export";
 import { componentMap, componentsRegistry } from "./modules/helpers/registry";
 import { usePopUpName, useSafeAsyncEffect } from './helpers/usePopUp';
@@ -285,7 +285,7 @@ function AtomsRenderer({ category, setCategory, desserealize }) {
     );
 }
 
-
+//const meta = editorContext.meta.get();
 const useAtoms =(category, setCategory, desserealize)=> {
     const categories = Object.entries(componentAtom);
 
@@ -322,6 +322,7 @@ const useElements = (currentTool, setCurrentTool) => {
         return category === currentTool;
     });
 
+
     return {
         start: (
             <TooglerInput
@@ -342,7 +343,7 @@ const useElements = (currentTool, setCurrentTool) => {
                 {itemsInCurrentCategory.map(([type, config]: [ProxyComponentName, any]) => {
                     const Icon = componentsRegistry[type].icon ?? Settings;
 
-                    return (
+                    if(!specialComponents.includes(type)) return (
                         <Box key={type} sx={{ display: 'flex', flexDirection: 'row', mb: 1 }}>
                             <DraggableToolItem
                                 id={type}

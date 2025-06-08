@@ -9,6 +9,7 @@ import { Delete, Edit, Star } from '@mui/icons-material';
 import { findFreeSpot, stackHorizont, stackVertical, getNearestLayout } from './helpers/editor';
 import { DroppableCell } from './Dragable';
 import Container from '@mui/material/Container';
+import { specialComponents } from './config/category';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from './utils/Rullers';
@@ -68,6 +69,7 @@ export default function ({ desserealize }) {
         if (!selected) return;
 
         const id = selected.props?.['data-id'];
+        if (specialComponents.includes(selected.props['data-type'])) return;
         if (!id) return;
 
         const cellId = renderData.find((layer) =>
@@ -104,9 +106,11 @@ export default function ({ desserealize }) {
         }
     }
     const delCellData = (idCell: string) => {
-        const breackpoint = editorContext.size.breackpoint.get();
-        renderSlice.set((prev) => prev.filter((cell) => cell.i !== idCell));
-        editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
+        if(!idCell.includes('system')) {
+            const breackpoint = editorContext.size.breackpoint.get();
+            renderSlice.set((prev) => prev.filter((cell) => cell.i !== idCell));
+            editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
+        }
 
         // Удаляем содержимое из кэша
         //cellsSlice.set((old) => {

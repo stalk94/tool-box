@@ -1,6 +1,6 @@
 import React from 'react';
-import { Drawer, Button, Box, List, ListItem, ListItemText } from '@mui/material';
-import { TextInput, CheckBoxInput, NumberInput, SelectInput, Modal } from '../../../index';
+import { Drawer, Button, Box, List, ListItem, ListItemText, Divider, Typography } from '@mui/material';
+import { TextInput, Accordion } from '../../../index';
 
 type LinkItems = {
     id: string
@@ -29,32 +29,53 @@ export default function({ open, data, setOpen, onChange }: Props) {
     const [dataCopy, setDataCopy] = React.useState<LinkItems[]>([]);
     
     const render =(elem, i: number, nested?: number)=> {
-        console.log(elem)
         return(
             <div style={{ display: 'flex' }}>
                 <Box sx={{ display: 'flex', flexDirection:'column' }}>
                     <TextInput
-                        label='path'
+                        label=' '
                         position='right'
-                        labelSx={{ fontSize: 14, color: '#000000cb' }}
+                        labelSx={{ fontSize: 14, color: '#c3c3c3' }}
                         value={elem.id}
+                        left={<span style={{fontSize: 12,opacity:0.7}}>path&nbsp;</span>}
+                        sx={{
+                            background: '#0000000',
+                            backgroundColor: '#0000000',
+                            height: 20,
+                            fontSize: 14
+                        }}
                         onChange={(v) => setDataCopy((old) => {
-                            if(nested !== undefined) old[i].children[nested].id = v;
-                            else old[i].id = v;
+                            const next = [...old];
+                            if(nested !== undefined) next[i].children[nested] = { 
+                                ...next[i].children[nested], 
+                                id: v 
+                            };
+                            else next[i] = { ...next[i], id: v };
 
-                            return [...old];
+                            return next;
                         })}
                     />
                     <TextInput
-                        label='label'
+                        label=' '
                         position='right'
-                        labelSx={{ fontSize: 14, color: '#000000cb' }}
+                        labelSx={{ fontSize: 14, color: '#c3c3c3' }}
                         value={elem.label ?? elem.id}
+                        sx={{
+                            background: '#0000000',
+                            backgroundColor: '#0000000',
+                            height: 20,
+                            fontSize: 14
+                        }}
+                        left={<span style={{fontSize: 12,opacity:0.7}}>label</span>}
                         onChange={(v) => setDataCopy((old) => {
-                            if(nested !== undefined) old[i].children[nested].label = v;
-                            else old[i].label = v;
+                            const next = [...old];
+                            if(nested !== undefined) next[i].children[nested] = { 
+                                ...next[i].children[nested], 
+                                label: v 
+                            };
+                            else next[i] = { ...next[i], label: v };
 
-                            return [...old];
+                            return next;
                         })}
                     />
                 </Box>
@@ -62,7 +83,7 @@ export default function({ open, data, setOpen, onChange }: Props) {
                     size='mini'
                     variant='outlined'
                     color='error'
-                    sx={{ mx: 1, height: 40}}
+                    sx={{ mx: 1, height: 25}}
                     onClick={() => {
                         setDataCopy((old) => {
                             if(nested !== undefined) {
@@ -89,6 +110,14 @@ export default function({ open, data, setOpen, onChange }: Props) {
             sx ={{
                 backdropFilter: 'blur(6px)',
             }}
+            slotProps={{
+                paper: {
+                    elevation: 3,
+                    sx: {
+                        background: 'rgb(44, 44, 44)',
+                    },
+                },
+            }}
             anchor="left" 
             open={open}
             onClose={(e, v)=> {
@@ -99,46 +128,75 @@ export default function({ open, data, setOpen, onChange }: Props) {
             }}
         >
             {dataCopy.map((elem, i)=> 
-                <div style={{display:'flex', flexDirection:'column',padding: 8}}>
-                    <Box key={elem.id} sx={{my: 1}}>
-                        { render(elem, i) }
-                        <Box sx={{display:'flex', flexDirection:'column', ml: 5}}>
-                            {elem.children?.map((nested, index)=>
-                                <Box key={nested.id} 
-                                    sx={{
-                                        display: 'flex',
-                                        border: '1px solid black'
+                <>
+                    <Divider
+                        children={
+                            <Typography
+                                variant='caption'
+                            >
+                                { elem.label }
+                            </Typography>
+                        }
+                    />
+                    <div style={{display:'flex', flexDirection:'column',padding: 8}}>
+                        <Box key={i} sx={{my: 1}}>
+                            { render(elem, i) }
+                            <Box sx={{display:'flex', flexDirection:'column', ml: 5, mt:1}}>
+                                {elem.children &&
+                                    <Accordion
+                                        items={elem.children?.map((nested, index)=> {
+                                            return({
+                                                title: nested.label ?? nested.id,
+                                                content: render(nested, i, index)
+                                            })
+                                        })}
+                                    />
+                                }
+                                <Button
+                                    size='mini'
+                                    variant='outlined'
+                                    color='success'
+                                    sx={{ml: 16, height: 25, mt: 2 }}
+                                    onClick={() => {
+                                        setDataCopy((old) => {
+                                            if(!old[i].children) old[i].children = [{
+                                                id: `${elem.id}_0`,
+                                                label: `${elem.id}-0`
+                                            }];
+                                            else old[i].children.push({
+                                                id: `${elem.id}_${old[i].children.length}`,
+                                                label: `${elem.id}-${old[i].children.length}`
+                                            });
+                                            
+                                            return [...old];
+                                        });
                                     }}
                                 >
-                                    { render(nested, i, index) }
-                                </Box>
-                            )}
-                            <Button
-                                size='mini'
-                                variant='outlined'
-                                color='success'
-                                sx={{ mx: 1, height: 20 }}
-                                onClick={() => {
-                                    setDataCopy((old) => {
-                                        if(!old[i].children) old[i].children = [{
-                                            id: `${elem.id}_0`,
-                                            label: `${elem.id}-0`
-                                        }];
-                                        else old[i].children.push({
-                                            id: `${elem.id}_${old[i].children.length}`,
-                                            label: `${elem.id}-${old[i].children.length}`
-                                        });
-                                        
-                                        return [...old];
-                                    });
-                                }}
-                            >
-                                add nested
-                            </Button>
+                                    add nested
+                                </Button>
+                            </Box>
                         </Box>
-                    </Box>
-                </div>
+                    </div>
+                </>
             )}
+            <Divider/>
+            <Button
+                size='mini'
+                variant='outlined'
+                color='inherit'
+                sx={{ mx: 1, height: 25, mt: 2 }}
+                onClick={() => {
+                    setDataCopy((old) => [
+                        ...old,
+                        {
+                            id: `navigation_${old.length}`,
+                            label: `navigation-${old.length}`
+                        }
+                    ]);
+                }}
+            >
+                add nested
+            </Button>
         </Drawer>
     );
 }

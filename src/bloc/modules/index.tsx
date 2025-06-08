@@ -14,9 +14,8 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
 } from './inputs';
 import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
 import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper, ListWrapper } from './any';
-import { TabsWrapper, BottomNavWrapper, AccordionWrapper, 
-    HeaderWrapper, BreadcrumbsWrapper
-} from './complex';
+import { TabsWrapper, BottomNavWrapper, AccordionWrapper } from './complex';
+import { HeaderWrapper, BreadcrumbsWrapper } from './shared';
 import { DataTableWrapper } from './tables';
 import { FrameWrapper, AreaWrapper } from './blocs';
 import { FormAuthOrRegWrapper } from './forms';
@@ -490,38 +489,6 @@ registerComponent({
     category: 'complex',
 });
 registerComponent({
-    type: 'AppBar',
-    component: HeaderWrapper,
-    defaultProps: {
-        fullWidth: true,
-        logo: '',
-        file: '',
-        'data-source': 'src',
-        linkItems: [
-            {id: 'test', label: 'test'},
-            {id: 'settings', label: 'settings'}
-        ],
-        slots: {
-            
-        }
-    },
-    icon: Repartition,
-    category: 'complex',
-});
-registerComponent({
-    type: 'Breadcrumbs',
-    component: BreadcrumbsWrapper,
-    defaultProps: {
-        fullWidth: true,
-        fontSize: 16,
-        separator: '/',
-        pathname: 'test/room/any',
-        style: {}
-    },
-    icon: Repartition,
-    category: 'complex',
-});
-registerComponent({
     type: 'BottomNav',
     component: BottomNavWrapper,
     defaultProps: {
@@ -628,4 +595,39 @@ registerComponent({
     },
     icon: EditNote,
     category: 'block',
+});
+
+
+// special 
+registerComponent({
+    type: 'AppBar',
+    component: HeaderWrapper,
+    defaultProps: {
+        fullWidth: true,
+        logo: '',
+        file: '',
+        'data-source': 'src',
+        linkItems: [
+            {id: 'test', label: 'test'},
+            {id: 'settings', label: 'settings'}
+        ],
+        slots: {
+            
+        }
+    },
+    icon: Repartition,
+    category: 'complex',
+});
+registerComponent({
+    type: 'Breadcrumbs',
+    component: BreadcrumbsWrapper,
+    defaultProps: {
+        fullWidth: true,
+        fontSize: 16,
+        separator: '/',
+        pathname: 'test/room/any',
+        style: {}
+    },
+    icon: Repartition,
+    category: 'complex',
 });

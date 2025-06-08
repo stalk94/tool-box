@@ -1,0 +1,137 @@
+{
+  "layouts": {
+    "lg": [
+      {
+        "w": 12,
+        "h": 3,
+        "x": 0,
+        "y": 0,
+        "i": "system-1749421632198",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 12,
+        "h": 2,
+        "x": 0,
+        "y": 3,
+        "i": "system-1749421638546",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "md": [
+      {
+        "w": 10,
+        "h": 3,
+        "x": 0,
+        "y": 0,
+        "i": "system-1749421632198",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 10,
+        "h": 2,
+        "x": 0,
+        "y": 3,
+        "i": "system-1749421638546",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "sm": [
+      {
+        "w": 8,
+        "h": 3,
+        "x": 0,
+        "y": 0,
+        "i": "system-1749421632198",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 8,
+        "h": 2,
+        "x": 0,
+        "y": 3,
+        "i": "system-1749421638546",
+        "moved": false,
+        "static": false
+      }
+    ],
+    "xs": [
+      {
+        "w": 6,
+        "h": 3,
+        "x": 0,
+        "y": 0,
+        "i": "system-1749421632198",
+        "moved": false,
+        "static": false
+      },
+      {
+        "w": 6,
+        "h": 2,
+        "x": 0,
+        "y": 3,
+        "i": "system-1749421638546",
+        "moved": false,
+        "static": false
+      }
+    ]
+  },
+  "content": {
+    "system-1749421632198": [
+      {
+        "id": 1749421935545,
+        "parent": "system-1749421632198",
+        "props": {
+          "fullWidth": true,
+          "logo": "",
+          "file": "",
+          "data-source": "src",
+          "linkItems": [
+            {
+              "id": "test",
+              "label": "test"
+            },
+            {
+              "id": "settings",
+              "label": "settings"
+            }
+          ],
+          "slots": {},
+          "data-id": 1749421935545,
+          "data-type": "AppBar"
+        }
+      }
+    ],
+    "system-1749421638546": [
+      {
+        "id": 1749421937840,
+        "parent": "system-1749421638546",
+        "props": {
+          "fullWidth": true,
+          "fontSize": 16,
+          "separator": "/",
+          "pathname": "test/room/any",
+          "style": {},
+          "data-id": 1749421937840,
+          "data-type": "Breadcrumbs"
+        }
+      }
+    ]
+  },
+  "meta": {
+    "scope": "system",
+    "name": "header",
+    "updatedAt": 1749422609420,
+    "preview": "snapshots/system-header.png"
+  },
+  "size": {
+    "width": 1200,
+    "height": 120,
+    "breackpoint": "lg"
+  }
+}

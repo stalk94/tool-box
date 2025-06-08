@@ -7,6 +7,7 @@ import useContextMenu from '@components/context-main';
 import { updateComponentProps } from './helpers/updateComponentProps';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { db } from "./helpers/export";
+import { specialComponents } from './config/category';
 import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
 import { desserealize } from './helpers/sanitize';
 import { statikRender } from './helpers/output';
@@ -51,6 +52,8 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
         statikRender(code, children);
     }
     const iseDeleteComponent = (ids: number) => {
+        if(specialComponents.includes(children.props['data-type'])) return;
+        
         const removeCoponentFromCells =(componentIndex: number)=> {
             cellsSlice.set((old) => {
                 old[cellId].splice(componentIndex, 1);
