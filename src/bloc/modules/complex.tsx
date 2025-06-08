@@ -12,6 +12,7 @@ import render, { exportedTabs, exportedBottomNav } from './export/bloks';
 import renderAppBar, { exportBreadCrumbs } from './export/shared';
 import { DropSlot, ContextSlot } from '../Dragable';
 import { editorContext } from "../context";
+import ToolBarApp from './sources/app-bar-tools';
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -577,6 +578,7 @@ export const BottomNavWrapper = React.forwardRef((props: BottomNavWrapperProps, 
 
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState(undefined);
+    const [openBar, setOpenBar] = React.useState(false);
     const lastFileRef = React.useRef<number | null>(null);
     const {
         ['data-id']: dataId,
@@ -615,10 +617,16 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
 
         call(code);
     }
+    const useEdit = (data) => {
+        updateComponentProps({
+            component: { props },
+            data: data
+        });
+    }
     const handlerClickNavigation = (path: 'string') => {
         console.log(path);
     }
-    const transformUseRouter = () => {
+    const transformUseRouter = (items) => {
         const func = (items, parent?: string) => {
             return items.map((elem, index) => {
                 if (!parent) elem.path = '/' + elem.id;
@@ -633,8 +641,8 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
                 return elem;
             });
         }
-        
-        const result = func([]);
+
+        const result = func(items ?? []);
         return result;
     }
     const handleUpload = async (file) => {
@@ -677,19 +685,33 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, [props]);
-
+    const parseItems =React.useMemo(()=> {
+        return transformUseRouter(JSON.parse(JSON.stringify(linkItems)));
+    }, [linkItems]);
+    
 
     return (
         <div
             ref={ref}
             data-id={dataId}
             data-type='AppBar'
+            onDoubleClick={()=> setOpenBar(true)}
             style={{
                 width: '100%', 
                 height: '100%',
                 ...style 
             }}
         >
+            { EDITOR && 
+                <ToolBarApp 
+                    data={{
+                        linkItems
+                    }}
+                    onChange={useEdit}
+                    open={openBar}
+                    setOpen={setOpenBar}
+                /> 
+            }
             <AppBar
                 elevation={elevation ?? 1}
                 height={height - 5}
@@ -716,13 +738,13 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
                             mr: 2,
                             ...styles?.navigation
                         }}
-                        items={transformUseRouter()}
+                        items={parseItems}
                     />
                 }
                 end={
                     <React.Fragment>
                         <MobailBurger
-                            items={transformUseRouter()}
+                            items={parseItems}
                         />
 
                     </React.Fragment>

@@ -59,7 +59,7 @@ export default function StorageDataTable({
     ...props 
 }: DataSourceTableProps) {
     const adapter = React.useRef<ReturnType<typeof createSupabaseJsonbTableAdapter> | null>(null);
-    const lastPushHash = React.useRef<string | null>(null);
+    const lastPushHash = React.useRef<string | null>('1');
     const lastFileRef = React.useRef<number | null>(null);
     const [data, setData] = React.useState([]);
     const [columns, setColumns] = React.useState<ColumnData[]>([]);         // схема колонок
@@ -71,7 +71,7 @@ export default function StorageDataTable({
         if (data.length > 0) {
             const result = [];
             const first = data[0];
-
+            
             Object.keys(first).map((key) => {
                 if(key.length > 0 && key !== 'id') result.push({
                     field: key,
