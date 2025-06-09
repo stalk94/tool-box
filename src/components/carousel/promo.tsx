@@ -201,7 +201,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
                     }}
                     variant='h4'
                 >
-                    {normalizeContent(data.title)}
+                    { normalizeContent(data.title) }
                 </MarqueeAdaptive>
                 <Typography component="div"
                     color="text.secondary"

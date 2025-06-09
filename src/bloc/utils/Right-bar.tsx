@@ -1,7 +1,7 @@
 import React from "react";
 import { LayoutCustom, Breakpoint } from '../type';
 import { Bar } from '@lib/index';
-import { editorContext, infoSlice, renderSlice, cellsSlice } from "../context";
+import { editorContext, infoSlice, cellsSlice } from "../context";
 
 
 const CellsPreview = () => {

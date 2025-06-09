@@ -6,7 +6,7 @@ import {
     RadioButtonUnchecked, RadioButtonChecked, Add, Code
 } from "@mui/icons-material";
 import { FaReact } from 'react-icons/fa';
-import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
+import { editorContext, infoSlice, cellsSlice } from "./context";
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { updateComponentProps, updateCelltProps } from './helpers/updateComponentProps';
@@ -181,8 +181,6 @@ const RenderProjectTopPanel = () => {
         const existingNamesBlocks = currentProject.map(el => el.name);
         
         // 🧹 Чистим layout/render до применения нового
-        renderSlice.set([]);
-        editorContext.layout.set([]);
         editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
 
         setValue(newScope);

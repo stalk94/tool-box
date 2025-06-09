@@ -6,7 +6,7 @@ import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, Slo
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
-import { editorContext, infoSlice, renderSlice, cellsSlice, nestedContextSlice } from "./context";
+import { editorContext, infoSlice, cellsSlice, nestedContextSlice, bufferSlice } from "./context";
 import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/helpers/registry';
@@ -105,26 +105,11 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         const { Component, props } = component;
         const data = createDataComponent(props, cellId);
 
-        renderSlice.set((prevRender) => {
-            const findIndex = prevRender.findIndex((cell) => cell.i === cellId);
-
-            if (findIndex !== -1) {
-                const targetCell = prevRender[findIndex];
-
-                if (Array.isArray(targetCell.content)) {
-                    targetCell.content.push(data);
-                }
-                else targetCell.content = [data];
-            }
-
-            return prevRender;
-        });
-
-        cellsSlice.set((old) => {
-            if(Array.isArray(old[cellId])) old[cellId].push(data);
-            else old[cellId] = [data];
+        cellsSlice.set((next) => {
+            if(Array.isArray(next[cellId])) next[cellId].push(data);
+            else next[cellId] = [data];
             
-            return old;
+            return next;
         });
     }
     const handleDragEndOld = (event: DragEndEvent, cellId: string) => {
@@ -136,36 +121,27 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         const newIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === over.id);
 
         if (oldIndex === -1 || newIndex === -1) return;
-
-        // 🔁 Обновляем стейты
-        renderSlice.set((prev) => {
-            const target = prev.find((cell) => cell.i === cellId);
-
-            if (target?.content) {
-                target.content = arrayMove(target.content, oldIndex, newIndex);
-            }
-            
-            return prev;
-        });
+        
+        // 🔁 Обновляем стейт
         cellsSlice.set((old) => {
-            old[cellId] = arrayMove(old[cellId], oldIndex, newIndex);
-
-            return old;
+            const next = { ...old };
+            next [cellId] = arrayMove(next[cellId], oldIndex, newIndex);
+            return next ;
         });
-
 
         if (cacheDrag.current) {
-            cacheDrag.current.classList.add('editor-selected');
-            const find = renderSlice.get().find(el => el.i === cellId);
+                document.querySelectorAll('[ref-id]').forEach(el => {
+                    if (el != cacheDrag.current) el.classList.remove('editor-selected');
+                });
+                cacheDrag.current.classList.add('editor-selected');
 
-            if (find && Array.isArray(find.content)) {
-                const findChild = find.content.find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
-                if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
+                if (currentList[cellId]) {
+                    const findChild = currentList[cellId].find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
+                    if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
+                }
             }
-        }
     }
     const handleDragStart = (event: DragStartEvent) => {
-        console.red('DRAG START')
         const elActivator = event.activatorEvent.target as HTMLElement;
         const container = elActivator.closest('[ref-id]') as HTMLElement | null;
         cacheDrag.current = container;
@@ -220,8 +196,26 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             const select = infoSlice.select.content?.get();
 
             if(select) {
-                editorContext.buffer.set(serrializeCopy(select));
+                bufferSlice.type.set('component');
+                bufferSlice.data.set(serrializeCopy(select));
                 enqueueSnackbar('скопирован', {variant: 'default'});
+            }
+        }
+        else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
+            if(bufferSlice.type.get() === 'component') {
+                const curCell = editorContext.currentCell.get(); 
+                const clone = bufferSlice.data.get(true);
+                if(!curCell.i || !clone) return;
+
+                clone.parent = curCell.i;
+                clone.props['data-id'] = Date.now(); 
+
+                cellsSlice.set((next) => {
+                    if(Array.isArray(next[curCell.i])) next[curCell.i].push(clone);
+                    else next[curCell.i] = [clone];
+                    
+                    return next;
+                });
             }
         }
     }
@@ -332,30 +326,6 @@ export default function EditorApp({ setShowBlocEditor }) {
             console.error("❗❗❗ fetchFolders error:", e);
         }
     }
-    const consolidationRender =(content: Record<string, ComponentSerrialize[]>, layouts: LayoutsBreackpoints)=> {
-        const breackpoint = editorContext.size.breackpoint.get();
-
-        // 🎯 Собираем renderSlice
-        const result = layouts[breackpoint].map((layer) => {
-            const cellContent = content[layer.i] ?? [];
-
-            const children = cellContent
-                .map((componentData) => {
-                    const Element = componentMap[componentData.props['data-type']];
-
-                    if (!Element) return null;
-                    else return componentData;
-                })
-                .filter(Boolean);
-
-            return {
-                ...layer,
-                content: children,
-            }
-        });
-
-        renderSlice.set(result);
-    }
 
     React.useLayoutEffect(() => {
         console.gray('layout effect');
@@ -382,7 +352,6 @@ export default function EditorApp({ setShowBlocEditor }) {
     }, []);
     React.useEffect(() => {
         // Очищаем перед установкой нового блока
-        renderSlice.set([]);
         cellsSlice.set({});
         editorContext.layouts.set({lg:[], md:[], sm:[], xs:[]});
         editorContext.size.set({ width: 1200, height: 800, breackpoint: 'lg' });
@@ -400,16 +369,8 @@ export default function EditorApp({ setShowBlocEditor }) {
             cellsSlice.set(content);
             editorContext.layouts.set(layouts);
             editorContext.size.set(size);
-
-            consolidationRender(content, layouts);
         }, 500);
     }, [meta.name, meta.scope]);
-    editorContext.size.breackpoint.useWatch((value)=> {
-        console.green('change breackpoint: ', value);
-        const layouts = editorContext.layouts.get();
-        
-        //consolidationRender(cellsSlice.get(true), layouts);
-    });
     
 
 

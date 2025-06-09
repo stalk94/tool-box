@@ -1,18 +1,15 @@
 import React from 'react';
-import { JSONContent } from '@tiptap/react';
-import Imgix from 'react-imgix';
 import { LoaderToolWrapper } from './sources/image-toolbar';
 import { useComponentSizeWithSiblings } from './helpers/hooks';
-import { CarouselHorizontal, PromoBanner, Card, Header, MediaImage, CarouselVertical, CarouselProps } from '../../index';
-import { StarBorder, Settings } from '@mui/icons-material';
+import { CarouselHorizontal, PromoBanner, CarouselVertical, CarouselProps } from '../../index';
 import { updateComponentProps } from '../helpers/updateComponentProps';
 import { uploadFile } from 'src/app/plugins';
-import { Box, Button, CardContent, Chip, Typography, Rating } from '@mui/material';
 import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/media';
 import { exportTipTapValue, toJSXProps, toLiteral, renderComponentSsr } from './export/utils';
 import { ComponentProps } from '../type';
-import { toJsx } from './helpers/format';
+import { CardBase } from './sources/cards';
+
 
 
 type PromoBannerWrapperProps = ComponentProps & {
@@ -67,20 +64,10 @@ type CardWrapperProps = ComponentProps & {
     'data-type': 'Card'
     index?: number
     fullWidth: boolean
-    fullHeight: boolean
     style: React.CSSProperties
     elevation?: number
     src: string
     heightMedia: string | number
-    // ??
-    slots: {
-        title?: JSONContent
-        subheader?: JSONContent
-        text?: JSONContent
-    }
-    path: string
-    max?: number
-    size?: "small" | "medium" | "large"
 }
 
 
@@ -170,7 +157,6 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
             }}
             {...otherProps}
         />
-
     );
 });
 export const VideoWrapper = React.forwardRef((props: VideoWrapperProps, ref) => {
@@ -706,7 +692,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         return buttonProps;
     }
     const parsedItems = React.useMemo(() => {
-        if(EDITOR) return items.map((item, i) => {
+        return items.map((item, i) => {
             if (i === active) {
                 return {
                     images: [...item.images],
@@ -716,11 +702,6 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
             }
             return item;
         });
-        else return items.map((item, i) => ({
-            images: item.images,
-            title: toJsx(item.title),
-            description: toJsx(item.description),
-        }));
     }, [items, active]);
     
     
@@ -748,35 +729,28 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         </div>
     );
 });
-//! 
 export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
+    const [imgSrc, setImgSrc] = React.useState<string>();
     const lastFileRef = React.useRef<number | null>(null);
     const {
+        'data-id': dataId,
         fullHeight,
-        style = {display:'flex',flexDirection: 'column'}, 
+        style = {}, 
         elevation = 1,
         slots,
         file,
         src,
         index = 0,
         heightMedia,
-        ...otherProps
+        'avatar-src': avatarSrc,
+        'avatar-icon': avatarIcon,
+        'avatar-text': avatarText,
     } = props;
+    const { width, height } = useComponentSizeWithSiblings(dataId);
 
-    const [imgSrc, setImgSrc] = React.useState<string>();
-    const componentId = props['data-id'];
-    
-
-    const onChange = (slot, data) => {
-        updateComponentProps({
-            component: { props: props },
-            data: { slots: { ...slots, [slot]: data } }
-        });
-    }
     const handleUpload = async (file) => {
         setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
-        const filename = `img-${componentId}.${file.name.split('.').pop()}`;
+        const filename = `img-${dataId}.${file.name.split('.').pop()}`;
         const url = await uploadFile(file, filename);
 
 
@@ -786,10 +760,9 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
             data: { src: `${url}?${Date.now()}` }
         });
     }
-    // в JSX строку
-    degidratationRef.current = (call) => {
+    const exportCode = (call) => {
         const code = renderCart(
-            componentId,
+            dataId,
             {...style, height: fullHeight && '100%'}, 
             slots, 
             heightMedia, 
@@ -798,14 +771,23 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
 
         call(code);
     }
+    const onChange = React.useCallback((data) => {
+        updateComponentProps({
+            component: { props: props },
+            data
+        });
+    }, [props]);
+
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
         sharedEmmiter.on('degidratation', handler);
-        sharedEmmiter.on('degidratation.' + componentId, handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
 
         return () => {
             sharedEmmiter.off('degidratation', handler);
-            sharedEmmiter.off('degidratation.' + componentId, handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, []);
     React.useEffect(() => {
@@ -830,117 +812,32 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
         <div
             ref={ref}
             data-type="Card"
-            data-id={componentId}
-            { ...otherProps }
+            data-id={dataId}
+            style={{
+                maxHeight: height
+            }}
         >
-            <Card
-                style={{...style, height: '100%'}}
-                elevation={8}
-                footer={
-                    <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', mb: 0.5 }}>
-                        <Box sx={{ p: 1 }}>
-                            <Rating
-                                defaultValue={2}
-                                precision={1}
-                                size={props.size ?? 'medium'}
-                                max={props.max ?? 5}
-                                onChange={(e, v) => {
-                                    fetch('/api/component/card', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ rating: v, path: props.path })
-                                    })
-                                }}
-                            />
-                        </Box>
-                        <Box sx={{ ml: 'auto' }}>
-                            <Button
-                                sx={{ m: 0.5 }}
-                                variant='outlined'
-                                size={props?.size}
-                                onClick={() => {
-                                    fetch('/api/component/card', {
-                                        method: 'POST',
-                                        headers: { 'Content-Type': 'application/json' },
-                                        body: JSON.stringify({ addCart: props.index, path: props.path })
-                                    })
-                                }}
-                            >
-                                add to cart
-                            </Button>
-                        </Box>
-                    </Box>
-                }
-            >
-                <Header
-                    avatar={ <StarBorder/> }
-                    title={
-                        <TipTapSlotEditor
-                            autoIndex={index}
-                            value={slots?.title}
-                            onChange={(html) => onChange('title', html)}
-                            placeholder="Текст"
-                            className="no-p-margin"
-                            isEditable={EDITOR}
-                            initialInsert={{
-                                text: 'Title',
-                                fontSize: '1.5rem',
-                                fontFamily: 'Roboto Condensed", Arial, sans-serif',
-                                fontWeight: '500',
-                            }}
-                        />
+            <CardBase
+                elevation={elevation}
+                isEditable={EDITOR}
+                index={index}
+                textSlots={slots}
+                src={imgSrc}
+                heightMedia={heightMedia}
+                onChange={onChange}
+                topSlots={{
+                    avatar: {
+                        src: avatarSrc,
+                        icon: avatarIcon,
+                        text: avatarText
                     }
-                    subheader={
-                        <TipTapSlotEditor
-                            autoIndex={index}
-                            value={slots?.subheader}
-                            onChange={(html) => onChange('subheader', html)}
-                            placeholder="Текст"
-                            className="no-p-margin"
-                            isEditable={EDITOR}
-                            initialInsert={{
-                                text: 'subheader',
-                                fontSize: '0.875rem',
-                                fontFamily: 'Roboto Condensed", Arial, sans-serif',
-                                fontWeight: '500',
-                            }}
-                        />
-                    }
-                    action={
-                        <Chip
-                            icon={<StarBorder/>}
-                            size="small"
-                            label="new" 
-                        />
-                    }
-                />
-                
-                <MediaImage
-                    sx={{ px: 0.7 }}
-                    height={heightMedia}
-                    src={imgSrc}
-                />
-                <div style={{
-                        marginTop: '3%',
-                        marginBottom: 'auto',
-                        overflow: 'auto'
-                    }}
-                >
-                    <TipTapSlotEditor
-                        autoIndex={index}
-                        value={ slots?.text }
-                        onChange={(html) => onChange('text', html)}
-                        placeholder="Текст"
-                        className="no-p-margin p"
-                        isEditable={EDITOR}
-                        initialInsert={{
-                            text: 'В зависимости от того, что вы хотите построить, представления узлов работают немного по-разному и могут иметь свои очень специфические возможности',
-                            fontSize: '0.975rem',
-                            fontFamily: 'Roboto Condensed", Arial, sans-serif',
-                        }}
-                    />
-                </div>
-            </Card>
+                }}
+                style={{
+                    ...style,
+                    display: 'flex',
+                    flexDirection: 'column'
+                }}
+            />
         </div>
     );
 });

@@ -1,6 +1,6 @@
 import fs from 'fs/promises';
 import path from 'path';
-import { DataRenderPage } from '../types/page';
+import { DataRenderPage } from '../types';
 
 
 const CONFIG_DIR = path.join(process.cwd(), 'public', 'config');

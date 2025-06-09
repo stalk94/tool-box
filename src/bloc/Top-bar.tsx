@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
 import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings } from "@mui/icons-material";
-import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
+import { editorContext, infoSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
 
 

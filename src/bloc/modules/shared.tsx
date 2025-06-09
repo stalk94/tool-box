@@ -44,6 +44,7 @@ type BreadcrumbsWrapperProps = {
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState(undefined);
     const [openBar, setOpenBar] = React.useState(false);
+    const meta = editorContext.meta.use();
     const lastFileRef = React.useRef<number | null>(null);
     const {
         ['data-id']: dataId,
@@ -169,7 +170,7 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
             }}
         >
             {/* панель настроек отдельная */}
-            { EDITOR && 
+            { (EDITOR && meta.scope === 'system') &&
                 <>
                     <div style={{position: 'absolute', zIndex:999, left:0, top:0}}>
                         <IconButton

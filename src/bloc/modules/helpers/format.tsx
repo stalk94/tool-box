@@ -1,8 +1,22 @@
 import { JSONContent } from '@tiptap/react';
-import { rendeHtml } from '../tip-tap';
+import { generateHTML } from '@tiptap/core';
+import extension from '../tip-tap/extension';
 
 
 export function toJsx(json: JSONContent|string|undefined|null) {
+    const rendeHtml =(value: JSONContent)=> {
+        const result = generateHTML(value, extension);
+        const match = result.match(/^<p([^>]*)>([\s\S]*)<\/p>$/);
+        
+        if (match) {
+            const attrs = match[1];                     // всё после <p
+            const content = match[2];                   // внутренний HTML
+            return `<div ${attrs}>${content}</div>`;
+        }
+
+        return  result;
+    }
+
     if(typeof json === 'object') {
         const html = rendeHtml(json);
         return <div dangerouslySetInnerHTML={{ __html: html }} />;

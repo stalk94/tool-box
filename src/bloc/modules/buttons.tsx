@@ -1,4 +1,4 @@
- import React from 'react';
+import React from 'react';
 import { Badge, Button, IconButton, ButtonProps, IconButtonProps } from '@mui/material';
 import { iconsList } from '../../components/tools/icons';
 import { Settings } from '@mui/icons-material';

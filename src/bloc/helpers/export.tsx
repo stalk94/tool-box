@@ -1,5 +1,5 @@
 import { writeFile } from '../../app/plugins';
-import { editorContext, infoSlice, renderSlice, cellsSlice } from "../context";
+import { editorContext, infoSlice, cellsSlice } from "../context";
 import { formatJsx } from '../modules/export/utils';
 
 

@@ -1,8 +1,10 @@
-import { ComponentSerrialize, LayoutCustom, LayoutsBreackpoints, SlotDataBus, Component, ComponentProps, ScopeData } from './type';
+import type { 
+    ComponentSerrialize, LayoutCustom, LayoutsBreackpoints, 
+    SlotDataBus, Component, ComponentProps, ScopeData, PageMeta
+} from './type';
 import { Editor } from '@tiptap/react';
 import { createState, useLocalStorage } from 'statekit-react';
 import { createStore as create } from 'statekit-lite';
-import { ssePlugin } from 'statekit-lite';
 import type { Palette } from '@mui/material/styles';
 
 
@@ -10,10 +12,7 @@ export type EditorContextType = {
     mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot'
     dragEnabled: boolean
     layouts: LayoutsBreackpoints
-    meta: {
-        scope: string
-        name: string
-    }
+    meta: PageMeta
     size: {
         width: number
         height: number
@@ -24,6 +23,10 @@ export type EditorContextType = {
         gridCompact: boolean
         rowHeight: number
     }
+    currentCell?: LayoutCustom
+    curentNestedContext?: {
+        parentComponentId: number | string
+    }
     inspector: {
         lastData: any
         colapsed: boolean
@@ -32,11 +35,6 @@ export type EditorContextType = {
             x: number
             y: number
         }
-    }
-    buffer?: ComponentSerrialize
-    currentCell?: LayoutCustom
-    curentNestedContext?: {
-        parentComponentId: number | string
     }
 }
 export type InfoStateType = {
@@ -74,9 +72,13 @@ export type SettingsContextStateType = {
         pallete: Palette
     }
 }
-
+type BufferStateType = {
+    type: 'component' | 'cell'
+    data: ComponentSerrialize
+}
 
 const isClient = typeof window !== 'undefined';
+
 
 export const editorContext = createState('EDITOR', {
     mod: 'block',
@@ -115,9 +117,10 @@ export const editorContext = createState('EDITOR', {
 ] : []);
 
 
-export const renderSlice = create([] as LayoutCustom[], {
-    devtools: { name: 'render' },
-    immer: true
+export const bufferSlice = create({
+    
+} as BufferStateType, {
+    devtools: { name: 'buffer' }
 });
 export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
     devtools: { name: 'cells' },
@@ -150,8 +153,6 @@ export const infoSlice = createState('infoGlobal', {
     },
     project: {}
 } as InfoStateType);
-
-
 export const nestedContextSlice = createState('nestedContextGlobal', {
     isEnable: false
 } as NestedContextStateType);

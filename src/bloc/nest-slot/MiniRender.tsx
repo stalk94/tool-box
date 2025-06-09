@@ -1,7 +1,7 @@
 import React from "react";
 import { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import "react-grid-layout/css/styles.css";
-import { ComponentSerrialize, MiniRenderSlotProps } from '../type';
+import { ComponentSerrialize, MiniRenderSlotProps, LayoutCustom } from '../type';
 import { desserealize } from '../helpers/sanitize';
 import { getRelativeStylePercent } from '../helpers/editor';
 import { generateRenderGridFileSafe, generateLiteralFromCells } from '../modules/export/_core';
@@ -12,7 +12,11 @@ const margin: [number, number] = [1, 1];
 
 
 
-export default function MiniRender({ layouts, onReadyLiteral, size, type }: MiniRenderSlotProps) {
+export default function MiniRender({ layouts, onReadyLiteral, size, type, anyRender }: MiniRenderSlotProps) {
+    const [ready, setReady] = React.useState(false);
+    const [breackpoint, setBreackpoint] = React.useState('lg');
+    const [layotRender, setLayoytRender] = React.useState([]);
+
     // режим headles render
     const degidrateAll = async () => {
         const cacheIds = [];
@@ -57,28 +61,47 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
             )
         });
     }
+    const useRender =(layout: LayoutCustom)=> {
+        if(Array.isArray(layouts)) return layout.content;
+        else if(layouts.content) return layouts.content[layout.i];
+    }
     React.useEffect(()=> {
         if(!EDITOR) return;
         if(onReadyLiteral) degidrateAll();
     }, []);
-
+    React.useEffect(()=> {
+        if(Array.isArray(layouts)) {
+            setBreackpoint('lg');
+            setLayoytRender(structuredClone(layouts));
+            setReady(true);
+        }
+        else if(layouts.layouts) {
+            setLayoytRender(structuredClone(layouts.layouts[breackpoint]));
+            setReady(true);
+        }
+    }, [breackpoint]);
+    
 
     return(
         <div style={{ position: 'relative' }}>
-            { type !== 'Area' &&
+            { anyRender }
+            { (type !== 'Area' && ready) &&
                 <ResponsiveGridLayout
                     className="GRID-SLOT"
-                    layouts={{ lg: structuredClone(layouts) ?? [] }}                                   // Схема сетки
-                    //breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-                    //cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
-                    rowHeight={21}
+                    layouts={{ [breackpoint]: layotRender }}
+                    breakpoints={{ lg: 1100, md: 940, sm: 590, xs: 480 }}
+                    cols={{ lg: 12, md: 10, sm: 8, xs: 6 }}
+                    rowHeight={20}
                     compactType={null}                                          // Отключение автоматической компоновки
                     preventCollision={true}
                     isDraggable={false}                                         // Отключить перетаскивание
                     isResizable={false}                                         // Отключить изменение размера
                     margin={margin}
+                    onBreakpointChange={(br)=> {
+                        if(!Array.isArray(layouts)) setBreackpoint(br)
+                    }}
                 >
-                    { layouts?.map((layer) => {
+                    { layotRender.map((layer) => {
                         return (
                             <div
                                 data-id={layer.i}
@@ -97,8 +120,8 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
                                     position: type === 'Area' ? 'relative' : 'static'
                                 }}
                             >
-                                { Array.isArray(layer.content) &&
-                                    layer.content.map((component, index) =>
+                                {
+                                    useRender(layer).map((component, index) =>
                                         <React.Fragment key={index}>
                                             {desserealize(
                                                 component, 

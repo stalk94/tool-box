@@ -1,5 +1,5 @@
 import { ComponentSerrialize, LayoutCustom, Breakpoint } from '../type';
-import { renderSlice, cellsSlice } from "../context";
+import { cellsSlice, editorContext } from "../context";
 
 
 
@@ -87,10 +87,12 @@ export function findLowestY(cells: LayoutCustom[]): number {
 
 
 export const stackHorizont = (countW: number, containerHeight: number, rowHeight: number, margin: [number, number]): LayoutCustom[] => {
+    const currentBreakpoint = editorContext.size.breackpoint.get();
+    const layout = editorContext.layouts[currentBreakpoint].get();
     const cellW = Math.floor(12 / countW); // ширина в колонках
     const cellH = Math.floor((containerHeight + margin[1]) / (rowHeight + margin[1])); // высота в строках
-    const y = findLowestY(renderSlice.get()); // если нужно добавить снизу
-
+    const y = findLowestY(layout); // если нужно добавить снизу
+    
     return Array.from({ length: countW }, (_, i) => ({
         i: `cell-${Date.now()}-${i}`,
         x: i * cellW,
@@ -101,14 +103,15 @@ export const stackHorizont = (countW: number, containerHeight: number, rowHeight
     }));
 }
 export const stackVertical = (countH: number, containerHeight: number, rowHeight: number, margin: [number, number]): LayoutCustom[] => {
-    const cells = renderSlice.get();
+    const currentBreakpoint = editorContext.size.breackpoint.get();
+    const layout = editorContext.layouts[currentBreakpoint].get();
     const maxCols = 12;
 
     const totalRows = Math.floor((containerHeight + margin[1]) / (rowHeight + margin[1]));
     const cellH = Math.floor(totalRows / countH);
 
     const usedXs = new Set<number>();
-    for (const cell of cells) {
+    for (const cell of layout) {
         for (let i = 0; i < cell.w; i++) {
             usedXs.add(cell.x + i);
         }
@@ -129,7 +132,7 @@ export const stackVertical = (countH: number, containerHeight: number, rowHeight
     }
 
     // Начать с нижней границы по этому x
-    const relevantCells = cells.filter(c => c.x <= targetX && c.x + c.w > targetX);
+    const relevantCells = layout.filter(c => c.x <= targetX && c.x + c.w > targetX);
     const yStart = relevantCells.length
         ? Math.max(...relevantCells.map(c => c.y + c.h))
         : 0;

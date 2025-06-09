@@ -4,22 +4,32 @@ import React from 'react';
 import Editor from '@bloc/App';
 import { Provider } from 'react-redux';
 import { store } from 'statekit-react';
-import { createTheme, ThemeProvider, Button, CssBaseline } from '@mui/material';
-import { darkTheme, lightTheme } from './theme/index';
+import GridRender from './components/GridAdapter';
 
 
-export default function EditorClient() {
+export default function EditorClient({ curBreacpoint, layouts, contentCells }) {
+    const [isClient, setIsClient] = React.useState(false);
+
     React.useEffect(() => {
         globalThis.EDITOR = true;
+        setIsClient(true);
     }, []);
-
+   
     
-    return (
+    if(isClient) return (
         <Provider store={store}>
-            <ThemeProvider theme={darkTheme}>
-                <CssBaseline />
-                <Editor />
-            </ThemeProvider>
+            <Editor />
         </Provider>
     );
 }
+
+
+/** 
+ *  return(
+        <GridRender
+            curBreacpoint={ curBreacpoint}
+            layouts={layouts}
+            contentCells={contentCells}
+        />
+    );
+ */

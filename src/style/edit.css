@@ -137,3 +137,18 @@
    width: 22;
    height: 22;
 }
+
+
+/* meta block */
+.headerEditor {
+  border: 1px dashed #499aeb3c;
+}
+.footerEditor {
+ 
+}
+.headerEditor:hover {
+  background: #419ffd0b;
+}
+.footerEditor:hover  {
+  background: #b7d23d0b;
+}

@@ -46,7 +46,6 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
         }
     }
     
-    
     if (type === 'video') {
         return (
             <CardMedia
@@ -63,7 +62,6 @@ export const MediaImage = ({ src, height, width, ...props }: MediaImageProps) =>
         <CardMedia
             component="img"
             image={src ?? "https://png.pngtree.com/thumb_back/fh260/background/20240801/pngtree-new-cb-background-images-photos-pics-wallpaper-pictures-image_16123145.jpg"}
-            height={height}
             width={width}
             alt={useAlt()}
             {...props}

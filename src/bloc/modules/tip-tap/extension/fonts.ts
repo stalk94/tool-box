@@ -1,5 +1,5 @@
 import { Mark, mergeAttributes } from '@tiptap/core';
-import { RawCommands } from '@tiptap/core';
+
 
 
 declare module '@tiptap/core' {

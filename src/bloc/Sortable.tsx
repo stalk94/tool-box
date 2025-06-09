@@ -1,7 +1,7 @@
 import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
+import { editorContext, infoSlice, cellsSlice } from "./context";
 import { SortableItemProps } from './type';
 import useContextMenu from '@components/context-main';
 import { updateComponentProps } from './helpers/updateComponentProps';
@@ -52,43 +52,17 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
         statikRender(code, children);
     }
     const iseDeleteComponent = (ids: number) => {
-        if(specialComponents.includes(children.props['data-type'])) return;
+        if (!id || !cellId) return;
+        if (specialComponents.includes(children.props['data-type'])) return;
+
+        cellsSlice.set((next) => {
+            next[cellId] = next[cellId].filter((content)=> 
+                content.props['data-id'] !== children.props['data-id']
+            );
+
+            return next;
+        });
         
-        const removeCoponentFromCells =(componentIndex: number)=> {
-            cellsSlice.set((old) => {
-                old[cellId].splice(componentIndex, 1);
-                return old;
-            });
-        }
-        const removeComponentFromCell = (cellId: string, componentIndex: number) => {
-            renderSlice.set((prevRender) => {
-                const cellIndex = prevRender.findIndex(item => item.i === cellId);
-
-                if (cellIndex !== -1) {
-                    if (Array.isArray(prevRender[cellIndex]?.content)) {
-                        prevRender[cellIndex]?.content?.splice(componentIndex, 1);
-                        removeCoponentFromCells(componentIndex);
-                    }
-                }
-
-                return [...prevRender];
-            });
-        }
-
-        const render = renderSlice.get(true);
-        if (!id) return;
-
-        const cellId = render.find((layer) =>
-            layer.content?.some?.((c) => c.props?.['data-id'] === ids)
-        )?.i;
-
-        if (!cellId) return;
-
-        const index = render.find((layer) => layer.i === cellId)
-            ?.content?.findIndex((c) => c.props?.['data-id'] === ids);
-        if (index === -1 || index === undefined) return;
-
-        removeComponentFromCell(cellId, index);
         infoSlice.select.content.set(null);
     }
     // добавление в колекцию сохраненных

@@ -1,7 +1,8 @@
 import React from "react";
+import { useSnackbar } from 'notistack';
 import { LayoutCustom, Breakpoint } from './type';
-import GridLayout, { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
-import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
+import { Responsive, WidthProvider } from "react-grid-layout";
+import { editorContext, infoSlice, cellsSlice } from "./context";
 import useContextMenu from '@components/context-main';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
@@ -13,114 +14,51 @@ import { specialComponents } from './config/category';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from './utils/Rullers';
-import MiniRender from "./nest-slot/MiniRender";
-import { consolidationRender } from "./helpers/output";
+import { MetaHeader, MetaFooter } from './utils/Meta';
+
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
 
-
 export default function ({ desserealize }) {
+    const { enqueueSnackbar } = useSnackbar();
     const [ready, setReady] = React.useState(false);
+    const gridContainerRef = React.useRef(null); 
     const size = editorContext.size.use();
     const mod = editorContext.mod.use();
     const meta = editorContext.meta.use();
-    const project = infoSlice.project.use();
-    const gridContainerRef = React.useRef(null);                            // ref на главный контейнер редактора сетки                        
-    const render = renderSlice.use();
+    const project = infoSlice.project.use();                           // ref на главный контейнер редактора сетки                        
     const curCell = editorContext.currentCell.use();                        // текушая выбранная ячейка
     const settings = editorContext.settings.use();
     const layouts = editorContext.layouts.use();
+    const cells = cellsSlice.use();
     const currentBreakpoint = editorContext.size.breackpoint.use();
 
 
-    const renderSpecial = () => {
-        const proj = infoSlice.project.get();
-        const footer = proj.system.find((d)=> d.name === 'footer');
-        const header = proj.system.find((d)=> d.name === 'header');
-
-        const headerLayouts = consolidationRender(header.data.content, header.data.layouts);
-        const footerLayouts = consolidationRender(footer.data.content, footer.data.layouts);
-        
-        if(footer && header) {
-            return {
-                header: (width)=> {
-                    console.log(width)
-                    return(
-                    <MiniRender
-                        type='Frame'
-                        layouts={headerLayouts}
-                        size={{
-                            width: width,
-                            height: header.data.size.height
-                        }}
-                    />
-                )},
-                footer: (width)=> (
-                    <MiniRender
-                        type='Frame'
-                        layouts={footerLayouts}
-                        size={{
-                            width: width,
-                            height: footer.data.size.height
-                        }}
-                    />
-                )
-            }
-        }
-    }
-    const removeComponentFromCell = (cellId: string, componentIndex: number) => {
-        const breackpoint = editorContext.size.breackpoint.get();
-
-        renderSlice.set((prevRender) => {
-            const cellIndex = prevRender.findIndex(item => item.i === cellId);
-
-            if (cellIndex !== -1) {
-                if (Array.isArray(prevRender[cellIndex]?.content)) {
-                    // Удаляем компонент из ячейки
-                    prevRender[cellIndex]?.content?.splice(componentIndex, 1);
-                }
-            }
-
-            return prevRender;
-        });
-
-        cellsSlice.set((old) => {
-            old[cellId].splice(componentIndex, 1);
-            return old;
-        });
-
-        editorContext.layouts[breackpoint]?.set((layer) => {
-            layer = layer.map((lay) => {
-                lay.content?.splice?.(componentIndex, 1);
-                return lay;
-            });
-        });
-    }
     const handleDeleteKeyPress = (event: KeyboardEvent) => {
-        const renderData = renderSlice.get();
+        const curCell = editorContext.currentCell.get(); 
+
+        if (!curCell?.i) {
+            enqueueSnackbar('Не выделена ячейка!', {variant: 'warning'});
+            return;
+        }
         if (event.key !== 'Delete') return;
 
         const selected = infoSlice.select.content?.get();
-        if (!selected) return;
-
-        const id = selected.props?.['data-id'];
+        if (!selected) {
+            enqueueSnackbar('Не выделен компонент!', {variant: 'warning'});
+            return;
+        }
         if (specialComponents.includes(selected.props['data-type'])) return;
-        if (!id) return;
+        
+        cellsSlice.set((next) => {
+            next[curCell.i] = next[curCell.i].filter((content) =>
+                content.props['data-id'] !== selected.props?.['data-id']
+            );
 
-        const cellId = renderData.find((layer) =>
-            layer.content?.some?.((c) => c.props?.['data-id'] === id)
-        )?.i;
-
-        if (!cellId) return;
-
-        const index = renderData.find((layer) => layer.i === cellId)
-            ?.content?.findIndex((c) => c.props?.['data-id'] === id);
-
-        if (index === -1 || index === undefined) return;
-
-        removeComponentFromCell(cellId, index);
+            return next;
+        });
         infoSlice.select.content.set(null);
     }
     const handleChangeLayout = (layout: LayoutCustom[]) => {
@@ -131,6 +69,7 @@ export default function ({ desserealize }) {
     }
     const handleClickCell = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, layer: LayoutCustom) => {
         // (event) переключение на панель компонентов
+        console.log('click')
         EVENT.emit('leftBarChange', {
             currentToolPanel: 'component'
         });
@@ -142,24 +81,20 @@ export default function ({ desserealize }) {
             EVENT.emit('onSelectCell', layer.i);
         }
     }
+    const handleDblClickCell = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, layer: LayoutCustom) => {
+        console.log('dbl click')
+    }
     const delCellData = (idCell: string) => {
         if(!idCell.includes('system')) {
             const breackpoint = editorContext.size.breackpoint.get();
-            renderSlice.set((prev) => prev.filter((cell) => cell.i !== idCell));
             editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
         }
-
-        // Удаляем содержимое из кэша
-        //cellsSlice.set((old) => {
-        //    delete old[idCell];
-        //    return old;
-        //});
     }
     const addCellData = (cells: any[], clean?: 'all' | string) => {
         if (clean === 'all') render.map((cell) => delCellData(cell.i));
         else if (clean && clean !== 'all') delCellData(clean);
 
-        cells.map((cell, index) => {
+        cells.forEach((cell, index) => {
             cell.i = cell.i ?? `cell-${Date.now() + index}`;
 
             ['lg', 'md', 'sm', 'xs'].forEach((breackpoint)=> 
@@ -167,13 +102,9 @@ export default function ({ desserealize }) {
                     prev.push(cell);
                 })
             );
-            renderSlice.set((prev) => {
-                prev.push(cell);
-                return prev;
-            });
-            cellsSlice.set((old) => {
-                old[cell.i] = [];
-                return old;
+            cellsSlice.set((next) => {
+                next[cell.i] = [];
+                return next;
             });
 
             editorContext.currentCell.set({ i: cell.i });
@@ -204,9 +135,20 @@ export default function ({ desserealize }) {
             content: []
         }]);
     }
+    const currentLayout = React.useMemo(()=> 
+        getNearestLayout(currentBreakpoint, layouts), 
+        [currentBreakpoint, layouts]
+    );
+    const { menu, handleOpen } = useContextMenu([
+        {
+            label: <div style={{ color: 'red', fontSize: 14 }}>Удалить cell</div>,
+            icon: <Delete sx={{ color: 'red', fontSize: 18 }} />,
+            onClick: (id) => delCellData(id),
+        },
+    ]);
 
     React.useEffect(() => {
-        console.gray('grid render');
+        console.blue('grid render');
         if (typeof window === 'undefined') return;
         document.addEventListener('keydown', handleDeleteKeyPress);
         EVENT.on('addCell', addNewCell);
@@ -232,7 +174,7 @@ export default function ({ desserealize }) {
                 setReady(true);
             }
 
-            const maxY = Math.max(...render.map((item) => item.y + item.h));
+            const maxY = Math.max(...currentLayout.map((item) => item.y + item.h));
             const totalVerticalMargin = margin[1] * (maxY + 1);
             const availableHeight = parentHeight - totalVerticalMargin;
             // setRowHeight(availableHeight / maxY);
@@ -246,19 +188,6 @@ export default function ({ desserealize }) {
             if (ref) resizeObserver.unobserve(ref); // ⬅️ важно: unobserve тот же ref
         }
     }, [meta, project, size]);
-
-    const currentSpecial = React.useMemo(()=> renderSpecial(), []);
-    const currentLayout = React.useMemo(()=> 
-        getNearestLayout(currentBreakpoint, layouts), 
-        [currentBreakpoint, layouts]
-    );
-    const { menu, handleOpen } = useContextMenu([
-        {
-            label: <div style={{ color: 'red', fontSize: 14 }}>Удалить cell</div>,
-            icon: <Delete sx={{ color: 'red', fontSize: 18 }} />,
-            onClick: (id) => delCellData(id),
-        },
-    ]);
     
     
     return (
@@ -270,7 +199,7 @@ export default function ({ desserealize }) {
             </div>
 
             <Container sx={{
-                    height: (size.height + 10) ?? '99%',
+                    height: (size.height + 10),
                     overflowY: 'hidden',
                     marginTop: '65px',
                 }}
@@ -284,12 +213,11 @@ export default function ({ desserealize }) {
                         overflowY: 'auto',
                     }}
                 >
-                    <div>
-                        { currentSpecial.header(size.width) }
-                    </div>
                     {ready &&
+                        <>
+                        <MetaHeader width={size.width} scope={meta.scope}/>
                         <ResponsiveGridLayout
-                            style={{ height: (size.height - 10) ?? '99%' }}
+                            style={{ height: size.height - 10 }}
                             className="GRID-EDITOR"
                             layouts={{ [currentBreakpoint]: currentLayout }}
                             breakpoints={{ lg: 1100, md: 950, sm: 590, xs: 480 }}
@@ -306,7 +234,7 @@ export default function ({ desserealize }) {
                             resizeHandles={['se', 'ne', 'sw', 'nw']}
                         >
                             { currentLayout.map((layer) => {
-                                const content = cellsSlice[layer.i].get();
+                                const content = cells[layer.i];
                                 
                                 return (
                                     <div
@@ -355,7 +283,7 @@ export default function ({ desserealize }) {
                                             }
                                         </DroppableCell>
 
-                                        {/* ANCHOR - Вне редактора */}
+                                        {/* ANCHOR - Вне редактора (!non correct) */}
                                         {(!EDITOR && Array.isArray(layer.content)) &&
                                             layer.content.map((component, index) =>
                                                 <React.Fragment key={component.props['data-id']}>
@@ -367,6 +295,8 @@ export default function ({ desserealize }) {
                                 );
                             })}
                         </ResponsiveGridLayout>
+                        <MetaFooter width={size.width} scope={meta.scope}/>
+                        </>
                     }
                 </div>
                 { menu }
@@ -374,122 +304,3 @@ export default function ({ desserealize }) {
         </ThemeProvider>
     );
 }
-
-
-
-
-/** 
- * const consolidation = (layoutList: LayoutCustom[]) => {
-        return layoutList.map((layer) => {
-            const copyLayer = structuredClone(layer);
-            const cache = cellsSlice.get();
-            const curCacheLayout = cache[layer.i];
-
-            copyLayer.content = [];
-
-            if (curCacheLayout) {
-                for (const content of Object.values(curCacheLayout)) {
-                    const result = desserealize(content);
-                    if (result) copyLayer.content.push(result);
-                }
-            }
-
-            return copyLayer;
-        });
-    } */
-/**
- *  React.useEffect(() => {
-        const currentScope = project?.[meta?.scope];
-        const found: BlocData = currentScope?.find((obj) => obj.name === meta?.name);
-       
-        if (!found?.data) return;
-
-        // ✅ устанавливаем layout и content
-        if (found.data.content) cellsSlice.set(found.data.content);
-        if (found.data.layout) editorContext.layout.set(found.data.layout);
-        if (found.data.size) {
-            editorContext.size.width.set(found.data.size.width);
-            editorContext.size.height.set(found.data.size.height);
-        }
-
-        const freshLayout = found.data.layout ?? [];
-        const result = consolidation(freshLayout);
-        renderSlice.set(result);
-    }, [meta.name, project]);
- */
-/**
- *  React.useEffect(() => {
-        const cur = render.get({ noproxy: true });
-
-        if (cur && cur[0]) {
-            console.log('layouts: ', cur);
-
-            // Обновляем максимальное количество колонок
-            const resizeObserver = new ResizeObserver(() => {
-                if (gridContainerRef.current) {
-                    const parentHeight = gridContainerRef.current.clientHeight; // Получаем высоту родительского контейнера
-                    const containerWidth = gridContainerRef.current.offsetWidth;
-
-                    info.container.height.set(parentHeight);
-                    info.container.width.set(containerWidth);
-
-                    // Рассчитываем количество строк, исходя из переданной схемы
-                    const maxY = Math.max(...cur.map((item) => item.y + item.h)); // Определяем максимальное значение по оси y
-                    const rows = maxY; // Количество строк = максимальное значение y + 1
-
-                    const totalVerticalMargin = margin[1] * (rows + 1); // Суммарные вертикальные отступы для всех строк
-                    const availableHeight = parentHeight - totalVerticalMargin; // Доступная высота без отступов
-                    //setRowHeight(availableHeight / rows); // Вычисляем высоту строки
-                }
-            });
-
-            if (gridContainerRef.current) {
-                resizeObserver.observe(gridContainerRef.current);
-            }
-
-            return () => {
-                resizeObserver.disconnect();
-            }
-        }
-    }, [render]);
- */
-/**
- * React.useEffect(() => {
-        console.log('consolidation');
-        const meta = ctx.meta.get();
-        const currentScope = info.project?.get({ noproxy: true })?.[meta.scope];
-        const find = currentScope?.find((obj) => obj.name === meta.name);
-
-        if (find?.data) {
-            if (find.data?.content) {
-                cellsCache.set(find.data.content);
-            }
-            if (find.data?.layout) {
-                ctx.layout.set(find.data.layout);
-                const result = consolidation(find.data.layout);
-                render.set(result);
-            }
-            if (find.data.size) ctx.size.set((old)=> ({ ...old, ...find.data.size }));
-        }
-    }, [ctx.meta.name, info.project]);
- */
-
-
-/**
- *  if(!ctx.layout.get()[0]) {
-            const parse = JSON.parse(cache);
-            const curName = Object.keys(parse).pop();
-            ctx.layout.set(parse[curName]);
-            const result = consolidation(parse[curName])
-            render.set(result)
-        }
- */
-/**
- *   React.useEffect(() => {
-        const cur = layoutCellEditor.get({ noproxy: true });
-
-        if (cur[0]) render.set((prev)=> {
-            return cur.map((l) => l.name = l.content)
-        });
-    }, [layoutCellEditor]);
- */

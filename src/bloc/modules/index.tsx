@@ -344,7 +344,29 @@ registerComponent({
     icon: ViewCarousel,
     category: 'media',
 });
-
+// card
+registerComponent({
+    type: 'Card',
+    component: CardWrapper,
+    defaultProps: {
+        fullHeight: true,
+        width: '100%',
+        elevation: 4,
+        heightMedia: 'auto',
+        src: '',
+        file: '',
+        'data-source': '',
+        alt: undefined,
+        slots: {
+            title: undefined,
+            subheader: undefined,
+            text: undefined,
+            image: undefined
+        }
+    },
+    icon: Subtitles,
+    category: 'media',
+});
 
 
 // misc
@@ -430,27 +452,6 @@ registerComponent({
     },
     icon: Label,
     category: 'misc',
-});
-registerComponent({
-    type: 'Card',
-    component: CardWrapper,
-    defaultProps: {
-        fullHeight: true,
-        width: '100%',
-        heightMedia: 'auto',
-        src: '',
-        file: '',
-        'data-source': '',
-        alt: undefined,
-        slots: {
-            title: undefined,
-            subheader: undefined,
-            text: undefined,
-            image: undefined
-        }
-    },
-    icon: Subtitles,
-    category: 'media',
 });
 registerComponent({
     type: 'List',

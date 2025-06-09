@@ -1,6 +1,5 @@
 import React from 'react';
 import { List, ListItem, ListItemText, ListItemIcon, ListItemAvatar, Divider, ListItemButton, Box } from '@mui/material';
-import { Search, RadioButtonChecked, Circle, Info, CheckCircle } from '@mui/icons-material';
 
 
 type ItemList = {
@@ -47,16 +46,19 @@ export default function({ items, onClick, style, styles }: ListCustomProps) {
             <ListItemText
                 slotProps={{
                     primary: {
+                        component: 'span',
                         sx: {
                             ...styles?.primary
                         }
                     },
                     secondary: {
+                        component: 'span',
                         sx: {
                             ...styles?.secondary
                         }
                     }
                 }}
+                
                 primary={item.primary}
                 secondary={item.secondary}
             />

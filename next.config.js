@@ -1,9 +1,8 @@
 const nextConfig = {
-  reactStrictMode: false, // ⛔ отключить двойной рендер в dev
+  reactStrictMode: false,
   typescript: {
     ignoreBuildErrors: true,
   },
 };
 
-
-module.exports = nextConfig;
+export default nextConfig;

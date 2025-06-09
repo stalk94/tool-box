@@ -102,7 +102,7 @@ export function deserializeJSX(node: any, maps?: Record<string, any>): any {
 }
 
 // используется для json редактора
-export const serrialize = (component: Component, parent?: string|number): ComponentSerrialize => {
+export const serrialize = (component: Component | ComponentSerrialize, parent?: string|number): ComponentSerrialize => {
     const rawProps = { ...component.props };
     const type = rawProps['data-type'];
     const id = rawProps['data-id'] ?? Date.now();

@@ -113,7 +113,7 @@
         "parent": "system-1749421638546",
         "props": {
           "fullWidth": true,
-          "fontSize": 16,
+          "fontSize": 14,
           "separator": "/",
           "pathname": "test/room/any",
           "style": {},
@@ -126,7 +126,7 @@
   "meta": {
     "scope": "system",
     "name": "header",
-    "updatedAt": 1749422609420,
+    "updatedAt": 1749456335423,
     "preview": "snapshots/system-header.png"
   },
   "size": {

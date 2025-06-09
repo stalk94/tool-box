@@ -113,11 +113,12 @@ export type SortableItemProps = {
 }
 export type MiniRenderSlotProps = {
     type?: 'Frame' | 'Area'
-    layouts: LayoutCustom[]
+    layouts: LayoutCustom[] | BlocData
     size: {
         width: number 
         height: number 
     }
+    anyRender?: React.ReactElement
     cellsContent: Record<string, ComponentSerrialize[]>
     onReadyLiteral?: (code: string | Structur )=> void
 }
@@ -134,22 +135,27 @@ export type LayoutCustom = Layout & {
         classNames?: string
     }
 }
+export type LayoutSystem = LayoutCustom & {
+    type?: 'system'
+    i: `system-${number}`
+}
 export type LayoutsBreackpoints = {
     lg: LayoutCustom[]
     md: LayoutCustom[]
     sm: LayoutCustom[]
     xs: LayoutCustom[]
 }
-export type BlocData = {
+export type PageMeta = {
+    scope: string
+    name: string
+    updatedAt: number
+}
+export type PageData = {
     /** список всех cell и serialize data component в них */
     content: Record<string, ComponentSerrialize[]>
     /** сетки */
     layouts: LayoutsBreackpoints
-    meta: {
-        scope: string
-        name: string
-        updatedAt: number
-    }
+    meta: PageMeta
     size: {
         breackpoint: 'lg' | 'md' | 'xs' | 'sm'
         width: number
@@ -158,7 +164,7 @@ export type BlocData = {
 }
 export type ScopeData = {
     name: string 
-    data: BlocData
+    data: PageData
 }
 
 /////////////////////////////////////////////////////////////////////////////

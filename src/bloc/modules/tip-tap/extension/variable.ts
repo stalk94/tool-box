@@ -1,6 +1,6 @@
 import { Node, mergeAttributes } from '@tiptap/core';
-import { ReactNodeViewRenderer } from '@tiptap/react';
-import { VariableView } from '../VariableView'; // путь к твоему компоненту
+//import { ReactNodeViewRenderer } from '@tiptap/react';
+//import { VariableView } from '../VariableView'; // путь к твоему компоненту
 
 
 export const Variable = Node.create({
@@ -48,7 +48,7 @@ export const Variable = Node.create({
         return `{{${node.attrs.name}}:{${node.attrs.rowIndex}}}`;
     },
 
-    addNodeView() {
-        return ReactNodeViewRenderer(VariableView);
-    },
+    //addNodeView() {
+        //return ReactNodeViewRenderer(VariableView);
+    //},
 });

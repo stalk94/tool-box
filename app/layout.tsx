@@ -1,7 +1,8 @@
 import './globals.css';
+import * as React from 'react';
+import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 export { generateMetadata } from './[page]/head';
-import EmotionRegistry from './theme/emotion'; 
-
+import Providers from './helpers/theme';
 
 const defaultMetadata = {
     title: 'editor',
@@ -16,9 +17,25 @@ const defaultMetadata = {
 
 
 
+export default function RootLayout({ children }: { children: React.ReactNode }) {
 
+    return (
+        <html lang="en" suppressHydrationWarning>
+            <body>
+                <InitColorSchemeScript attribute="class" />
+                <Providers>
+                    { children }
+                </Providers>
+            </body>
+        </html>
+    );
+}
+
+
+/**
 export default function RootLayout({ children }: { children: React.ReactNode }) {
     
+
     return (
         <html lang="ru">
             <head>
@@ -27,9 +44,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             
             <body>
                 <EmotionRegistry>
-                    { children }
+                        { children }
                 </EmotionRegistry>
             </body>
         </html>
     )
 }
+*/

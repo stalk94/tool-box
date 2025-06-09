@@ -1,0 +1,22 @@
+import { LayoutCustom, ComponentSerrialize } from '@bloc/type';
+
+///////////////////////////////////////////////////////////////
+//    data
+///////////////////////////////////////////////////////////////
+
+
+///////////////////////////////////////////////////////////////
+//    props types
+///////////////////////////////////////////////////////////////
+export interface GridSSRAdapterProps {
+	layouts: {
+		lg:  LayoutCustom[]
+		md:  LayoutCustom[]
+		sm:  LayoutCustom[]
+		xs:  LayoutCustom[]
+	}
+	curBreacpoint: 'lg' | 'md' | 'sm' | 'xs'
+	gap?: number
+	rowHeight?: number
+	contentCells: Record<string, ComponentSerrialize[]>
+}
