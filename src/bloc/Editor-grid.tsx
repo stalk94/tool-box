@@ -3,7 +3,7 @@ import { LayoutCustom, Breakpoint } from './type';
 import GridLayout, { Responsive, WidthProvider, Layouts, Layout } from "react-grid-layout";
 import { editorContext, infoSlice, renderSlice, cellsSlice } from "./context";
 import useContextMenu from '@components/context-main';
-import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
 import { Delete, Edit, Star } from '@mui/icons-material';
 import { findFreeSpot, stackHorizont, stackVertical, getNearestLayout } from './helpers/editor';
@@ -13,6 +13,8 @@ import { specialComponents } from './config/category';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from './utils/Rullers';
+import MiniRender from "./nest-slot/MiniRender";
+import { consolidationRender } from "./helpers/output";
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -33,6 +35,41 @@ export default function ({ desserealize }) {
     const currentBreakpoint = editorContext.size.breackpoint.use();
 
 
+    const renderSpecial = () => {
+        const proj = infoSlice.project.get();
+        const footer = proj.system.find((d)=> d.name === 'footer');
+        const header = proj.system.find((d)=> d.name === 'header');
+
+        const headerLayouts = consolidationRender(header.data.content, header.data.layouts);
+        const footerLayouts = consolidationRender(footer.data.content, footer.data.layouts);
+        
+        if(footer && header) {
+            return {
+                header: (width)=> {
+                    console.log(width)
+                    return(
+                    <MiniRender
+                        type='Frame'
+                        layouts={headerLayouts}
+                        size={{
+                            width: width,
+                            height: header.data.size.height
+                        }}
+                    />
+                )},
+                footer: (width)=> (
+                    <MiniRender
+                        type='Frame'
+                        layouts={footerLayouts}
+                        size={{
+                            width: width,
+                            height: footer.data.size.height
+                        }}
+                    />
+                )
+            }
+        }
+    }
     const removeComponentFromCell = (cellId: string, componentIndex: number) => {
         const breackpoint = editorContext.size.breackpoint.get();
 
@@ -210,7 +247,7 @@ export default function ({ desserealize }) {
         }
     }, [meta, project, size]);
 
-
+    const currentSpecial = React.useMemo(()=> renderSpecial(), []);
     const currentLayout = React.useMemo(()=> 
         getNearestLayout(currentBreakpoint, layouts), 
         [currentBreakpoint, layouts]
@@ -223,7 +260,7 @@ export default function ({ desserealize }) {
         },
     ]);
     
-
+    
     return (
         <ThemeProvider theme={taskadeTheme}>
             {/* линейки */}
@@ -247,6 +284,9 @@ export default function ({ desserealize }) {
                         overflowY: 'auto',
                     }}
                 >
+                    <div>
+                        { currentSpecial.header(size.width) }
+                    </div>
                     {ready &&
                         <ResponsiveGridLayout
                             style={{ height: (size.height - 10) ?? '99%' }}
@@ -319,7 +359,7 @@ export default function ({ desserealize }) {
                                         {(!EDITOR && Array.isArray(layer.content)) &&
                                             layer.content.map((component, index) =>
                                                 <React.Fragment key={component.props['data-id']}>
-                                                    {desserealize(component)}
+                                                    { desserealize(component) }
                                                 </React.Fragment>
                                             )
                                         }

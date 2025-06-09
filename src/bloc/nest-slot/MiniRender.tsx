@@ -69,8 +69,8 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type }: Mini
                 <ResponsiveGridLayout
                     className="GRID-SLOT"
                     layouts={{ lg: structuredClone(layouts) ?? [] }}                                   // Схема сетки
-                    breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
-                    cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
+                    //breakpoints={{ lg: 1200 }}                                  // Ширина экрана для переключения
+                    //cols={{ lg: 12 }}                                           // Количество колонок для каждого размера
                     rowHeight={21}
                     compactType={null}                                          // Отключение автоматической компоновки
                     preventCollision={true}
