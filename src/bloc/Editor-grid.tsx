@@ -1,20 +1,22 @@
 import React from "react";
 import { useSnackbar } from 'notistack';
-import { LayoutCustom, Breakpoint } from './type';
+import { LayoutCustom, BlockData } from './type';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { editorContext, infoSlice, cellsSlice } from "./context";
 import useContextMenu from '@components/context-main';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
-import { Delete, Edit, Star } from '@mui/icons-material';
+import { Delete, Edit, Save, Star } from '@mui/icons-material';
 import { findFreeSpot, stackHorizont, stackVertical, getNearestLayout } from './helpers/editor';
-import { DroppableCell } from './Dragable';
+import { DroppableCell, DroppableGrid } from './Dragable';
 import Container from '@mui/material/Container';
 import { specialComponents } from './config/category';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from './utils/Rullers';
+import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
+import { db } from "./helpers/export";
 
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
@@ -28,8 +30,8 @@ export default function ({ desserealize }) {
     const size = editorContext.size.use();
     const mod = editorContext.mod.use();
     const meta = editorContext.meta.use();
-    const project = infoSlice.project.use();                           // ref на главный контейнер редактора сетки                        
-    const curCell = editorContext.currentCell.use();                        // текушая выбранная ячейка
+    const project = infoSlice.project.use();                                              
+    const curCell = editorContext.currentCell.use();                       
     const settings = editorContext.settings.use();
     const layouts = editorContext.layouts.use();
     const cells = cellsSlice.use();
@@ -84,10 +86,65 @@ export default function ({ desserealize }) {
     const handleDblClickCell = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, layer: LayoutCustom) => {
         console.log('dbl click')
     }
-    const delCellData = (idCell: string) => {
-        if(!idCell.includes('system')) {
-            const breackpoint = editorContext.size.breackpoint.get();
-            editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
+    const saveFavorite = (idCell: string) => {
+        const layotsExport = {};
+        const cellComponents = cellsSlice[idCell].get(true);
+        const layots = editorContext.layouts.get();
+        const refCell = document.querySelector(`[data-id=${idCell}]`);
+        
+        const cleanDom = () => {
+            const wrapper = document.createElement('div');
+            const styles = extractMuiStylesForContainer(refCell);
+            wrapper.innerHTML = refCell.innerHTML;
+
+            // Селекторы мусора
+            const selectors = [
+                '.react-resizable-handle',
+                '.resize-box',
+                '.editor-only',
+                'script',
+                'style[data-editor]',
+            ];
+
+            selectors.forEach((selector) => {
+                wrapper.querySelectorAll(selector).forEach((el) => el.remove());
+            });
+
+            return `<style>${styles}</style>\n${wrapper.outerHTML}`;
+        }
+
+        Object.keys(layots).forEach((br)=> {
+            const find = layots[br].find((lay)=> lay.i === idCell);
+            layotsExport[br] = find;
+        });
+      
+        const data: BlockData = {
+            meta: {
+                category: 'favorite',
+                name: String(Date.now()),
+                preview: cleanDom()
+            },
+            content: cellComponents,
+            layouts: layotsExport,
+        }
+        
+        db.get('BLOCK.favorite').then((all)=> {
+            if(!all) all = [];
+            all.push(data);
+            db.set('BLOCK.favorite', all);
+        });
+    }
+    const delCellData = (idCell: string, isAll?: boolean) => {
+        if (!idCell.includes('system')) {
+            if (!isAll) {
+                const breackpoint = editorContext.size.breackpoint.get();
+                editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
+            }
+            else {
+                ['lg', 'md', 'sm', 'xs'].forEach((breackpoint)=> {
+                    editorContext.layouts[breackpoint]?.set((prev) => prev.filter((cell) => cell.i !== idCell));
+                });
+            }
         }
     }
     const addCellData = (cells: any[], clean?: 'all' | string) => {
@@ -135,15 +192,23 @@ export default function ({ desserealize }) {
             content: []
         }]);
     }
-    const currentLayout = React.useMemo(()=> 
-        getNearestLayout(currentBreakpoint, layouts), 
-        [currentBreakpoint, layouts]
-    );
+
+    const currentLayout = React.useMemo(()=> layouts[currentBreakpoint], [currentBreakpoint, layouts]);
     const { menu, handleOpen } = useContextMenu([
+        {
+            label: <div style={{ color: 'silver', fontSize: 14 }}>Сохранить</div>,
+            icon: <Save sx={{ color: 'silver', fontSize: 18 }} />,
+            onClick: (id) => saveFavorite(id),
+        },
         {
             label: <div style={{ color: 'red', fontSize: 14 }}>Удалить cell</div>,
             icon: <Delete sx={{ color: 'red', fontSize: 18 }} />,
             onClick: (id) => delCellData(id),
+        },
+        {
+            label: <div style={{ color: 'red', fontSize: 14 }}>Удалить all cell</div>,
+            icon: <Delete sx={{ color: 'red', fontSize: 18 }} />,
+            onClick: (id) => delCellData(id, true),
         },
     ]);
 
@@ -202,8 +267,10 @@ export default function ({ desserealize }) {
                     height: (size.height + 10),
                     overflowY: 'hidden',
                     marginTop: '65px',
+                    boxSizing: 'content-box'
                 }}
             >
+                <DroppableGrid id={1}>
                 <div ref={gridContainerRef}
                     style={{
                         margin: 1,
@@ -257,7 +324,8 @@ export default function ({ desserealize }) {
                                             width: '100%',
                                             flexWrap: 'wrap',
                                             alignItems: 'stretch',
-                                            alignContent: 'flex-start'
+                                            alignContent: 'flex-start',
+                                            boxSizing: 'border-box'
                                         }}
                                     >
                                         <DroppableCell key={layer.i} id={layer.i}>
@@ -299,6 +367,7 @@ export default function ({ desserealize }) {
                         </>
                     }
                 </div>
+                </DroppableGrid>
                 { menu }
             </Container>
         </ThemeProvider>

@@ -3,43 +3,47 @@ import path from 'path';
 import fs from 'fs/promises';
 
 
+async function screenshotElementFromHTML() {
+  const browser = await puppeteer.launch();
+  const page = await browser.newPage();
 
-export async function renderWithPuppeteer(componentPath, props={}) {
-    const browser = await puppeteer.launch({ headless: true });
-    const page = await browser.newPage();
+  // Пример HTML (можно загрузить файл, или собрать динамически)
+  const html = `
+    <html>
+      <head>
+        <style>
+          body { margin: 0; font-family: sans-serif; }
+          .capture {
+            width: 300px;
+            height: 200px;
+            background: linear-gradient(to right, #00f, #0ff);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="capture">🎯 Hello, Screenshot!</div>
+      </body>
+    </html>
+  `;
 
-    // Минимальный HTML-шаблон
-    await page.setContent(`<html><body><div id="root"></div></body></html>`, {
-        waitUntil: 'domcontentloaded',
-    });
+  // Загружаем HTML
+  await page.setContent(html, { waitUntil: 'domcontentloaded' });
 
-    // Подключаем React и ReactDOM
-    await page.addScriptTag({ url: 'https://unpkg.com/react@18/umd/react.production.min.js' });
-    await page.addScriptTag({ url: 'https://unpkg.com/react-dom@18/umd/react-dom.production.min.js' });
+  // Ждём, пока рендер завершится (если нужно — можно добавить паузу или waitForSelector)
+  await page.waitForSelector('.capture');
 
-    // Читаем исходник компонента как строку
-    const absPath = path.resolve(componentPath);
-    const raw = await fs.readFile(absPath, 'utf8');
-    
+  const element = await page.$('.capture');
+  if (!element) throw new Error('Элемент не найден');
 
-    // Упрощённый способ загрузки кода компонента
-    await page.addScriptTag({
-        content: `
-            ${raw}
-            const Component = exports?.default ?? module?.exports?.default;
-            const props = ${JSON.stringify(props)};
-            const root = document.getElementById('root');
-            ReactDOM.render(React.createElement(Component, props), root);
-        `,
-    });
+  // Скриншот конкретного DOM-элемента
+  await element.screenshot({ path: 'capture.png' });
 
-    // Ждём выполнения эффектов
-    await page.waitForFunction(() => true, { timeout: 1000 });
+  console.log('Скриншот сохранён в capture.png');
 
-    // Забираем финальный HTML
-    const html = await page.$eval('#root', el => el.innerHTML);
-    console.log(html)
-
-    await browser.close();
-    return html;
+  await browser.close();
 }

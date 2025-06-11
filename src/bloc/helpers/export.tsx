@@ -1,6 +1,7 @@
 import { writeFile } from '../../app/plugins';
 import { editorContext, infoSlice, cellsSlice } from "../context";
 import { formatJsx } from '../modules/export/utils';
+import type { ComponentSerrialize } from '../type';
 
 
 const isVite = typeof import.meta !== 'undefined' && !!import.meta.env?.DEV;
@@ -159,6 +160,26 @@ export const addModuleToIndex = async(strImport: string) => {
 }
 
 
+export const buildComponent = async(tag: string, component: ComponentSerrialize, theme?: string) => {
+	const res = await fetch('/build', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			tag: tag,
+			theme: theme ?? 'darkTheme',
+			schema: component
+		}),
+	});
+
+	if (!res.ok) {
+		console.error('❌ Ошибка при сохранении блока');
+	} 
+	else {
+		const json = await res.json();
+		console.log('✅ build component: ', json.path);
+		return json.path;
+	}
+}
 export const fetchFolders = async (): Promise<string[]> => {
     const res = await fetch(`${API_BASE}/list-folders`);
     if (!res.ok) throw new Error('Ошибка загрузки');

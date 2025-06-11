@@ -9,7 +9,6 @@ const RenderButton = () => (
     <div style={{ position: 'absolute', zIndex: 999, left: 0, top: 0 }}>
         <IconButton
             sx={{
-                color: '',
                 backdropFilter: 'blur(4px)',
                 padding: '3px',
                 color: 'silver',

@@ -96,7 +96,7 @@ export type PropsForm = {
 }
 export type LeftToolPanelProps = {
     useDump: () => void
-    desserealize: (component: ComponentSerrialize) => void
+    desserealize?: (component: ComponentSerrialize) => void
 }
 export type PropsSimpleList = {
     defaultValue?: 'number'
@@ -165,6 +165,22 @@ export type PageData = {
 export type ScopeData = {
     name: string 
     data: PageData
+}
+export type BlockCategory = 'any' | 'favorite'
+export type BlockData = {
+    meta: {
+        author: string | 'system'
+        name: string
+        category: BlockCategory
+        preview: string
+    }
+    layouts: {
+        lg: LayoutCustom,
+        md: LayoutCustom,
+        sm: LayoutCustom,
+        xs: LayoutCustom
+    }
+    content: ComponentSerrialize[]
 }
 
 /////////////////////////////////////////////////////////////////////////////

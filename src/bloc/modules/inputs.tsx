@@ -34,7 +34,7 @@ type TextWrapperProps = TextInputProps & {
 }
 
 
-// styles 
+
 export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
@@ -101,7 +101,6 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
 });
 
 export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -117,7 +116,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
 
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'number',
             undefined,
@@ -130,7 +129,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -138,7 +137,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
 
     return (
@@ -163,7 +162,6 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 });
 
 export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -178,7 +176,7 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
    
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'date',
             undefined,
@@ -191,7 +189,7 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -199,7 +197,7 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     
     
     return (
@@ -222,7 +220,6 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
 });
 
 export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -240,7 +237,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
     const RightIcon = rightIcon && iconsList[rightIcon] ? iconsList[rightIcon] : null;
 
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = sliderRender(
             leftIcon,
             rightIcon,
@@ -252,7 +249,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -260,7 +257,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
 
     return (
@@ -285,7 +282,6 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 });
 
 export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const [state, setState] = React.useState(false);
     const { 
         children, 
@@ -301,7 +297,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
  
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'chek',
             undefined,
@@ -314,7 +310,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -322,7 +318,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
     
 
     return (
@@ -347,7 +343,6 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
 });
 
 export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -362,7 +357,7 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'switch',
             undefined,
@@ -375,7 +370,7 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -383,7 +378,7 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
     return (
         <div 
@@ -405,7 +400,6 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 });
 
 export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -420,7 +414,7 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
    
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'toogle',
             undefined,
@@ -433,7 +427,7 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -441,7 +435,7 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
     return (
         <div 
@@ -463,7 +457,6 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 });
 
 export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -479,7 +472,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
   
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'select',
             undefined,
@@ -492,7 +485,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -500,7 +493,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
     return (
         <div 
@@ -523,7 +516,6 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 });
 
 export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -539,7 +531,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'autocomplete',
             undefined,
@@ -552,7 +544,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -560,7 +552,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
     return (
         <div 
@@ -584,7 +576,6 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
 });
 
 export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
-    const degidratationRef = React.useRef<(call) => void>(() => {});
     const { 
         children, 
         ['data-id']: dataId, 
@@ -600,7 +591,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     
     const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     
-    degidratationRef.current = (call) => {
+    const codeRender = (call) => {
         const code = render(
             'file',
             undefined,
@@ -613,7 +604,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         call(code);
     }
     React.useEffect(() => {
-        const handler = (data) => degidratationRef.current(data.call);
+        const handler = (data) => codeRender(data.call);
         sharedEmmiter.on('degidratation', handler);
         sharedEmmiter.on('degidratation.' + dataId, handler);
 
@@ -621,7 +612,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             sharedEmmiter.off('degidratation', handler);
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
-    }, []);
+    }, [props]);
 
 
     return (

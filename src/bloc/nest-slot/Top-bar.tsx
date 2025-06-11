@@ -168,8 +168,7 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
                         step={5}
                         sx={{ 
                             width: '18%',
-                            mr: 3, 
-                            width: '70px'
+                            mr: 3,
                         }}
                     />
                 </Box>

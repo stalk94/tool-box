@@ -12,7 +12,7 @@ import { TextInputWrapper, NumberInputWrapper, DateInputWrapper, SliderInputWrap
     ToggleInputWrapper, SwitchInputWrapper, CheckBoxInputWrapper, SelectInputWrapper,
     AutoCompleteInputWrapper, FileInputWrapper, 
 } from './inputs';
-import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper } from './media';
+import { HorizontalCarouselWrapper, VerticalCarouselWrapper, PromoBannerWrapper, VideoWrapper, CardWrapper, ShopCardWrapper } from './media';
 import { DividerWrapper, AvatarWrapper, ChipWrapper, RatingWrapper, ListWrapper } from './any';
 import { TabsWrapper, BottomNavWrapper, AccordionWrapper } from './complex';
 import { HeaderWrapper, BreadcrumbsWrapper } from './shared';
@@ -344,6 +344,7 @@ registerComponent({
     icon: ViewCarousel,
     category: 'media',
 });
+
 // card
 registerComponent({
     type: 'Card',
@@ -356,12 +357,28 @@ registerComponent({
         src: '',
         file: '',
         'data-source': '',
-        alt: undefined,
         slots: {
             title: undefined,
             subheader: undefined,
             text: undefined,
-            image: undefined
+        }
+    },
+    icon: Subtitles,
+    category: 'media',
+});
+registerComponent({
+    type: 'ShopCard',
+    component: ShopCardWrapper,
+    defaultProps: {
+        fullHeight: true,
+        width: '100%',
+        elevation: 4,
+        heightMedia: 'auto',
+        src: '',
+        file: '',
+        'data-source': '',
+        slots: {
+            
         }
     },
     icon: Subtitles,

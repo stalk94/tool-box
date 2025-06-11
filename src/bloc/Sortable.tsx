@@ -11,7 +11,7 @@ import { specialComponents } from './config/category';
 import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
 import { desserealize } from './helpers/sanitize';
 import { statikRender } from './helpers/output';
-
+import { buildComponent } from './helpers/export'
 
 
 
@@ -46,6 +46,9 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
         maxWidth: '100%',
         padding: 1
+    }
+    const test =()=> {
+        buildComponent('btn-editor', children);
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code);
@@ -100,7 +103,6 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
             currentToolPanel: 'styles'
         });
     }
-    
     const contextMenuItems = React.useMemo(() => [
         { 
             label: <div style={{color:'gold',fontSize:14}}>В заготовки</div>, 

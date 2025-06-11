@@ -8,10 +8,11 @@ import TipTapSlotEditor from './tip-tap';
 import renderCart, { renderImage, renderVideo } from './export/media';
 import { exportTipTapValue, toJSXProps, toLiteral, renderComponentSsr } from './export/utils';
 import { ComponentProps } from '../type';
-import { CardBase } from './sources/cards';
+import type { ButtonSlot, AvatarSlot, RatingSlot } from './sources/cards';
+import { CardBase, CardShop } from './sources/cards';
 
 
-
+////////////////////////////////////////////////////////////////////////////
 type PromoBannerWrapperProps = ComponentProps & {
     'data-id': number
     fullWidth: boolean
@@ -68,7 +69,20 @@ type CardWrapperProps = ComponentProps & {
     elevation?: number
     src: string
     heightMedia: string | number
+    'avatar-src': string | undefined
+    'avatar-icon': string | undefined
+    'avatar-text': string | undefined
+    slots: {
+        title: string
+        subheader: string
+        text: string
+    }
 }
+type ShopCardWrapperProps = CardWrapperProps & {
+    'data-id': number
+    'data-type': 'ShopCard'
+}
+////////////////////////////////////////////////////////////////////////////
 
 
 export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => {
@@ -552,7 +566,6 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
 });
 
 
-
 export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperProps, ref) => {
     const [active, setActive] = React.useState(0);
     const [activeSlide, setActiveSlide] = React.useState(0);
@@ -818,6 +831,7 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
             }}
         >
             <CardBase
+                dataId={dataId}
                 elevation={elevation}
                 isEditable={EDITOR}
                 index={index}
@@ -832,6 +846,15 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
                         text: avatarText
                     }
                 }}
+                footerSlots={{
+                    left: [],
+                    right: [{
+                        type: 'Button',
+                        action: 'goTo',
+                        variant: 'outlined',
+                        text: 'go to'
+                    } as ButtonSlot]
+                }}
                 style={{
                     ...style,
                     display: 'flex',
@@ -841,44 +864,115 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
         </div>
     );
 });
+export const ShopCardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
+    const [imgSrc, setImgSrc] = React.useState<string>();
+    const lastFileRef = React.useRef<number | null>(null);
+    const {
+        'data-id': dataId,
+        fullHeight,
+        style = {}, 
+        elevation = 1,
+        slots,
+        file,
+        src,
+        index = 0,
+        heightMedia,
+        'avatar-src': avatarSrc,
+        'avatar-icon': avatarIcon,
+        'avatar-text': avatarText,
+    } = props;
+    const { width, height } = useComponentSizeWithSiblings(dataId);
+
+    const handleUpload = async (file) => {
+        setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');
+        const filename = `img-${dataId}.${file.name.split('.').pop()}`;
+        const url = await uploadFile(file, filename);
 
 
-
-/**
- *  const createImgx = (src: string) => {
-        return(
-            <Imgix
-                data-type="Image"
-                src={src ?? 'https://cs5.pikabu.ru/post_img/big/2015/06/04/11/1433446202_1725992411.jpg'}
-                sizes={'100vw'}
-                imgixParams={{}}
-                htmlAttributes={{
-                    width: width,
-                    height: height
-                }}
-            />
-        );
-    }
-    // дегидратор
-    const parseItems = () => {
-        const result = [];
-
-        items.map((elem, index)=> {
-            if(elem.type === 'img') {
-                if(elem.props.src) result.push(
-                    createImgx(elem.props.src)
-                );
-            }
+        setImgSrc(`${url}?v=${Date.now()}`);
+        updateComponentProps({
+            component: { props },
+            data: { src: `${url}?${Date.now()}` }
         });
-
-        return result;
     }
- * <HorizontalCarousel
-                items={parseItems() ?? []}
-                height={height-8}
-                settings={{
-                    autoplay,
-                    slidesToShow
+    const exportCode = (call) => {
+        const code = renderCart(
+            dataId,
+            {...style, height: fullHeight && '100%'}, 
+            slots, 
+            heightMedia, 
+            imgSrc
+        );
+
+        call(code);
+    }
+    const onChange = React.useCallback((data) => {
+        updateComponentProps({
+            component: { props: props },
+            data
+        });
+    }, [props]);
+
+    React.useEffect(() => {
+        if(!EDITOR) return;
+
+        const handler = (data) => exportCode(data.call);
+        sharedEmmiter.on('degidratation', handler);
+        sharedEmmiter.on('degidratation.' + dataId, handler);
+
+        return () => {
+            sharedEmmiter.off('degidratation', handler);
+            sharedEmmiter.off('degidratation.' + dataId, handler);
+        }
+    }, []);
+    React.useEffect(() => {
+        if (file instanceof File) {
+            const id = file.lastModified;
+
+            if (id !== lastFileRef.current) {
+                lastFileRef.current = id;
+                handleUpload(file);
+            }
+        }
+    }, [file]);
+    React.useEffect(() => {
+        if (!src || src.length === 0) {
+            setImgSrc('/placeholder.jpg');
+        }
+        else setImgSrc(src);
+    }, [src]);
+    
+    
+    return (
+        <div
+            ref={ref}
+            data-type="ShopCard"
+            data-id={dataId}
+            style={{
+                maxHeight: height
+            }}
+        >
+            <CardShop
+                dataId={dataId}
+                elevation={elevation}
+                isEditable={EDITOR}
+                index={index}
+                textSlots={slots}
+                src={imgSrc}
+                heightMedia={heightMedia}
+                onChange={onChange}
+                footerSlots={{
+                    left: [],
+                    right: [{
+                        type: 'Button'
+                    }]
+                }}
+                style={{
+                    ...style,
+                    display: 'flex',
+                    flexDirection: 'column'
                 }}
             />
- */
+        </div>
+    );
+});

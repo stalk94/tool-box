@@ -16,7 +16,7 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
     const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label', 'separator'];
     const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
     const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels', 'isChildren', 'isSecondary', 'isButton', 'autoplay', 'isHorizontal'];
-    //const fileKeys = [''];
+    
     
     if(switchKeys.includes(propName)) {
         return {

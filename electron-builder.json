@@ -1,0 +1,32 @@
+{
+    "appId": "com.live.editor",
+    "productName": "LiveEditor",
+    "directories": {
+        "output": "release",
+        "buildResources": "assets"
+    },
+    "files": [
+        "dist/**/*",
+        "dist-electron/**/*",
+        "public/**/*",
+        "package.json"
+    ],
+    "extraResources": [
+        {
+            "from": "public",
+            "to": "public",
+            "filter": [
+                "**/*"
+            ]
+        }
+    ],
+    "win": {
+        "target": "nsis"
+    },
+    "mac": {
+        "target": "dmg"
+    },
+    "linux": {
+        "target": "AppImage"
+    }
+}

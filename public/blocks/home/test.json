@@ -2,16 +2,13 @@
   "layouts": {
     "lg": [
       {
-        "i": "cell-1749374108447",
+        "w": 6,
+        "h": 14,
         "x": 0,
         "y": 0,
-        "w": 3,
-        "h": 2,
-        "props": {
-          "classNames": "",
-          "style": {}
-        },
-        "content": []
+        "i": "cell-1749374108447l",
+        "moved": false,
+        "static": false
       }
     ],
     "md": [
@@ -20,14 +17,14 @@
         "h": 18,
         "x": 0,
         "y": 0,
-        "i": "cell-1749374108447",
+        "i": "cell-1749374108447l",
         "moved": false,
         "static": false
       }
     ],
     "sm": [
       {
-        "i": "cell-1749374108447",
+        "i": "cell-1749374108447l",
         "x": 0,
         "y": 0,
         "w": 3,
@@ -41,7 +38,7 @@
     ],
     "xs": [
       {
-        "i": "cell-1749374108447",
+        "i": "cell-1749374108447l",
         "x": 0,
         "y": 0,
         "w": 3,
@@ -55,26 +52,70 @@
     ]
   },
   "content": {
-    "cell-1749374108447": [
+    "cell-1749374108447": [],
+    "cell-1749374108447l": [
       {
-        "id": 1749377072930,
-        "parent": "cell-1749374108447",
+        "id": 1749635570407,
+        "parent": "cell-1749374108447l",
+        "props": {
+          "children": "Button",
+          "variant": "outlined",
+          "size": "medium",
+          "color": "primary",
+          "fullWidth": true,
+          "startIcon": "none",
+          "endIcon": "none",
+          "style": {},
+          "data-id": 1749635570407,
+          "data-type": "Button"
+        }
+      },
+      {
+        "id": 1749635580798,
+        "parent": "cell-1749374108447l",
         "props": {
           "fullWidth": true,
-          "sourceType": "supabase",
-          "data-source": "table",
-          "header": "",
+          "isButton": false,
+          "isSecondary": true,
+          "styles": {},
+          "items": [
+            {
+              "startIcon": "Settings",
+              "primary": "primary",
+              "secondary": "secondary"
+            }
+          ],
+          "data-id": 1749635580798,
+          "data-type": "List"
+        }
+      },
+      {
+        "id": 1749635576110,
+        "parent": "cell-1749374108447l",
+        "props": {
+          "fullWidth": true,
+          "sizes": 36,
+          "src": "https://mui.com/static/images/avatar/3.jpg",
           "file": "",
-          "source": "14Jy8ozyC4nmjopCdaCWBZ48eFrJE4BneWuA3CMrHodE",
-          "refreshInterval": 25000,
-          "data-id": 1749377072930,
-          "data-type": "DataTable",
-          "config": {
-            "anonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJoZ3Jjb2NhZHdzZWp3b2R2enFsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDg2MzY5NTksImV4cCI6MjA2NDIxMjk1OX0.ijFGDKECfWYBULzTDUtIJMFaAJN1N-70ygQSzMONQIg",
-            "url": "https://bhgrcocadwsejwodvzql.supabase.co",
-            "tableName": "kv_store",
-            "key": "user"
-          }
+          "icon": "",
+          "data-source": "src",
+          "style": {},
+          "data-id": 1749635576110,
+          "data-type": "Avatar"
+        }
+      },
+      {
+        "id": 1749635577930,
+        "parent": "cell-1749374108447l",
+        "props": {
+          "fullWidth": true,
+          "isHalf": false,
+          "size": "medium",
+          "iconName": "none",
+          "apiPath": "api/test",
+          "colors": "#ff3d47",
+          "data-id": 1749635577930,
+          "data-type": "Rating"
         }
       }
     ]
@@ -82,12 +123,12 @@
   "meta": {
     "scope": "home",
     "name": "test",
-    "updatedAt": 1749390334848,
+    "updatedAt": 1749635640893,
     "preview": "snapshots/home-test.png"
   },
   "size": {
-    "width": 960,
+    "width": 1200,
     "height": 800,
-    "breackpoint": "md"
+    "breackpoint": "lg"
   }
 }

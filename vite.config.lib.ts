@@ -4,33 +4,24 @@ import dts from 'vite-plugin-dts';
 import path from 'path';
 
 
+
 export default defineConfig({
-    plugins: [
-        react(), dts({
-            tsconfigPath: path.resolve(__dirname, 'src/tsconfig.json'),
-            outputDir: 'dist',
-            include: ['src'],
-            skipDiagnostics: true,
-            logDiagnostics: false,
-        })
-    ],
+    plugins: [react()],
+    resolve: {
+        alias: {
+            src: path.resolve(__dirname, 'src'),
+        },
+    },
     build: {
+        copyPublicDir: false,
         lib: {
-            entry: path.resolve(__dirname, 'src/index.ts'), // ← файл библиотеки
-            name: 'kitui-react',
-            formats: ['es', 'cjs'],
-            fileName: (format) => `index.${format}.js`
+            entry: 'src/bloc/modules/export/web-component.wc.tsx',
+            name: 'MyBlock',
+            fileName: () => 'my-block.js',
+            formats: ['iife'], // важно: самодостаточный .js
         },
         rollupOptions: {
-            external: [
-                'react', 'react-dom', 'primereact',
-            ],
-            output: {
-                globals: {
-                    react: 'React',
-                    'react-dom': 'ReactDOM'
-                }
-            }
-        }
-    }
+            external: [], // можно пусто — всё внутрь
+        },
+    },
 });

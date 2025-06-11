@@ -1,6 +1,5 @@
 import { iconsList } from '../../components/tools/icons';
-import { ViewModule, TouchApp, Photo, Layers, Widgets, Launch, Settings } from '@mui/icons-material';
-import { Paper } from '@mui/material';
+import { ViewModule, TouchApp, Photo, Layers, Widgets, Launch, Settings, Save } from '@mui/icons-material';
 import { LuBlocks } from "react-icons/lu";
 import { MdOutlineWidgets } from "react-icons/md";
 
@@ -38,7 +37,16 @@ export const componentAtom = {
         icon: MdOutlineWidgets,
     },
 }
-
+export const componentBlock = {
+    favorite: {
+        label: 'Сохраненные',
+        icon: Save,
+    },
+    any: {
+        label: 'Базовые блоки',
+        icon: LuBlocks,
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //                  Settings mod

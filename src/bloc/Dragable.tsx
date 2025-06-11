@@ -10,15 +10,16 @@ import { componentMap } from './modules/helpers/registry';
 export const activeSlotState = createStore({} as {
     type: 'slot'
     dataTypesAccepts: ProxyComponentName[]
-    onAdd: (component: Component) => void
+    onAdd: (component: ComponentSerrialize) => void
 });
 
 
 
-export function DraggableToolItem({ id, type, dataType, element }) {
+export function DraggableToolItem({ id, type, dataType, data, element }) {
     const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
         id,
         data: { 
+            data,
             dataType,
             type,
             element 
@@ -31,7 +32,7 @@ export function DraggableToolItem({ id, type, dataType, element }) {
         zIndex: 1000,
         width: '100%'
     }
-
+    
 
     return (
         <div 
@@ -121,8 +122,8 @@ export function DropSlot({ id, dataTypesAccepts, children, onAdd }: DropSlotProp
         </span>
     );
 }
-// data - данные сетки слота
-export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type, style }: ContextSlotProps) {
+// nested context, data - данные сетки слота
+export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type }: ContextSlotProps) {
     const handle = () => EVENT.emit('addGridContext', {
         nestedComponentsList,
         data: data ?? {},
@@ -205,6 +206,7 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
         </div>
     );
 }
+// зона сброса для компонентов
 export function DroppableCell({ id, children }) {
     const { setNodeRef, isOver, active } = useDroppable({ 
         id,
@@ -222,13 +224,34 @@ export function DroppableCell({ id, children }) {
         <div
             ref={setNodeRef}
             style={{
-                border: isOver && '1px dashed lime',
+                border: isOver && active.data?.current?.type==='element' && '1px dashed lime',
                 height: '100%',
                 display: 'inline-flex',
                 width: '100%',
                 flexWrap: 'wrap',
                 alignItems: 'stretch',
                 alignContent: 'flex-start'
+            }}
+        >
+            { children }
+        </div>
+    );
+}
+// зона сброса для блоков
+export function DroppableGrid({ id, children }) {
+    const { setNodeRef, isOver, active } = useDroppable({ 
+        id,
+        data: {
+            type: 'grid'
+        },
+    });
+    
+
+    return (
+        <div
+            ref={setNodeRef}
+            style={{
+                border: isOver && active.data?.current?.type==='block' && '1px dashed lime'
             }}
         >
             { children }

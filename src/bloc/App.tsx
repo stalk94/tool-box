@@ -2,6 +2,7 @@
 import colorLog from '../app/helpers/console';
 import React from "react";
 import { useSnackbar } from 'notistack';
+import type { BlockData } from './type';
 import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, SlotDataBus, DataNested, LayoutsBreackpoints } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -23,6 +24,7 @@ import RightBar from './utils/Right-bar';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import inputsIndex from 'public/export/index';
+import { useKeyboardListener } from './helpers/hooks';
 import './modules/index';
 import "../style/edit.css";
 
@@ -45,7 +47,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
    
-
+    
     const desserealize = (component: ComponentSerrialize) => {
         const { id, props, parent } = component;
         const type = props["data-type"];
@@ -68,7 +70,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             />
         );
     }
-    // получает конкретный импорт превью из ранее экспортированных литералов
     const getPreview =()=> {
         const meta = editorContext.meta.get();
         const path = `${meta.scope}_${meta.name}`;
@@ -83,6 +84,21 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                 not path import preview
             </div>
         );
+    }
+    const addBlockToGrid = (data: BlockData) => {
+        const newid =  `cell-${Date.now()}`;
+
+        Object.keys(data.layouts).forEach((breackpoint: 'lg'|'md'|'sm'|'xs') =>
+            editorContext.layouts[breackpoint]?.set((prev) => {
+                const layout = data.layouts[breackpoint];
+                layout.i = newid;
+                prev.push(layout);
+            })
+        );
+        cellsSlice.set((next) => {
+            next[newid] = data.content;
+            return next;
+        });
     }
     const createDataComponent = (rawProps: ComponentProps, cellId: string): ComponentSerrialize => {
         const type = rawProps['data-type'];
@@ -169,6 +185,10 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             if(slot?.dataTypesAccepts && dataType && slot?.dataTypesAccepts?.includes(dataType) ) {
                 slot.onAdd(createComponentFromRegistry(dataType));
             }
+        }
+        // сброс блока
+        else if (dropMeta?.type === 'grid' && dragData.type === 'block') {
+            addBlockToGrid(dragData.data);
         }
         else if (over?.id) {
             const dragged = active.data?.current?.element;
@@ -277,7 +297,7 @@ export default function EditorApp({ setShowBlocEditor }) {
     const fileSaveFromDumpRender = () => {
         const name = editorContext.meta.name.get();
         const scope = editorContext.meta.scope.get();
-        //snapshotAndUpload(`${scope}-${name}`);
+        
         saveBlockToFile(scope, name, (msg, type) => {
             enqueueSnackbar(msg, { variant: type });
             updateProjectState(scope, name);

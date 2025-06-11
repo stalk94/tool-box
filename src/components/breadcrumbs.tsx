@@ -149,8 +149,7 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
                         key={segment.href}
                         sx={{
                             color: "text.secondary",
-                            ...commonSx(true),
-                            fontWeight: 'bold'
+                            ...commonSx(true)
                         }}
                     >
                         { segment.label }
