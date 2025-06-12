@@ -11,11 +11,11 @@ import { specialComponents } from './config/category';
 import { LinktoolBar, SlotToolBar } from './modules/helpers/Toolbar';
 import { desserealize } from './helpers/sanitize';
 import { statikRender } from './helpers/output';
-import { buildComponent } from './helpers/export'
 
 
 
-export function SortableItem({ id, children, cellId }: SortableItemProps) {
+export function SortableItem({ id, children, cellId, onSelectCell }: SortableItemProps) {
+    const lock = editorContext.lock.use();
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorContext.dragEnabled.use();
     const RenderElement = React.useMemo(() => desserealize(children), [children]);
@@ -26,7 +26,7 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
             cellId,
             element: children
         },
-        disabled: !dragEnabled        // ✅ глобальный флаг
+        disabled: (!dragEnabled || lock)        // ✅ глобальный флаг
     });
     
 
@@ -46,9 +46,6 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
         maxWidth: '100%',
         padding: 1
-    }
-    const test =()=> {
-        buildComponent('btn-editor', children);
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code);
@@ -77,7 +74,7 @@ export function SortableItem({ id, children, cellId }: SortableItemProps) {
         infoSlice.select.content.set(children);
 
         if (editorContext.currentCell.get()?.i !== cellId) {
-            editorContext.currentCell.set({ i: cellId });
+            onSelectCell();
             const refCell = document.querySelector(`[data-id=${cellId}]`);
 
             if (refCell) infoSlice.select.cell.set(refCell);

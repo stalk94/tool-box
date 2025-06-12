@@ -1,9 +1,16 @@
 import { app, BrowserWindow, ipcMain, dialog, globalShortcut, screen } from 'electron';
+import { copyInitialDataOnce } from './utils/init';
+import { initDB, DB } from './utils/db';
+import { startLocalServer } from './utils/server';
+import { startNgrock } from './utils/ngrock';
 import path from 'path';
 import fs from 'fs';
 
-const projectRoot = path.resolve(__dirname, '..');
-export const PROJECTS_DIR = path.resolve(__dirname, '../public'); 
+
+const USER_DATA_DIR = app.getPath('userData');
+export const PROJECTS_DIR = path.join(USER_DATA_DIR, 'blocks');
+const PORT = 3456;
+
 
 const getBounds =()=> {
     const displays = screen.getAllDisplays();
@@ -17,7 +24,6 @@ const getBounds =()=> {
         height: bounds.height,
     }
 }
-
 const createWindow = () => {
     const win = new BrowserWindow({
         ...getBounds(),
@@ -30,19 +36,26 @@ const createWindow = () => {
     win.maximize();
     win.webContents.openDevTools();
 
-    // ⚠️ Vite dev или прод
+    // ⚠️ Vite dev
     if (process.env.VITE_DEV_SERVER_URL) {
         win.loadURL(process.env.VITE_DEV_SERVER_URL);
     }
+    // prod
     else {
         win.loadFile(path.join(__dirname, '../dist/index.html'));
     }
 }
 
 
-app.whenReady().then(() => {
+app.whenReady().then(async() => {
+    startLocalServer(PORT);
+    fs.mkdirSync(PROJECTS_DIR, { recursive: true });
+    await initDB();
+    copyInitialDataOnce();
     createWindow();
+    
 
+    // dev tools
     globalShortcut.register('F12', () => {
         const win = BrowserWindow.getFocusedWindow();
         if (win) win.webContents.toggleDevTools();
@@ -67,7 +80,7 @@ app.whenReady().then(() => {
     // FS api
     ipcMain.handle('fs:readFile', async (_event, filePath: string) => {
         try {
-            const absPath = path.resolve(projectRoot, filePath);
+            const absPath = path.join(USER_DATA_DIR, filePath);
             const content = fs.readFileSync(absPath, 'utf-8');
             return content;
         } 
@@ -75,15 +88,75 @@ app.whenReady().then(() => {
             return { error: err.message };
         }
     });
-    ipcMain.handle('fs:writeFile', async (_event, filePath: string, content: string) => {
+    ipcMain.handle('fs:writeFile', async (_event, filePath: string, content: string | Buffer) => {
         try {
-            const absPath = path.resolve(projectRoot, filePath);
-            fs.writeFileSync(absPath, content, 'utf-8');
+            const absPath = path.join(USER_DATA_DIR, filePath);
+            fs.mkdirSync(path.dirname(absPath), { recursive: true });
+            fs.writeFileSync(absPath, Buffer.isBuffer(content) ? content : Buffer.from(content, 'utf-8'));
+
+            const relativeUrl = filePath.replace(/^public[\\/]/, '').replace(/\\/g, '/');
+            const url = `http://localhost:${PORT}/${relativeUrl}`;
+            return url;
+        }
+        catch (err) {
+            console.error('fs:writeFile error:', err);
+            return { error: err.message };
+        }
+    });
+    ipcMain.handle('fs:listFolders', async () => {
+        const basePath = PROJECTS_DIR;
+        const result = {};
+
+        try {
+            const scopes = fs.readdirSync(basePath, { withFileTypes: true })
+                .filter((entry) => entry.isDirectory())
+                .map((entry) => entry.name);
+
+            for (const scope of scopes) {
+                const folderPath = path.join(basePath, scope);
+                const files = fs.readdirSync(folderPath).filter(file => file.endsWith('.json'));
+
+                result[scope] = files.map(file => {
+                    const filePath = path.join(folderPath, file);
+                    const content = fs.readFileSync(filePath, 'utf8');
+                    return {
+                        name: file.replace(/\.json$/, ''),
+                        data: JSON.parse(content)
+                    };
+                });
+            }
+        } 
+        catch (err) {
+            return { error: err.message };
+        }
+
+        return result;
+    });
+
+    // quick db 
+    ipcMain.handle('db:get', async (_event, key: string) => {
+        try {
+            const result = await DB.get(key);
+            return result;
+        } 
+        catch (err) {
+            return { error: err.message };
+        }
+    });
+    ipcMain.handle('db:set', async (_event, key: string, value: any) => {
+        try {
+            await DB.set(key, value);
             return true;
         } 
         catch (err) {
             return { error: err.message };
         }
+    });
+
+    // services
+    ipcMain.handle('ngrock:start', async (_event, authKey: string) => {
+        const url = await startNgrock(PORT, authKey);
+        return url;
     });
 });
 

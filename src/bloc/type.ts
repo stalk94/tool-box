@@ -110,6 +110,7 @@ export type SortableItemProps = {
     children: ComponentSerrialize
     cellId: string 
     isArea?: boolean            // только для nested context
+    onSelectCell: ()=> void
 }
 export type MiniRenderSlotProps = {
     type?: 'Frame' | 'Area'

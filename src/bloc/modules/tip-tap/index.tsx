@@ -41,6 +41,7 @@ export default function TipTapSlotEditor({
     autoIndex,
     style={}
 }: PropsEditor) {
+    const lock = editorContext.lock.use();
     if (!isEditable) {
         return (
             <JSONRenderer
@@ -90,16 +91,23 @@ export default function TipTapSlotEditor({
             chain.insertContent(initialInsert.text).run();
         }
     }, [editor, value, initialInsert]);
+    React.useEffect(()=> {
+        editor.setEditable(lock)
+    }, [lock]);
 
 
 
     return (
-        <div
-            onFocus={() => editorContext.dragEnabled.set(false)}
-            onBlur={() => editorContext.dragEnabled.set(true)}
-        >
-            {editor && <BubbleMenuText editor={editor} />}
-            <EditorContent style={style} editor={editor} />
+        <div>
+            {editor && lock && 
+                <BubbleMenuText 
+                    editor={editor} 
+                />
+            }
+            <EditorContent 
+                style={style}
+                editor={editor}
+            />
         </div>
     );
 }
@@ -118,3 +126,9 @@ export const rendeHtml =(value: JSONContent)=> {
 
     return  result;
 }
+
+
+/**
+     * onFocus={() => editorContext.dragEnabled.set(false)}
+        onBlur={() => editorContext.dragEnabled.set(true)}
+     */

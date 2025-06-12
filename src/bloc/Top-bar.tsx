@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
-import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings } from "@mui/icons-material";
+import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings, Lock, LockOpen } from "@mui/icons-material";
 import { editorContext, infoSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
 
@@ -13,8 +13,19 @@ const categories = [
     { id: 'preview', label: <Input style={{fontSize: 24}} /> }
 ];
 const Instrument = () => {
+    const lock = editorContext.lock.use();
     const mod = editorContext.mod.use();
 
+    if(mod === 'block') return(
+        <>
+            <IconButton
+                onClick={() => editorContext.lock.set((l)=> l = !l)}
+            >
+                { lock && <Lock sx={{fontSize:18, color: '#c65555'}} /> }
+                { !lock && <LockOpen sx={{fontSize:18}} /> }
+            </IconButton>
+        </>
+    );
     if(mod === 'grid') return(
         <>
             <IconButton

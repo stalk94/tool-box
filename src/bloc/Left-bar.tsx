@@ -179,6 +179,10 @@ export default function ({ useDump }: LeftToolPanelProps) {
         { id: 'exit', label: 'Выход', icon: <Logout /> }
     ];
 
+    const startNgrock = async() => {
+        const res = await window.electronAPI.startNgrock('1roLqOcXYfEopiwzSBJVEJnqktv_3ds7wmtXYFkP3d8CzTc8u');
+        
+    }
     const handleExportGrid = () => exportsGrid(
         editorContext.layouts.get(),
         cellsSlice.get(),
@@ -219,6 +223,7 @@ export default function ({ useDump }: LeftToolPanelProps) {
         else if (item.id === 'save') useDump();
         else if (item.id === 'slot') setCurrentToolPanel('slot');
         else if (item.id === 'export') handleExportGrid();
+        else if (item.id === 'exit') startNgrock();
     }
     const useComponentUpdateFromEditorForm = (newDataProps) => {
         const selectComponent = select.content.get();

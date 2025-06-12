@@ -405,6 +405,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
             data-type="HorizontCarousel"
             data-id={dataId}
             style={{
+                ...style,
                 width: '100%',
                 display: 'block',
                 overflow: 'hidden',
@@ -423,7 +424,7 @@ export const HorizontalCarouselWrapper = React.forwardRef((props: CarouselWrappe
 });
 export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperProps, ref) => {
     const [active, setActive] = React.useState(0);
-    const { 'data-id': dataId, fullWidth, delay, items, ...otherProps } = props;
+    const { 'data-id': dataId, fullWidth, delay, items, style, ...otherProps } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
     
 
@@ -548,6 +549,7 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
             data-id={dataId}
             data-type="VerticalCarousel"
             style={{
+                ...style,
                 height: height,
                 width: '100%',
                 display: 'block',
@@ -704,6 +706,18 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
         if(pb && pb.length > 3) buttonProps.onClick =()=> console.log(pb);
         return buttonProps;
     }
+    const filtreStyle = React.useMemo(()=> {
+        const exclude = ['marginLeft', 'marginRight', 'marginTop', 'marginBottom'];
+        const margins = {};
+        const any = {};
+
+        Object.entries(style).map(([key, value])=> {
+            if(exclude.includes(key)) margins[key] = value;
+            else any[key] = value;
+        });
+
+        return any;
+    }, [style]);
     const parsedItems = React.useMemo(() => {
         return items.map((item, i) => {
             if (i === active) {
@@ -734,7 +748,7 @@ export const PromoBannerWrapper = React.forwardRef((props: PromoBannerWrapperPro
                 editor={EDITOR && createImageWrapper(parsedItems[active].images[activeSlide], active)}
                 onChange={setActive}
                 items={parsedItems}
-                style={{...style, height, width}}
+                style={{...filtreStyle, height, width}}
                 styles={{...otherProps?.styles}}
                 button={createButtonProps()}
                 actionAreaEnabled={otherProps?.actionAreaEnabled}

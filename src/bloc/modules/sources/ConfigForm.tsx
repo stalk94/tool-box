@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button } from '@mui/material';
-import { TextInput, CheckBoxInput, NumberInput } from '../../../index';
+import { TextInput, CheckBoxInput, NumberInput, SliderInput } from '../../../index';
 import { SupabaseAuthData } from './storage';
 
 type FormProps = { 

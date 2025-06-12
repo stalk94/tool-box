@@ -10,6 +10,7 @@ import type { Palette } from '@mui/material/styles';
 
 export type EditorContextType = {
     mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot'
+    lock: boolean
     dragEnabled: boolean
     layouts: LayoutsBreackpoints
     meta: PageMeta
@@ -71,6 +72,10 @@ export type SettingsContextStateType = {
         currentGroop: keyof Palette
         pallete: Palette
     }
+    panel: {
+        stepSize: 1 | 2 | 5
+        stepPosition:  1 | 2 | 5
+    }
 }
 type BufferStateType = {
     type: 'component' | 'cell'
@@ -82,6 +87,7 @@ const isClient = typeof window !== 'undefined';
 
 export const editorContext = createState('EDITOR', {
     mod: 'block',
+    lock: false,
     dragEnabled: true,
     settings: {
         gridCompact: false,
@@ -131,6 +137,10 @@ export const settingsSlice = create({
         currentTheme: 'dark',
         currentGroop: 'input',
         pallete: {}
+    },
+    panel: {
+        stepSize: 1,
+        stepPosition: 1,
     }
 } as SettingsContextStateType, {
     immer: true,

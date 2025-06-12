@@ -7,7 +7,7 @@ import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, Slo
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
 import "react-grid-layout/css/styles.css";
-import { editorContext, infoSlice, cellsSlice, nestedContextSlice, bufferSlice } from "./context";
+import { editorContext, infoSlice, cellsSlice, nestedContextSlice, bufferSlice, settingsSlice } from "./context";
 import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/helpers/registry';
@@ -25,8 +25,10 @@ import { updateComponentProps, updateProjectState } from './helpers/updateCompon
 import NestedContext from './nest-slot/App';
 import inputsIndex from 'public/export/index';
 import { useKeyboardListener } from './helpers/hooks';
+import { setPadding } from './helpers/hotKey';
 import './modules/index';
 import "../style/edit.css";
+
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -239,6 +241,28 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             }
         }
     }
+
+    useKeyboardListener((key: string)=> {
+        const select = infoSlice.select.content.get();
+        if (!select) return;
+
+        if(key === 'ArrowUp') {
+            setPadding('Top', select, 'decrement');
+        }
+        else if(key === 'ArrowDown') {
+            setPadding('Top', select, 'increment');
+        }
+        else if(key === 'ArrowLeft') {
+            if(select.props.fullWidth) setPadding('Right', select, 'increment');
+            else setPadding('Left', select, 'decrement');
+        }
+        else if(key === 'ArrowRight') {
+            setPadding('Left', select, 'increment');
+        }
+        else if(key === 'CapsLock') {
+            editorContext.lock.set((p)=> p = !p);
+        }
+    });
     React.useEffect(()=> {
         if (typeof window === 'undefined') return;
         window.addEventListener('keydown', handleKeyboard);
@@ -336,7 +360,7 @@ export default function EditorApp({ setShowBlocEditor }) {
     const useGetDataFileDir = async () => {
         try {
             const data = await fetchFolders();
-
+            
             if (data) {
                 infoSlice.project.set(data);
                 editorContext.dragEnabled.set(true);
@@ -366,7 +390,14 @@ export default function EditorApp({ setShowBlocEditor }) {
 
             setTimeout(() => setEnable(true), 100);
         }
+        const handleArrow = (e) => {
+            const arrowKeys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Tab'];
+            if (arrowKeys.includes(e.key)) {
+                e.preventDefault();
+            }
+        }
 
+        window.addEventListener('keydown', handleArrow);
         EVENT.on('addGridContext', handle);
         return () => EVENT.off('addGridContext', handle);
     }, []);

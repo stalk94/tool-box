@@ -56,7 +56,6 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
         }
     }, [props]);
 
-
     return(
         <div 
             ref={ref}
@@ -81,6 +80,7 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     );
 });
 export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps, ref) => {
+    const lock = editorContext.lock.use();
     const { children, 'data-id': dataId, style, fullWidth, fontFamily, textAlign, ...otherProps } = props;
     const [text, setText] = React.useState(children);
     const selected = infoSlice.select.content.use();
@@ -131,7 +131,7 @@ export const TypographyWrapper = React.forwardRef((props: TypographyWrapperProps
             ref={ref} 
             data-id={dataId}
             data-type="Typography" 
-            contentEditable={globalThis.EDITOR && selected?.props?.['data-id'] === dataId}
+            contentEditable={lock && globalThis.EDITOR && selected?.props?.['data-id'] === dataId}
             suppressContentEditableWarning
             onBlur={handleBlur}
             { ...otherProps }

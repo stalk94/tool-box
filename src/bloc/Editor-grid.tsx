@@ -17,7 +17,7 @@ import { RulerX, RulerY } from './utils/Rullers';
 import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
 import { db } from "./helpers/export";
-
+import Settings from './utils/Settings';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -78,7 +78,7 @@ export default function ({ desserealize }) {
 
 
         if (curCell?.i !== layer.i) {
-            editorContext.currentCell.set({ i: layer.i });
+            editorContext.currentCell.set(layer);
             infoSlice.select.cell.set(e.currentTarget);
             EVENT.emit('onSelectCell', layer.i);
         }
@@ -164,7 +164,7 @@ export default function ({ desserealize }) {
                 return next;
             });
 
-            editorContext.currentCell.set({ i: cell.i });
+            editorContext.currentCell.set(cell);
         });
     }
     const addNewCell = () => {
@@ -262,7 +262,8 @@ export default function ({ desserealize }) {
                 <RulerX containerRef={gridContainerRef} />
                 <RulerY containerRef={gridContainerRef} />
             </div>
-
+            <Settings />
+            
             <Container sx={{
                     height: (size.height + 10),
                     overflowY: 'hidden',
@@ -341,6 +342,7 @@ export default function ({ desserealize }) {
                                                                     key={component.props['data-id']}
                                                                     id={component.props['data-id']}
                                                                     cellId={layer.i}
+                                                                    onSelectCell={()=> editorContext.currentCell.set(layer)}
                                                                 >
                                                                     { component }
                                                                 </SortableItem>
