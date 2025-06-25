@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Box, Typography, Divider } from "@mui/material";
-import { BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets } from '@mui/icons-material';
+import { BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets, AccountCircle } from '@mui/icons-material';
 import { Settings, AccountTree, Logout, Palette, Extension, Save, Code } from "@mui/icons-material";
 import { LuBlocks } from "react-icons/lu";
 import { editorContext, infoSlice, cellsSlice } from "./context";
@@ -9,12 +9,14 @@ import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { updateComponentProps } from './helpers/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';
-import { componentGroups, componentAtom, specialComponents, componentBlock } from './config/category';
+import { componentGroups, settingsBlock, specialComponents, componentBlock } from './config/category';
 import { componentMap, componentsRegistry } from "./modules/helpers/registry";
 import { LeftToolPanelProps, ProxyComponentName, Component } from './type';
 import { useKeyboardListener } from './helpers/hooks';
 import BlockRender from './left-bar/blocks';
+import BlockSettings from './left-bar/settings-block';
 import { DraggableToolItem } from './Dragable';
+import { PiCodeBlockFill } from "react-icons/pi";
 import { RenderListProject, RenderProjectTopPanel } from './left-bar/project';
 import exportsGrid from "./modules/export/Grid";
 
@@ -147,6 +149,31 @@ const useBlock = (category='any', setCategory) => {
         children: (<BlockRender category={category}/>)
     };
 }
+const useBlockSettings = (category, setCategory) => {
+    const categories = Object.entries(settingsBlock);
+
+    return {
+        start: (
+            <TooglerInput
+                value={category}
+                onChange={(v)=> setCategory && setCategory(v)}
+                sx={{ px: 0.2 }}
+                items={categories.map(([id, group]) => {
+                    const Icon = group.icon ?? Settings;
+                    return {
+                        id,
+                        label: <Icon style={{ fontSize: 18 }} />
+                    };
+                })}
+            />
+        ),
+        children: (
+            <BlockSettings
+                category={category}
+            />
+        )
+    };
+}
 
 ////////////////////////////////////////////////////////////////////////////////////
 
@@ -157,8 +184,9 @@ export default function ({ useDump }: LeftToolPanelProps) {
     const [force, useForce] = React.useReducer((i)=> i+1, 0);
     const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'block' | 'component' | 'styles' | 'slot'>('project');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'block' | 'component' | 'styles' | 'slot'>('blockSetting');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('misc');
+    const [currentSettings, setCurrentSettings] = React.useState<keyof typeof settingsBlock>('all');
     const [currentBlock, setCurrentBlock] = React.useState<string>('any');
 
     
@@ -166,6 +194,8 @@ export default function ({ useDump }: LeftToolPanelProps) {
         { id: 'project', label: 'управление', icon: <AccountTree />, style: {paddingTop:2} },
         { divider: <Divider sx={{borderColor: 'rgba(128, 128, 129, 0.266)',my:1.2}}/> },
         { id: 'block', label: '', icon: <LuBlocks size={22} /> },
+        { divider: true },
+        { id: 'blockSetting', label: '', icon:  <PiCodeBlockFill size={22} /> },
         { divider: true },
         { id: 'component', label: 'Библиотека', icon: <Extension /> },
         { divider: true },
@@ -176,7 +206,7 @@ export default function ({ useDump }: LeftToolPanelProps) {
     const endItems = [
         { id: 'save', label: 'Сохранить', icon: <Save /> },
         { id: 'export', label: 'export', icon: <Code /> },
-        { id: 'exit', label: 'Выход', icon: <Logout /> }
+        { id: 'user', label: 'Выход', icon: <AccountCircle /> }
     ];
 
     const startNgrock = async() => {
@@ -219,7 +249,7 @@ export default function ({ useDump }: LeftToolPanelProps) {
         else if (item.id === 'block') setCurrentToolPanel('block');
         else if (item.id === 'project') setCurrentToolPanel('project');
         else if (item.id === 'styles') setCurrentToolPanel('styles');
-        else if (item.id === 'atoms') setCurrentToolPanel('atoms');
+        else if (item.id === 'blockSetting') setCurrentToolPanel('blockSetting');
         else if (item.id === 'save') useDump();
         else if (item.id === 'slot') setCurrentToolPanel('slot');
         else if (item.id === 'export') handleExportGrid();
@@ -248,7 +278,8 @@ export default function ({ useDump }: LeftToolPanelProps) {
             children: ( <RenderListProject currentCat={'all'}/> ) 
         }),
         block: ()=> useBlock(currentBlock, setCurrentBlock),
-        component: () => useElements(currentTool, setCurrentTool),
+        blockSetting: ()=> useBlockSettings(currentSettings, setCurrentSettings),
+        component: ()=> useElements(currentTool, setCurrentTool),
         styles: () => useStylesEditor(select.content, useComponentUpdateFromEditorForm, curSubpanel, setSubPanel),
         slot: ()=> useSlot(select.slot, curSlotPanel, setCurSlotPanel, useComponentSlotUpdateFromEditorForm)
     }), [force, select, currentToolPanel, currentTool, curSubpanel]);

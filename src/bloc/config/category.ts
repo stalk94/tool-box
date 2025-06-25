@@ -47,6 +47,12 @@ export const componentBlock = {
         icon: LuBlocks,
     }
 }
+export const settingsBlock = {
+    all: {
+        label: '',
+        icon: List
+    }
+}
 
 ///////////////////////////////////////////////////////////////////////
 //                  Settings mod

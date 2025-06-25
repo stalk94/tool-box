@@ -1,4 +1,3 @@
-import React from 'react';
 import { Component, ComponentSerrialize } from '../type';
 import { editorContext, infoSlice, cellsSlice } from "../context";
 import { story } from './hooks';
@@ -75,7 +74,7 @@ export const updateProjectState = (scope: string, name: string) => {
 }
 
 
-export function updateCelltProps(data) {
+export function updateCellProps(data) {
     const cellId = editorContext.currentCell.get()?.i;
 
     if (!cellId) {

@@ -7,6 +7,7 @@ import { exportedMuiButton, exportedMuiIconButton } from './export/Buttons';
 type IconButtonWrapperProps = IconButtonProps & {
     'data-id': number
     'data-type': 'IconButton'
+    'data-group'?: string 
     fullWidth: boolean
     icon: string
     style: React.CSSProperties
@@ -14,6 +15,7 @@ type IconButtonWrapperProps = IconButtonProps & {
 type ButtonWrapperProps = ButtonProps & {
     'data-id': number
     'data-type': 'Button'
+    'data-group'?: string 
     isArea?: boolean
     fullWidth: boolean
     style: React.CSSProperties
@@ -25,7 +27,7 @@ type ButtonWrapperProps = ButtonProps & {
 
 
 export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps, ref) => {
-    const { 'data-id': dataId, icon, children, fullWidth, style, ...otherProps } = props;
+    const { 'data-id': dataId, 'data-group': dataGroup, icon, children, fullWidth, style, ...otherProps } = props;
     const Icon = icon && iconsList[icon] ? iconsList[icon] : Settings;
 
     const exportCode = (call) => {
@@ -71,7 +73,7 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
     );
 });
 export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) => {
-    const { startIcon, endIcon, children, style, 'data-id': dataId, isArea, ...otherProps } = props;
+    const { startIcon, endIcon, children, style, 'data-id': dataId, 'data-group': dataGroup, isArea, ...otherProps } = props;
     const StartIcon = startIcon && iconsList[startIcon] ? iconsList[startIcon] : null;
     const EndIcon = endIcon && iconsList[endIcon] ? iconsList[endIcon] : null;
     

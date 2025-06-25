@@ -4,15 +4,15 @@ import { TextInput, CheckBoxInput, NumberInput, SliderInput, ToggleInput } from 
 import { Close, DragIndicator, ExpandMore, ExpandLess, Code, } from '@mui/icons-material';
 import { editorContext } from "./context";
 import { RiRulerLine } from "react-icons/ri";
-import { TbScanPosition } from "react-icons/tb";
+import { SlSizeFullscreen } from "react-icons/sl";
 import { PiCodeBlockFill } from "react-icons/pi";
 import Settings from './utils/Settings';
 import { formatJsx } from './modules/export/utils';
 
 
 const category = [{
-    id: 'layer',
-    label: <PiCodeBlockFill />
+    id: 'padding',
+    label: <SlSizeFullscreen />
 },{
     id: 'size',
     label: <RiRulerLine />
@@ -22,7 +22,7 @@ const category = [{
 
 export default function InspectorPanel ({ data, onClose }) {
     const refEditor = React.useRef({data: {}, call: (editObject)=> console.log(editObject)});
-    const [activeCat, setActiveCat] = React.useState<'size'|'layer'>('size');
+    const [activeCat, setActiveCat] = React.useState<'size'|'padding'>('size');
     const [mod, setMod] = useState<'json'|'render'>('json');
     const [cache, setCache] = useState<string>();
     const renderRef = React.useRef<HTMLDivElement>(null);

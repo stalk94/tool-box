@@ -5,7 +5,6 @@ import { TextInput, NumberInput, PasswordInput, LoginInput,
 } from '../../index';
 import { TextInputProps, NumberInputProps } from '../../index';
 import { SxProps } from '@mui/material';
-import { useEvent, useCtxBufer } from './helpers/shared';
 import { triggerFlyFromComponent } from './helpers/anim';
 import { iconsList } from '../../components/tools/icons';
 import render, { sliderRender } from './export/inputs';
@@ -172,8 +171,8 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         style,
         width,
@@ -181,8 +180,6 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         ...otherProps
     } = props;
     
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-   
     const codeRender = (call) => {
         const code = render(
             'date',
@@ -217,8 +214,13 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             <DateInput
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 {...otherProps}
             />
@@ -230,8 +232,8 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         leftIcon,
         rightIcon,
         style,
@@ -240,7 +242,6 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
     const RightIcon = rightIcon && iconsList[rightIcon] ? iconsList[rightIcon] : null;
 
@@ -279,8 +280,13 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                 start={LeftIcon ? <LeftIcon/> : null}
                 end={RightIcon ? <RightIcon/> : null}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        type: 'onChange',
+                        dataGroup,
+                        value: v
+                    });
                 }}
                 {...otherProps}
             />
@@ -293,17 +299,15 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         style,
         width,
         fullWidth,
         ...otherProps
     } = props;
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
- 
+
     const codeRender = (call) => {
         const code = render(
             'chek',
@@ -339,9 +343,14 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
                 value={state}
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
-                    setState(v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    setState(v);
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 {...otherProps}
             />
@@ -353,16 +362,14 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         style,
         width,
         fullWidth,
         ...otherProps
     } = props;
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     
     const codeRender = (call) => {
         const code = render(
@@ -397,8 +404,13 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             <SwitchInput
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 {...otherProps}
             />
@@ -410,8 +422,8 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         style,
         width,
@@ -419,8 +431,6 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-   
     const codeRender = (call) => {
         const code = render(
             'toogle',
@@ -454,8 +464,13 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             <ToggleInput
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 {...otherProps}
             />
@@ -467,8 +482,8 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         style,
         styles,
@@ -477,8 +492,6 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         ...otherProps
     } = props;
     
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
-  
     const codeRender = (call) => {
         const code = render(
             'select',
@@ -512,8 +525,13 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             <SelectInput
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 styles={styles}
                 {...otherProps}
@@ -526,8 +544,8 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         style,
         styles,
@@ -535,8 +553,6 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
         fullWidth,
         ...otherProps
     } = props;
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     
     const codeRender = (call) => {
         const code = render(
@@ -573,8 +589,13 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
                 styles={styles}
                 placeholder='выбери из двух стульев'
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 {...otherProps}
             />
@@ -586,8 +607,8 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     const { 
         children, 
         ['data-id']: dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         startIcon,
         styles,
         style,
@@ -595,8 +616,6 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         fullWidth,
         ...otherProps
     } = props;
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     
     const codeRender = (call) => {
         const code = render(
@@ -632,8 +651,13 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
             <FileInput
                 labelSx={labelStyle}
                 onUpload={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 styles={styles}
                 {...otherProps}

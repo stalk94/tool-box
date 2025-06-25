@@ -7,11 +7,6 @@ import { editorContext, infoSlice, settingsSlice, cellsSlice, bufferSlice } from
 import { updateComponentProps } from '../helpers/updateComponentProps';
 
 
-type SettingsProps = {
-   activeCat: 'size' | 'position' | 'layer'
-}
-
-
 
 const Size = () => {
     const select = infoSlice.select.content.use();
@@ -25,22 +20,6 @@ const Size = () => {
     }, [select]);
 
 
-    const setResetPosition =(key: string, any=false)=> {
-        const copy = structuredClone(infoSlice.select.content.get());
-
-        if(any) {
-            delete copy.props.style?.marginTop;
-            delete copy.props.style?.marginBottom;
-            delete copy.props.style?.marginLeft;
-            delete copy.props.style?.marginRight;
-    
-            updateComponentProps({
-                component: copy,
-                data: { style: copy.props.style }
-            });
-            infoSlice.select.content.set(copy);
-        }
-    }
     const setResetSize =(key: string, any=false)=> {
         const copy = structuredClone(infoSlice.select.content.get());
 
@@ -117,64 +96,54 @@ const Size = () => {
                     { id: '10', label: <span style={styleTgBtn}>x10</span> }
                 ]}
             />
-            <Box sx={{display:'flex',flexDirection:'row',p: 1, pt:2,m:'auto'}}>
-                <Button variant='outlined' size='mini' color='error' onClick={()=> setResetPosition('', true)}>
-                    <SettingsBackupRestore sx={{fontSize: 18}} /> <span style={{fontSize: 10}}>indents</span>
-                </Button>
+            <Box sx={{display:'flex',flexDirection:'row',p: 1, pt:2,ml:'auto'}}>
                 <Button sx={{ml:1}} variant='outlined' size='mini' color='error' onClick={()=> setResetSize('', true)}>
-                    <SettingsBackupRestore sx={{fontSize: 18}} /> <span style={{fontSize: 10}}>size</span>
+                    <SettingsBackupRestore sx={{fontSize: 18}} /> <span style={{fontSize: 10}}>reset</span>
                 </Button>
             </Box>
         </>
     );
 }
-const Layer = () => {
-    const select = editorContext.currentCell.use();
+const Padding = () => {
+    const setResetPosition = (key: string, any = false) => {
+        const copy = structuredClone(infoSlice.select.content.get());
 
-    const setMetaName = React.useCallback((name: string)=> {
-        if(!select) return;
-        if(name.length < 3) return;
+        if (any) {
+            delete copy.props.style?.marginTop;
+            delete copy.props.style?.marginBottom;
+            delete copy.props.style?.marginLeft;
+            delete copy.props.style?.marginRight;
 
-        ['lg', 'md', 'sm', 'xs'].forEach((breackpoint)=> {
-            const c = editorContext.layouts[breackpoint].get();
-            const findIndex = c.findIndex((l)=> l.i === select.i);
-            if(findIndex !== -1) {
-                editorContext.layouts[breackpoint][findIndex].set((l)=> {
-                    l.metaName = name;
-                    return l;
-                });
-            }
-        });
-    }, [select])
-    
+            updateComponentProps({
+                component: copy,
+                data: { style: copy.props.style }
+            });
+            infoSlice.select.content.set(copy);
+        }
+    }
 
     return(
         <>
-            <TextInput
-                disabled={!select.i}
-                label='meta name:'
-                position='left'
-                labelSx={{fontSize: 12}}
-                style={{ maxHeight: 14, height: 16 }}
-                value={select?.metaName ?? select.i}
-                onChange={setMetaName}
-            />
-
-            <div>...</div>
+            <Box sx={{display:'flex',flexDirection:'row',p: 1, pt:2,ml:'auto'}}>
+                <Button variant='outlined' size='mini' color='error' onClick={()=> setResetPosition('', true)}>
+                    <SettingsBackupRestore sx={{fontSize: 18}} /> <span style={{fontSize: 10}}>reset</span>
+                </Button>
+            </Box>
+        
         </>
     );
 }
 
 
 
-export default function Settings({ activeCat }: SettingsProps) {
+export default function Settings({ activeCat }: { activeCat: 'size' | 'padding' }) {
     const select = infoSlice.select.content.use();
 
 
     return (
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
             {activeCat === 'size' && <Size />}
-            {activeCat === 'layer' && <Layer />}
+            {activeCat === 'padding' && <Padding />}
         </Box>
     );
 }

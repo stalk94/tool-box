@@ -27,7 +27,7 @@ export const palleteStd = {
     // верхняя навигационная панель
     appBar: {
         main: "rgba(57, 62, 70, 0.35)",
-        border: 'rgba(255, 255, 255, 0.3)'
+        border: 'rgba(255, 255, 255, 0.2)'
     },
     // левая панелька (как в vscode)
     toolNavBar: {

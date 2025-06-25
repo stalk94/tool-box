@@ -1,9 +1,10 @@
 {
     "input": {
-        "main": "#2C3035",
+        "main": "rgba(255, 255, 255, 0.05)",
         "border": "rgba(255, 255, 255, 0.2)",
-        "placeholder": "#808080",
-        "label": "#808080"
+        "error": "#f34f4fcc",
+        "success": "rgba(120, 227, 114, 0.6)",
+        "placeholder": "#808080"
     },
     "chekbox": {
         "main": "rgba(255, 255, 255, 0.05)",
@@ -18,13 +19,13 @@
         "icon": "rgb(215, 215, 215)"
     },
     "slider": {
-        "thumb": "rgba(140, 139, 139, 1)",
+        "thumb": "rgb(255, 255, 255)",
         "track": "lightgrey",
         "rail": "darkgrey"
     },
     "appBar": {
-        "main": "rgba(45, 51, 62, 0.35)",
-        "border": "#484D51"
+        "main": "rgba(57, 62, 70, 0.35)",
+        "border": "rgba(255, 255, 255, 0.2)"
     },
     "toolNavBar": {
         "main": "rgb(58, 58, 58)",
@@ -51,27 +52,33 @@
     },
     "background": {
         "default": "#222222",
-        "sidenav": "#1C1F22",
+        "sidenav": "#1f283e",
         "paper": "rgba(7, 7, 7, 0.05)"
     },
     "navigation": {
-        "main": "#C7CCD1"
+        "main": "rgba(255, 255, 255, 0.8)"
     },
-    "primary": {
-        "main": "#D12954",
-        "contrastText": "rgba(240, 237, 237, 1)",
-        "light": "#e3f2fd",
-        "dark": "rgba(196, 4, 68, 1)"
-    },
-    "secondary": {
-        "main": "rgba(78, 41, 229, 1)",
-        "contrastText": "rgba(241, 238, 238, 0.87)",
-        "light": "#f3e5f5",
-        "dark": "rgba(61, 5, 191, 1)"
+    "text": {
+        "disabled": "gray",
+        "primary": "#fff",
+        "secondary": "rgba(255, 255, 255, 0.7)",
+        "icon": "rgba(255, 255, 255, 0.5)"
     },
     "common": {
         "black": "#000",
         "white": "#fff"
+    },
+    "primary": {
+        "main": "#90caf9",
+        "light": "#e3f2fd",
+        "dark": "#42a5f5",
+        "contrastText": "rgba(0, 0, 0, 0.87)"
+    },
+    "secondary": {
+        "main": "#ce93d8",
+        "light": "#f3e5f5",
+        "dark": "#ab47bc",
+        "contrastText": "rgba(0, 0, 0, 0.87)"
     },
     "error": {
         "main": "#f44336",
