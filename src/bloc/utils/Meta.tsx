@@ -5,7 +5,7 @@ import { Settings } from '@mui/icons-material';
 import { editorContext, infoSlice, cellsSlice } from "../context";
 
 
-const RenderButton = () => (
+const RenderButton = ({ type }) => (
     <div style={{ position: 'absolute', zIndex: 999, left: 0, top: 0 }}>
         <IconButton
             sx={{
@@ -17,7 +17,7 @@ const RenderButton = () => (
                 }
             }}
             onClick={() => {
-
+                EVENT.emit('blockSettings', {type: type});
             }}
             children={<Settings />}
         />
@@ -51,7 +51,7 @@ export function MetaHeader({ width, scope }) {
                     height: height
                 }}
                 anyRender={
-                    <RenderButton />
+                    <RenderButton type='header' />
                 }
             />
         </div>
@@ -97,7 +97,7 @@ export function MetaFooter({ width, scope }) {
                         height: height
                     }}
                     anyRender={
-                        <RenderButton />
+                        <RenderButton type='footer' />
                     }
                 />
             </div>

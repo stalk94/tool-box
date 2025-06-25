@@ -25,12 +25,15 @@ type InputStyles = {
 type TextWrapperProps = TextInputProps & {
     'data-id': number
     labelStyle?: SxProps
-    functions: Record<string, string>,
-    leftIcon?: string,
-    label?: string,
+    'data-group'?: string
+    leftIcon?: string
+    label?: string
     position: 'left' | 'right' | 'column'
     width: string | number
     styles?: InputStyles
+    min?: number 
+    max?: number
+    multiline?: boolean
 }
 
 
@@ -38,9 +41,9 @@ type TextWrapperProps = TextInputProps & {
 export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
-        ['data-id']: dataId, 
+        'data-id': dataId, 
+        'data-group': dataGroup,
         labelStyle,
-        functions,
         leftIcon,
         style,
         width,
@@ -48,9 +51,6 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         styles,
         ...otherProps
     } = props;
-    
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
     const LeftIcon = leftIcon && iconsList[leftIcon] ? iconsList[leftIcon] : null;
 
     const codeRender = (call) => {
@@ -90,8 +90,13 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                 left={LeftIcon ? <LeftIcon/> : null}
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        dataGroup,
+                        type: 'onChange',
+                        value: v
+                    });
                 }}
                 styles={styles}
                 {...otherProps}
@@ -105,16 +110,13 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         children, 
         ['data-id']: dataId, 
         labelStyle,
-        functions,
-        startIcon,
+        'data-group': dataGroup,
         styles,
         style,
         width,
         fullWidth,
         ...otherProps
     } = props;
-    
-    const emiter = React.useMemo(() => useEvent(dataId), [dataId]);
 
     const codeRender = (call) => {
         const code = render(
@@ -151,8 +153,13 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
             <NumberInput
                 labelSx={labelStyle}
                 onChange={(v)=> {
-                    emiter('onChange', v);
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
+                    sharedEmmiter.emit('event', {
+                        id: dataId,
+                        type: 'onChange',
+                        dataGroup,
+                        value: v
+                    });
                 }}
                 styles={styles}
                 {...otherProps}

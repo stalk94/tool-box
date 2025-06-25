@@ -27,7 +27,7 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
             cellId,
             element: children
         },
-        disabled: (!dragEnabled || lock)        // ✅ глобальный флаг
+        disabled: (!dragEnabled || lock || mod === 'actions')        // ✅ глобальный флаг
     });
     
 
@@ -161,11 +161,13 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
                     handleOpen(e, {id, type: children.props['data-type']});
                 }}
             >
-                <SlotToolBar
-                    dataId={children.props['data-id']}
-                    type={children.props['data-type']}
-                    children={children}
-                />
+                { mod === 'block' &&
+                    <SlotToolBar
+                        dataId={children.props['data-id']}
+                        type={children.props['data-type']}
+                        children={children}
+                    />
+                }
                 
                 { RenderElement }
             </div>

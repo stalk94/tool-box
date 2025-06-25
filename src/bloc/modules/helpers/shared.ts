@@ -20,7 +20,7 @@ export const useCtxBufer = (id: number, initValue: any) => {
     }
 }
 //  компонент создает эммитер
-export const useEvent = (id: string | number) => {
+export const useEvent = (id: string | number, ) => {
     const uid = `${id}`;
 
     // label - это как класификатор уточнение

@@ -54,7 +54,7 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
         return {
             type: 'text',
             id: propName,
-            multiline: true,
+            multiline: (propName === 'src' && true),
             value: propValue,
             label: propName,
             labelSx: { fontSize: '14px' },

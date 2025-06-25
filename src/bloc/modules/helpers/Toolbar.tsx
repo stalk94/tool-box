@@ -97,6 +97,7 @@ const ContextualToolbar: React.FC<ContextualToolbarProps> = ({
     );
 }
 
+
 export const LinktoolBar =({dataId, subs, onChange})=> {
     const [isThisSelect, setSelectThis] = React.useState(false);
     const selectContent = infoSlice.select.content;
@@ -151,7 +152,6 @@ export const LinktoolBar =({dataId, subs, onChange})=> {
         />
     );
 }
-
 export const SlotToolBar =({ dataId, type, children })=> {
     const selectedContent = infoSlice.select.content.use();
     const [isThisSelect, setSelectThis] = React.useState(false);

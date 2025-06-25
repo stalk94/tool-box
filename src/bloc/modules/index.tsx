@@ -79,7 +79,10 @@ registerComponent({
         divider: 'none',
         fullWidth: true,
         leftIcon: 'none',
-        styles: {} satisfies InputStyles,
+        min: 0,
+        max: 0,
+        multiline: false,
+        styles: {},
         labelStyle: {
             fontSize: 14,
         }

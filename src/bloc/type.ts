@@ -18,6 +18,7 @@ export interface Events {
     // добавить новый layout grid (ячейку)
     addCell: ()=> void
     addGridContext: (data: SlotDataBus)=> void
+    blockSettings: (data: { type: 'header' | 'footer' })=> void
 }
 export interface EventsShared {
     [key: string]: (data: any)=> void

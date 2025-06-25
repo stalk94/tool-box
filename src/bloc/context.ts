@@ -9,7 +9,7 @@ import type { Palette } from '@mui/material/styles';
 
 
 export type EditorContextType = {
-    mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot'
+    mod: 'block' | 'settings' | 'grid' | 'preview' | 'storage' | 'slot' | 'actions'
     lock: boolean
     dragEnabled: boolean
     layouts: LayoutsBreackpoints

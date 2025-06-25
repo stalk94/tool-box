@@ -5,7 +5,7 @@ import {
     Settings, AccountTree, Logout, Extension, Save, Functions, Palette as Pallet,
     BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets
 } from "@mui/icons-material";
-import { settingsSlice } from "./context";
+import { editorContext, settingsSlice } from "./context";
 import { motion } from 'framer-motion';
 import { TooglerInput } from '../components/input/input.any';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left';

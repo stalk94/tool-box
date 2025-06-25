@@ -1,5 +1,5 @@
 import { iconsList } from '../../components/tools/icons';
-import { ViewModule, TouchApp, Photo, Layers, Widgets, Launch, Settings, Save } from '@mui/icons-material';
+import { ViewModule, TouchApp, Photo, Layers, Widgets, Launch, Settings, Save, List, Functions } from '@mui/icons-material';
 import { LuBlocks } from "react-icons/lu";
 import { MdOutlineWidgets } from "react-icons/md";
 
@@ -81,5 +81,13 @@ export const componentBaseSettings = {
         icon: Settings,
     },
 }
+// список категорий action main
+export const categoryActions = {
+    all: {
+        label: '',
+        icon: Functions
+    },
+}
+
 
 export const specialComponents = ['AppBar', 'Breadcrumbs', 'Footer'];

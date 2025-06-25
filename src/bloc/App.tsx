@@ -20,7 +20,6 @@ import { getComponentById } from "./helpers/editor";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
 import EventEmitter from "../app/emiter";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
-import RightBar from './utils/Right-bar';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import inputsIndex from 'public/export/index';
@@ -307,9 +306,11 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
                 <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                     <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
-                    <RightBar />
                     
-                    { (mod === 'block' || mod === 'grid') && <GridComponentEditor desserealize={desserealize} /> }
+                    
+                    { (mod === 'block' || mod === 'grid' || mod === 'actions') && 
+                        <GridComponentEditor desserealize={desserealize} /> 
+                    }
                     { mod === 'settings' && <PreviewTheme /> }
                 </div>
             </div>
@@ -330,7 +331,7 @@ export default function EditorApp({ setShowBlocEditor }) {
         const name = editorContext.meta.name.get();
         const scope = editorContext.meta.scope.get();
         
-        saveBlockToFile(scope, name, (msg, type) => {
+        return saveBlockToFile(scope, name, (msg, type) => {
             enqueueSnackbar(msg, { variant: type });
             updateProjectState(scope, name);
         });
@@ -404,10 +405,20 @@ export default function EditorApp({ setShowBlocEditor }) {
                 e.preventDefault();
             }
         }
+        const handleSpecialBlock =(data)=> {
+            fileSaveFromDumpRender().then((res)=> {
+                editorContext.meta.scope.set('system');
+                editorContext.meta.name.set(data.type);
+            });
+        }
 
         window.addEventListener('keydown', handleArrow);
         EVENT.on('addGridContext', handle);
-        return () => EVENT.off('addGridContext', handle);
+        EVENT.on('blockSettings', handleSpecialBlock);
+        return () => {
+            EVENT.off('addGridContext', handle);
+            EVENT.off('blockSettings', handleSpecialBlock);
+        }
     }, []);
     React.useEffect(() => {
         // Очищаем перед установкой нового блока

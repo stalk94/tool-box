@@ -4,7 +4,7 @@ import { settingsSlice, infoSlice } from "../context";
 
 
 export function setPadding(side: 'Top'|'Left'|'Right', component: ComponentSerrialize, direction: 'increment' | 'decrement') {
-	const step = settingsSlice.panel.stepPosition.get();
+	const step = settingsSlice.panel.stepSize.get();
     const clone = structuredClone(component);
 	const style = clone.props.style ?? {};
 	const key = `margin${side}` as keyof React.CSSProperties;

@@ -2,7 +2,7 @@ import React from "react";
 import { useSnackbar } from 'notistack';
 import { LayoutCustom, BlockData } from './type';
 import { Responsive, WidthProvider } from "react-grid-layout";
-import { editorContext, infoSlice, cellsSlice } from "./context";
+import { editorContext, infoSlice, cellsSlice, settingsSlice } from "./context";
 import useContextMenu from '@components/context-main';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
@@ -18,13 +18,14 @@ import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
 import { db } from "./helpers/export";
 
-
+const themes = { taskade: taskadeTheme, light: lightTheme, dark: darkTheme };
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
 
 
 export default function ({ desserealize }) {
     const { enqueueSnackbar } = useSnackbar();
+    const ctxTheme = settingsSlice.theme.use();
     const [ready, setReady] = React.useState(false);
     const gridContainerRef = React.useRef(null); 
     const size = editorContext.size.use();
@@ -256,9 +257,9 @@ export default function ({ desserealize }) {
     
     
     return (
-        <ThemeProvider theme={taskadeTheme}>
+        <ThemeProvider theme={themes[ctxTheme.currentTheme??'dark']}>
             {/* линейки */}
-            <div className="ruler-container">
+            <div className="ruler-container" style={{marginTop: 4}}>
                 <RulerX containerRef={gridContainerRef} />
                 <RulerY containerRef={gridContainerRef} />
             </div>
