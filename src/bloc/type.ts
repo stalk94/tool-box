@@ -1,3 +1,4 @@
+import { EditorContextType } from './context';
 import { Layout } from "react-grid-layout";
 import { RegistreTypeComponent } from './config/type';
 import React from 'react'
@@ -182,6 +183,10 @@ export type BlockData = {
         xs: LayoutCustom
     }
     content: ComponentSerrialize[]
+}
+export type Story = {
+    ctx: EditorContextType,
+    cells: Record<string, ComponentSerrialize[]>
 }
 
 /////////////////////////////////////////////////////////////////////////////

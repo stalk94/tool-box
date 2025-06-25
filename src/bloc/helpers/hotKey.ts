@@ -31,6 +31,7 @@ export function setPadding(side: 'Top'|'Left'|'Right', component: ComponentSerri
 	
 	updateComponentProps({
         component: component,
-        data: { style: style }
+        data: { style: style },
+		undo: true
     });
 }

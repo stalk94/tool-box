@@ -15,6 +15,7 @@ import { statikRender } from './helpers/output';
 
 
 export function SortableItem({ id, children, cellId, onSelectCell }: SortableItemProps) {
+    const mod = editorContext.mod.use();
     const lock = editorContext.lock.use();
     const itemRef = React.useRef<HTMLDivElement>(null);
     const dragEnabled = editorContext.dragEnabled.use();
@@ -45,7 +46,8 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
         flexShrink: 0,
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
         maxWidth: '100%',
-        padding: 1
+        padding: 1,
+        pointerEvents: mod === 'grid' ? 'none' : 'auto'
     }
     const useDegidratationHandler = (code: string) => {
         console.log(code);

@@ -17,7 +17,7 @@ import { RulerX, RulerY } from './utils/Rullers';
 import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
 import { db } from "./helpers/export";
-import Settings from './utils/Settings';
+
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [5, 5];
@@ -192,7 +192,7 @@ export default function ({ desserealize }) {
             content: []
         }]);
     }
-
+    
     const currentLayout = React.useMemo(()=> layouts[currentBreakpoint], [currentBreakpoint, layouts]);
     const { menu, handleOpen } = useContextMenu([
         {
@@ -262,7 +262,6 @@ export default function ({ desserealize }) {
                 <RulerX containerRef={gridContainerRef} />
                 <RulerY containerRef={gridContainerRef} />
             </div>
-            <Settings />
             
             <Container sx={{
                     height: (size.height + 10),
@@ -271,7 +270,7 @@ export default function ({ desserealize }) {
                     boxSizing: 'content-box'
                 }}
             >
-                <DroppableGrid id={1}>
+                <DroppableGrid id={1}/>
                 <div ref={gridContainerRef}
                     style={{
                         margin: 1,
@@ -369,7 +368,6 @@ export default function ({ desserealize }) {
                         </>
                     }
                 </div>
-                </DroppableGrid>
                 { menu }
             </Container>
         </ThemeProvider>

@@ -1,19 +1,20 @@
 import React from 'react';
 import { Component, ComponentSerrialize } from '../type';
 import { editorContext, infoSlice, cellsSlice } from "../context";
+import { story } from './hooks';
 
 
 type Params = {
     component: Component;
     data: Record<string, any>;
-    rerender?: boolean;
+    undo?: boolean;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////////
 // ВАЖНАЯ ФУНКЦИЯ ЖИЗНЕННОГО ЦИКЛА
 ///////////////////////////////////////////////////////////////////////////////////
-export function updateComponentProps({ component, data, rerender = true }: Params) {
+export function updateComponentProps({ component, data, undo }: Params) {
     const id = component?.props?.['data-id'];
     const cellId = editorContext.currentCell.get()?.i;
     
@@ -21,13 +22,14 @@ export function updateComponentProps({ component, data, rerender = true }: Param
         console.warn('updateComponentProps: отсутствует data-id или data-cell');
         return;
     }
-    
+	if(undo) story.addOld();
+
     cellsSlice.set((old) => {
         const index = old[cellId]?.findIndex((component) => component.id === id);
 
-        if (index !== -1) {
+        if (index !== -1 && old[cellId]) {
             Object.entries(data).forEach(([key, value]) => {
-                old[cellId][index].props[key] = value;
+                if(old[cellId][index]) old[cellId][index].props[key] = value;
             });
         }
 

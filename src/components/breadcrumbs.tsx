@@ -137,6 +137,7 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
             separator={separator}
             sx={{ 
                 m: 1,
+                my: 0.5,
                 '& .MuiBreadcrumbs-separator': {
                     opacity: 0.7
                 },

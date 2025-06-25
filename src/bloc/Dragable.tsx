@@ -215,22 +215,28 @@ export function DroppableCell({ id, children }) {
         },
     });
     
-    //const style
+
+    const isElement = active?.data?.current?.type === 'element';
     React.useEffect(() => {
         activeSlotState.set(null);
     }, [isOver]);
+   
 
     return (
         <div
             ref={setNodeRef}
             style={{
-                border: isOver && active.data?.current?.type==='element' && '1px dashed lime',
+                border: isOver && isElement && '1px dashed lime',
+                background: isOver && isElement ? '#feea7740' : 'none',
                 height: '100%',
                 display: 'inline-flex',
                 width: '100%',
                 flexWrap: 'wrap',
                 alignItems: 'stretch',
-                alignContent: 'flex-start'
+                alignContent: 'flex-start',
+                //position: 'relative',
+                //zIndex: isOver && isElement ? 999999 : 'auto',
+                pointerEvents: 'auto'
             }}
         >
             { children }
@@ -245,16 +251,23 @@ export function DroppableGrid({ id, children }) {
             type: 'grid'
         },
     });
-    
+
+    const isBlock = active?.data?.current?.type === 'block';
 
     return (
         <div
             ref={setNodeRef}
             style={{
-                border: isOver && active.data?.current?.type==='block' && '1px dashed lime'
+                position: 'fixed',
+                width: '70%',
+                height: '90%',
+                zIndex: 9999,
+                pointerEvents: 'none',
+                border: isOver && isBlock ? '2px dashed lime' : 'none',
+                background: isOver && isBlock ? '#d1fe7740' : 'none',
             }}
         >
-            { children }
+            
         </div>
     );
 }

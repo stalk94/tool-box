@@ -167,49 +167,9 @@ export default function({ type, elemLink, onChange }: PropsForm) {
     const copyDataContent = React.useRef({});                               // кэш во избежание перерендеров
     const [schema, setSchema] = React.useState<Schema[]>([]);
     const [acSchema, setAcSchema] = React.useState<AccordionScnema[]>([]);
-    const [story, setStory] = React.useState<Record<string, string>[]>([]);
-    const [future, setFuture] = React.useState<Record<string, string>[]>([]);
     const [current, setCurrent] = React.useState<Record<string, any>>(null);
 
 
-    const undo = () => {
-        if (story.length <= 1) return; // Nothing to undo
-        
-        // Take the current state and add it to future for potential redo
-        setFuture(prev => [structuredClone(current), ...prev]);
-        
-        // Get the previous state from story
-        const newStory = story.slice(0, -1);
-        const previousState = structuredClone(newStory[newStory.length - 1]);
-        
-        // Update current state and apply it to the theme
-        
-        
-        // Update story array
-        setStory(newStory);
-    }
-    const redo = () => {
-        if (future.length === 0) return; // Nothing to redo
-        
-        // Get the next state from future
-        const nextState = structuredClone(future[0]);
-        const newFuture = future.slice(1);
-        
-        // Add current state to history before applying the next state
-        setStory(prev => [...prev, structuredClone(current)]);
-        
-        // Update current state and apply it to the theme
-        
-        
-        // Update future array
-        setFuture(newFuture);
-    }
-    const useAddStory = (current) => {
-        if (current && (story.length === 0 || JSON.stringify(current) !== JSON.stringify(story[story.length - 1]))) {
-            setFuture(prev => [sanitizeProps(current), ...prev]);
-            setStory(prev => [...prev, sanitizeProps(current)]);
-        }
-    }
     const useMergeObject = (key: 'style'|'sx'|string, newValue: any) => {
         setCurrent((prev) => {
             const prevValue = prev[key] ?? {};
@@ -217,7 +177,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                 ...prev,
                 [key]: merge({}, prevValue, newValue)  // lodash.merge для глубокой сборки
             };
-            useAddStory(next);
+           
             onChange(next);
             return next;
         });
@@ -235,7 +195,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                 }
                 else setCurrent((prev) => {
                     const next = { ...prev, [key]: newValue };
-                    useAddStory(next);
+                    //useAddStory(next);
                     onChange(next);
                     return next;
                 });
@@ -303,9 +263,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
         };
     
         const copyProps = sanitizeProps(props);
-        setStory([copyProps]);
         setCurrent(copyProps);
-        setFuture([]);
     
         createScheme(internalType, copyProps);
     }, [elemLink, type]);

@@ -76,6 +76,11 @@ export type SettingsContextStateType = {
         stepSize: 1 | 2 | 5
         stepPosition:  1 | 2 | 5
     }
+    story: {
+        max: number
+        future: any
+        old: any
+    }
 }
 type BufferStateType = {
     type: 'component' | 'cell'
@@ -141,6 +146,11 @@ export const settingsSlice = create({
     panel: {
         stepSize: 1,
         stepPosition: 1,
+    },
+    story: {
+        max: 50,
+        future: [],
+        old: []
     }
 } as SettingsContextStateType, {
     immer: true,

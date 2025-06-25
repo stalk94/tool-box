@@ -5,26 +5,15 @@ import { RestartAlt, DragIndicator, ExpandMore, ExpandLess, Code, SettingsBackup
 import { TextInput, CheckBoxInput, NumberInput, SliderInput, ToggleInput } from 'src/index';
 import { editorContext, infoSlice, settingsSlice, cellsSlice, bufferSlice } from "../context";
 import { updateComponentProps } from '../helpers/updateComponentProps';
-import { useKeyboardListener } from '@bloc/helpers/hooks';
-import { setPadding } from '@bloc/helpers/hotKey';
 
 
 type SettingsProps = {
-   
+   activeCat: 'size' | 'position' | 'layer'
 }
-const category = [{
-    id: 'layer',
-    label: <span style={{fontSize: 10}}>block</span>
-},{
-    id: 'position',
-    label: <span style={{fontSize: 10}}>position</span>
-},{
-    id: 'size',
-    label: <span style={{fontSize: 10}}>size</span>
-}];
 
 
-const Position = () => {
+
+const Size = () => {
     const select = infoSlice.select.content.use();
     const styleTgBtn: React.CSSProperties = { fontSize: '10px' }
     const settings = settingsSlice.panel.use();
@@ -35,7 +24,8 @@ const Position = () => {
         return style;
     }, [select]);
 
-    const setReset =(key: string, any=false)=> {
+
+    const setResetPosition =(key: string, any=false)=> {
         const copy = structuredClone(infoSlice.select.content.get());
 
         if(any) {
@@ -51,40 +41,7 @@ const Position = () => {
             infoSlice.select.content.set(copy);
         }
     }
-
-    return(
-        <>
-            <ToggleInput
-                label='step:'
-                position='left'
-                labelSx={{fontSize: 12}}
-                value={String(settings.stepPosition)}
-                onChange={(v)=> settingsSlice.panel.stepPosition.set(+v)}
-                items={[
-                    { id: '1', label: <span style={styleTgBtn}>x1</span> },
-                    { id: '5', label: <span style={styleTgBtn}>x5</span> },
-                    { id: '10', label: <span style={styleTgBtn}>x10</span> }
-                ]}
-            />
-            <Button sx={{mt:1, ml:'70%'}} size='mini' color='error' onClick={()=> setReset('', true)}>
-                <SettingsBackupRestore />
-            </Button>
-        </>
-    );
-}
-const Size = () => {
-    const select = infoSlice.select.content.use();
-    const styleTgBtn: React.CSSProperties = { fontSize: '10px' }
-    const settings = settingsSlice.panel.use();
-    const style = React.useMemo(()=>  {
-        if(!select) return ;
-
-        const style = select.parent?.style ?? {};
-        return style;
-    }, [select]);
-
-
-    const setReset =(key: string, any=false)=> {
+    const setResetSize =(key: string, any=false)=> {
         const copy = structuredClone(infoSlice.select.content.get());
 
         if(any) {
@@ -150,7 +107,8 @@ const Size = () => {
             <ToggleInput
                 label='step:'
                 position='left'
-                labelSx={{fontSize: 12}}
+                labelSx={{fontSize: 14}}
+                style={{ height: 26 }}
                 value={String(settings.stepSize)}
                 onChange={(v)=> settingsSlice.panel.stepSize.set(+v)}
                 items={[
@@ -159,10 +117,14 @@ const Size = () => {
                     { id: '10', label: <span style={styleTgBtn}>x10</span> }
                 ]}
             />
-            
-            <Button sx={{mt:1, ml:'70%'}} size='mini' color='error' onClick={()=> setReset('', true)}>
-                <SettingsBackupRestore />
-            </Button>
+            <Box sx={{display:'flex',flexDirection:'row',p: 1, pt:2,m:'auto'}}>
+                <Button variant='outlined' size='mini' color='error' onClick={()=> setResetPosition('', true)}>
+                    <SettingsBackupRestore sx={{fontSize: 18}} /> <span style={{fontSize: 10}}>indents</span>
+                </Button>
+                <Button sx={{ml:1}} variant='outlined' size='mini' color='error' onClick={()=> setResetSize('', true)}>
+                    <SettingsBackupRestore sx={{fontSize: 18}} /> <span style={{fontSize: 10}}>size</span>
+                </Button>
+            </Box>
         </>
     );
 }
@@ -189,80 +151,30 @@ const Layer = () => {
     return(
         <>
             <TextInput
+                disabled={!select.i}
                 label='meta name:'
                 position='left'
                 labelSx={{fontSize: 12}}
-                style={{height: 15}}
+                style={{ maxHeight: 14, height: 16 }}
                 value={select?.metaName ?? select.i}
                 onChange={setMetaName}
             />
+
+            <div>...</div>
         </>
     );
 }
 
-export default function Settings({  }: SettingsProps) {
-    const [activeCat, setActiveCat] = React.useState<'size'|'position'|'layer'>('position');
-    const [colapsed, setColapsed] = React.useState(false);
+
+
+export default function Settings({ activeCat }: SettingsProps) {
     const select = infoSlice.select.content.use();
-    
-    useKeyboardListener((key)=> {
-        if (key === 'Tab') setColapsed(p => !p);
-    });
-    React.useEffect(()=> {
-        if(!select) return;
 
-        const handleCell = () => setActiveCat('layer');
-        //EVENT.on('onSelectCell', handleCell);
 
-        return ()=> {
-            //EVENT.off('onSelectCell', handleCell);
-        }
-    }, []);
-
-    return(
-         <>
-            { select && (
-                <div
-                    style={{
-                        position: 'absolute',
-                        display: 'flex',
-                        flexDirection: 'column', 
-                        top: '7%',
-                        right: '0%',
-                        zIndex: 99999,
-                        background: 'rgb(58, 58, 58)',
-                        boxShadow: '0px 3px 4px rgba(0, 0, 0, 0.3)',
-                        backdropFilter: 'blur(8px)',
-                        color: 'white',
-                        borderRadius: 4,
-                        minWidth: !colapsed ? '12%' : 0
-                    }}
-                >
-                    <Box sx={{display:'flex', width:'100%', height: '25px', background:'rgba(0, 0, 0, 0.3)'}}>
-                        <IconButton size="small" onClick={()=> setColapsed(p => !p)}>
-                            {colapsed
-                                ? <ExpandMore sx={{ color: '#aaa', fontSize: 14 }} />
-                                : <ExpandLess sx={{ color: '#aaa', fontSize: 14 }} />
-                            }
-                        </IconButton>
-                    </Box>
-                    { !colapsed && select &&
-                        <Box sx={{px: 0, pb: 1}}>
-                            <ToggleInput
-                                style={{height: 12}}
-                                value={activeCat}
-                                items={category}
-                                onChange={setActiveCat}
-                            />
-                            <Box sx={{display: 'flex', flexDirection: 'column', pt: 2}}>
-                                { activeCat === 'size' && <Size /> }
-                                { activeCat === 'position' && <Position /> }
-                                { activeCat === 'layer' && <Layer /> }
-                            </Box>
-                        </Box>
-                    }
-                </div>
-            )}
-        </>
+    return (
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+            {activeCat === 'size' && <Size />}
+            {activeCat === 'layer' && <Layer />}
+        </Box>
     );
 }

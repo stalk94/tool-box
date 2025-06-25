@@ -1,15 +1,28 @@
 import React, { useState } from 'react';
 import { Paper, IconButton, Box, Typography, Button } from '@mui/material';
+import { TextInput, CheckBoxInput, NumberInput, SliderInput, ToggleInput } from 'src/index';
 import { Close, DragIndicator, ExpandMore, ExpandLess, Code, } from '@mui/icons-material';
 import { editorContext } from "./context";
-import { AiOutlinePushpin } from "react-icons/ai";
-import { IoMove } from "react-icons/io5";
+import { RiRulerLine } from "react-icons/ri";
+import { TbScanPosition } from "react-icons/tb";
+import { PiCodeBlockFill } from "react-icons/pi";
+import Settings from './utils/Settings';
 import { formatJsx } from './modules/export/utils';
+
+
+const category = [{
+    id: 'layer',
+    label: <PiCodeBlockFill />
+},{
+    id: 'size',
+    label: <RiRulerLine />
+}];
 
 
 
 export default function InspectorPanel ({ data, onClose }) {
     const refEditor = React.useRef({data: {}, call: (editObject)=> console.log(editObject)});
+    const [activeCat, setActiveCat] = React.useState<'size'|'layer'>('size');
     const [mod, setMod] = useState<'json'|'render'>('json');
     const [cache, setCache] = useState<string>();
     const renderRef = React.useRef<HTMLDivElement>(null);
@@ -23,7 +36,7 @@ export default function InspectorPanel ({ data, onClose }) {
         zIndex: 1500,
         width: '100%',
         maxHeight: '40vh',
-        background: '#1e1e1e',
+        background: '#66666612',
         color: 'white',
         overflow: 'auto',
         display: 'flex',
@@ -120,26 +133,33 @@ export default function InspectorPanel ({ data, onClose }) {
                     borderTop: '1px solid #5555559d',
                 }}
             >
+                <IconButton size="small" onClick={() => editorContext.inspector.colapsed.set((collapsed) => !collapsed)}>
+                    {!state?.colapsed
+                        ? <ExpandMore sx={{ color: '#aaa', fontSize: 14 }} />
+                        : <ExpandLess sx={{ color: '#aaa', fontSize: 14 }} />
+                    }
+                </IconButton>
                 <Box sx={{ display: 'flex',  ml:'auto' }}>
-                    <IconButton size="small" onClick={() => editorContext.inspector.colapsed.set((collapsed)=> !collapsed)}>
-                        {!state?.colapsed
-                            ? <ExpandMore sx={{ color: '#aaa', fontSize:14 }} />
-                            : <ExpandLess sx={{ color: '#aaa', fontSize:14 }} />
-                        }
-                    </IconButton>
+                    <ToggleInput
+                        style={{ height: 24 }}
+                        styles={{
+                            button: {
+                                border: 'none',
+                                maxWidth: 45
+                            }
+                        }}
+                        value={activeCat}
+                        items={category}
+                        onChange={setActiveCat}
+                    />
                 </Box>
             </Box>
 
             
-            {state?.colapsed && (
-                <>
-                    <div ref={renderRef}/>
-                    { mod === 'json' &&
-                        <div>
-
-                        </div>
-                    }
-                </>
+            { state?.colapsed && (
+                <Settings 
+                    activeCat={activeCat}
+                />
             )}
         </Paper>
     );

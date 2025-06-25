@@ -24,7 +24,7 @@ import RightBar from './utils/Right-bar';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
 import inputsIndex from 'public/export/index';
-import { useKeyboardListener } from './helpers/hooks';
+import { useKeyboardListener, story } from './helpers/hooks';
 import { setPadding } from './helpers/hotKey';
 import './modules/index';
 import "../style/edit.css";
@@ -88,8 +88,8 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         );
     }
     const addBlockToGrid = (data: BlockData) => {
-        const newid =  `cell-${Date.now()}`;
-
+        const newid = `cell-${Date.now()}`;
+        
         Object.keys(data.layouts).forEach((breackpoint: 'lg'|'md'|'sm'|'xs') =>
             editorContext.layouts[breackpoint]?.set((prev) => {
                 const layout = data.layouts[breackpoint];
@@ -214,7 +214,15 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         setActiveDragElement(null); // очистка
     }
     const handleKeyboard =(e: KeyboardEvent)=> {
-        if (e.ctrlKey && e.key.toLowerCase() === 'c') {
+        const isMac = navigator.platform.toUpperCase().includes('MAC');
+        const ctrlKey = isMac ? e.metaKey : e.ctrlKey;
+
+        if (ctrlKey && e.key.toLowerCase() === 'z') {
+            e.preventDefault();
+            if (e.shiftKey) story.redo();
+            else story.undo();
+        }
+        else if (ctrlKey && e.key.toLowerCase() === 'c') {
             const select = infoSlice.select.content?.get();
 
             if(select) {
@@ -223,7 +231,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                 enqueueSnackbar('скопирован', {variant: 'default'});
             }
         }
-        else if (e.ctrlKey && e.key.toLowerCase() === 'v') {
+        else if (ctrlKey && e.key.toLowerCase() === 'v') {
             if(bufferSlice.type.get() === 'component') {
                 const curCell = editorContext.currentCell.get(); 
                 const clone = bufferSlice.data.get(true);
@@ -243,9 +251,12 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
     }
 
     useKeyboardListener((key: string)=> {
+        if(key === 'NumLock') editorContext.lock.set((p)=> p = !p);
+        
         const select = infoSlice.select.content.get();
         if (!select) return;
 
+        
         if(key === 'ArrowUp') {
             setPadding('Top', select, 'decrement');
         }
@@ -258,9 +269,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         }
         else if(key === 'ArrowRight') {
             setPadding('Left', select, 'increment');
-        }
-        else if(key === 'CapsLock') {
-            editorContext.lock.set((p)=> p = !p);
         }
     });
     React.useEffect(()=> {
