@@ -63,7 +63,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
         ...otherProps 
     } = props;
     const selected = infoSlice.select.content.use();
-    
+    const isHorizontal = otherProps.orientation === 'horizontal' ? true : false;
 
     const handleBlur = (e) => {
         const newText = e.target.innerText;
@@ -124,7 +124,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
             sharedEmmiter.off('degidratation.' + dataId, handler);
         }
     }, [props]);
-
+    
 
     return (
         <span
@@ -132,14 +132,14 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
             data-id={dataId}
             data-type='Divider'
             style={{
-                minHeight: !fullWidth ? '22px' : '14px',
+                minHeight: !isHorizontal ? '22px' : '14px',
                 minWidth: '14px',
-                width: fullWidth && '100%',
+                width: isHorizontal && '100%',
+                height: '100%',
                 paddingTop: !isChildren && '4px'
             }}
         >
             <Divider
-                orientation={fullWidth ? 'horizontal' : 'vertical'}
                 variant={variant}
                 flexItem={fullWidth}
                 sx={{
@@ -155,7 +155,7 @@ export const DividerWrapper = React.forwardRef((props: DividerWrapperProps, ref)
                         contentEditable={globalThis.EDITOR && selected?.props?.['data-id'] === dataId}
                         suppressContentEditableWarning
                         onBlur={handleBlur}
-                        style={!fullWidth ? {
+                        style={!isHorizontal ? {
                             writingMode: 'vertical-rl',
                             transform: 'rotate(180deg)',
                         } : {}}

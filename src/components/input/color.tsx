@@ -196,26 +196,6 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
         navigator.clipboard.writeText(inputValue);
     }
 
-    const renderTriggerBox = (
-        <Box
-            onClick={(e) => {
-                variant === 'popup'
-                    ? !props.disabled && setAnchorEl(e.currentTarget)
-                    : !props.disabled && setModalOpen(true);
-            }}
-            sx={{
-                width: props?.style?.height ?? 28,
-                height: props?.style?.height ?? 26,
-                borderRadius: 1,
-                background: inputValue,
-                cursor: 'pointer',
-                border: `1px solid ${theme.palette.divider}`,
-                marginLeft: 1,
-                marginRight: 1,
-            }}
-        />
-    );
-
     React.useEffect(() => {
         if (value && isMounted.current) {
             setInputValue(String(value));
@@ -229,7 +209,22 @@ export default function ColorPicker({value='rgba(255, 0, 0, 1)', onChange, showC
 
     return (
         <InputPaper {...props}>
-            { renderTriggerBox }
+            <Box
+                onClick={(e) => {
+                    variant === 'popup'
+                        ? !props.disabled && setAnchorEl(e.currentTarget)
+                        : !props.disabled && setModalOpen(true);
+                }}
+                sx={{
+                    width: '10%',
+                    height: '70%',
+                    borderRadius: 1,
+                    background: inputValue,
+                    cursor: 'pointer',
+                    marginLeft: 1,
+                    marginRight: 2,
+                }}
+            />
 
             <InputBaseCustom
                 {...props}

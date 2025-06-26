@@ -129,7 +129,7 @@ export const components: ThemeOptions = {
             styleOverrides: {
                 paper: ({ theme }) => ({
                     marginTop: 3,
-                    marginLeft: -20,
+                    marginLeft: -10,
                     //marginRight: -10,
                     backgroundColor: theme.palette?.menu?.main,
                     //backdropFilter: 'blur(14px)',

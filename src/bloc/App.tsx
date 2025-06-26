@@ -263,8 +263,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             setPadding('Top', select, 'increment');
         }
         else if(key === 'ArrowLeft') {
-            if(select.props.fullWidth) setPadding('Right', select, 'increment');
-            else setPadding('Left', select, 'decrement');
+            setPadding('Left', select, 'decrement');
         }
         else if(key === 'ArrowRight') {
             setPadding('Left', select, 'increment');

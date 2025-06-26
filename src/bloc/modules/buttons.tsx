@@ -63,6 +63,7 @@ export const IconButtonWrapper = React.forwardRef((props: IconButtonWrapperProps
             onClick={()=> {
                 sharedEmmiter.emit('event', {
                     id: dataId,
+                    dataGroup,
                     type: 'onClick'
                 });
             }}
@@ -115,6 +116,7 @@ export const ButtonWrapper = React.forwardRef((props: ButtonWrapperProps, ref) =
             onClick={()=> {
                 sharedEmmiter.emit('event', {
                     id: dataId,
+                    dataGroup,
                     type: 'onClick'
                 });
             }}

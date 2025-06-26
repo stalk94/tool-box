@@ -1,5 +1,5 @@
 import React from 'react';
-import { Breadcrumbs, Typography, useMediaQuery } from '@mui/material';
+import { Breadcrumbs, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Home } from '@mui/icons-material';
 

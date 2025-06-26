@@ -7,7 +7,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CalendarMonth, AccessTime } from '@mui/icons-material';
 import { InputPaper } from './atomize';
-
+import { StylesProps } from './type';
 
 export type DateTimeInputProps = {
     value?: string;
@@ -17,6 +17,7 @@ export type DateTimeInputProps = {
     format?: string;
     placeholder?: string;
     disabled?: boolean;
+    styles?: StylesProps
 }
 
 
@@ -45,13 +46,19 @@ export default function DateTimeInput({
             variant: 'standard',
             InputProps: {
                 disableUnderline: true,
-                sx: { textAlign: 'center', pl:1 }
+                sx: { 
+                    textAlign: 'center', 
+                    pl: 1,
+                    fontSize: '0.9rem',
+                    ...props?.sx?.['& input']
+                }
             },
             sx: {
+                '& input': {
+                    fontSize: '0.9rem',
+                },
                 '& input::placeholder': { 
-                    color: theme.palette.input.placeholder,
-                    opacity: 1,
-                    fontStyle: theme.mixins.input.fontStyle,
+                    fontSize: '0.9rem',
                     ...props?.styles?.placeholder
                  },
             }
@@ -97,7 +104,10 @@ export default function DateTimeInput({
                 >
                     <IconButton 
                         disabled={disabled} 
-                        sx={{color: theme.palette.action.active, ml:0.2, ...props?.styles?.icon}}
+                        sx={{
+                            ml: 0.2, 
+                            ...props?.styles?.icon
+                        }}
                     >
                         { icon }
                     </IconButton>

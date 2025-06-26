@@ -1,8 +1,8 @@
 import React from 'react';
-import { Typography, IconButton, Box } from '@mui/material';
+import { IconButton, Box } from '@mui/material';
 import { Accordion, AccordionTab } from 'primereact/accordion';
-import { styled, useTheme } from '@mui/system';
-import { ExpandMore, ExpandLess } from '@mui/icons-material';
+import { useTheme } from '@mui/system';
+import { ExpandMore } from '@mui/icons-material';
 
 
 type AccordionItem = {

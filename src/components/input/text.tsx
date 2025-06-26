@@ -4,6 +4,7 @@ import Divider from '@mui/material/Divider';
 import { InputBaseProps } from '@mui/material/InputBase';
 import { InputPaper, InputBaseCustom  } from './atomize';
 import { safeOmitInputProps } from '../hooks/omit';
+import { StylesProps } from './type';
 
 
 export type BaseInputProps = {
@@ -15,10 +16,13 @@ export type BaseInputProps = {
     placeholder?: string
     label?: string
     children?: React.ReactNode
+    variant?: "fullWidth" | "inset" | "middle"
+    value?: string | number
     onChange?: (value: string | number)=> void
     success?: boolean
     borderStyle?: 'dashed' | 'solid' | 'dotted'
     divider?: 'none' | 'dashed' | 'solid' | 'dotted'
+    styles?: StylesProps
 } & InputBaseProps
 
 
@@ -28,14 +32,15 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number | string>('');
 
-    const useStyleIcon =()=> {
+
+    const styleIcon = React.useMemo(()=> {
         const style = props?.styles?.icon;
 
         return style ?? {
             color: alpha(theme.palette.action.active, 0.5),
         }
-    }
-    const useFiltre =(value: string|number)=> {
+    }, []);
+    const useFiltre = React.useCallback((value: string | number) => {
         if(props.type === 'text' || props.type === 'number' || props.type === 'password') {
             if(props.type === 'number' && !isNaN(+value)) {
                 setInputValue(+value);
@@ -46,8 +51,8 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
                 onChange && onChange(value);
             }
         }
-    }
-    const filteredProps =()=> {
+    }, []);
+    const filteredProps = React.useMemo(()=> {
         const clone = safeOmitInputProps(props, [
             'borderStyle',
             'success',
@@ -61,7 +66,7 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
 
         if(clone.type !== 'password') delete clone.type;
         return clone;
-    }
+    }, [props]);
     React.useEffect(()=> {
         if (typeof window === 'undefined') return;
         
@@ -76,19 +81,23 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
             <IconButton
                 disabled={props.disabled}
                 sx={{
-                    ...useStyleIcon(),
+                    ...styleIcon,
                     '&:hover': {
                         backgroundColor: 'transparent',
                     },
                 }}
             >
                 { left }
-                { props.divider!=='none' && 
+                { props.divider !== 'none' && 
                     <Divider 
                         flexItem 
                         orientation="vertical" 
                         variant='fullWidth' 
-                        sx={{borderStyle: props.divider, pl:0.6}} /> 
+                        sx={{
+                            borderStyle: props.divider, 
+                            pl: 0.6
+                        }} 
+                    /> 
                     }
             </IconButton>
            
@@ -96,13 +105,17 @@ export default function TextInput({ value, left, right, onChange, placeholder, v
                 value={inputValue}
                 placeholder={placeholder}
                 onChange={useFiltre}
-                { ...filteredProps() }
+                { ...filteredProps }
             />
 
             {right &&
                 <React.Fragment>
-                    {variant || theme.mixins.input.variant &&
-                        <Divider flexItem orientation="vertical" variant={variant ?? theme.mixins.input.variant} />
+                    {variant  &&
+                        <Divider 
+                            flexItem 
+                            orientation="vertical" 
+                            variant={variant} 
+                        />
                     }
                     { right }
                 </React.Fragment>

@@ -1,6 +1,5 @@
-import colorCustom from './color.json';
+import { PaletteOptions } from "@mui/material/styles";
 
-/** порт цветов из taskade.com */
 export const palleteStd = {
     input: {
         main: '#2C3035',
@@ -94,9 +93,9 @@ const transform =()=> {
     return result;
 }
 
-export const taskadePallete = {
+export const taskadePallete: { palette: PaletteOptions } = {
     palette: {
         mode: "dark",
-        ...transform()
+        ...palleteStd
     }
 }

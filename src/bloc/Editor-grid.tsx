@@ -1,6 +1,6 @@
 import React from "react";
 import { useSnackbar } from 'notistack';
-import { LayoutCustom, BlockData } from './type';
+import { LayoutCustom, BlockData, ComponentSerrialize } from './type';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { editorContext, infoSlice, cellsSlice, settingsSlice } from "./context";
 import useContextMenu from '@components/context-main';
@@ -11,16 +11,17 @@ import { findFreeSpot, stackHorizont, stackVertical, getNearestLayout } from './
 import { DroppableCell, DroppableGrid } from './Dragable';
 import Container from '@mui/material/Container';
 import { specialComponents } from './config/category';
-import { ThemeProvider, CssBaseline } from '@mui/material';
+import { ThemeProvider, Paper } from '@mui/material';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from './utils/Rullers';
 import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
 import { db } from "./helpers/export";
+import registr from './helpers/shared';
 
 const themes = { taskade: taskadeTheme, light: lightTheme, dark: darkTheme };
 const ResponsiveGridLayout = WidthProvider(Responsive);
-const margin: [number, number] = [5, 5];
+const margin: [number, number] = [3, 3];
 
 
 export default function ({ desserealize }) {
@@ -195,6 +196,12 @@ export default function ({ desserealize }) {
     }
     
     const currentLayout = React.useMemo(()=> layouts[currentBreakpoint], [currentBreakpoint, layouts]);
+    const initBlock = React.useCallback((cell: LayoutCustom, content: ComponentSerrialize[]) => {
+        const nameGroup = cell?.props?.["data-group"] ?? cell.i;
+        registr.init(nameGroup, cell);
+        
+        return registr.inject(content, cell);
+    }, [currentLayout]);
     const { menu, handleOpen } = useContextMenu([
         {
             label: <div style={{ color: 'silver', fontSize: 14 }}>Сохранить</div>,
@@ -212,6 +219,7 @@ export default function ({ desserealize }) {
             onClick: (id) => delCellData(id, true),
         },
     ]);
+
 
     React.useEffect(() => {
         console.blue('grid render');
@@ -289,7 +297,7 @@ export default function ({ desserealize }) {
                             className="GRID-EDITOR"
                             layouts={{ [currentBreakpoint]: currentLayout }}
                             breakpoints={{ lg: 1100, md: 950, sm: 590, xs: 480 }}
-                            cols={{ lg: 12, md: 10, sm: 8, xs: 6 }}
+                            cols={{ lg: 24, md: 16, sm: 12, xs: 8 }}
                             rowHeight={settings.rowHeight}
                             compactType={settings.gridCompact ? undefined : null}       // Отключение автоматической компоновки
                             preventCollision={settings.gridCompact ? false : true}
@@ -302,10 +310,11 @@ export default function ({ desserealize }) {
                             resizeHandles={['se', 'ne', 'sw', 'nw']}
                         >
                             { currentLayout.map((layer) => {
-                                const content = cells[layer.i];
+                                const content = initBlock(layer, cells[layer.i]);
                                 
                                 return (
-                                    <div
+                                    <Paper
+                                        elevation={layer?.props?.elevation ?? 0}
                                         onClick={(e) => handleClickCell(e, layer)}
                                         onContextMenu={(e) => {
                                             handleClickCell(e, layer);
@@ -315,18 +324,18 @@ export default function ({ desserealize }) {
                                         key={layer.i}
                                         className={layer?.props?.classNames}
                                         style={{
+                                            background: 'none',
                                             ...layer?.props?.style,
                                             overflowX: 'hidden',
                                             overflowY: 'auto',
                                             border: `1px dashed ${curCell?.i === layer.i ? '#8ffb5030' : '#fe050537'}`,
-                                            background: curCell?.i === layer.i && 'rgba(147, 243, 68, 0.003)',
                                             height: '100%',
                                             display: 'inline-flex',
                                             width: '100%',
                                             flexWrap: 'wrap',
                                             alignItems: 'stretch',
                                             alignContent: 'flex-start',
-                                            boxSizing: 'border-box'
+                                            boxSizing: 'border-box',
                                         }}
                                     >
                                         <DroppableCell key={layer.i} id={layer.i}>
@@ -354,14 +363,14 @@ export default function ({ desserealize }) {
                                         </DroppableCell>
 
                                         {/* ANCHOR - Вне редактора (!non correct) */}
-                                        {(!EDITOR && Array.isArray(layer.content)) &&
-                                            layer.content.map((component, index) =>
+                                        {(!EDITOR && Array.isArray(content)) &&
+                                            content.map((component, index) =>
                                                 <React.Fragment key={component.props['data-id']}>
                                                     { desserealize(component) }
                                                 </React.Fragment>
                                             )
                                         }
-                                    </div>
+                                    </Paper>
                                 );
                             })}
                         </ResponsiveGridLayout>

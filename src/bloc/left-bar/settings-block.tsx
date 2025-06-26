@@ -1,31 +1,42 @@
 import React from "react";
 import { Box, Typography, Divider, Chip } from "@mui/material";
 import { editorContext, infoSlice, cellsSlice } from "../context";
-import { TextInput, CheckBoxInput, NumberInput, SliderInput, ToggleInput } from 'src/index';
+import { TextInput, CheckBoxInput, NumberInput, SliderInput, ToggleInput, SelectInput, ColorInput } from 'src/index';
+import { CgBorderStyleSolid } from "react-icons/cg";
+import { RxBorderDotted } from "react-icons/rx";
+import { RxBorderDashed } from "react-icons/rx";
+import { RxValueNone } from "react-icons/rx";
 
-
-
+// backdropFilter: 'blur(4px)'
 export default function ({ category }) {
+    const types = ['standart', 'form', ''];
     const select = editorContext.currentCell.use();
 
+    const mergeProps = (key: string, value: any) => {
+        const clone = structuredClone(editorContext.currentCell.get());
+        if (!clone) return;
+
+        if (!clone.props) clone.props = { [key]: value };
+        else if(typeof value !== 'object') clone.props[key] = value;
+        else clone.props[key] = { ...clone.props[key], ...value };
+
+        ['lg', 'md', 'sm', 'xs'].forEach((breackpoint) =>
+            editorContext.layouts[breackpoint]?.set((prev) => {
+                const findex = prev.findIndex((lay)=> lay.i === select.i);
+                if(findex !== -1) prev[findex].props = clone.props;
+            })
+        );
+        editorContext.currentCell.set(clone);
+    }
     const setMetaName = React.useCallback((name: string) => {
         if (!select) return;
         if (name.length < 3) return;
 
-        ['lg', 'md', 'sm', 'xs'].forEach((breackpoint) => {
-            const c = editorContext.layouts[breackpoint].get();
-            const findIndex = c.findIndex((l) => l.i === select.i);
-            if (findIndex !== -1) {
-                editorContext.layouts[breackpoint][findIndex].set((l) => {
-                    l.metaName = name;
-                    return l;
-                });
-            }
-        });
+        mergeProps('data-group', name);
     }, [select])
+    
 
-
-    return(
+    if (category === 'all') return (
         <>
             <TextInput
                 disabled={!select.i}
@@ -33,8 +44,123 @@ export default function ({ category }) {
                 position='column'
                 labelSx={{ fontSize: 14 }}
                 style={{ maxHeight: 14, height: 16 }}
-                value={select?.metaName ?? select.i}
+                value={select?.props?.["data-group"] ?? select.i}
                 onChange={setMetaName}
+            />
+            <SelectInput
+                label='type:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                style={{ maxHeight: 14, height: 16 }}
+                value={select?.props?.type ?? 'standart'}
+                items={types.map((v)=> ({id: v, label:v}))}
+                onChange={(val)=> mergeProps('type', val.id)}
+            />
+        </>
+    );
+    else return (
+        <>
+            <SliderInput
+                label='elevation:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                max={12}
+                min={0}
+                value={select?.props?.elevation ?? 0}
+                onChange={(val)=> mergeProps('elevation', val)}
+            />
+            <SliderInput
+                label='padding:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                max={64}
+                min={0}
+                value={select?.props?.style?.padding ?? 0}
+                onChange={(val)=>
+                    mergeProps('style', {...select?.props?.style, padding: val})
+                }
+            />
+            <SliderInput
+                label='round:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                max={44}
+                min={0}
+                value={select?.props?.style?.borderRadius ?? 0}
+                onChange={(val)=>
+                    mergeProps('style', {...select?.props?.style, borderRadius: val})
+                }
+            />
+            <ColorInput
+                label='background:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                max={12}
+                min={0}
+                value={select?.props?.style?.backgroundColor ?? '#00000000'}
+                onChange={(val)=> {
+                    mergeProps('style', {...select?.props?.style, backgroundColor: val})}
+                }
+            />
+            <ToggleInput
+                label='blur:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                style={{ height: 26 }}
+                value={select?.props?.style?.backdropFilter ?? 'none'}
+                onChange={(val) =>
+                    mergeProps('style', {...select?.props?.style, backdropFilter: val})
+                }
+                items={[
+                    { id: 'none', label: <span style={{ fontSize: '14px' }}><RxValueNone /></span> },
+                    { id: 'blur(4px)', label: <span style={{ fontSize: '12px' }}>x4</span> },
+                    { id: 'blur(8px)', label: <span style={{ fontSize: '12px' }}>x8</span> },
+                    { id: 'blur(16px)', label: <span style={{ fontSize: '12px' }}>x16</span> }
+                ]}
+            />
+
+            <Divider variant='fullWidth' sx={{mt:2}}>
+                <Typography variant='caption'>
+                    border style
+                </Typography>
+            </Divider>
+            <ToggleInput
+                label='style:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                style={{ height: 26 }}
+                value={select?.props?.style?.borderStyle ?? 'none'}
+                onChange={(val) =>
+                    mergeProps('style', {...select?.props?.style, borderStyle: val})
+                }
+                items={[
+                    { id: 'none', label: <span style={{ fontSize: '14px' }}><RxValueNone /></span> },
+                    { id: 'solid', label: <span style={{ fontSize: '14px' }}><CgBorderStyleSolid/></span> },
+                    { id: 'dashed', label: <span style={{ fontSize: '14px' }}><RxBorderDashed/></span> },
+                    { id: 'dotted', label: <span style={{ fontSize: '14px' }}><RxBorderDotted/></span> }
+                ]}
+            />
+            <ColorInput
+                label='color:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                max={12}
+                min={0}
+                value={select?.props?.style?.borderColor ?? '#00000000'}
+                onChange={(val)=> {
+                    mergeProps('style', {...select?.props?.style, borderColor: val})}
+                }
+            />
+            <SliderInput
+                label='width:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                max={12}
+                min={0}
+                value={select?.props?.style?.borderWidth ?? 0}
+                onChange={(val)=>
+                    mergeProps('style', {...select?.props?.style, borderWidth: val})
+                }
             />
         </>
     );

@@ -42,11 +42,11 @@ registerComponent({
     type: 'Button',
     component: ButtonWrapper,
     defaultProps: {
+        fullWidth: true,
         children: 'Button',
         variant: 'outlined',
         size: 'medium',
         color: 'primary',
-        fullWidth: true,
         startIcon: 'none',
         endIcon: 'none',
         style: {}
@@ -73,11 +73,12 @@ registerComponent({
     type: 'TextInput',
     component: TextInputWrapper,
     defaultProps: {
+        fullWidth: true,
         label: 'label',
+        name: 'text',
         position: 'column',
         placeholder: 'ввод',
         divider: 'none',
-        fullWidth: true,
         leftIcon: 'none',
         min: 0,
         max: 0,
@@ -94,11 +95,14 @@ registerComponent({
     type: 'Number',
     component: NumberInputWrapper,
     defaultProps: {
+        fullWidth: true,
         label: 'label',
+        name: 'number',
         position: 'column',
         placeholder: 'ввод number',
-        fullWidth: true,
-        styles: {} satisfies InputStyles,
+        min: -10000,
+        max: 10000,
+        styles: {},
         labelStyle: {
             fontSize: 14,
         }
@@ -110,10 +114,11 @@ registerComponent({
     type: 'Time',
     component: DateInputWrapper,
     defaultProps: {
+        fullWidth: true,
         label: 'label',
+        name: 'time',
         position: 'column',
         type: 'time',
-        fullWidth: true,
         styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
@@ -126,10 +131,11 @@ registerComponent({
     type: 'Date',
     component: DateInputWrapper,
     defaultProps: {
+        fullWidth: true,
         label: 'label',
+        name: 'date',
         position: 'column',
         type: 'date',
-        fullWidth: true,
         styles: {} satisfies InputStyles,
         labelStyle: {
             fontSize: 14,
@@ -142,9 +148,14 @@ registerComponent({
     type: 'Slider',
     component: SliderInputWrapper,
     defaultProps: {
-        label: 'label',
-        position: 'column',
         fullWidth: true,
+        marks: false,
+        step: 1,
+        min: 0,
+        max: 100,
+        label: 'label',
+        name: 'slider',
+        position: 'column',
         leftIcon: 'none',
         rightIcon: 'none',
         labelStyle: {
@@ -158,9 +169,9 @@ registerComponent({
     type: 'ToggleButtons',
     component: ToggleInputWrapper,
     defaultProps: {
+        fullWidth: true,
         label: 'label',
         position: 'column',
-        fullWidth: true,
         items: [
             { id: '1', label: 'test-1' },
             { id: '2', label: 'test-2' },
@@ -176,9 +187,10 @@ registerComponent({
     type: 'Switch',
     component: SwitchInputWrapper,
     defaultProps: {
-        label: 'label',
-        position: 'column',
         fullWidth: true,
+        label: 'label',
+        name: 'switch',
+        position: 'column',
         labelStyle: {
             fontSize: 14,
         }
@@ -192,6 +204,7 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         label: 'label',
+        name: 'check',
         position: 'column',
         labelStyle: {
             fontSize: 14,
@@ -204,9 +217,10 @@ registerComponent({
     type: 'Select',
     component: SelectInputWrapper,
     defaultProps: {
-        label: 'label',
-        position: 'column',
         fullWidth: true,
+        label: 'label',
+        name: 'select',
+        position: 'column',
         items: [
             { id: '1', label: 'test-1' },
             { id: '2', label: 'test-2' },
@@ -222,9 +236,10 @@ registerComponent({
     type: 'AutoComplete',
     component: AutoCompleteInputWrapper,
     defaultProps: {
-        label: 'label',
-        position: 'column',
         fullWidth: true,
+        label: 'label',
+        name: 'select',
+        position: 'column',
         options: [
             { id: '1', label: 'пики' },
             { id: '2', label: 'стволы' },
@@ -240,9 +255,10 @@ registerComponent({
     type: 'File',
     component: FileInputWrapper,
     defaultProps: {
-        label: 'label',
-        position: 'column',
         fullWidth: true,
+        label: 'label',
+        name: 'file',
+        position: 'column',
         labelStyle: {
             fontSize: 14,
         }
@@ -435,6 +451,7 @@ registerComponent({
     defaultProps: {
         fullWidth: true,
         isChildren: false,
+        orientation: 'horizontal',
         variant: 'fullWidth',
         'border-style': 'solid',
         'border-color': null,

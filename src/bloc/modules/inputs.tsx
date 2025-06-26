@@ -34,6 +34,18 @@ type TextWrapperProps = TextInputProps & {
     max?: number
     multiline?: boolean
 }
+type SliderWrapperProps = {
+    name: string
+    'data-id': number
+    labelStyle?: SxProps
+    label?: string
+    position: 'left' | 'right' | 'column'
+    leftIcon?: string
+    min?: number 
+    max?: number
+    step?: number 
+    marks?: boolean
+}
 
 
 
@@ -42,6 +54,7 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
         children, 
         'data-id': dataId, 
         'data-group': dataGroup,
+        name,
         labelStyle,
         leftIcon,
         style,
@@ -93,6 +106,7 @@ export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                     sharedEmmiter.emit('event', {
                         id: dataId,
                         dataGroup,
+                        name,
                         type: 'onChange',
                         value: v
                     });
@@ -112,6 +126,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         'data-group': dataGroup,
         styles,
         style,
+        name,
         width,
         fullWidth,
         ...otherProps
@@ -157,6 +172,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                         id: dataId,
                         type: 'onChange',
                         dataGroup,
+                        name,
                         value: v
                     });
                 }}
@@ -170,6 +186,7 @@ export const NumberInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
+        name,
         ['data-id']: dataId, 
         'data-group': dataGroup,
         labelStyle,
@@ -218,6 +235,7 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                     sharedEmmiter.emit('event', {
                         id: dataId,
                         dataGroup,
+                        name,
                         type: 'onChange',
                         value: v
                     });
@@ -228,9 +246,9 @@ export const DateInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
     );
 });
 
-export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
+export const SliderInputWrapper = React.forwardRef((props: SliderWrapperProps, ref) => {
     const { 
-        children, 
+        name,
         ['data-id']: dataId, 
         'data-group': dataGroup,
         labelStyle,
@@ -267,7 +285,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
         }
     }, [props]);
 
-
+    
     return (
         <div 
             ref={ref}
@@ -284,6 +302,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     sharedEmmiter.emit('event', {
                         id: dataId,
                         type: 'onChange',
+                        name,
                         dataGroup,
                         value: v
                     });
@@ -297,6 +316,7 @@ export const SliderInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const [state, setState] = React.useState(false);
     const { 
+        name,
         children, 
         ['data-id']: dataId, 
         'data-group': dataGroup,
@@ -348,6 +368,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
                     sharedEmmiter.emit('event', {
                         id: dataId,
                         dataGroup,
+                        name,
                         type: 'onChange',
                         value: v
                     });
@@ -361,6 +382,7 @@ export const CheckBoxInputWrapper = React.forwardRef((props: TextWrapperProps, r
 export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
+        name,
         ['data-id']: dataId, 
         'data-group': dataGroup,
         labelStyle,
@@ -407,6 +429,7 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                     sharedEmmiter.emit('event', {
                         id: dataId,
+                        name,
                         dataGroup,
                         type: 'onChange',
                         value: v
@@ -421,6 +444,7 @@ export const SwitchInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
+        name,
         ['data-id']: dataId, 
         'data-group': dataGroup,
         labelStyle,
@@ -468,6 +492,7 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     sharedEmmiter.emit('event', {
                         id: dataId,
                         dataGroup,
+                        name,
                         type: 'onChange',
                         value: v
                     });
@@ -480,6 +505,7 @@ export const ToggleInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 
 export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
+        name,
         children, 
         ['data-id']: dataId, 
         'data-group': dataGroup,
@@ -528,6 +554,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                     sharedEmmiter.emit('event', {
                         id: dataId,
+                        name,
                         dataGroup,
                         type: 'onChange',
                         value: v
@@ -543,6 +570,7 @@ export const SelectInputWrapper = React.forwardRef((props: TextWrapperProps, ref
 export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
+        name,
         ['data-id']: dataId, 
         'data-group': dataGroup,
         labelStyle,
@@ -593,6 +621,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
                     sharedEmmiter.emit('event', {
                         id: dataId,
                         dataGroup,
+                        name,
                         type: 'onChange',
                         value: v
                     });
@@ -606,6 +635,7 @@ export const AutoCompleteInputWrapper = React.forwardRef((props: TextWrapperProp
 export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
     const { 
         children, 
+        name,
         ['data-id']: dataId, 
         'data-group': dataGroup,
         labelStyle,
@@ -654,6 +684,7 @@ export const FileInputWrapper = React.forwardRef((props: TextWrapperProps, ref) 
                     if(globalThis.EDITOR) triggerFlyFromComponent(String(dataId));
                     sharedEmmiter.emit('event', {
                         id: dataId,
+                        name,
                         dataGroup,
                         type: 'onChange',
                         value: v

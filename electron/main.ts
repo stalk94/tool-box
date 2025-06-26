@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, dialog, globalShortcut, screen } from 'electron';
+import { session, app, BrowserWindow, ipcMain, dialog, globalShortcut, screen } from 'electron';
 import { copyInitialDataOnce } from './utils/init';
 import { initDB, DB } from './utils/db';
 import { startLocalServer } from './utils/server';
@@ -49,6 +49,7 @@ const createWindow = () => {
 
 app.whenReady().then(async() => {
     startLocalServer(PORT);
+    session.defaultSession.clearCache();
     fs.mkdirSync(PROJECTS_DIR, { recursive: true });
     await initDB();
     copyInitialDataOnce();

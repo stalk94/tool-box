@@ -144,6 +144,7 @@ const propsInputAutocomplete = {
 }
 const propsInputSlider = {
     label: 'string',
+    marks: { type: 'switch' },
     position: ['none', 'column', 'left', 'right'],
     leftIcon: 'string',
     rightIcon: 'string',

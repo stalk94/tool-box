@@ -29,7 +29,6 @@ export const MarqueeText: React.FC = ({ children, variant, ...props }: MarqueeTe
                 sx={{
                     display: 'inline-block',
                     animation: 'marquee 4s linear infinite',
-                    //fontFamily: '"Roboto Condensed", Arial, sans-serif',
                     ...props.sx
                 }}
             >

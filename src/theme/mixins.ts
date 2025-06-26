@@ -1,3 +1,5 @@
+import { Mixins } from '@mui/material/styles';
+
 /**
  * стандартные паттерны стилевые паттерны  
  * -  надо добавить основные бордер радиусы  
@@ -10,11 +12,6 @@ export const mixins = {
         "@media (min-width:600px)": {
             padding: "20px",
         },
-    },
-    input: {
-        fontStyle: "italic",
-        variant: undefined,          //<undefined|"fullWidth"|"inset"|"middle"> 
-        alight: undefined           // <'center'|undefined>
     },
     scrollbar: {
         "&::-webkit-scrollbar": {

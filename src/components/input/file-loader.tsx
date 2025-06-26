@@ -1,5 +1,4 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { FileUpload, FileUploadHandlerEvent } from 'primereact/fileupload';
 import { get, set } from 'idb-keyval';
 import { InputPaper, InputBaseCustom  } from './atomize';
 import { Box, IconButton, Typography, useTheme, TextField, Button } from '@mui/material';

@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { CSSProperties } from 'react';
 import { InputBase, useTheme, InputBaseProps, InputLabel, InputLabelProps as InputLabelP, Box } from '@mui/material';
 import { alpha, lighten, styled, SxProps } from '@mui/system';
 
 
-
-export type PropsInputBaseCustom = InputBaseProps & {
+type BaseMuiProps = Omit<InputBaseProps, 'onChange'|'value'>;
+export type PropsInputBaseCustom = BaseMuiProps & {
     onChange: (value: string)=> void
+    value?: string | number
     styles?: {
         placeholder?: React.CSSProperties,
     }
@@ -17,6 +18,9 @@ export type PropsInputForm = {
     error?: boolean
     success?: boolean
     sx?: SxProps
+    style?: CSSProperties
+    multiline?: boolean
+    borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
     styles?: {
         form?: {
             borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
@@ -64,10 +68,10 @@ export function Label({ id, children, styles, sx }: InputLabelProps) {
                 mt: 'auto',
                 mb: 'auto',
                 opacity: 0.9,
-                color: theme.palette.input.label ??theme.palette.text.secondary,
+                //color: theme.palette.text.secondary,
                 fontFamily: '"Roboto Condensed", Arial, sans-serif',
                 ...sx,
-                ...transform()
+                //...transform()
             }}
         >
             { children }
@@ -87,7 +91,7 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
         if (props.error) return `1px ${border} ${theme.palette.error.dark}`;
         else if (props.success) return `1px ${border} ${theme.palette.success.dark}`;
         else return `1px ${border} ${editorBorderColor ?? colors.border}`;
-    }
+    };
     // цвет бордера при фокусе в зависимости от состояния (error, sucess, disabled)
     const useColorBorderFocus = () => {
         const colors = theme.palette.input;
@@ -95,7 +99,7 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
         if (props.error) return lighten(theme.palette.error.light, 0.2);
         else if (props.success) return lighten(theme.palette.success.light, 0.2);
         else return lighten(colors.border, 0.3);
-    }
+    };
     // цвет фона в зависимости от состояния (error, sucess, disabled)
     const useBackgroundColor = () => {
         const colors = theme.palette.input;
@@ -103,9 +107,9 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
 
         if (props.error) return alpha(theme.palette.error.light, 0.05);
         else if (props.success) return alpha(theme.palette.success.light, 0.05);
-        else if(styleBcg && styleBcg !== 'none') return styleBcg;
+        else if (styleBcg && styleBcg !== 'none') return styleBcg;
         else return colors.main;
-    }
+    };
     // цвет фона при фокусе  в зависимости от состояния (error, sucess, disabled)
     // ? можно сделать отключение выделения через глобал темы
     const useBackgroundColorFocus = () => {
@@ -115,31 +119,31 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
         if (props.error) return alpha(theme.palette.error.light, 0.2);
         else if (props.success) return alpha(theme.palette.success.light, 0.2);
         else return alpha(theme.palette.action.focus, opacity);
-    }
+    };
     // эксперементальная
-    const useElevation =()=> {
+    const useElevation = () => {
         const sx = {
             boxShadow: 0
-        }
+        };
 
-        if(elevation) {
-            if(Math.sign(elevation) === -1) {
+        if (elevation) {
+            if (Math.sign(elevation) === -1) {
                 const cur = Math.abs(elevation) * 0.07;
                 const curb = Math.abs(elevation) * 0.02;
-                sx.boxShadow = `inset 0px 0px 15px rgba(0, 0, 0, ${cur})`
+                sx.boxShadow = `inset 0px 0px 15px rgba(0, 0, 0, ${cur})`;
                 // + `, 0px 0px 7px rgba(255, 255, 255, ${curb})`
             }
             else {
                 const cur = elevation * 0.05;
                 const curb = elevation * 0.02;
-                sx.boxShadow = `0px 0px 15px rgba(0, 0, 0, ${cur})`
+                sx.boxShadow = `0px 0px 15px rgba(0, 0, 0, ${cur})`;
                 // + `, inset 0px 0px 15px rgba(255, 255, 255, ${curb})`
             }
         }
 
         return sx;
-    }
-    
+    };
+
 
     return (
         <AnimatedBox
@@ -173,47 +177,35 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
 
 /** Базовый инпут */
 export function InputBaseCustom({ value, onChange, type, styles, ...props }: PropsInputBaseCustom) {
-    const theme = useTheme();
-    const isMounted = React.useRef(false);
     const [v, setV] = React.useState(value);
     
-    const placeholderStyle = {
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-        fontWeight: 400,
-        fontSize: '0.9rem',         // ≈ 14px
-        //fontStyle: 'italic',
-        lineHeight: 1.43,
-        letterSpacing: '0.01071em',
-        ...styles?.placeholder
-    }
-    
-    const filtreProps =()=> {
-        delete props.borderStyle;
-        delete props.success;
-        delete props.toolVisible;
-        delete props.labelSx;
-        delete props.divider;
-        delete props.childrenSlate;
-        delete props.placeholderFont;
-        
-        return props;
-    }
-    const useChange = (newValue) => {
+    const filteredProps = React.useMemo(() => {
+        const {
+            borderStyle,
+            success,
+            toolVisible,
+            labelSx,
+            divider,
+            childrenSlate,
+            placeholderFont,
+            ...rest
+        } = props;
+
+        return rest;
+    }, [props]);
+    const useChange = (newValue: string) => {
         onChange && onChange(newValue);
-    };
+    }
     React.useEffect(()=> {
-        if (isMounted.current) {
-            setV(value);
-        } 
-        else {
-            isMounted.current = true;
-        }
+        if (typeof window === 'undefined') return;
+
+        setV(value);
     }, [value]);
-   
+    
     
     return (
         <InputBase
-            { ...filtreProps() }
+            { ...filteredProps }
             placeholder={props.placeholder}
             type={type}
             value={v}
@@ -231,20 +223,24 @@ export function InputBaseCustom({ value, onChange, type, styles, ...props }: Pro
                     background: 'transparent',
                     minHeight: 28,
                     padding: 0,
-                    //border: '1px solid red',
+                    fontSize: '0.9rem',
+                    ...props?.sx?.['& input']
                 },
-                '& input::placeholder, & textarea::placeholder': placeholderStyle,
+                '& input::placeholder, & textarea::placeholder': {
+                    fontWeight: 400,
+                    fontSize: '0.9rem',
+                    ...styles?.placeholder
+                },
                 "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {
                     display: "none",
                 },
                 "input[type=number]": {
                     MozAppearance: "textfield", // Убирает стрелки в Firefox
                 },
-                ...props.sx
             }}
             inputProps={{ 
-                style: { textAlign: theme.mixins.input.alight, resize: 'both', },
-                autoComplete: 'off',
+                style: { resize: 'both', },
+                autoComplete: 'off'
             }}
             onChange={(e) => useChange(e.target.value)}
         />

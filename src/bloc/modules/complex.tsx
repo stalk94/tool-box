@@ -170,6 +170,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
     );
 });
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
+    const lock = editorContext.lock.use();
     const [value, setValue] = React.useState(0);
     const { 
         'data-id': dataId, 
@@ -185,7 +186,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
         ...otherProps 
     } = props;
     const { width, height, container } = useComponentSizeWithSiblings(dataId);
-
+    
 
     const exportCode = (call) => {
         const code = exportedTabs(
@@ -247,14 +248,14 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
                         border: '1px solid transparent',
                         outline: 'none',
                     }}
-                    onClick={(e) => e.stopPropagation()}
+                    onClick={(e) => lock && e.stopPropagation()}
                     onBlur={(e) => {
                         e.currentTarget.style.border = '1px solid transparent';
                         e.currentTarget.style.background = 'none';
                         e.currentTarget.style.padding = '0px';
                         handleChangeEdit(index, e.currentTarget.innerText);
                     }}
-                    contentEditable={true}
+                    contentEditable={lock}
                     suppressContentEditableWarning
                     onFocus={(e) => {
                         e.currentTarget.style.padding = '5px';
@@ -269,7 +270,7 @@ export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
             else return items;
         });
     }
-    const parsedItems = React.useMemo(() => parse(), [items]);
+    const parsedItems = React.useMemo(() => parse(), [items, lock]);
     
 
     return (

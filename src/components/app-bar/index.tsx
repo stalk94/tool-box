@@ -1,5 +1,5 @@
 import React from "react";
-import { AppBar, Toolbar, Box, useTheme, AppBarProps, alpha } from "@mui/material";
+import { AppBar, Toolbar, Box, useTheme, AppBarProps } from "@mui/material";
 import LinearNavigationDesktop from './linear-desktop';
 import MobailBurgerNavigation from './mobail-burger';
 

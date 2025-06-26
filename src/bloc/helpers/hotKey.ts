@@ -3,29 +3,46 @@ import { updateComponentProps } from './updateComponentProps';
 import { settingsSlice, infoSlice } from "../context";
 
 
+
 export function setPadding(side: 'Top'|'Left'|'Right', component: ComponentSerrialize, direction: 'increment' | 'decrement') {
 	const step = settingsSlice.panel.stepSize.get();
     const clone = structuredClone(component);
 	const style = clone.props.style ?? {};
 	const key = `margin${side}` as keyof React.CSSProperties;
+	const reverseSideMap: Record<typeof side, 'Top' | 'Left' | 'Right'> = {
+        Top: 'Top', // если добавишь Bottom — можно расширить
+        Left: 'Right',
+        Right: 'Left',
+    };
+    const reverseSide = reverseSideMap[side];
+    const reverseKey = `margin${reverseSide}` as keyof React.CSSProperties;
 
 	const raw = style[key];
 	let current = 0;
     let usePercent = false;
-
+	
 	if (typeof raw === 'string') {
 		usePercent = raw.trim().endsWith('%');
 		current = parseFloat(raw);
 	}
     else if (typeof raw === 'number') {
-		if(component.props.fullWidth) current = 0;
+		if (component.props.fullWidth) current = 0;
 		else current = raw;
 	}
+	if (component.props.fullWidth) usePercent = true;
+		
 	
-	// сделать множитель incr/decr
-	const next = direction === 'increment' ? current + step : current - step;
-	style[key] = component.props.fullWidth ? `${next}%` : next;
+	let next = direction === 'increment' ? current + step : current - step;
+	delete style[key];
+	delete style[reverseKey];
 
+	if (next < 0) {
+		if (side === 'Top') next = 0;
+		// 🔁 Реверс направления и стороны
+		else return setPadding(reverseSide, component, direction === 'increment' ? 'decrement' : 'increment');
+	}
+	
+	style[key] = usePercent ? `${next}%` : next;
 	clone.props.style = style;
 	infoSlice.select.content.set(clone);
 	

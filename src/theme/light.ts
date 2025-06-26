@@ -1,3 +1,5 @@
+import { PaletteOptions } from "@mui/material/styles";
+
 export const palleteStd = {
     input: {
         main: 'rgba(255, 255, 255, 0.05)',
@@ -74,7 +76,7 @@ export const palleteStd = {
 
 
 
-export const lightPallete = {
+export const lightPallete: { palette: PaletteOptions }  = {
     palette: {
         mode: "light",
         ...palleteStd

@@ -52,6 +52,7 @@ export type ComponentProps = {
     'data-type': ProxyComponentName
     'data-slot'?: boolean | string | number
     'data-parent': string
+    'data-group'?: any
     isArea?: boolean
     apiPath?: string
     children ?: string | any
@@ -129,11 +130,18 @@ export type MiniRenderSlotProps = {
 /////////////////////////////////////////////////////////////////////////////
 //          Data Formats
 /////////////////////////////////////////////////////////////////////////////
+export type LayoutOptionBlockData = {
+    url?: string
+}
 export type LayoutCustom = Layout & {
     /** массив компонентов */
     content?: ComponentSerrialize[]
     /** стилизация ячейки */
     props?: {
+        type: 'standart' | 'form' | ''
+        'data-group'?: string
+        options: LayoutOptionBlockData
+        elevation?: number
         style?: React.CSSProperties
         classNames?: string
     }

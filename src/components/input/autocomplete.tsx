@@ -3,6 +3,7 @@ import { Autocomplete, AutocompleteProps, IconButton, TextField, useTheme } from
 import { InputPaper } from './atomize';
 import { safeOmitInputProps } from '../hooks/omit';
 import { ExpandMore } from '@mui/icons-material';
+import { StylesProps } from './type';
 
 
 export type AutoCompleteOption = string | { label: string; id: string };
@@ -13,25 +14,14 @@ export type AutoCompleteProps = Omit<AutocompleteProps<any, boolean, boolean, bo
     value?: any;
     onChange?: (value: any) => void;
     placeholder?: string;
-    styles?: {
-        placeholder?: React.CSSProperties
-    }
+    styles?: StylesProps 
 }
 
 
 export default function AutoCompleteInput({ options, value, onChange, placeholder, ...props }: AutoCompleteProps) {
     const [curvalue, setCurValue] = React.useState(value ?? '');
     const theme = useTheme();
-    const placeholderStyle = {
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-        fontWeight: 400,
-        fontSize: '0.9rem',         // ≈ 14px
-        //fontStyle: 'italic',
-        lineHeight: 1.43,
-        letterSpacing: '0.01071em',
-        ...props?.styles?.placeholder
-    }
-
+    
     const filteredProps = () => {
         const clone = safeOmitInputProps(props, [
             'borderStyle',
@@ -57,26 +47,27 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
     
     return (
         <InputPaper { ...props }>
-
-            <IconButton
-                disabled={props.disabled}
-                sx={{
-                    color: theme.palette.action.active,
-                }}
-            >
-                { props?.left }
-            </IconButton>
+            {props?.left &&
+                <IconButton
+                    disabled={props.disabled}
+                    sx={{
+                        color: theme.palette.action.active,
+                    }}
+                >
+                    { props?.left }
+                </IconButton>
+            }
 
             <Autocomplete
                 { ...filteredProps() }
-                popupIcon={<ExpandMore sx={{fontSize:20}}/>}
+                popupIcon={
+                    <ExpandMore sx={{width:'80%'}} />
+                }
                 value={curvalue}
                 options={options ?? []}
                 fullWidth
                 disableClearable
-                onChange={(event, val) => {
-                    onChange?.(val)
-                }}
+                onChange={(event, val) => onChange?.(val)}
                 getOptionLabel={(option) =>
                     typeof option === 'string' ? option : option.label
                 }
@@ -113,8 +104,8 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
                             minHeight: '38px',
                             background: 'transparent',
                             padding: 0,
-                            pl: props.left ? 1 : 2,
-                            pr: 2,
+                            pl: props?.left ? 1 : 2,
+                            pr: 1.5,
                             pt: 0.1,
                             flex: 1,
                             '& input': {
@@ -122,10 +113,15 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
                                 zIndex: 2,
                                 background: 'transparent',
                                 minHeight: 30,
-                                ...props?.styles?.form,
-                                //border: '1px solid red',
+                                fontSize: '0.9rem',
+                                ...props?.styles?.form
                             },
-                            '& input::placeholder, & textarea::placeholder': placeholderStyle,
+                            '& input::placeholder, & textarea::placeholder': {
+                                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+                                fontWeight: 400,
+                                fontSize: '0.9rem',         // ≈ 14px
+                                ...props?.styles?.placeholder
+                            },
                             ...props.sx
                         }}
                     />

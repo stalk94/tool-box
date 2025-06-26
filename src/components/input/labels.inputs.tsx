@@ -57,7 +57,7 @@ function wrapWithLabel<P>(
     label: React.ReactNode,
     position: 'left' | 'right' | 'column' | undefined,
     Component: React.ReactElement,
-    props: { id?: string | number; labelSx?: any, styles:Record<string, any> }
+    props: { id?: string | number; labelSx?: any, styles?: Record<string, any> }
 ) {
    
     if (label && typeof label === 'string' && label.length) {

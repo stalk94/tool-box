@@ -131,7 +131,7 @@ export const desserealize = (component: ComponentSerrialize, data?: Record<strin
             console.warn(`Компонент типа "${type}" не найден в реестре`);
             return null;
         }
-
+        
         return (
             <Component
                 data-parent={parent ?? data.parent}

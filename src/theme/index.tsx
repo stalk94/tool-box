@@ -10,7 +10,7 @@ import { mixins } from './mixins';
 declare module '@mui/material/styles' {
     interface Mixins {
         responsivePadding: CSSProperties
-        scrollbar: any
+        scrollbar: CSSProperties
     }
     interface Palette {
         input: {

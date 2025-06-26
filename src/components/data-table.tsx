@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect, ComponentProps } from 'react';
+import React, { useRef, useState, useEffect, ComponentProps, useMemo } from 'react';
 import { alpha, darken, lighten, Theme } from "@mui/material/styles";
 import { DataTable, DataTableValueArray } from "primereact/datatable";
 import styled, { css } from 'styled-components';
@@ -197,7 +197,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
     const [autoPagination, setPagination] = useState(false);
     
     
-    const mergeStyle = () => {
+    const mergeStyle = useMemo(() => {
         const bodyBcg = theme.palette?.table?.body;
         const borderColor = theme.palette?.card?.border;
         const headerBcg = theme.palette?.table?.header;
@@ -205,7 +205,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
         const textColor = theme.palette?.text?.primary;
         const theadColor = theme.palette.grey[500]
 
-        const style: TableStyle = {
+        const style: TableStyles = {
             body: {
                 background: bodyBcg,
                 borderColor: borderColor,
@@ -227,7 +227,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
         }
 
         return style;
-    }
+    }, []);
     const getPadding =(element: Element)=> {
         const style = getComputedStyle(element);
         const padding = parseFloat(style.paddingBottom);
@@ -308,7 +308,7 @@ export default function DataTableCustom({ value, children, header, footer, fontS
             {!(typeof window === 'undefined') &&
                 <StyledTableWrapper 
                     as="span"
-                    theme={mergeStyle()} 
+                    theme={mergeStyle} 
                     fontSizeHead={fontSizeHead}
                 >
                     <DataTable

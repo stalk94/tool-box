@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Box, BoxProps, useTheme, alpha, darken, SxProps } from "@mui/material";
+import React from "react";
+import { Box, useTheme, darken, SxProps } from "@mui/material";
 import { NavLinkItem } from '../menu/type';
 import BaseLeftSideBar from "./left-nav";
 

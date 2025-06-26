@@ -13,7 +13,7 @@ import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/
 
 // составляет индивидуальную схему пропсов
 const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
-    const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label', 'separator'];
+    const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label', 'separator', 'name'];
     const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
     const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels', 'isChildren', 'isSecondary', 'isButton', 'autoplay', 'isHorizontal'];
     
@@ -39,14 +39,17 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
         };
     }
     else if(numberKeys.includes(propName)) {
+        const max = propName==='elevation' ? 12 : (propName==='heightMedia' ? 500 : undefined);
+        const step = propName==='elevation' ? 1 : (propName==='heightMedia' ? 20 : undefined)
+
         return {
             type: 'number',
             id: propName,
             value: propValue,
             label: propName,
             labelSx: { fontSize: '14px' },
-            max: propName==='elevation' ? 12 : propName==='heightMedia' && 500,
-            step: propName==='elevation' ? 1 : propName==='heightMedia' && 20,
+            max: max,
+            step: step,
             sx: { fontSize: 14 }
         }
     }

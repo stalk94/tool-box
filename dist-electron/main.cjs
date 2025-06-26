@@ -133,6 +133,7 @@ const createWindow = () => {
 };
 electron.app.whenReady().then(async () => {
   startLocalServer(PORT);
+  electron.session.defaultSession.clearCache();
   fs.mkdirSync(PROJECTS_DIR, { recursive: true });
   await initDB();
   copyInitialDataOnce();

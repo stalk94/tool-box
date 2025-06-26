@@ -27,6 +27,7 @@ function generateTestData(count = 5) {
 
 export type PromoSliderProps = {
     editor?: React.ReactElement
+    onChange?: (active: number)=> void
     items: {
         title: string
         description: string
@@ -55,32 +56,25 @@ export type PromoSliderProps = {
 
 
 const IconGroop = ({ active, setActive, count, style }) => {
-    const fill = (active: number) => {
-        const result = [];
-        if (count > 4) count = 4;
+    const size = style?.size ?? '12px';
+    const activeColor = style?.activeColor ?? '#c11619';
+    const color = style?.color ?? '#666';
 
-        for (let i = 0; i < count; i++) {
-            result.push(
-                <IconButton
-                    key={i}
-                    onClick={() => setActive(i)}
-                >
-                    {i === active
-                        ? <AdjustOutlined sx={{ fontSize: (style?.size ?? '14px'), color: style?.activeColor ?? '#c11619' }} />
-                        : <FiberManualRecord sx={{ fontSize: (style?.size ?? '12px'), color: style?.color }} />
-                    }
-                </IconButton>
-            );
-        }
+    const icons = React.useMemo(() => {
+        const cappedCount = Math.min(count, 4);
+        return Array.from({ length: cappedCount }, (_, i) => (
+            <IconButton key={i} onClick={() => setActive(i)}>
+                {i === active ? (
+                    <AdjustOutlined sx={{ fontSize: size, color: activeColor }} />
+                ) : (
+                    <FiberManualRecord sx={{ fontSize: size, color }} />
+                )}
+            </IconButton>
+        ));
+    }, [active, count, setActive, size, activeColor, color]);
 
-        return result;
-    }
-
-    return (
-        <ButtonGroup>
-            { fill(active) }
-        </ButtonGroup>
-    );
+    
+    return <ButtonGroup>{icons}</ButtonGroup>;
 }
 const PhotoColage = ({ images }) => {
     return (
@@ -243,7 +237,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
 
 export default function PromoSlider({ items, button, styles, style, editor, ...props }: PromoSliderProps) {
     const [active, setActive] = React.useState(0);
-    const testData = generateTestData();            // моковые данные активны если не передать items
+    const testData = React.useMemo(()=> generateTestData(), []);
 
 
     React.useEffect(() => {

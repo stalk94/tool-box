@@ -130,7 +130,6 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
         window.addEventListener('resize', update);
         return () => window.removeEventListener('resize', update);
     }, [currentIndex, slidesToShow, props]);
-    //! нужно для ssr вычислить размеры
     useEffect(()=> {
         if (typeof window === 'undefined') return;
         

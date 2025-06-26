@@ -1,8 +1,9 @@
 import React from 'react';
-import { InputBase, useTheme, IconButton, SxProps } from '@mui/material';
+import { useTheme, IconButton } from '@mui/material';
 import { InputBaseProps } from '@mui/material/InputBase';
 import { Add, Remove } from '@mui/icons-material';
 import { InputPaper, InputBaseCustom,  } from './atomize';
+import { StylesProps } from './type';
 
 
 export type NumberInputProps = {
@@ -10,12 +11,13 @@ export type NumberInputProps = {
     min?: number
     max?: number
     step?: number
-    onChange?: (value: number)=> void
+    onChange?: (value: number) => void
+    styles?: StylesProps
 } & InputBaseProps
 
 
 
-export default function NumberInput({ value, min=-10, max=100, step=1, onChange, ...props }: NumberInputProps) {
+export default function NumberInput({ value, min=-1000, max=1000, step=1, onChange, ...props }: NumberInputProps) {
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number>(0);
     const [rawInput, setRawInput] = React.useState<string>('0');
@@ -27,22 +29,6 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
         onChange?.(clamped);
     }
     const handleInputChange = (raw: string) => {
-        const cleaned = raw?.replace(/[^\d-]/g, '');
-        const parsed = parseInt(cleaned, 10);
-
-        if (!isNaN(parsed)) {
-            updateValue(parsed);
-        }
-    }
-    const handleInputChangeOld = (raw: string) => {
-        setRawInput(raw);
-
-        if (raw.trim() === '') {
-            setInputValue(0); // можно отобразить пустое поле
-            return;
-        }
-
-        // Только цифры, поддержка минуса
         const cleaned = raw?.replace(/[^\d-]/g, '');
         const parsed = parseInt(cleaned, 10);
 
@@ -72,7 +58,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
             setRawInput(String(value));
         }
     }, [value]);
-
+    
     const isMin = inputValue <= min;
     const isMax = inputValue >= max;
   
@@ -101,6 +87,7 @@ export default function NumberInput({ value, min=-10, max=100, step=1, onChange,
                         textAlign: 'center',
                         paddingLeft: 0,
                         paddingRight: 0,
+                        fontSize: '0.91rem',
                     },
                 }}
                 styles={props.styles}
