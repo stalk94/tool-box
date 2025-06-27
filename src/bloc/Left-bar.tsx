@@ -4,7 +4,7 @@ import { BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets, Accou
 import { Settings, AccountTree, Logout, Palette, Extension, Save, Code } from "@mui/icons-material";
 import { LuBlocks } from "react-icons/lu";
 import { editorContext, infoSlice, cellsSlice } from "./context";
-import { TooglerInput } from '../components/input/input.any';
+import TooglerInput from 'src/components/input/toogler';
 import LeftSideBarAndTool from '../components/nav-bars/tool-left'
 import { updateComponentProps } from './helpers/updateComponentProps';
 import Forms from './Forms';

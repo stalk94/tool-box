@@ -20,6 +20,11 @@ declare module '@mui/material/styles' {
             success: string
             placeholder: string
         }
+        slider: {
+            thumb: string       // Цвет "пальца" ползунка
+            track: string       // Цвет пути ползунка
+            rail: string        // Цвет "рельсы" (основной фон)
+        }
         chekbox: {
             main: string
             border: string

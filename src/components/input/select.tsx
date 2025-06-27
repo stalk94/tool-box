@@ -1,36 +1,15 @@
 import React from 'react';
-import { useTheme, alpha, Select, MenuItem, FormControl } from '@mui/material';
+import { Select, MenuItem} from '@mui/material';
 import { InputPaper } from './atomize';
-import { NavLinkItemSlider } from '../menu/type';
 import { ExpandMore } from '@mui/icons-material';
-import { StylesProps } from './type';
-
-export type BaseSelectProps = {
-    value: any
-    onChange?: (newValue: string)=> void
-    items: NavLinkItemSlider[]
-    placeholder?: string
-    position?: 'start' | 'end'
-    onlyId?: boolean
-    variant: "fullWidth" | "inset" | "middle"
-    borderStyle?: 'dashed' | 'solid' | 'dotted'
-    styles?: StylesProps 
-}
+import type { SelectProps } from './type';
 
 
-export default function ({ value, onChange, items, placeholder, ...props }: BaseSelectProps) {
+
+export default function ({ value, onChange, items, placeholder, ...props }: SelectProps) {
     const [selected, setSelected] = React.useState({});
     
 
-    const placeholderStyle = {
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-        fontWeight: 400,
-        fontSize: '0.9rem',         // ≈ 14px
-        lineHeight: 1.43,
-        letterSpacing: '0.01071em',
-        paddingLeft: props.left ? 9 : 18,
-        ...props?.styles?.placeholder
-    }
     const handleSelectItem = (id: string) => {
         const item = items.find(i => i.id === id);
         if (!item) return;
@@ -50,7 +29,19 @@ export default function ({ value, onChange, items, placeholder, ...props }: Base
         }
     }, [value]);
 
+
+    const placeholderStyle = {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontWeight: 400,
+        fontSize: '0.9rem',         // ≈ 14px
+        opacity: 0.3,
+        lineHeight: 1.43,
+        letterSpacing: '0.01071em',
+        paddingLeft: props.left ? 9 : 18,
+        ...props?.styles?.placeholder
+    }
     
+
     return(
         <InputPaper {...props}>
             <Select

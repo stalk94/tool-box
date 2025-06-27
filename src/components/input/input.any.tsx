@@ -1,71 +1,11 @@
 import React, { useState } from 'react';
-import { IconButton, Popover, Box, FormHelperText, InputBaseProps, FormControlLabel, styled, alpha } from '@mui/material';
-import { Phone, MoreHoriz, AlternateEmail } from '@mui/icons-material';
-import ToggleButton, { ToggleButtonOwnProps } from '@mui/material/ToggleButton';
-import ToggleButtonGroup, { ToggleButtonGroupProps } from '@mui/material/ToggleButtonGroup';
-import Checkbox, { CheckboxProps } from '@mui/material/Checkbox';
-import { useTheme } from '@mui/material/styles';
-import Switch, { SwitchProps } from '@mui/material/Switch';
-import { InputPaper, InputBaseCustom, Label } from './atomize';
-import { safeOmitInputProps } from '../hooks/omit';
+import { IconButton, Box, FormHelperText, FormControlLabel, styled, alpha, useTheme } from '@mui/material';
+import { Phone, AlternateEmail } from '@mui/icons-material';
+import Switch from '@mui/material/Switch';
+import { InputPaper, InputBaseCustom } from './atomize';
 export { default as ColorPicker } from './color';
+import type { EmailInputProps, PhoneInputProps, SwitchInputProps } from './type';
 
-
-
-export type EmailInputProps = InputBaseProps & {
-    value: string;
-    onChange: (value: string) => void;
-    error?: boolean;
-    helperText?: string;
-    disabled?: boolean;
-    placeholder?: string;
-    useVerify?: (value: string)=> {
-        result: boolean,
-        helperText?: string 
-    }
-}
-export type PhoneInputProps = InputBaseProps & {
-    value: string;
-    onChange: (value: string) => void;
-    error?: boolean;
-    helperText?: string;
-    disabled?: boolean;
-    placeholder?: string;
-    useVerify?: (value: string)=> {
-        result: boolean,
-        helperText?: string 
-    }
-}
-export type TooglerInputProps = ToggleButtonGroupProps & {
-    value?: string | string[]
-    isColapsed?: boolean
-    /** множественный выбор */
-    multi: boolean
-    label: string
-    items: (ToggleButtonOwnProps & {
-        label: string  | React.ReactNode
-        id: string 
-    })[]
-    onChange?: (value: string | string[])=> void
-}
-export type CheckBoxInputProps = CheckboxProps & {
-    value?: boolean
-    label?: React.ReactNode
-    onChange?: (value: boolean)=> void
-}
-export type SwitchInputProps = SwitchProps & { 
-    value?: boolean, 
-    onChange: (v:boolean)=> void 
-}
-export type ChekBoxAgrementProps = CheckBoxInputProps & {
-    useVerify?: (value: string)=> {
-        result: boolean,
-        helperText?: string 
-    }
-    linkUrl?: React.ReactElement
-    agrement?: string
-    helperText?: string
-}
 
 
 export function EmailInput({ value, useVerify, onChange, helperText, disabled, placeholder, ...props }: EmailInputProps) {
@@ -74,6 +14,7 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
     const [emailValue, setEmailValue] = useState(value);
     const [isValid, setIsValid] = useState(true);
 
+    
     const useHookVerify =(newValue: string)=> {
         let valid = true;
 
@@ -86,7 +27,6 @@ export function EmailInput({ value, useVerify, onChange, helperText, disabled, p
         return valid;
     }
     const handleChange =(newValue: string)=> {
-        console.log(newValue)
         setIsValid(useHookVerify(newValue));
         setEmailValue(newValue);
         onChange(newValue); // Передаем значение родителю
@@ -214,236 +154,9 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
 }
 
 
-export function TooglerInput({ items, value, label, onChange, isColapsed, ...props }: TooglerInputProps) {
-    const theme = useTheme();
-    const [curentValue, setCurent] = React.useState<string[]>([]);
-    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-
-    const handleOpen = (event: React.MouseEvent<HTMLElement>) => setAnchorEl(event.currentTarget);
-    const handleClose = () => setAnchorEl(null);
-    const handlerChange = (newValue) => {
-        if (Array.isArray(value) || props.multi) {
-            setCurent(newValue);
-            onChange && onChange(newValue);
-        } else {
-            const last = newValue[newValue.length - 1];
-            setCurent([last]);
-            onChange && onChange(last);
-        }
-    }
-    React.useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        if (typeof value === 'string') {
-            setCurent([value]);
-        } else if (Array.isArray(value)) {
-            setCurent([...value]);
-        }
-    }, [value]);
-    const visibleItems = isColapsed
-        ? items.filter((i) => curentValue.includes(i.id))
-        : items;
-    const hiddenItems = isColapsed
-        ? items.filter((i) => !curentValue.includes(i.id))
-        : [];
-
-
-    return (
-        <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <ToggleButtonGroup
-                value={curentValue}
-                onChange={(e, v) => handlerChange(v)}
-                aria-label={label}
-                {...safeOmitInputProps(props, ['borderStyle', 'success', 'error', 'labelSx'])}
-                sx={{
-                    display: 'flex',
-                    flexWrap: 'wrap',
-                    width: '100%',
-                    ...props.sx,
-                    border: props?.styles?.form?.borderColor && '1px solid',
-                    ...props?.styles?.form,
-                }}
-            >
-                {visibleItems.map((elem, index) => (
-                    <ToggleButton
-                        sx={{
-                            flex: 1,
-                            border: `1px solid ${theme.palette.input.border}`,
-                            height: props?.style?.height ?? 36,
-                            ...props?.styles?.button,
-                            overflowWrap: 'normal',
-                            wordBreak: 'keep-all',
-                            "&.Mui-selected": {
-                                opacity: props.disabled ? 0.5 : 1,
-                            },
-                        }}
-                        key={index}
-                        value={elem.id}
-                        aria-label={elem.id}
-                    >
-                        {elem.label}
-                    </ToggleButton>
-                ))}
-            </ToggleButtonGroup>
-
-            {isColapsed && hiddenItems.length > 0 && (
-                <>
-                    <IconButton onClick={handleOpen} size="small" sx={{ height: 26 }}>
-                        <MoreHoriz />
-                    </IconButton>
-                    <Popover
-                        open={!!anchorEl}
-                        anchorEl={anchorEl}
-                        onClose={handleClose}
-                        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-                        PaperProps={{
-                            sx: {
-                                p: 0.5,
-                                maxWidth: 300,
-                                overflowY:'auto'
-                            },
-                        }}
-                    >
-                        <ToggleButtonGroup
-                            orientation="horizontal"
-                            value={curentValue}
-                            onChange={(e, v) => {
-                                handlerChange(v);
-                                handleClose();
-                            }}
-                            sx={{
-                                display: 'flex',
-                                flexWrap: 'wrap',
-                                gap: 1,
-                                ...props.sx,
-                                border: props?.styles?.form?.borderColor && '1px solid',
-                                ...props?.styles?.form,
-                            }}
-                        >
-                            {hiddenItems.map((elem, index) => (
-                                <ToggleButton
-                                    key={index}
-                                    value={elem.id}
-                                    aria-label={elem.id}
-                                    sx={{
-                                        border: `1px solid ${theme.palette.input.border}`,
-                                        flex: '1 0 16%',
-                                        minWidth: 20,
-                                        maxWidth: '100%',
-                                        whiteSpace: 'nowrap',
-                                        height: props?.style?.height ?? 32,
-                                        ...props?.styles?.button,
-                                        overflowWrap: 'normal',
-                                        wordBreak: 'keep-all',
-                                        "&.Mui-selected": {
-                                            opacity: props.disabled ? 0.5 : 1,
-                                        },
-                                    }}
-                                >
-                                    {elem.label}
-                                </ToggleButton>
-                            ))}
-                        </ToggleButtonGroup>
-                    </Popover>
-                </>
-            )}
-        </Box>
-    );
-}
-export function CheckBoxInput({ value, onChange, label, ...props }: CheckBoxInputProps) {
-    const theme = useTheme();
-    //const [curentValue, setCurent] = React.useState(value ?? false);
-    
-    const useColor =()=> {
-        const colors = theme.palette.chekbox;
-        const editorStyle = props?.styles?.form;
-
-        if(props.disabled) return alpha((editorStyle?.borderColor ?? colors.border), 0.1);
-        else return editorStyle?.borderColor ?? colors.border;
-    }
-    const useColorCheck =()=> {
-        const colors = theme.palette.chekbox;
-        const editorStyle = props?.styles?.form;
-
-        if(props.disabled) return alpha(editorStyle?.colorSuccess ?? colors.success, 0.2);
-        else return editorStyle?.colorSuccess ?? colors.success;
-    }
-    
-    return(
-        <FormControlLabel
-            disabled={props.disabled}
-            value="end"
-            control={
-                <Checkbox 
-                    checked={value}     //!
-                    onChange={(e, v)=> {
-                        //setCurent(v);
-                        onChange && onChange(v);
-                    }}
-                    inputProps={{ 'aria-label': props.name ?? 'checkbox' }}
-                    sx={{
-                        "& .MuiSvgIcon-root": {
-                            color: useColor(), // Цвет обводки (обычное состояние)
-                        },
-                        "&.Mui-checked .MuiSvgIcon-root": {
-                            color: useColorCheck(), // Цвет обводки при выборе
-                        },
-                        ...props.sx
-                    }}
-                />
-            }
-            label={label}
-            labelPlacement="end"
-            sx={{ 
-                gap: 2, 
-                margin: 0, 
-                mt: 1,
-                "& .MuiFormControlLabel-label": {
-                    color: alpha(theme.palette.text.secondary, 0.6),
-                    fontFamily: '"Roboto Condensed", Arial, sans-serif',
-                    ...props?.styles?.label
-                }
-            }}
-        />
-    );
-}
-export const ChekBoxAgrement =({ useVerify, onChange, helperText, ...props}: ChekBoxAgrementProps)=> {
-    const [customHelper, setCustomHelper] = React.useState<string>();
-    const [isValid, setIsValid] = React.useState(true);
-
-    const useHookVerify =(newValue: string)=> {
-        let valid = true;
-
-        if(useVerify) {
-            const res = useVerify(newValue);
-            valid = res.result;
-            setCustomHelper(res.helperText);
-        }
-
-        return valid;
-    }
-
-    return(
-        <React.Fragment>
-            <CheckBoxInput 
-                onChange={(newValue)=> {
-                    setIsValid(useHookVerify(newValue));
-                    onChange && onChange(newValue);
-                }}
-                { ...props}
-            />
-            {!isValid && (
-                <FormHelperText error={true} style={{ marginTop: '4px' }}>
-                    *{customHelper || (helperText ?? 'надо принять пользовательское соглашение')}
-                </FormHelperText>
-            )}
-        </React.Fragment>
-    )
-}
-
 export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
     const theme = useTheme();
-    //const [curvalue, setCur] = React.useState(value);
+  
     const Android12Switch = styled(Switch)(({ theme }) => ({
         padding: 8,
         '& .MuiSwitch-track': {
@@ -481,7 +194,7 @@ export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
         }
     }));
     
-    const useColor =(type: 'trackOn'|'trackOff'|'thumb'|'icon'|'border')=> {
+    const useColor =(type: 'trackOn' | 'trackOff' | 'thumb' | 'icon' | 'border')=> {
         let color = theme.palette.switch[type];
         const styleEditor = props?.styles?.form;
         

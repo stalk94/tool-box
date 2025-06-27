@@ -1,22 +1,11 @@
 import React from 'react';
 import { useTheme, IconButton, FormHelperText } from '@mui/material';
 import { InputPaper, InputBaseCustom  } from './atomize';
-import { InputBaseProps } from '@mui/material/InputBase';
-
-
-export type loginInputProps = InputBaseProps & {
-    value: string
-    useVerify: (value: string)=> {
-        result: boolean,
-        helperText?: string 
-    }
-    helperText?: string
-    onChange: (value: string)=> void
-}
+import type { LoginInputProps } from './type';
 
 
 
-export default function LoginInput({ value, helperText, useVerify, onChange, ...props }: loginInputProps) {
+export default function LoginInput({ value, helperText, useVerify, onChange, ...props }: LoginInputProps) {
     const theme = useTheme();
     const [customHelper, setCustomHelper] = React.useState<string>();
     const [isValid, setValid] = React.useState<boolean>(true);

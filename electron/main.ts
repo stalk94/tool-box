@@ -1,6 +1,7 @@
 import { session, app, BrowserWindow, ipcMain, dialog, globalShortcut, screen } from 'electron';
 import { copyInitialDataOnce } from './utils/init';
 import { initDB, DB } from './utils/db';
+import { supabase } from './utils/supabase';
 import { startLocalServer } from './utils/server';
 import { startNgrock } from './utils/ngrock';
 import path from 'path';
@@ -158,6 +159,68 @@ app.whenReady().then(async() => {
     ipcMain.handle('ngrock:start', async (_event, authKey: string) => {
         const url = await startNgrock(PORT, authKey);
         return url;
+    });
+    ipcMain.handle('auth:google', async () => {
+        try {
+            const { data, error } = await supabase.auth.signInWithOAuth({
+                provider: 'google'
+            });
+
+            if (error || !data?.url) {
+                console.error('❌ Supabase ошибка:', error?.message);
+                return { success: false, error: error?.message || 'No auth URL returned' };
+            }
+
+            const win = new BrowserWindow({
+                width: 500,
+                height: 700,
+                show: true,
+                webPreferences: {
+                    nodeIntegration: false,
+                    contextIsolation: true
+                }
+            });
+
+            return await new Promise((resolve) => {
+                const timeout = setTimeout(() => {
+                    console.warn('⏱ Авторизация не завершена — timeout');
+                    win.close();
+                    resolve({ success: false, error: 'Timeout or no action' });
+                }, 60_000); // 1 минута
+
+                win.webContents.on('will-redirect', (_e, url) => {
+                    if (url.includes('error=')) {
+                        const err = new URL(url).searchParams.get('error');
+                        console.error('❌ Google отказал:', err);
+                        clearTimeout(timeout);
+                        win.close();
+                        resolve({ success: false, error: err });
+                        return;
+                    }
+
+                    const hash = new URL(url).hash;
+                    const token = new URLSearchParams(hash.slice(1)).get('access_token');
+
+                    if (token) {
+                        console.log('✅ Токен получен');
+                        clearTimeout(timeout);
+                        win.close();
+                        resolve({ success: true, token });
+                    }
+                });
+
+                win.on('closed', () => {
+                    clearTimeout(timeout);
+                    resolve({ success: false, error: 'Окно закрыто пользователем' });
+                });
+
+                win.loadURL(data.url);
+            });
+        } 
+        catch (err) {
+            console.error('❌ Ошибка в try-catch:', err);
+            return { success: false, error: err.message };
+        }
     });
 });
 

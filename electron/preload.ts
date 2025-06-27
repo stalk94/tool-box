@@ -33,4 +33,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     readDir: (dirPath: string) => ipcRenderer.invoke('fs:readDir', dirPath),
     getAppPath: () => ipcRenderer.invoke('sys:getAppPath'),
 	startNgrock: (token: string) => ipcRenderer.invoke('ngrock:start', token),
+	signInWithGoogle: () => ipcRenderer.invoke('auth:google'),
 });

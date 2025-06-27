@@ -2,7 +2,8 @@ import React from 'react';
 import { LabelText, LabelNumber, LabelColor, LabelSlider, LabelSelect, LabelToogler, 
     LabelDateOrTime, LabelFileLoader, LabelAutocomplete, LabelComboFileLoader
 } from '../input/labels.inputs';
-import { SwitchInput, CheckBoxInput } from '../input/input.any';
+import { SwitchInput } from '../input/input.any';
+import { CheckBoxInput } from '../input/checkbox';
 import { Schema, TypeSchema } from './types';
 import { Divider, Typography } from '@mui/material';
 

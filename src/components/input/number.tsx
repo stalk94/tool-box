@@ -1,19 +1,9 @@
 import React from 'react';
 import { useTheme, IconButton } from '@mui/material';
-import { InputBaseProps } from '@mui/material/InputBase';
 import { Add, Remove } from '@mui/icons-material';
 import { InputPaper, InputBaseCustom,  } from './atomize';
-import { StylesProps } from './type';
+import type { NumberInputProps } from './type';
 
-
-export type NumberInputProps = {
-    value?: number
-    min?: number
-    max?: number
-    step?: number
-    onChange?: (value: number) => void
-    styles?: StylesProps
-} & InputBaseProps
 
 
 

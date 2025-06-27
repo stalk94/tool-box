@@ -276,7 +276,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         return ()=> window.removeEventListener('keydown', handleKeyboard);
     }, []);
     
-
+    
     return (
         <DndContext
             collisionDetection={pointerWithin}

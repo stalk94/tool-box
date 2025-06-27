@@ -1,58 +1,27 @@
 import React from 'react';
-import Text, { BaseInputProps } from './text';
-import Number, { NumberInputProps } from './number';
-import Slider, { CustomSliderProps } from './slider';
-import Login, { loginInputProps } from './login';
-import Password, { PasswordInputProps } from './password';
-import { EmailInputProps, PhoneInputProps, TooglerInputProps } from './input.any';
-import { EmailInput, PhoneInput, TooglerInput } from './input.any'
-import ColorPicker, { ColorPickerProps } from './color';
-import DatePickerCustom, { DateTimeInputProps } from './date';
-import Select, { BaseSelectProps } from './select';
-import Autocomplete, { AutoCompleteProps } from './autocomplete';
-import { Box, ToggleButtonOwnProps } from '@mui/material';
-import { Label } from './atomize';
-import { SxProps, Theme } from '@mui/system';
-import FileLoader, { FileLoaderProps, FileLoaderCombo, ComboLoader } from './file-loader';
+import Text from './text';
+import Number from './number';
+import Slider from './slider';
+import Login from './login';
+import Password from './password';
+import { EmailInput, PhoneInput } from './input.any';
+import TooglerInput from './toogler';
+import ColorPicker from './color';
+import DatePickerCustom from './date';
+import Select from './select';
+import Autocomplete from './autocomplete';
+import FileLoader, { FileLoaderCombo } from './file-loader';
+import type { 
+    AutoCompleteProps, FileLoaderProps, ComboLoaderProps, SelectProps, DateTimeInputProps,
+    ColorPickerProps, EmailInputProps, PhoneInputProps, TooglerInputProps, PasswordInputProps,
+    LoginInputProps, NumberInputProps, TextInputProps, CustomSliderProps, LabelTextProps
+} from './type';
+import LabelInput, { InputTupe } from '../text/label';
 import '../../style/fonts.css';
 
 
-type InputTupe = 'text' 
-    | 'password' 
-    | 'number' 
-    | 'color' 
-    | 'phone' 
-    | 'email' 
-    | 'date' 
-    | 'time' 
-    | 'login' 
-    | 'select' 
-    | 'slider'
-    | 'toggle'
-    | 'autocomplete'
-    | 'file-combo'
-    | 'file';
-    
-type InputCustomLabelProps = {
-    label: React.ReactNode
-    position?: 'left' | 'right' | 'column'
-    typeInput?: InputTupe
-    children: React.ReactNode
-    styles?: any
-    sx?: SxProps<Theme>
-    id?: string | number
-}
-export type LabelTextProps = {
-    /** ❗ не передав `label` инпут будет без label */
-    label?:  React.ReactNode
-    /** не передав `position` label не отрисуется но будет лишняя обертка, по этому лучше не передать `label` */
-    position?: 'left' | 'right' | 'column'
-    labelSx?: SxProps
-}
 
-
-
-function wrapWithLabel<P>(
+function wrapWithLabel <P> (
     typeInput: InputTupe,
     label: React.ReactNode,
     position: 'left' | 'right' | 'column' | undefined,
@@ -76,62 +45,9 @@ function wrapWithLabel<P>(
     }
     return Component;
 }
-export function LabelInput({ label, position, typeInput, children, sx, id, styles }: InputCustomLabelProps) {
-    const idRef = React.useRef(`input-${typeInput}-${id ?? Date.now()}`).current;       // можно отслеживать
-    
-    return(
-        <Box sx={{mt: 1.5}}
-            display="flex" 
-            flexDirection={(position==='left' || position==='right') ? 'row' : 'column'} 
-        >
-            { position === 'left' && 
-                <Label 
-                    id={idRef}
-                    children={label} 
-                    sx={{
-                        flex: 0.7,
-                        mr: 0,
-                        fontSize: 18,
-                        ...sx
-                    }}
-                />
-            }
-            { position === 'column' && 
-                <Label 
-                    id={idRef}
-                    children={label} 
-                    styles={styles}
-                    sx={{
-                        flex: 1,
-                        ml: 0.5,
-                        fontSize: 18,
-                        mb: 0.5,
-                        ...sx
-                    }}
-                />
-            }
-            <Box sx={{ flex: 2 }}>
-                { React.cloneElement(children, {id: idRef}) }
-            </Box>
-
-            { position === 'right' && 
-                <Label 
-                    id={idRef} 
-                    children={label}
-                    sx={{
-                        flex: 1,
-                        ml: 2,
-                        fontSize: 20,
-                        ...sx
-                    }}
-                />
-            }
-        </Box>
-    );
-}
 
 
-export function LabelText(props: LabelTextProps & BaseInputProps) {
+export function LabelText(props: LabelTextProps & TextInputProps) {
     return wrapWithLabel('text', props.label, props.position, <Text {...props} type="text" />, props);
 }
 
@@ -139,7 +55,7 @@ export function LabelNumber(props: LabelTextProps & NumberInputProps) {
     return wrapWithLabel('number', props.label, props.position, <Number {...props} />, props);
 }
 
-export function LabelLogin(props: LabelTextProps & loginInputProps) {
+export function LabelLogin(props: LabelTextProps & LoginInputProps) {
     return wrapWithLabel('login', props.label, props.position, <Login {...props} />, props);
 }
 
@@ -164,7 +80,7 @@ export function LabelDateOrTime(props: LabelTextProps & DateTimeInputProps) {
     return wrapWithLabel(type, props.label, props.position, <DatePickerCustom {...props} />, props);
 }
 
-export function LabelSelect(props: LabelTextProps & BaseSelectProps) {
+export function LabelSelect(props: LabelTextProps & SelectProps) {
     return wrapWithLabel('select', props.label, props.position, <Select {...props} />, props);
 }
 
@@ -185,6 +101,6 @@ export function LabelFileLoader(props: LabelTextProps & FileLoaderProps) {
     return wrapWithLabel('file', props.label, props.position, <FileLoader {...props} />, props);
 }
 
-export function LabelComboFileLoader(props: LabelTextProps & ComboLoader) {
+export function LabelComboFileLoader(props: LabelTextProps & ComboLoaderProps) {
     return wrapWithLabel('file-combo', props.label, props.position, <FileLoaderCombo {...props} />, props);
 }

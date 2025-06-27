@@ -1,24 +1,57 @@
 import React from 'react';
-import { Box, Grid, Slider, SliderProps, useTheme } from '@mui/material';
+import { Box, Grid, Slider, useTheme } from '@mui/material';
 import Input from '@mui/material/Input';
+import type { CustomSliderProps } from './type';
 
-
-export type CustomSliderProps = SliderProps & {
-    value?: number|number[]
-    onChange: (value: number|number[])=> void,
-    start?: React.ReactNode
-    end?: React.ReactNode
-    styles: {
-        thumb: React.CSSProperties,
-        track: React.CSSProperties,
-        rail: React.CSSProperties
-    }
-}
 
 
 export default function({ value, onChange, start, end, ...props }: CustomSliderProps) {
     const theme = useTheme();
     const [curValue, setCurValue] = React.useState(0);
+    
+
+    const filteredProps = React.useMemo(() => {
+        const {
+            position,
+            success,
+            error,
+            labelSx,
+            diapasone,
+            markStep,
+            mark,
+            sx,
+            ...rest
+        } = props;
+
+        return rest;
+    }, [props]);
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = event.target.value === '' ? 0 : Number(event.target.value);
+
+        if(!props.max) props.max = 100;
+        if(props.min === undefined) props.min = 0;
+        
+        if(Array.isArray(curValue)) {
+            if(curValue[0] < newValue) {
+                if(newValue < props.max) handlerChange([curValue[0], newValue]);
+            }
+            else handlerChange([curValue[0], curValue[0] + 1]);
+        }
+        else handlerChange(newValue);
+    }
+    const handlerChange = (newValue: number | number[]) => {
+        setCurValue(newValue);
+        onChange && onChange(newValue);
+    }
+    React.useEffect(()=> {
+        if (typeof window === 'undefined') return;
+        
+        if(value !== undefined && value !== curValue) {
+            setCurValue(value);
+        }
+    }, [value]);
+
+
     const style = {
         color: '#00000000',
         '& .MuiSlider-thumb': {
@@ -38,45 +71,6 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
             ...props?.styles?.rail
         }
     }
-    
-
-    const useFiltre =()=> {
-        delete props.position;
-        delete props.error;
-        delete props.success;
-        delete props.diapasone;
-        delete props.markStep;
-        delete props.mark;
-        delete props.sx;
-        delete props.labelSx;
-
-        return props;
-    }
-    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = event.target.value === '' ? 0 : Number(event.target.value);
-
-        if(!props.max) props.max = 100;
-        if(props.min === undefined) props.min = 0;
-        
-        if(Array.isArray(curValue)) {
-            if(curValue[0] < newValue) {
-                if(newValue < props.max) handlerChange([curValue[0], newValue]);
-            }
-            else handlerChange([curValue[0], curValue[0] + 1]);
-        }
-        else handlerChange(newValue);
-    }
-    const handlerChange = (newValue) => {
-        setCurValue(newValue);
-        onChange && onChange(newValue);
-    }
-    React.useEffect(()=> {
-        if (typeof window === 'undefined') return;
-        
-        if(value !== undefined && value !== curValue) {
-            setCurValue(value);
-        }
-    }, [value]);
 
     
     if(!start && !end) return (
@@ -99,7 +93,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                     ...style,
                     ...props.sx
                 }}
-                { ...useFiltre() }
+                { ...filteredProps }
                 onChange={(e, v) => handlerChange(v)}
             />
         </Box>
@@ -131,7 +125,7 @@ export default function({ value, onChange, start, end, ...props }: CustomSliderP
                         ...style,
                         ...props.sx
                     }}
-                    { ...useFiltre() }
+                    { ...filteredProps }
                     onChange={(e, v) => handlerChange(v)}
                 />
             </Grid>

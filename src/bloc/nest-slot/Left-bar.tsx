@@ -7,7 +7,7 @@ import {
 } from "@mui/icons-material";
 import { FaReact } from 'react-icons/fa';
 import { editorSlice, infoSlice, renderSlice, cellsSlice } from "./context";
-import { TooglerInput } from '../../components/input/input.any';
+import TooglerInput from 'src/components/input/toogler';
 import LeftSideBarAndTool from '../../components/nav-bars/tool-left'
 import { updateComponentProps } from './helpers/shim';
 import Forms from '../Forms';

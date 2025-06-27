@@ -7,18 +7,8 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { CalendarMonth, AccessTime } from '@mui/icons-material';
 import { InputPaper } from './atomize';
-import { StylesProps } from './type';
+import { DateTimeInputProps } from './type';
 
-export type DateTimeInputProps = {
-    value?: string;
-    onChange?: (value: string) => void;
-    type?: 'date' | 'time';
-    variant?: 'modal' | 'popup';
-    format?: string;
-    placeholder?: string;
-    disabled?: boolean;
-    styles?: StylesProps
-}
 
 
 // todo: adapterLocale вынести в основной контекст
@@ -59,6 +49,7 @@ export default function DateTimeInput({
                 },
                 '& input::placeholder': { 
                     fontSize: '0.9rem',
+                    opacity: 0.3,
                     ...props?.styles?.placeholder
                  },
             }

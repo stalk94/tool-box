@@ -1,27 +1,17 @@
 import React from 'react';
-import { Autocomplete, AutocompleteProps, IconButton, TextField, useTheme } from '@mui/material';
+import { Autocomplete, IconButton, TextField, useTheme } from '@mui/material';
 import { InputPaper } from './atomize';
 import { safeOmitInputProps } from '../hooks/omit';
 import { ExpandMore } from '@mui/icons-material';
-import { StylesProps } from './type';
+import { AutoCompleteProps } from './type';
 
-
-export type AutoCompleteOption = string | { label: string; id: string };
-export type AutoCompleteProps = Omit<AutocompleteProps<any, boolean, boolean, boolean>, 'renderInput'> & {
-    label?: React.ReactNode;
-    position?: 'left' | 'right' | 'column';
-    options: AutoCompleteOption[];
-    value?: any;
-    onChange?: (value: any) => void;
-    placeholder?: string;
-    styles?: StylesProps 
-}
 
 
 export default function AutoCompleteInput({ options, value, onChange, placeholder, ...props }: AutoCompleteProps) {
     const [curvalue, setCurValue] = React.useState(value ?? '');
     const theme = useTheme();
     
+
     const filteredProps = () => {
         const clone = safeOmitInputProps(props, [
             'borderStyle',
@@ -117,9 +107,9 @@ export default function AutoCompleteInput({ options, value, onChange, placeholde
                                 ...props?.styles?.form
                             },
                             '& input::placeholder, & textarea::placeholder': {
-                                fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-                                fontWeight: 400,
+                                fontWeight: 200,
                                 fontSize: '0.9rem',         // ≈ 14px
+                                opacity: 0.3,
                                 ...props?.styles?.placeholder
                             },
                             ...props.sx

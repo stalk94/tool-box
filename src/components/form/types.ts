@@ -9,8 +9,8 @@ export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider
 | 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete' | 'divider';
 
 
-
-export interface Text extends TextInputProps {
+type OmitText = Omit<TextInputProps, 'onChange' | 'value'>
+export interface Text extends OmitText {
     value?: string
     onChange?: (value: string)=> void
     validator?: (value: string)=> boolean

@@ -83,14 +83,3 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
         </>
     );
 }
-
-
-/**
- * React.useEffect(() => {
-        const updatedState: Record<string, any> = {};
-        scheme.forEach((field) => {
-            updatedState[field.id] = field.value;
-        });
-        setState(updatedState);
-    }, [scheme]);
- */

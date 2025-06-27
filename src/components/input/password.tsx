@@ -2,20 +2,11 @@ import React from 'react';
 import { useTheme, IconButton, FormHelperText } from '@mui/material';
 import { InputPaper, InputBaseCustom  } from './atomize';
 import { VisibilityOff, Visibility } from '@mui/icons-material';
-import { InputBaseProps } from '@mui/material/InputBase';
+import type { PasswordInputProps} from './type';
 
 
-export type PasswordInputProps = InputBaseProps & {
-    value: string;
-    onChange: (value: string) => void;
-    useVerify?: (val: string) => { result: boolean; helperText?: string };
-    helperText?: string;
-    disabled?: boolean;
-    placeholder?: string;
-}
 
 
-// todo:  убрать лишние рендеры
 export default function PasswordInput({ value, helperText, useVerify, ...props }: PasswordInputProps) {
     const theme = useTheme();
     const [type, setType] = React.useState<'password'|'text'>('password');

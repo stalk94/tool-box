@@ -1,34 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { get, set } from 'idb-keyval';
-import { InputPaper, InputBaseCustom  } from './atomize';
-import { Box, IconButton, Typography, useTheme, TextField, Button } from '@mui/material';
+import { InputPaper } from './atomize';
+import { Box, IconButton, Typography, useTheme, TextField } from '@mui/material';
 import { UploadFile, InsertDriveFile } from '@mui/icons-material';
-
-
-export type FileLoaderProps = {
-    value?: File | File[];
-    onUpload?: (files: File[] | File) => void;
-    accept?: string;
-    multiple?: boolean;
-    maxSize?: number; // в байтах
-    disabled?: boolean;
-    placeholder?: string;
-}
-export type SimpleFileLoaderProps = {
-    children: React.ReactNode;
-    onUpload: (files: File[] | File) => void;
-    accept?: string;
-    multiple?: boolean;
-    maxSize?: number; // в байтах (например, 5 * 1024 * 1024)
-    onReject?: (reason: string) => void;
-    style?: React.CSSProperties;
-    className?: string;
-    dragActiveClassName?: string;
-}
-export type ComboLoader = {
-    value?: File
-    onChange: (path: string)=> void
-}
+import type { FileLoaderProps, ComboLoaderProps, SimpleFileLoaderProps } from './type';
 
 
 export function SimpleFileLoader({
@@ -45,6 +20,7 @@ export function SimpleFileLoader({
     const inputRef = useRef<HTMLInputElement>(null);
     const [isDragOver, setDragOver] = useState(false);
 
+    
     const openFileDialog = () => inputRef.current?.click();
     const validateFiles = (files: FileList): File[] | null => {
         const list = Array.from(files);
@@ -130,18 +106,10 @@ export function SimpleFileLoader({
         </div>
     );
 }
-export function FileLoaderCombo({ value, onChange, ...props }: ComboLoader) {
+export function FileLoaderCombo({ value, onChange, ...props }: ComboLoaderProps) {
     const [url, setUrl] = React.useState(value ?? '');
-    const placeholderStyle = {
-        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
-        fontWeight: 400,
-        fontSize: '0.9rem',         // ≈ 14px
-        //fontStyle: 'italic',
-        lineHeight: 1.43,
-        letterSpacing: '0.01071em',
-        ...props?.styles?.placeholder
-    }
-
+   
+    
     const handleFile = async (file: File) => {
         const reader = new FileReader();
         reader.onload = async (e) => {
@@ -155,6 +123,16 @@ export function FileLoaderCombo({ value, onChange, ...props }: ComboLoader) {
             onChange(id);
         };
         reader.readAsDataURL(file);
+    }
+
+    const placeholderStyle = {
+        fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+        fontWeight: 400,
+        fontSize: '0.9rem',         // ≈ 14px
+        //fontStyle: 'italic',
+        lineHeight: 1.43,
+        letterSpacing: '0.01071em',
+        ...props?.styles?.placeholder
     }
 
 
@@ -192,11 +170,9 @@ export function FileLoaderCombo({ value, onChange, ...props }: ComboLoader) {
             />
             <IconButton
                 component="label"
-                variant="outlined"
                 size="small"
-                sx={{fontSize:10}}
+                sx={{ fontSize: 10 }}
             >
-                
                 <input
                     type="file"
                     hidden
@@ -227,12 +203,6 @@ export default function FileLoader({
     const [fileList, setFileList] = useState<File[]>([]);
 
 
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-
-        if (value instanceof File) setFileList([value]);
-        else if (Array.isArray(value)) setFileList(value);
-    }, [value]);
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
         if (!files) return;
@@ -252,6 +222,12 @@ export default function FileLoader({
     const openFileDialog = () => {
         if (!disabled) inputRef.current?.click();
     }
+    React.useEffect(() => {
+        if (typeof window === 'undefined') return;
+
+        if (value instanceof File) setFileList([value]);
+        else if (Array.isArray(value)) setFileList(value);
+    }, [value]);
 
 
     return (
@@ -280,7 +256,13 @@ export default function FileLoader({
                 }}
             >
                 
-                <UploadFile sx={{ mr: 1, color: theme.palette.input.placeholder, ...props?.styles?.icon }} />
+                <UploadFile 
+                    sx={{ 
+                        mr: 1, 
+                        color: theme.palette.input.placeholder, 
+                        ...props?.styles?.icon 
+                    }}
+                />
 
                 {fileList.length > 0 ? (
                     <Box sx={{ flex: 1 }}>
@@ -296,7 +278,11 @@ export default function FileLoader({
                 ) : (
                     <Typography 
                         variant="body2" 
-                        sx={{ opacity: 0.5, ml: 1, ...props?.styles?.placeholder }}
+                        sx={{ 
+                            opacity: 0.5,
+                            ml: 1, 
+                            ...props?.styles?.placeholder 
+                        }}
                     >
                         { placeholder }
                     </Typography>

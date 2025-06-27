@@ -1,34 +1,13 @@
 import React from 'react';
 import { alpha, IconButton, useTheme } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import { InputBaseProps } from '@mui/material/InputBase';
 import { InputPaper, InputBaseCustom  } from './atomize';
 import { safeOmitInputProps } from '../hooks/omit';
-import { StylesProps } from './type';
-
-
-export type BaseInputProps = {
-    min?: number
-    max?: number
-    step?: number
-    left?: any 
-    right?: any 
-    placeholder?: string
-    label?: string
-    children?: React.ReactNode
-    variant?: "fullWidth" | "inset" | "middle"
-    value?: string | number
-    onChange?: (value: string | number)=> void
-    success?: boolean
-    borderStyle?: 'dashed' | 'solid' | 'dotted'
-    divider?: 'none' | 'dashed' | 'solid' | 'dotted'
-    styles?: StylesProps
-} & InputBaseProps
+import type { TextInputProps } from './type';
 
 
 
-
-export default function TextInput({ value, left, right, onChange, placeholder, variant, label, ...props }: BaseInputProps) {
+export default function TextInput({ value, left, right, onChange, placeholder, variant, label, ...props }: TextInputProps) {
     const theme = useTheme();
     const [inputValue, setInputValue] = React.useState<number | string>('');
 

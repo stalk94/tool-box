@@ -1,5 +1,5 @@
 import React, { CSSProperties } from 'react';
-import { InputBase, useTheme, InputBaseProps, InputLabel, InputLabelProps as InputLabelP, Box } from '@mui/material';
+import { InputBase, useTheme, InputBaseProps, Box } from '@mui/material';
 import { alpha, lighten, styled, SxProps } from '@mui/system';
 
 
@@ -29,11 +29,6 @@ export type PropsInputForm = {
         }
     }
 }
-export type InputLabelProps = InputLabelP & {
-    styles?: {
-        label?: React.CSSProperties
-    }
-}
 
 
 const AnimatedBox = styled(Box)`
@@ -42,42 +37,6 @@ const AnimatedBox = styled(Box)`
         background-color: ${alpha('rgb(221, 235, 238)', 0.1)}; // Используем alpha для задания прозрачности
     }
 `;
-
-
-
-// базовый лейбл
-export function Label({ id, children, styles, sx }: InputLabelProps) {
-    const theme = useTheme();
-
-    const transform =()=> {
-        if(styles?.label?.fontSize) {
-            if(Number.isFinite(+styles?.label?.fontSize)) styles.label = {
-                ...styles.label,
-                fontSize: +styles.label.fontSize
-            }
-        }
-        return styles?.label;
-    }
-
-    
-    return (
-        <InputLabel
-            htmlFor={id}
-            sx={{
-                ml: 1,
-                mt: 'auto',
-                mb: 'auto',
-                opacity: 0.9,
-                //color: theme.palette.text.secondary,
-                fontFamily: '"Roboto Condensed", Arial, sans-serif',
-                ...sx,
-                //...transform()
-            }}
-        >
-            { children }
-        </InputLabel>
-    );
-}
 // базовая подложка под все инпуты (! тшательно доработать, я почти у цели)
 export function InputPaper({ children, elevation, styles, ...props }: PropsInputForm) {
     const theme = useTheme();
@@ -175,7 +134,7 @@ export function InputPaper({ children, elevation, styles, ...props }: PropsInput
 }
 
 
-/** Базовый инпут */
+
 export function InputBaseCustom({ value, onChange, type, styles, ...props }: PropsInputBaseCustom) {
     const [v, setV] = React.useState(value);
     
@@ -227,8 +186,9 @@ export function InputBaseCustom({ value, onChange, type, styles, ...props }: Pro
                     ...props?.sx?.['& input']
                 },
                 '& input::placeholder, & textarea::placeholder': {
-                    fontWeight: 400,
+                    fontWeight: 200,
                     fontSize: '0.9rem',
+                    opacity: 0.5,
                     ...styles?.placeholder
                 },
                 "input::-webkit-outer-spin-button, input::-webkit-inner-spin-button": {

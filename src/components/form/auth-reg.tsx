@@ -1,6 +1,6 @@
 import React from 'react';
 import { LabelLogin, LabelPassword, LabelEmail, LabelPhone } from '../input/labels.inputs';
-import { ChekBoxAgrement } from '../input/input.any';
+import { CheckBoxAgrement } from '../input/checkbox';
 import { Button, ButtonProps, CircularProgress, SxProps, FormHelperText } from '@mui/material';
 import { Person, Key, Tag, AlternateEmail, Label } from '@mui/icons-material';
 import { validateEmail, validateLogin, validatePass, validatePhone, validateConfirm } from './validator-defolt';
@@ -116,13 +116,13 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
 
     return (
         <React.Fragment>
-            { Object.keys(state).map((keyName, index) => {
+            { Object.keys(state).map((keyName: TypeSchema, index) => {
                 const element = getScheme(keyName);
                 const type = keyName as TypeSchema;
                 if (!element) return null;
 
                 const commonProps = {
-                    position: 'column',     // ANCHOR - надо доработать
+                    position: 'column',
                     disabled: loading,
                     label: element.label,
                     placeholder: element.placeholder,
@@ -137,7 +137,7 @@ export default function RegistrationForm({ scheme, loading, onRegistration, butt
                     password2: <LabelPassword key={index} {...commonProps} left={<Key />} useVerify={validatorsRender[type]} />,
                     email: <LabelEmail key={index} {...commonProps} left={<AlternateEmail />} useVerify={validatorsRender[type]} />,
                     phone: <LabelPhone key={index} {...commonProps} left={<Tag />} useVerify={validatorsRender[type]} />,
-                    confirm: <ChekBoxAgrement key={index} {...commonProps} useVerify={validatorsRender[type]} />
+                    confirm: <CheckBoxAgrement key={index} {...commonProps} useVerify={validatorsRender[type]} />
                 };
 
                 return componentMap[keyName] ?? null;

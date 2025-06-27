@@ -1,18 +1,12 @@
 import React, { useState } from 'react';
-import { Popover, IconButton, useTheme, Dialog, InputBaseProps, Box } from '@mui/material';
-import { InputPaper, InputBaseCustom, Label } from './atomize';
+import { Popover, IconButton, useTheme, Dialog, Box } from '@mui/material';
+import { InputPaper, InputBaseCustom } from './atomize';
 import { RgbaColorPicker, RgbaColor } from 'react-colorful';
-import { FileCopy, Padding } from '@mui/icons-material';
+import { FileCopy } from '@mui/icons-material';
 import { useDebounced } from '../hooks/debounce';
+import type { ColorPickerProps, ColorWindowProps } from './type';
 
 
-export type ColorPickerProps = InputBaseProps & {
-    value?: string
-    onChange?: (value: string)=> void
-    /** включить ли кнопку копирования данных ввода */
-    showCopy?: boolean,
-    variant?: 'popup' | 'modal'
-}
 const parseRgba = (rgba: string): RgbaColor => {
     const match = rgba.match(/rgba?\((\d+), (\d+), (\d+),? ([0-9.]+)?\)/);
     if (!match) return { r: 255, g: 0, b: 0, a: 1 };
@@ -26,7 +20,7 @@ const parseRgba = (rgba: string): RgbaColor => {
 const toRgbaString = ({ r, g, b, a }: RgbaColor) => {
     return `rgba(${r}, ${g}, ${b}, ${a})`;
 }
-const ColorWindow =({ color, onChange, sx })=> (
+const ColorWindow =({ color, onChange, sx }: ColorWindowProps)=> (
     <Box
         sx={{
             p: 1.5,

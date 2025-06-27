@@ -3,7 +3,7 @@ import { Breadcrumbs, Typography } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Home } from '@mui/icons-material';
 
-
+////////////////////////////////////////////////////////////////////////////////
 export type Breadcrumb = {
     label: string;
     href: string;
@@ -15,7 +15,10 @@ export type Options = {
     /** Исключить сегменты (например, 'edit', 'id') */
     exclude?: string[];
     /** Начальный сегмент */
-    base?: { label: string; href: string };
+    base?: { 
+        label: React.ReactElement | string
+        href: string 
+    }
 }
 export type BreadcrumbsNavProps = {
     isMobile?: boolean
@@ -26,8 +29,9 @@ export type BreadcrumbsNavProps = {
     linkStyle?: React.CSSProperties
     Link: React.ComponentType<{ href: string; children: React.ReactNode }>
 }
+////////////////////////////////////////////////////////////////////////////////
 
-export function useBreadcrumbs(pathname: string, options?: Options): Breadcrumb[] {
+export function useBreadcrumbs(pathname: string, options?: Options) {
     const { nameMap = {}, exclude = [], base } = options || {};
 
     return React.useMemo(() => {
@@ -71,7 +75,9 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
                 <Home 
                     sx={{
                         ...commonSx(false), 
-                        fontSize: linkStyle.fontSize + 6
+                        fontSize: (typeof linkStyle?.fontSize === 'number'
+                            ? linkStyle.fontSize + 6
+                            : (parseFloat(linkStyle?.fontSize?.toString() || '14') + 6))
                     }} 
                 />
             ),
@@ -104,6 +110,8 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
             isMounted.current = true;
         }
     }, []);
+
+
     if (isMobile || collapsed) {
         const current = crumbs.at(-1);
         const previous = crumbs.at(-2) || crumbs[0];
@@ -146,6 +154,7 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
             { crumbs.map((segment, index) =>
                 segment.isLast ? (
                     <Typography
+                        component='span'
                         ref={(el) => (itemRefs.current[index] = el!)}
                         key={segment.href}
                         sx={{
@@ -158,6 +167,7 @@ export default function BreadcrumbsNav({ pathname, push, Link, separator, nameMa
                 ) : (
                         <Link key={segment.href} href={segment.href}>
                             <Typography
+                                component='span'
                                 sx={{
                                     color: 'text.primary',
                                     ...commonSx(false),

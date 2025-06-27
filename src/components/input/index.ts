@@ -1,21 +1,21 @@
-import { BaseInputProps } from './text';
+import { TextInputProps as BaseInputProps } from './type';
 import { 
     EmailInputProps as EmailInputPropsBase, 
     PhoneInputProps as PhoneInputPropsBase, 
     TooglerInputProps as TooglerInputPropsBase,
     CheckBoxInputProps as CheckBoxInputPropsBase,
     SwitchInputProps as  SwitchInputPropBase
-} from './input.any';
-import { NumberInputProps as NumberInputPropsBase } from './number';
-import { CustomSliderProps } from './slider';
-import { loginInputProps as loginInputPropsBase } from './login';
-import { PasswordInputProps as  PasswordInputPropsBase } from './password';
-import { DateTimeInputProps } from './date';
-import { BaseSelectProps } from './select';
-import { LabelTextProps } from './labels.inputs';  //* labels type
-import { ColorPickerProps as ColorPickerPropsBase } from './color';
-import { FileLoaderProps as FileLoaderPropsDefault } from './file-loader';
-import { AutoCompleteProps as  AutoCompletePropsDefault } from './autocomplete';
+} from './type';
+import { NumberInputProps as NumberInputPropsBase } from './type';
+import { CustomSliderProps } from './type';
+import { LoginInputProps as loginInputPropsBase } from './type';
+import { PasswordInputProps as  PasswordInputPropsBase } from './type';
+import { DateTimeInputProps } from './type';
+import { SelectProps } from './type';
+import { LabelTextProps } from './type';  //* labels type
+import { ColorPickerProps as ColorPickerPropsBase } from './type';
+import { FileLoaderProps as FileLoaderPropsDefault } from './type';
+import { AutoCompleteProps as  AutoCompletePropsDefault } from './type';
 
 
 export type TextInputProps =  LabelTextProps & BaseInputProps;
@@ -27,7 +27,7 @@ export type SwitchInputProps = SwitchInputPropBase;
 export type loginInputProps = LabelTextProps & loginInputPropsBase;
 export type PasswordInputProps = LabelTextProps & PasswordInputPropsBase;
 export type EmailInputProps = LabelTextProps & EmailInputPropsBase;
-export type SelectInputProps = LabelTextProps & BaseSelectProps;
+export type SelectInputProps = LabelTextProps & SelectProps;
 export type PhoneInputProps = LabelTextProps & PhoneInputPropsBase;
 /** группа кнопок */
 export type ToogleeInputProps = LabelTextProps & TooglerInputPropsBase;
@@ -41,12 +41,9 @@ export type AutoCompleteProps = LabelTextProps & AutoCompletePropsDefault;
 
 
 // особенные
-export {
-    /** вкл/выкл */
-    SwitchInput,
-    /** ✔ ☐ */
-    CheckBoxInput
-} from './input.any';
+export { SwitchInput } from './input.any';
+export { CheckBoxInput } from './checkbox';
+
 
 export {
     LabelText as TextInput,
