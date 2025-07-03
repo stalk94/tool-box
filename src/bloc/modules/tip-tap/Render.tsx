@@ -117,10 +117,10 @@ function NodeRenderer({ node, autoIndex }: { node: any, autoIndex?:number }) {
 }
 
 
-export default function TiptapJSONRenderer({ value,  className, autoIndex }: { value: any, className?: string, autoIndex?:number }) {
+export default function TiptapJSONRenderer({ value, className, autoIndex }: { value: any, className?: string, autoIndex?:number }) {
     return (
         <div className={className}>
-            {value.content?.map((node, i) => (
+            {value?.content?.map((node, i) => (
                 <NodeRenderer key={i} node={node} autoIndex={autoIndex} />
             ))}
         </div>

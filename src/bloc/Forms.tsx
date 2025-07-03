@@ -23,7 +23,7 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             type: 'switch',
             id: propName,
             label: propName,
-            labelSx: { fontSize: '14px' },
+            labelSx: { fontSize: '12px' },
             value: propValue
         }
     }
@@ -35,6 +35,7 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             label: 'upload',
             accept: propValue === 'table' && ".json,.csv,.xlsx,.xls",
             labelSx: { fontSize: '14px' },
+            style: { maxHeight: 14, height: 16 },
             value: propValue,
         };
     }
@@ -50,7 +51,8 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             labelSx: { fontSize: '14px' },
             max: max,
             step: step,
-            sx: { fontSize: 14 }
+            sx: { fontSize: 14 },
+            style: { maxHeight: 14, height: 16 },
         }
     }
     else if(textKeys.includes(propName)) {
@@ -61,6 +63,7 @@ const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, pr
             value: propValue,
             label: propName,
             labelSx: { fontSize: '14px' },
+            style: { maxHeight: 14, height: 16 },
             sx: { fontSize: 14 }
         }
     }
@@ -120,7 +123,8 @@ const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<
             ],
             label: 'variant',
             value: props?.variant ?? 'circular',
-            labelSx: { fontSize: '14px' }
+            labelSx: { fontSize: '14px' },
+            style: { height: 26 }
         }, {
             type: 'toggle',
             id: 'data-source',
@@ -131,7 +135,8 @@ const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<
             ],
             label: 'data-source',
             value: props['data-source'],
-            labelSx: { fontSize: '14px' }
+            labelSx: { fontSize: '14px' },
+            style: { height: 26 }
         });
 
         result.schema.push({
@@ -140,6 +145,7 @@ const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<
             multiline: true,
             label: 'src',
             labelSx: { fontSize: '14px' },
+            style: { maxHeight: 14, height: 16 },
             value: props.src,
         });
         result.schema.push({
@@ -154,6 +160,7 @@ const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<
             multiline: true,
             id: 'children',
             label: 'children',
+            style: { maxHeight: 14, height: 16 },
             labelSx: { fontSize: '14px' },
             value: props.children,
         });

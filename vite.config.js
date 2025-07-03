@@ -15,6 +15,12 @@ export default defineConfig({
     server: {
         port: 3001
     },
+    build: {
+        outDir: 'dist',
+        rollupOptions: {
+            input: 'src/index.html'
+        }
+    },
     resolve: {
         alias: {
             src: path.resolve(__dirname, 'src'),

@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, TextField, Box, Dialog, Paper, Typography, Tooltip, IconButton, MenuItem, Select } from "@mui/material";
-import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings, Lock, LockOpen, Functions } from "@mui/icons-material";
+import { DynamicFeed, TouchApp, ViewComfy, Add, Input, Settings, Lock, LockOpen, Preview, Functions } from "@mui/icons-material";
 import { editorContext, infoSlice, cellsSlice } from "./context";
 import NumberInput from "src/components/input/number";
 
@@ -9,8 +9,8 @@ import NumberInput from "src/components/input/number";
 const categories = [
     { id: 'block', label: <TouchApp/> },
     { id: 'grid', label: <ViewComfy/> },
-    //{ id: 'actions', label: <Functions/> },
-    { id: 'settings', label: <Settings/> }
+    { id: 'settings', label: <Settings/> },
+    { id: 'preview', label: <Preview/> },
 ];
 const Instrument = () => {
     const lock = editorContext.lock.use();
@@ -76,11 +76,15 @@ export const ToolBarInfo = ({ setShowBlocEditor }) => {
         return () => clearInterval(i);
     }, []);
     React.useEffect(()=> {
-        if (selectCell && selectCell.getBoundingClientRect) {
-            const bound = selectCell.getBoundingClientRect();
-            setBound(bound);
-        }
-    }, [selectCell]);
+        const i = setInterval(()=> {
+            if (selectCell && selectCell?.getBoundingClientRect) {
+                const bound = selectCell.getBoundingClientRect();
+                setBound(bound);
+            }
+        }, 500);
+
+        return () => clearInterval(i);
+    }, []);
     
 
     return (

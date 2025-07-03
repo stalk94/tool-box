@@ -90,7 +90,7 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type, anyRen
                     className="GRID-SLOT"
                     layouts={{ [breackpoint]: layotRender }}
                     breakpoints={{ lg: 1100, md: 940, sm: 590, xs: 480 }}
-                    cols={{ lg: 12, md: 10, sm: 8, xs: 6 }}
+                    cols={{ lg: 24, md: 16, sm: 12, xs: 8 }}
                     rowHeight={20}
                     compactType={null}                                          // Отключение автоматической компоновки
                     preventCollision={true}

@@ -9,7 +9,7 @@ import { updateComponentProps } from '../helpers/updateComponentProps';
 import { exportTipTapValue, toJSXProps, toObjectLiteral, renderComponentSsr, toLiteral } from './export/utils';
 import TipTapSlotEditor from './tip-tap';
 import { toJsx } from './helpers/format';
-import { infoSlice, editorContext} from "../context";
+import { infoSlice, editorContext } from "../context";
 import { ToggleInput, HoverPopover, List } from '@lib/index';
 
 
@@ -313,7 +313,7 @@ export const AvatarWrapper = React.forwardRef((props: AvatarWrapperProps, ref) =
         }
     }, [file]);
     React.useEffect(() => {
-        if(!EDITOR) return;
+        //if(!EDITOR) return;
 
         if (!src || src.length === 0) {
             setImgSrc('https://mui.com/static/images/avatar/3.jpg');
@@ -549,9 +549,9 @@ export const ListWrapper = React.forwardRef((props: ListWrapperProps, ref) => {
         });
         else return items.map((item, index)=> {
             const Icon = (item.startIcon && iconsList[item.startIcon]) ? iconsList[item.startIcon] : null;
-
+            
             return ({
-                startIcon: Icon ? Icon : undefined,
+                startIcon: Icon ? <Icon /> : undefined,
                 primary: toJsx(item.primary),
                 secondary: isSecondary ? toJsx(item.secondary) : undefined
             });

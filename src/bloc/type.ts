@@ -257,10 +257,25 @@ export type DropSlotProps = {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//          export
+//            RENDER
 //////////////////////////////////////////////////////////////////////////////// 
-export type Structur = {
-    allImports: Set<string>;
-    allComponents: string[];
-    jsxByCell: Record<string, string>;
+export type RenderPageData = {
+    header?: PageData
+    body: PageData
+    footer?: PageData
+    html?: string
+    meta: {
+        title?: string
+        description?: string
+        path: string
+    }
+}
+
+export type ProjectConfig = {
+    theme: any
+    style: string
+    home: RenderPageData
+    pages: {
+        [key: string]: RenderPageData
+    }
 }

@@ -29,7 +29,8 @@ function wrapWithLabel <P> (
     props: { id?: string | number; labelSx?: any, styles?: Record<string, any> }
 ) {
    
-    if (label && typeof label === 'string' && label.length) {
+    // typeof label === 'string' && label.length
+    if (label) {
         return (
             <LabelInput
                 label={label}

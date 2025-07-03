@@ -1,9 +1,9 @@
 import React from "react";
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
-import { ThemeProvider, CssBaseline, Palette, Theme, Button, Avatar, Rating, useTheme, Divider, Typography } from '@mui/material';
+import { ThemeProvider, createTheme, Palette, Theme, Button, Avatar, Rating, useTheme, Divider, Typography } from '@mui/material';
 import Container from '@mui/material/Container';
 import { settingsSlice } from "../context";
-import { writeFile } from 'src/app/plugins';
+import { db } from "../helpers/export";
 import { Flag, TextInput, NumberInput, ColorInput, DateInput, ToggleInput, SelectInput, 
     SliderInput, CheckBoxInput, Accordion, SwitchInput, AutoCompleteInput, FileInput, Modal
 } from 'src/index';
@@ -418,11 +418,16 @@ export default function PreviewThemeSettings() {
 
         return result;
     }
-    const useSaveFile =()=> {
+    const useSaveFile = () => {
         setThemeData((themeData)=> {
-            writeFile('src/theme', 'color.json', JSON.stringify(getNewPallete(themeData.palette), null, 4));
+            db.set(`themes.${currentTheme}`, {
+                typography: JSON.parse(JSON.stringify(themeData.typography)),
+                palette: JSON.parse(JSON.stringify(themeData.palette)),
+                components: JSON.parse(JSON.stringify(themeData.components)),
+                mixins: JSON.parse(JSON.stringify(themeData.mixins))
+            });
             return themeData;
-        }); 
+        });
     }
     const handleThemeEdit =(data: Palette)=> {
         setThemeData((old)=> {
@@ -434,7 +439,13 @@ export default function PreviewThemeSettings() {
         });
     }
     React.useEffect(()=> {
-        setThemeData(listTheme[currentTheme]);
+        db.get('themes').then((saveThemes)=> {
+            if(saveThemes && saveThemes[currentTheme]) {
+                const theme = createTheme(saveThemes[currentTheme]);
+                setThemeData(theme);
+            }
+            else setThemeData(listTheme[currentTheme]);
+        });
     }, [currentTheme]);
     React.useEffect(()=> {
         if(themeData.palette) settingsSlice.theme.pallete.set(getNewPallete(themeData.palette));
@@ -449,7 +460,7 @@ export default function PreviewThemeSettings() {
         }
     }, []);
     
-
+    
     return (
         <ThemeProvider theme={themeData}>
             <Container

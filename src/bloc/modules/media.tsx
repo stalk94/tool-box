@@ -96,6 +96,7 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
         alt = '',
         'data-source': source,
         fullWidth,
+        fullHeight,
         style = {},
         ...otherProps
     } = props;
@@ -117,8 +118,8 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
         const code = renderImage(
             imgSrc, 
             {
-                width: '100%',
-                height: height - 1,
+                height: fullHeight ? height : '100%',
+                maxHeight: height,
                 ...style
             },
             otherProps
@@ -165,8 +166,9 @@ export const ImageWrapper = React.forwardRef((props: ImageWrapperProps, ref) => 
             data-type="Image"
             src={imgSrc ?? '/placeholder.jpg'}
             style={{
-                width: width ?? '100%',
-                height: height ?? '100%',
+                //width: width ?? '100%',
+                height: fullHeight ? height : '100%',
+                maxHeight: height,
                 ...style
             }}
             {...otherProps}
@@ -774,6 +776,7 @@ export const CardWrapper = React.forwardRef((props: CardWrapperProps, ref) => {
         'avatar-text': avatarText,
     } = props;
     const { width, height } = useComponentSizeWithSiblings(dataId);
+
 
     const handleUpload = async (file) => {
         setImgSrc('https://cdn.pixabay.com/animation/2023/08/11/21/18/21-18-05-265_512.gif');

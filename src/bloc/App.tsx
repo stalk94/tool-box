@@ -3,6 +3,7 @@ import colorLog from '../app/helpers/console';
 import React from "react";
 import { useSnackbar } from 'notistack';
 import type { BlockData } from './type';
+import { createTheme } from '@mui/material';
 import { DataRegisterComponent, ComponentSerrialize, ComponentProps, Events, SlotDataBus, DataNested, LayoutsBreackpoints } from './type';
 import { DndContext, DragOverlay, DragEndEvent, PointerSensor, useSensors, useSensor, DragStartEvent, pointerWithin } from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy, rectSortingStrategy } from '@dnd-kit/sortable';
@@ -12,7 +13,7 @@ import { createComponentFromRegistry } from './helpers/createComponentRegistry';
 import { ToolBarInfo } from './Top-bar';
 import { componentMap } from './modules/helpers/registry';
 import LeftToolBar from './Left-bar';
-import LeftToolBarSettings from './Left-bar-settings';
+import LeftToolBarSettings from './left-bar/Left-bar-settings';
 import GridComponentEditor from './Editor-grid';
 import PreviewTheme from './utils/Preview-theme';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
@@ -22,11 +23,11 @@ import EventEmitter from "../app/emiter";
 import { DragItemCopyElement, activeSlotState } from './Dragable';
 import { updateComponentProps, updateProjectState } from './helpers/updateComponentProps';
 import NestedContext from './nest-slot/App';
-import inputsIndex from 'public/export/index';
+import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { useKeyboardListener, story } from './helpers/hooks';
 import { setPadding } from './helpers/hotKey';
-import './modules/index';
-import "../style/edit.css";
+import Preview from './export/Page';
+import { db } from "./helpers/export";
 
 
 
@@ -40,10 +41,12 @@ colorLog();
 
 function EditorGlobal({ setShowBlocEditor, dumpRender }) {  
     const { enqueueSnackbar } = useSnackbar();
+    const [theme, setTheme] = React.useState(lightTheme);
     const cacheDrag = React.useRef<HTMLDivElement>(null);                                  
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
     const mod = editorContext.mod.use();
+    const ctxTheme = settingsSlice.theme.use();
     const sensors = useSensors(
         useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
     );
@@ -69,21 +72,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                     if (el) refs.current[id] = el;
                 }}
             />
-        );
-    }
-    const getPreview =()=> {
-        const meta = editorContext.meta.get();
-        const path = `${meta.scope}_${meta.name}`;
-
-        if(inputsIndex[path]) return (
-            <div style={{marginTop: '65px'}}>
-                { inputsIndex[path]() }
-            </div>
-        );
-        else return (
-            <div style={{marginTop: '65px', marginLeft: '30px'}}>
-                not path import preview
-            </div>
         );
     }
     const addBlockToGrid = (data: BlockData) => {
@@ -249,6 +237,28 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         }
     }
 
+    const getPreview = React.useCallback(() => {
+        const meta = editorContext.meta.get();
+        const project = infoSlice.project.get();
+        const header = project.system.find((d) => d.name === 'header');
+        const footer = project.system.find((d) => d.name === 'footer');
+        
+
+        return {
+            theme,
+            data: {
+                header: header.data,
+                body: {
+                    layouts: structuredClone(editorContext.layouts.get()),
+                    content: cellsSlice.get(true),
+                    size: editorContext.size.get()
+                },
+                footer: footer.data,
+                meta
+            },
+            prev: ()=> editorContext.mod.set('block')
+        }
+    }, [ctxTheme, theme]);
     useKeyboardListener((key: string)=> {
         if(key === 'NumLock') editorContext.lock.set((p)=> p = !p);
         
@@ -269,6 +279,20 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             setPadding('Left', select, 'increment');
         }
     });
+    React.useEffect(() => {
+        const themes = { taskade: taskadeTheme, light: lightTheme, dark: darkTheme };
+
+        db.get('themes').then((saveThemes) => {
+            const ctxTheme = settingsSlice.theme.get();
+            const themeName = ctxTheme.currentTheme ?? 'dark';
+
+            if (saveThemes && saveThemes[themeName]) {
+                const themeCreate = createTheme(saveThemes[themeName]);
+                setTheme(themeCreate);
+            }
+            else setTheme(themes[themeName]);
+        });
+    }, [ctxTheme]);
     React.useEffect(()=> {
         if (typeof window === 'undefined') return;
         window.addEventListener('keydown', handleKeyboard);
@@ -278,42 +302,52 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
     
     
     return (
-        <DndContext
-            collisionDetection={pointerWithin}
-            sensors={sensors}
-            onDragStart={(event) => {
-                const dragged = event.active.data?.current?.element;
-                const dragData = event.active.data?.current;
+        <>
+            {mod !== 'preview' &&
+                <DndContext
+                    collisionDetection={pointerWithin}
+                    sensors={sensors}
+                    onDragStart={(event) => {
+                        const dragged = event.active.data?.current?.element;
+                        const dragData = event.active.data?.current;
 
-                if (dragData.type === 'sortable') handleDragStart(event);
-                if (dragged) setActiveDragElement(dragged);
-            }}
-            onDragEnd={handleDragEnd}
-        >
-            <DragOverlay dropAnimation={null}>
-                {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
-            </DragOverlay>
+                        if (dragData.type === 'sortable') handleDragStart(event);
+                        if (dragged) setActiveDragElement(dragged);
+                    }}
+                    onDragEnd={handleDragEnd}
+                >
+                    <DragOverlay dropAnimation={null}>
+                        {activeDragElement && <DragItemCopyElement activeDragElement={activeDragElement} />}
+                    </DragOverlay>
 
-            <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row' }}>
-                { mod !== 'settings' &&
-                    <LeftToolBar
-                        desserealize={desserealize}
-                        useDump={dumpRender}
-                    />
-                }
-                { mod === 'settings' && <LeftToolBarSettings/> }
+                    <div style={{ width: '100%', height: '100vh', display: 'flex', flexDirection: 'row' }}>
+                        { mod !== 'settings' &&
+                            <LeftToolBar
+                                desserealize={desserealize}
+                                useDump={dumpRender}
+                            />
+                        }
+                        { mod === 'settings' && <LeftToolBarSettings/> }
 
-                <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
-                    <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
-                    
-                    
-                    { (mod === 'block' || mod === 'grid' || mod === 'actions') && 
-                        <GridComponentEditor desserealize={desserealize} /> 
-                    }
-                    { mod === 'settings' && <PreviewTheme /> }
-                </div>
-            </div>
-        </DndContext>
+                        <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
+                            <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
+                            
+                            
+                            { (mod === 'block' || mod === 'grid' || mod === 'actions') && 
+                                <GridComponentEditor 
+                                    desserealize={desserealize} 
+                                    theme={theme}
+                                /> 
+                            }
+                            { mod === 'settings' && <PreviewTheme /> }
+                        </div>
+                    </div>
+                </DndContext>
+            }
+            {mod === 'preview' && 
+                <Preview { ...getPreview() } />
+            }
+        </>
     );
 }
 

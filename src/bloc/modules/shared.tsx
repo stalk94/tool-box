@@ -44,7 +44,7 @@ type BreadcrumbsWrapperProps = {
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState(undefined);
     const [openBar, setOpenBar] = React.useState(false);
-    const meta = editorContext.meta.use();
+    const meta = EDITOR ? editorContext.meta.use() : __META__;
     const lastFileRef = React.useRef<number | null>(null);
     const {
         ['data-id']: dataId,
@@ -254,7 +254,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
         ...otherProps
     } = props;
 
-    const meta = editorContext.meta.get();
+    const meta = EDITOR ? editorContext.meta.get() : __META__;
     const exportCode = (call) => {
         const linkStyleState = {
             fontFamily: style?.fontFamily,
@@ -303,7 +303,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
             <Breadcrumbs
                 isMobile={!fullWidth}
                 separator={separator}
-                pathname={`test/${meta.scope}/${meta.name}`}
+                pathname={meta.path ?? `${meta.scope}/${meta.name}`}
                 push={(href) => console.log(href)}
                 linkStyle={{
                     fontFamily: style?.fontFamily,

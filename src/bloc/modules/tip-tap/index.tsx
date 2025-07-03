@@ -41,7 +41,8 @@ export default function TipTapSlotEditor({
     autoIndex,
     style={}
 }: PropsEditor) {
-    const lock = editorContext.lock.use();
+    const lock = EDITOR ? editorContext.lock.use() : false;
+
     if (!isEditable) {
         return (
             <JSONRenderer

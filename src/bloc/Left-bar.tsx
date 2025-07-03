@@ -184,7 +184,7 @@ export default function ({ useDump }: LeftToolPanelProps) {
     const [force, useForce] = React.useReducer((i)=> i+1, 0);
     const [curSlotPanel, setCurSlotPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
     const [curSubpanel, setSubPanel] = React.useState<'props' | 'styles' | 'flex' | 'text'>('props');
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'block' | 'component' | 'styles' | 'slot'>('blockSetting');
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'project' | 'block' | 'component' | 'styles' | 'slot'>('project');
     const [currentTool, setCurrentTool] = React.useState<keyof typeof componentGroups>('misc');
     const [currentSettings, setCurrentSettings] = React.useState<keyof typeof settingsBlock>('all');
     const [currentBlock, setCurrentBlock] = React.useState<string>('any');

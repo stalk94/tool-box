@@ -170,7 +170,7 @@ export const AccordionWrapper = React.forwardRef((props: AccordionWrapperProps, 
     );
 });
 export const TabsWrapper = React.forwardRef((props: TabsWrapperProps, ref) => {
-    const lock = editorContext.lock.use();
+    const lock = EDITOR ? editorContext.lock.use() : true;
     const [value, setValue] = React.useState(0);
     const { 
         'data-id': dataId, 

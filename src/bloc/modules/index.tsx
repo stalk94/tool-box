@@ -273,8 +273,10 @@ registerComponent({
     component: ImageWrapper,
     defaultProps: {
         fullWidth: true,
+        fullHeight: true,
         src: '/placeholder.jpg',
         file: '',
+        width: '100%',
         'data-source': 'src',
         alt: 'Картинка',
     },

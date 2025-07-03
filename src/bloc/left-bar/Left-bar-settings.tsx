@@ -5,17 +5,17 @@ import {
     Settings, AccountTree, Logout, Extension, Save, Functions, Palette as Pallet,
     BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets
 } from "@mui/icons-material";
-import { editorContext, settingsSlice } from "./context";
+import { editorContext, settingsSlice } from "../context";
 import { motion } from 'framer-motion';
 import TooglerInput from 'src/components/input/toogler';
-import LeftSideBarAndTool from '../components/nav-bars/tool-left';
-import { Form, Schema, AccordionForm, AccordionScnema } from '../index';
-import { componentThemeSettings, componentBaseSettings } from './config/category';
-import { colorsList, actionsColors, actionsOpacity } from './config/theme';
-import { usePopUpName, useSafeAsyncEffect } from './helpers/usePopUp';
-import { LeftToolPanelProps, ProxyComponentName, Component } from './type';
-import { useKeyboardListener } from './helpers/hooks';
-import { db } from "./helpers/export";
+import LeftSideBarAndTool from '../../components/nav-bars/tool-left';
+import { Form, Schema, AccordionForm, AccordionScnema } from '../../index';
+import { componentThemeSettings, componentBaseSettings } from '../config/category';
+import { colorsList, actionsColors, actionsOpacity } from '../config/theme';
+import { usePopUpName, useSafeAsyncEffect } from '../helpers/usePopUp';
+import { LeftToolPanelProps, ProxyComponentName, Component } from '../type';
+import { useKeyboardListener } from '../helpers/hooks';
+import { db } from "../helpers/export";
 import cloneDeep from 'lodash/cloneDeep';
 import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 const listTheme = {
@@ -25,7 +25,16 @@ const listTheme = {
 }
 
 
+
 const BasePanel =()=> {
+    const [config, setConfig] = React.useState({});
+
+    React.useEffect(()=> {
+        db.get('configs').then((res)=> {
+            if(res) setConfig(res);
+        });
+    }, []);
+
 
     return(
         <>

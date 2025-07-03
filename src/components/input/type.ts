@@ -230,6 +230,8 @@ export type SwitchInputProps = SwitchProps & {
     value?: boolean
     label?: string | React.ReactNode
     styles?: StylesProps
+    style?: React.CSSProperties
+    labelSx?: React.CSSProperties
     onChange: (v:boolean)=> void 
 }
 export type ChekBoxAgrementProps = CheckBoxInputProps & {

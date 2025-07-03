@@ -154,7 +154,7 @@ export function PhoneInput({ value, onChange, useVerify, helperText, disabled, p
 }
 
 
-export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
+export function SwitchInput({ value, onChange, labelSx, style, ...props }: SwitchInputProps) {
     const theme = useTheme();
   
     const Android12Switch = styled(Switch)(({ theme }) => ({
@@ -206,7 +206,7 @@ export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
         } 
         else return color;
     }
-
+    
     return(
         <Box>
             <FormControlLabel
@@ -232,7 +232,7 @@ export function SwitchInput({ value, onChange, ...props }: SwitchInputProps) {
                         color: alpha(theme.palette.text.secondary, 0.6),  // label color
                         fontFamily: '"Roboto Condensed", Arial, sans-serif',
                         fontSize: 16,
-                        ...props?.styles?.label
+                        ...labelSx
                     }
                 }}
             />

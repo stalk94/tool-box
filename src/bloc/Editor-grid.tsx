@@ -12,21 +12,18 @@ import { DroppableCell, DroppableGrid } from './Dragable';
 import Container from '@mui/material/Container';
 import { specialComponents } from './config/category';
 import { ThemeProvider, Paper } from '@mui/material';
-import { taskadeTheme, lightTheme, darkTheme } from 'src/theme';
 import { RulerX, RulerY } from './utils/Rullers';
 import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
 import { db } from "./helpers/export";
 import registr from './helpers/shared';
 
-const themes = { taskade: taskadeTheme, light: lightTheme, dark: darkTheme };
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [3, 3];
 
 
-export default function ({ desserealize }) {
+export default function ({ desserealize, theme }) {
     const { enqueueSnackbar } = useSnackbar();
-    const ctxTheme = settingsSlice.theme.use();
     const [ready, setReady] = React.useState(false);
     const gridContainerRef = React.useRef(null); 
     const size = editorContext.size.use();
@@ -195,6 +192,7 @@ export default function ({ desserealize }) {
         }]);
     }
     
+    
     const currentLayout = React.useMemo(()=> layouts[currentBreakpoint], [currentBreakpoint, layouts]);
     const initBlock = React.useCallback((cell: LayoutCustom, content: ComponentSerrialize[]) => {
         const nameGroup = cell?.props?.["data-group"] ?? cell.i;
@@ -265,7 +263,7 @@ export default function ({ desserealize }) {
     
     
     return (
-        <ThemeProvider theme={themes[ctxTheme.currentTheme??'dark']}>
+        <ThemeProvider theme={theme}>
             {/* линейки */}
             <div className="ruler-container" style={{marginTop: 4}}>
                 <RulerX containerRef={gridContainerRef} />

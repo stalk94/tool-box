@@ -34,7 +34,10 @@ export function MetaHeader({ width, scope }) {
         const proj = infoSlice.project.get();
         const header = proj.system.find((d) => d.name === 'header');
         
-        return { headerLayouts: header.data, height: header.data.size.height};
+        return { 
+            headerLayouts: header.data, 
+            height: header.data.size.height
+        }
     }, []);
 
 

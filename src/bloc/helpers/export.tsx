@@ -202,26 +202,6 @@ export const addModuleToIndex = async(strImport: string) => {
 }
 
 
-export const buildComponent = async(tag: string, component: ComponentSerrialize, theme?: string) => {
-	const res = await fetch('/build', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			tag: tag,
-			theme: theme ?? 'darkTheme',
-			schema: component
-		}),
-	});
-
-	if (!res.ok) {
-		console.error('❌ Ошибка при сохранении блока');
-	} 
-	else {
-		const json = await res.json();
-		console.log('✅ build component: ', json.path);
-		return json.path;
-	}
-}
 export const fetchFolders = async () => {
 	if (window.electronAPI?.listFolders) {
 		try {
@@ -237,6 +217,7 @@ export const fetchFolders = async () => {
     if (!res.ok) throw new Error('Ошибка загрузки');
     return res.json();
 }
+
 
 export const db = {
 	async set(key: string, value: any) {
@@ -264,3 +245,26 @@ export const db = {
 	}
 }
 
+
+/**
+ * export const buildComponent = async(tag: string, component: ComponentSerrialize, theme?: string) => {
+	const res = await fetch('/build', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			tag: tag,
+			theme: theme ?? 'darkTheme',
+			schema: component
+		}),
+	});
+
+	if (!res.ok) {
+		console.error('❌ Ошибка при сохранении блока');
+	} 
+	else {
+		const json = await res.json();
+		console.log('✅ build component: ', json.path);
+		return json.path;
+	}
+}
+ */

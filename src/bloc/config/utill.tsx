@@ -341,7 +341,8 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
             items: getColors(theme, typeComponent === 'Tabs'),
             label: propName,
             value: propValue,
-            labelSx: { fontSize: '14px' }
+            labelSx: { fontSize: '14px' },
+            //style: { height: 36 },
         }
     }
     else if (propName === 'size') {
@@ -363,7 +364,8 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
             items: items,
             label: propName,
             value: propValue,
-            labelSx: { fontSize: '14px' }
+            labelSx: { fontSize: '14px' },
+            style: { maxHeight: 32, height: 32 },
         }
     }
     else if (propName === 'delay') {
@@ -439,10 +441,7 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
     else if(typeComponent && metaProps[typeComponent]?.[propName]) {
         const vars = metaProps[typeComponent][propName];
         
-        if(vars === 'string') {
-
-        }
-        else if(Array.isArray(vars)) {
+        if(Array.isArray(vars)) {
             const type = vars.length < 5 ? 'toggle' : 'select';
 
             const result = {
@@ -462,7 +461,7 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
                 }))
             }
 
-            if(type==='select') result.onlyId = true;
+            if(type === 'select') result.onlyId = true;
             return result;
         }
         else if (typeof vars === 'object' && vars !== null) {
@@ -495,179 +494,3 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
         }
     }
 }
-
-
-
-
-/**
- * export const fabrickPropsScheme = (type: RegistreTypeComponent, defaultValue: any, typeProps: PropsTypesEditor) => {
-    const alightsIcons = {
-        left: <FormatAlignLeft />,
-        center: <FormatAlignCenter />,
-        right: <FormatAlignRight />,
-        justify: <FormatAlignJustify />
-    }
-    const displayIcons = {
-        initial: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}> init </span>,
-        block: <LinearScale />,
-        inline: <ViewColumn />,
-        'inline-block': <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }}>in -b </span>,
-        flex: <Widgets />,
-        'inline-flex': <ViewList />,
-        grid: <ViewQuilt />,
-        'inline-grid': <ViewArray />
-    }
-    Object.keys(displayIcons).map((key) => {
-        displayIcons[key] = (
-            <Tooltip title={key} placement="top" arrow >
-                { displayIcons[key] }
-            </Tooltip>
-        )
-    });
-
-
-    if (typeProps === 'children' && typeof defaultValue === 'string') {
-        return {
-            type: 'text',
-            id: typeProps,
-            multiline: true,
-            value: defaultValue,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            sx: { fontSize: 14 }
-        }
-    }
-    else if (['src', 'alt', 'sizes'].includes(typeProps)) {
-        return {
-            type: 'text',
-            id: typeProps,
-            multiline: true,
-            value: defaultValue,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            sx: { fontSize: 14 }
-        }
-    }
-    else if (typeProps === 'color') {
-        return {
-            type: 'toggle',
-            id: typeProps,
-            items: '',
-            label: typeProps,
-            value: defaultValue,
-            labelSx: { fontSize: '14px' }
-        }
-    }
-    else if (typeProps === 'variant') {
-        return {
-            type: 'toggle',
-            id: typeProps,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            value: defaultValue,
-            items: metaProps[type]?.[typeProps]?.map((key) => ({
-                id: key,
-                label: <span style={{ fontSize: '10px', whiteSpace: 'nowrap' }} >{key}</span>
-            }))
-        }
-    }
-    else if (typeProps === 'size') {
-        return {
-            type: 'toggle',
-            id: typeProps,
-            items: [
-                {
-                    id: 'small', label: <var style={{ fontStyle: 'italic' }} > sm </var>
-                },
-                { id: 'medium', label: <var style={{ fontWeight: 400 }}> md </var> },
-                { id: 'large', label: <var style={{ fontWeight: 'bold' }}> lg </var> }
-            ],
-            label: typeProps,
-            value: defaultValue,
-            labelSx: { fontSize: '14px' }
-        }
-    }
-    else if (typeProps === 'display' || typeProps === 'labelPosition') {
-        return {
-            type: 'toggle',
-            id: typeProps,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            value: defaultValue,
-            items: metaProps[type]?.[typeProps]?.map((key) => ({
-                id: key,
-                label: displayIcons[key]
-            }))
-        }
-    }
-    else if (typeProps === 'align') {
-        return {
-            type: 'toggle',
-            id: typeProps,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            value: defaultValue,
-            items: metaProps[type]?.[typeProps]?.map((key) => ({
-                id: key,
-                label: alightsIcons[key]
-            }))
-        }
-    }
-    else if (typeProps === 'fullWidth') {
-        return {
-            type: 'switch',
-            id: typeProps,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            value: defaultValue,
-        }
-    }
-    else if (typeProps === 'type') {
-        return {
-            type: 'toggle',
-            id: typeProps,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            value: defaultValue,
-            items: metaProps[type]?.[typeProps]?.map((key) => ({
-                id: key,
-                label: <span style={{ fontSize: '11px', whiteSpace: 'nowrap' }} > {key} </span>
-            }))
-        }
-    }
-    else if (['icon', 'endIcon', 'startIcon', 'leftIcon'].includes(typeProps)) {
-        const r = Object.keys(iconsList).map((key) => {
-            const Render = iconsList[key];
-
-            return ({
-                id: key,
-                label: <Render />
-            })
-        });
-        r.unshift({
-            id: 'none',
-            label: <span style={{ fontSize: '10px', whiteSpace: 'nowrap', color: 'gray' }}>✖️</span>
-        });
-
-        return {
-            type: 'toggle',
-            id: typeProps,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            value: defaultValue,
-            items: r
-
-        }
-    }
-    else if (['min', 'max', 'step'].includes(typeProps)) {
-        return {
-            type: 'number',
-            id: typeProps,
-            value: defaultValue,
-            label: typeProps,
-            labelSx: { fontSize: '14px' },
-            sx: { fontSize: 14 }
-        }
-    }
-}
- */

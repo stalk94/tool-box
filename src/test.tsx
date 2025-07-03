@@ -14,34 +14,42 @@ import './style/index.css';
 import Editor from './bloc/App';
 import { store } from 'statekit-react';
 import './bloc/modules/index';
+import { AlertProvider } from './index';
+import Page from './bloc/export/Page';
+import './bloc/modules/index';
+import "./style/edit.css";
 
 
 const App = () => {
     const savedTheme = localStorage.getItem('theme');
     const [darkMode, setDarkMode] = React.useState(savedTheme === 'light' ? false: true);
-    const [size, setSize] = React.useState({
-        width: 100,
-        height: 100
-    });
+
     
     React.useEffect(()=> {
-        globalThis.EDITOR = true;
+        if (!globalThis.__DATA__) globalThis.EDITOR = true;
     }, []);
 
 
-    
+    if (globalThis.__DATA__) return(
+        <Page
+            theme={globalThis.__DATA__.theme}
+            data={globalThis.__DATA__.data}
+        />
+    );
     return(
         <Provider store={store}>
             <ThemeProvider theme={darkMode ? darkTheme : lightTheme}>
-                <CssBaseline />
-                <SnackbarProvider
-                    maxSnack={3}
-                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                    autoHideDuration={4000}
-                    preventDuplicate
-                >
-                    <Editor/>
-                </SnackbarProvider>
+                <AlertProvider>
+                    <CssBaseline />
+                    <SnackbarProvider
+                        maxSnack={3}
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        autoHideDuration={4000}
+                        preventDuplicate
+                    >
+                        <Editor/>
+                    </SnackbarProvider>
+                </AlertProvider>
             </ThemeProvider>
         </Provider>
     );

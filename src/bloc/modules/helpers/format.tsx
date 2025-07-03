@@ -17,8 +17,10 @@ export function toJsx(json: JSONContent|string|undefined|null) {
         return  result;
     }
 
+    
     if(typeof json === 'object') {
         const html = rendeHtml(json);
+        
         return <div dangerouslySetInnerHTML={{ __html: html }} />;
     }
     else return json;

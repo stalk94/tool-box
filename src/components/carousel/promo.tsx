@@ -5,7 +5,7 @@ import Card from '../carts/base';
 import { FiberManualRecord, AdjustOutlined } from '@mui/icons-material';
 import { Faker, ru, en } from '@faker-js/faker';
 import { MarqueeText, MarqueeAdaptive } from '../text/marque';
-import { useContainerWidth } from '../hooks/useContainerWidth';
+import { useContainerSize } from '../hooks/useContainerWidth';
 const faker = new Faker({ locale: [ru, en] });
 
 
@@ -147,13 +147,13 @@ const PhotoColage = ({ images }) => {
     );
 }
 const Description = ({ data, navigationSlot, button, style }) => {
-    const [ref, width] = useContainerWidth<HTMLDivElement>();
-
+    const [ref, width, height] = useContainerSize<HTMLDivElement>();
+    
 
     return (
-        <Box
+        <div
             ref={ref}
-            sx={{
+            style={{
                 position: "relative",
                 height: "100%",
                 width: "100%",
@@ -164,8 +164,8 @@ const Description = ({ data, navigationSlot, button, style }) => {
                 textAlign: "center",
             }}
         >
-            <Box
-                sx={{
+            <div
+                style={{
                     width: "100%",
                     height: "100%",
                     display: "flex",
@@ -173,7 +173,7 @@ const Description = ({ data, navigationSlot, button, style }) => {
                     justifyContent: width < 600 ? 'start' : "center",
                     alignItems: "start",
                     textAlign: "center",
-                    p: 2,
+                    padding: 8,
                     flexGrow: 1,
                 }}
             >
@@ -214,23 +214,20 @@ const Description = ({ data, navigationSlot, button, style }) => {
                 </Typography>
                 {button}
 
-                <Box
-                    sx={{
+                <div
+                    style={{
                         position: "absolute",
-                        bottom: width < 600 ? 0 : {
-                            xs: 0,
-                            md: 24,
-                        },
+                        bottom: 0,
                         left: "50%",
                         transform: "translateX(-50%)"
                     }}
                 >
-                    {navigationSlot}
-                </Box>
-            </Box>
+                    { navigationSlot }
+                </div>
+            </div>
 
             {/* <PhotoColage images={data.images} /> */}
-        </Box>
+        </div>
     );
 }
 
