@@ -200,7 +200,7 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
                                 flex: `0 0 ${100 / slidesToShow}%`,
                                 maxWidth: `${100 / slidesToShow}%`,
                                 height: (height ?? cellHeight) ?? '100%',
-                                padding: 4,
+                                padding: 2,
                                 boxSizing: 'border-box',
                                 userSelect: 'none',
                                 justifyContent: 'center',
@@ -314,8 +314,8 @@ export const CarouselVertical = ({ editor, ...props }: CarouselProps) => {
                 style={{ 
                     ...item?.style,
                     width: '100%', 
-                    paddingTop: 4,
-                    paddingBottom: 4,
+                    paddingTop: 2,
+                    paddingBottom: 2,
                     height: slideHeight, 
                 }} 
             />
@@ -330,8 +330,8 @@ export const CarouselVertical = ({ editor, ...props }: CarouselProps) => {
                     width: '100%', 
                     height: slideHeight, 
                     margin: 'auto', 
-                    paddingTop: 4,
-                    paddingBottom: 4,
+                    paddingTop: 2,
+                    paddingBottom: 2,
                 }} 
             />
         );
@@ -340,8 +340,8 @@ export const CarouselVertical = ({ editor, ...props }: CarouselProps) => {
                 style={{ 
                     ...item?.style,
                     width: '100%', 
-                    paddingTop: 4,
-                    paddingBottom: 4,
+                    paddingTop: 2,
+                    paddingBottom: 2,
                     //height: calculateHeightSlide - 4, 
                 }} 
             >

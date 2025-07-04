@@ -3,6 +3,7 @@ import { useSnackbar } from 'notistack';
 import { LayoutCustom, BlockData, ComponentSerrialize } from './type';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { editorContext, infoSlice, cellsSlice, settingsSlice } from "./context";
+import { Splitter, SplitterPanel } from 'primereact/splitter';
 import useContextMenu from '@components/context-main';
 import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { SortableItem } from './Sortable';
@@ -15,11 +16,46 @@ import { ThemeProvider, Paper } from '@mui/material';
 import { RulerX, RulerY } from './utils/Rullers';
 import { extractMuiStylesForContainer } from './helpers/dom';
 import { MetaHeader, MetaFooter } from './utils/Meta';
+import { mergeBlockProps } from './helpers/updateComponentProps';
 import { db } from "./helpers/export";
 import registr from './helpers/shared';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 const margin: [number, number] = [3, 3];
+
+
+const Cell = ({layer, content, nested}) => {
+    
+    return(
+        <DroppableCell 
+            key={layer.i} 
+            id={nested ? layer.i +':'+ nested?.index : layer.i}
+            nested={nested}
+        >
+            {EDITOR &&
+                <SortableContext
+                    items={content ? content.map((cnt) => cnt.props['data-id']) : []}
+                    strategy={rectSortingStrategy}
+                >
+                    {Array.isArray(content) &&
+                        <>
+                            {Array.isArray(content) && content.map((component) => (
+                                <SortableItem
+                                    key={component.props['data-id']}
+                                    id={component.props['data-id']}
+                                    cellId={layer.i}
+                                    onSelectCell={() => editorContext.currentCell.set(layer)}
+                                >
+                                    { component }
+                                </SortableItem>
+                            ))}
+                        </>
+                    }
+                </SortableContext>
+            }
+        </DroppableCell>
+    );
+}
 
 
 export default function ({ desserealize, theme }) {
@@ -54,7 +90,14 @@ export default function ({ desserealize, theme }) {
         if (specialComponents.includes(selected.props['data-type'])) return;
         
         cellsSlice.set((next) => {
-            next[curCell.i] = next[curCell.i].filter((content) =>
+            if (Array.isArray(next[curCell.i]?.[0])) {
+                next[curCell.i].forEach((nest, index)=> {
+                    next[curCell.i][index] = nest.filter((content) =>
+                        content.props['data-id'] !== selected.props?.['data-id']
+                    );
+                });
+            }
+            else next[curCell.i] = next[curCell.i].filter((content) =>
                 content.props['data-id'] !== selected.props?.['data-id']
             );
 
@@ -194,11 +237,16 @@ export default function ({ desserealize, theme }) {
     
     
     const currentLayout = React.useMemo(()=> layouts[currentBreakpoint], [currentBreakpoint, layouts]);
-    const initBlock = React.useCallback((cell: LayoutCustom, content: ComponentSerrialize[]) => {
+    const initBlock = React.useCallback((cell: LayoutCustom, content: ComponentSerrialize[]|ComponentSerrialize[][]) => {
         const nameGroup = cell?.props?.["data-group"] ?? cell.i;
         registr.init(nameGroup, cell);
         
-        return registr.inject(content, cell);
+        if (Array.isArray(content) && Array.isArray(content[0])) {
+            return content.map((contentNested)=> registr.inject(contentNested, cell))
+        }
+        else {
+            return registr.inject(content, cell);
+        }
     }, [currentLayout]);
     const { menu, handleOpen } = useContextMenu([
         {
@@ -309,6 +357,7 @@ export default function ({ desserealize, theme }) {
                         >
                             { currentLayout.map((layer) => {
                                 const content = initBlock(layer, cells[layer.i]);
+                                const splitCells = layer.props?.nested;
                                 
                                 return (
                                     <Paper
@@ -336,37 +385,37 @@ export default function ({ desserealize, theme }) {
                                             boxSizing: 'border-box',
                                         }}
                                     >
-                                        <DroppableCell key={layer.i} id={layer.i}>
-                                            {EDITOR &&
-                                                <SortableContext
-                                                    items={content ? content.map((cnt) => cnt.props['data-id']) : []}
-                                                    strategy={rectSortingStrategy}
-                                                >
-                                                    {Array.isArray(content) &&
-                                                        <>
-                                                            {Array.isArray(content) && content.map((component) => (
-                                                                <SortableItem
-                                                                    key={component.props['data-id']}
-                                                                    id={component.props['data-id']}
-                                                                    cellId={layer.i}
-                                                                    onSelectCell={()=> editorContext.currentCell.set(layer)}
-                                                                >
-                                                                    { component }
-                                                                </SortableItem>
-                                                            ))}
-                                                        </>
-                                                    }
-                                                </SortableContext>
-                                            }
-                                        </DroppableCell>
-
-                                        {/* ANCHOR - Вне редактора (!non correct) */}
-                                        {(!EDITOR && Array.isArray(content)) &&
-                                            content.map((component, index) =>
-                                                <React.Fragment key={component.props['data-id']}>
-                                                    { desserealize(component) }
-                                                </React.Fragment>
-                                            )
+                                        { splitCells &&
+                                            <Splitter key={layer.i}
+                                                style={{ height: '100%', width: '100%' }} 
+                                                layout={splitCells.orientation} 
+                                                onResizeEnd={(e)=> {
+                                                    mergeBlockProps('nested', {
+                                                        ...splitCells,
+                                                        sizes: e.sizes
+                                                    }, layer);
+                                                }}
+                                            >
+                                                { content.map((contentNest, index)=> 
+                                                    <SplitterPanel 
+                                                        key={index} 
+                                                        size={splitCells.sizes[index] ?? 50}
+                                                    >
+                                                        <Cell
+                                                            content={contentNest}
+                                                            layer={layer}
+                                                            nested={{ ...splitCells, index }}
+                                                        />
+                                                    </SplitterPanel>
+                                                )}
+                                            </Splitter>
+                                        }
+                                        { !splitCells &&
+                                            <Cell
+                                                key={layer.i}
+                                                content={content}
+                                                layer={layer}
+                                            />
                                         }
                                     </Paper>
                                 );

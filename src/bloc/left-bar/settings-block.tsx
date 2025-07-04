@@ -1,13 +1,14 @@
 import React from "react";
 import { Box, Typography, Divider, Chip } from "@mui/material";
 import { editorContext, infoSlice, cellsSlice } from "../context";
+import { ComponentSerrialize } from '../type';
 import { TextInput, CheckBoxInput, NumberInput, SliderInput, ToggleInput, SelectInput, ColorInput } from 'src/index';
 import { CgBorderStyleSolid } from "react-icons/cg";
 import { RxBorderDotted } from "react-icons/rx";
 import { RxBorderDashed } from "react-icons/rx";
 import { RxValueNone } from "react-icons/rx";
 
-// backdropFilter: 'blur(4px)'
+
 export default function ({ category }) {
     const types = ['standart', 'form', ''];
     const select = editorContext.currentCell.use();
@@ -27,6 +28,44 @@ export default function ({ category }) {
             })
         );
         editorContext.currentCell.set(clone);
+    }
+    const setNested = (orientation: 'vertical' | 'horizontal' | 'none', count: number) => {
+        const curCell = editorContext.currentCell.get();
+        const cells = cellsSlice.get(true);
+        const old = cells[curCell.i];
+
+        if (!old) return;
+
+        cellsSlice.set((prev) => {
+            if (orientation === 'none') {
+                // Убрать вложенность
+                prev[curCell.i] = Array.isArray(old[0]) ? old[0] : [];
+            } 
+            else {
+                if (Array.isArray(old[0])) {
+                    // Уже есть вложенность — просто добавляем новые пустые блоки
+                    let newNested = [...(old as ComponentSerrialize[][])];
+                    
+                    if (count < newNested.length) {
+                        newNested = newNested.slice(0, count);
+                    } 
+                    else if (count > newNested.length) {
+                        for (let i = 0; i < count - newNested.length; i++) {
+                            newNested.push([]);
+                        }
+                    }
+
+                    prev[curCell.i] = newNested;
+                } 
+                else {
+                    // Нет вложенности — создаём новые блоки, старое содержимое в первый
+                    const newNested: ComponentSerrialize[][] = [old, ...Array.from({ length: count - 1 }, () => [])];
+                    prev[curCell.i] = newNested;
+                }
+            }
+
+            return prev;
+        });
     }
     const setMetaName = React.useCallback((name: string) => {
         if (!select) return;
@@ -55,6 +94,28 @@ export default function ({ category }) {
                 value={select?.props?.type ?? 'standart'}
                 items={types.map((v)=> ({id: v, label:v}))}
                 onChange={(val)=> mergeProps('type', val.id)}
+            />
+            <ToggleInput
+                label='split:'
+                position='column'
+                labelSx={{ fontSize: 14 }}
+                style={{ height: 26 }}
+                value={select?.props?.nested?.sizes?.length ?? 'none'}
+                onChange={(val) => {
+                    const count = +val;
+
+                    setNested('horizontal', count);
+                    mergeProps('nested', {
+                        ...select?.props?.nested, 
+                        orientation: 'horizontal',
+                        sizes: Array(count).fill(100/count)
+                    });
+                }}
+                items={[
+                    { id: '2', label: <span style={{ fontSize: '14px' }}>x2</span> },
+                    { id: '3', label: <span style={{ fontSize: '12px' }}>x3</span> },
+                    { id: '4', label: <span style={{ fontSize: '12px' }}>x4</span> },
+                ]}
             />
         </>
     );

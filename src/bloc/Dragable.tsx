@@ -207,11 +207,12 @@ export function ContextSlot({ idParent, idSlot, nestedComponentsList, data, type
     );
 }
 // зона сброса для компонентов
-export function DroppableCell({ id, children }) {
+export function DroppableCell({ id, children, nested }) {
     const { setNodeRef, isOver, active } = useDroppable({ 
         id,
         data: {
-            type: 'cell'
+            type: 'cell',
+            nested
         },
     });
     

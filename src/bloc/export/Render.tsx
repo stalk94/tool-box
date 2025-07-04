@@ -23,15 +23,24 @@ function Render({ layouts, cells, size, meta, preview }: RenderProps) {
     const [currentBreakpoint, setCurrentBreackpoint] = React.useState('lg');
     const currentLayout = React.useMemo(() => layouts[currentBreakpoint], [currentBreakpoint, layouts]);
 
+    
     const useElevation = (elevation: number) => {
         const safeElevation = Math.min(Math.max(elevation, 0), 24);
         return theme.shadows[safeElevation];
     }
-    const initBlock = React.useCallback((cell: LayoutCustom, content: ComponentSerrialize[]) => {
+    const initBlock = React.useCallback((
+        cell: LayoutCustom, 
+        content: ComponentSerrialize[]|ComponentSerrialize[][]
+    ) => {
         const nameGroup = cell?.props?.["data-group"] ?? cell.i;
         registr.init(nameGroup, cell);          // инициализация блоков и их компонентов
 
-        return registr.inject(content, cell);
+        if (Array.isArray(content) && Array.isArray(content[0])) {
+            return content.map((contentNested)=> registr.inject(contentNested, cell))
+        }
+        else {
+            return registr.inject(content, cell);
+        }
     }, [currentLayout]);
     
 
@@ -41,7 +50,7 @@ function Render({ layouts, cells, size, meta, preview }: RenderProps) {
             layouts={{ [currentBreakpoint]: currentLayout }}
             breakpoints={{ lg: 1200, md: 980, sm: 640, xs: 480 }}
             cols={{ lg: 24, md: 16, sm: 12, xs: 8 }}
-            rowHeight={(meta?.rowHeight ?? 20)}        
+            rowHeight={(meta?.rowHeight ?? 13)}        
             margin={meta?.margin ?? [0, 0]}           
             isDraggable={false}
             isResizable={false}
@@ -50,6 +59,7 @@ function Render({ layouts, cells, size, meta, preview }: RenderProps) {
         >
             {currentLayout.map((layer) => {
                 const content = preview ? cells[layer.i] : initBlock(layer, cells[layer.i]);
+                const splitCells = layer.props?.nested;
 
                 return (
                     <div

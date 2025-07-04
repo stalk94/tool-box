@@ -107,22 +107,26 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             }
         };
     }
-    const addComponentToCell = (cellId: string, component: DataRegisterComponent) => {
+    const addComponentToCell = (cellId: string, component: DataRegisterComponent, nestedId?: number) => {
         const { Component, props } = component;
         const data = createDataComponent(props, cellId);
 
         cellsSlice.set((next) => {
-            if(Array.isArray(next[cellId])) next[cellId].push(data);
+            if (nestedId !== undefined) {
+                next[cellId][nestedId].push(data);
+            }
+            else if(Array.isArray(next[cellId])) next[cellId].push(data);
             else next[cellId] = [data];
             
             return next;
         });
     }
-    const handleDragEndOld = (event: DragEndEvent, cellId: string) => {
+    const useChangeIndexOld = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
         if (!active || !over || active.id === over.id) return;
 
         const currentList = cellsSlice.get(true);
+        
         const oldIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === active.id);
         const newIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === over.id);
 
@@ -136,16 +140,88 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         });
 
         if (cacheDrag.current) {
-                document.querySelectorAll('[ref-id]').forEach(el => {
-                    if (el != cacheDrag.current) el.classList.remove('editor-selected');
-                });
-                cacheDrag.current.classList.add('editor-selected');
+            document.querySelectorAll('[ref-id]').forEach(el => {
+                if (el != cacheDrag.current) el.classList.remove('editor-selected');
+            });
+            cacheDrag.current.classList.add('editor-selected');
 
-                if (currentList[cellId]) {
-                    const findChild = currentList[cellId].find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
-                    if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
-                }
+            if (currentList[cellId]) {
+                const findChild = currentList[cellId].find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
+                if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
             }
+        }
+    }
+    const useChangeIndex = (event: DragEndEvent, cellId: string) => {
+        const { active, over } = event;
+        if (!active || !over || active.id === over.id) return;
+
+        const currentList = cellsSlice.get(true);
+        const cell = currentList[cellId];
+
+        // 🔍 Универсальный поиск в 1D или 2D массиве
+        const findIndexes = (list: any) => {
+            if (Array.isArray(list[0])) {
+                // 2D
+                for (let i = 0; i < list.length; i++) {
+                    const idx = list[i].findIndex(comp => comp.props['data-id'] === active.id);
+                    if (idx !== -1) {
+                        return { outer: i, inner: idx, type: '2d' };
+                    }
+                }
+            } 
+            else {
+                // 1D
+                const idx = list.findIndex(comp => comp.props['data-id'] === active.id);
+                if (idx !== -1) return { index: idx, type: '1d' };
+            }
+            return null;
+        };
+        const findTargetIndex = (list: any) => {
+            if (Array.isArray(list[0])) {
+                for (let i = 0; i < list.length; i++) {
+                    const idx = list[i].findIndex(comp => comp.props['data-id'] === over.id);
+                    if (idx !== -1) {
+                        return { outer: i, inner: idx };
+                    }
+                }
+            } 
+            else {
+                const idx = list.findIndex(comp => comp.props['data-id'] === over.id);
+                if (idx !== -1) return { index: idx };
+            }
+            return null;
+        };
+
+        const from = findIndexes(cell);
+        const to = findTargetIndex(cell);
+        if (!from || !to) return;
+
+        // ✅ Перемещение
+        cellsSlice.set((draft) => {
+            if (from.type === '1d' && 'index' in to) {
+                draft[cellId] = arrayMove(draft[cellId], from.index, to.index);
+            } 
+            else if (from.type === '2d' && 'outer' in from && 'outer' in to) {
+                const item = draft[cellId][from.outer][from.inner];
+                draft[cellId][from.outer].splice(from.inner, 1);
+                draft[cellId][to.outer].splice(to.inner, 0, item);
+            }
+        });
+
+        // 👁️ Восстановление выделения
+        if (cacheDrag.current) {
+            document.querySelectorAll('[ref-id]').forEach(el => {
+                if (el !== cacheDrag.current) el.classList.remove('editor-selected');
+            });
+            cacheDrag.current.classList.add('editor-selected');
+            const id = cacheDrag.current.getAttribute('ref-id');
+
+            if (id) {
+                const all = Array.isArray(cell[0]) ? cell.flat() : cell;
+                const findChild = all.find(child => child.props['data-id'] == id);
+                if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
+            }
+        }
     }
     const handleDragStart = (event: DragStartEvent) => {
         const elActivator = event.activatorEvent.target as HTMLElement;
@@ -164,7 +240,7 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
         // перетаскивание внутри ячеек
         if (dragData?.type === 'sortable' && dropMeta?.type === 'sortable') {
             const cellId = dragData.cellId;
-            handleDragEndOld(event, cellId);
+            useChangeIndex(event, cellId);
             return;
         }
         // перетаскивание на слот
@@ -187,6 +263,8 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
             // добавление из галереи компонентов
             if (dragged && type === 'element' && !accepts) {
+                if(dropMeta?.nested) over.id = over.id.split(':')[0];
+    
                 editorContext.currentCell.set({ i: over.id });
 
                 const ref = document.querySelector(`[data-id="${over.id}"]`);
@@ -194,7 +272,8 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
                 addComponentToCell(
                     over.id,
-                    createComponentFromRegistry(active.id)
+                    createComponentFromRegistry(active.id),
+                    dropMeta?.nested?.index ?? undefined
                 );
             }
         }

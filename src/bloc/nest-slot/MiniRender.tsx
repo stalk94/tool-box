@@ -91,7 +91,7 @@ export default function MiniRender({ layouts, onReadyLiteral, size, type, anyRen
                     layouts={{ [breackpoint]: layotRender }}
                     breakpoints={{ lg: 1100, md: 940, sm: 590, xs: 480 }}
                     cols={{ lg: 24, md: 16, sm: 12, xs: 8 }}
-                    rowHeight={20}
+                    rowHeight={10}
                     compactType={null}                                          // Отключение автоматической компоновки
                     preventCollision={true}
                     isDraggable={false}                                         // Отключить перетаскивание

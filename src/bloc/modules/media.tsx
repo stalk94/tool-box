@@ -501,8 +501,8 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
         const styles = {
             img: {
                 width: '100%',
-                paddingTop: 4,
-                paddingBottom: 4,
+                paddingTop: 2,
+                paddingBottom: 2,
                 height: height / otherProps.slidesToShow,
             },
             video: {
@@ -510,8 +510,8 @@ export const VerticalCarouselWrapper = React.forwardRef((props: CarouselWrapperP
                 width: '100%',
                 height: height / otherProps.slidesToShow,
                 margin: 'auto',
-                paddingTop: 4,
-                paddingBottom: 4,
+                paddingTop: 2,
+                paddingBottom: 2,
             }
         }
 

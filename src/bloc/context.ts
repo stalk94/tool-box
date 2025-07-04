@@ -99,7 +99,7 @@ export const editorContext = createState('EDITOR', {
     dragEnabled: true,
     settings: {
         gridCompact: false,
-        rowHeight: 20
+        rowHeight: 10
     },
     meta: {
         scope: 'test',
@@ -136,7 +136,7 @@ export const bufferSlice = create({
 } as BufferStateType, {
     devtools: { name: 'buffer' }
 });
-export const cellsSlice = create({} as Record<string, ComponentSerrialize[]>, {
+export const cellsSlice = create({} as Record<string, ComponentSerrialize[]|ComponentSerrialize[][]>, {
     devtools: { name: 'cells' },
     immer: true
 });

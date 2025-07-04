@@ -308,7 +308,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
                     labelPosition="column"
                     headerStyle={{
                         fontSize: '12px',
-                        color: 'orange',
+                        color: 'silver',
                         paddingLeft: '14px',
                     }}
                     onSpecificChange={(old, news, keyProps: string)=> {

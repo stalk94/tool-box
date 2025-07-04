@@ -38,10 +38,11 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
         transition,
         opacity: isDragging ? 0.5 : 1,
         width: children.props.fullWidth ? '100%' : (children.props.width ?? 300),
+        //height: 'fit-content',
         display: 'flex',
         cursor: dragEnabled ? 'grab' : 'default',
         //alignItems: 'center',
-        borderRight: !children.props.fullWidth && '1px dashed #b1544529',
+        borderRight: !children.props.fullWidth && '1px dashed #98989810',
         transformOrigin: 'center',
         flexShrink: 0,
         flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
@@ -58,7 +59,14 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
         if (specialComponents.includes(children.props['data-type'])) return;
 
         cellsSlice.set((next) => {
-            next[cellId] = next[cellId].filter((content)=> 
+            if (Array.isArray(next[cellId]?.[0])) {
+                next[cellId].forEach((nest, index)=> {
+                    next[cellId][index] = nest.filter((content) =>
+                        content.props['data-id'] !== children.props?.['data-id']
+                    );
+                });
+            }
+            else next[cellId] = next[cellId].filter((content)=> 
                 content.props['data-id'] !== children.props['data-id']
             );
 

@@ -44,7 +44,7 @@ type BreadcrumbsWrapperProps = {
 export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) => {
     const [src, setSrc] = React.useState(undefined);
     const [openBar, setOpenBar] = React.useState(false);
-    const meta = EDITOR ? editorContext.meta.use() : __META__;
+    const meta = EDITOR ? editorContext?.meta?.use() : __META__;
     const lastFileRef = React.useRef<number | null>(null);
     const {
         ['data-id']: dataId,

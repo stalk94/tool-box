@@ -135,7 +135,7 @@ export type LayoutOptionBlockData = {
 }
 export type LayoutCustom = Layout & {
     /** массив компонентов */
-    content?: ComponentSerrialize[]
+    content?: ComponentSerrialize[] | ComponentSerrialize[][]
     /** стилизация ячейки */
     props?: {
         type: 'standart' | 'form' | ''
@@ -144,6 +144,10 @@ export type LayoutCustom = Layout & {
         elevation?: number
         style?: React.CSSProperties
         classNames?: string
+        nested?: {
+            orientation: 'vertical' | 'horizontal'
+            sizes: number[]
+        }
     }
 }
 export type LayoutSystem = LayoutCustom & {

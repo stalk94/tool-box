@@ -61,7 +61,10 @@ export const TextWrapper = React.forwardRef((props: TextWrapperProps, ref) => {
             ref={ref}
             data-id={dataId} 
             data-type="Text" 
-            style={{ width: '100%', ...style }}
+            style={{ 
+                width: '100%', 
+                ...style 
+            }}
         >
             <TipTapSlotEditor
                 value={children}
