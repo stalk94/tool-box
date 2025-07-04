@@ -161,6 +161,7 @@ export type LayoutsBreackpoints = {
     xs: LayoutCustom[]
 }
 export type PageMeta = {
+    project: string
     scope: string
     name: string
     updatedAt: number
@@ -178,8 +179,9 @@ export type PageData = {
     }
 }
 export type ScopeData = {
-    name: string 
-    data: PageData
+    [key: string]: {
+        [key: string]: PageData
+    }
 }
 export type BlockCategory = 'any' | 'favorite'
 export type BlockData = {

@@ -28,6 +28,14 @@ const Helpers = ({ children, theme }) => {
                     { children }
                 </SnackbarProvider>
             </AlertProvider>
+            <style>
+                {!EDITOR && `
+                    .p-splitter-gutter {
+                        pointer-events: none;
+                        cursor: default !important;
+                    }
+                `}
+            </style>
         </ThemeProvider>
     );
 }

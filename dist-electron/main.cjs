@@ -2,38 +2,12 @@
 Object.defineProperty(exports, Symbol.toStringTag, { value: "Module" });
 const electron = require("electron");
 const fs = require("fs");
-const path = require("path");
 const lowdb = require("lowdb");
 const node = require("lowdb/node");
+const path = require("path");
 const lodash = require("lodash");
 const express = require("express");
 const ngrok = require("ngrok");
-function copyRecursiveSync(src, dest) {
-  if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
-  for (const item of fs.readdirSync(src)) {
-    const srcPath = path.join(src, item);
-    const destPath = path.join(dest, item);
-    if (fs.statSync(srcPath).isDirectory()) {
-      copyRecursiveSync(srcPath, destPath);
-    } else {
-      fs.copyFileSync(srcPath, destPath);
-    }
-  }
-}
-function copyInitialDataOnce() {
-  const targetBlocksPath = path.join(electron.app.getPath("userData"), "blocks");
-  const sys = path.join(electron.app.getPath("userData"), "blocks/system");
-  if (fs.existsSync(sys)) return;
-  !electron.app.isPackaged;
-  const sourceBlocksPath = path.join(process.cwd(), "public/blocks");
-  console.log("Copying from:", sourceBlocksPath);
-  if (!fs.existsSync(sourceBlocksPath)) {
-    console.warn("❌ Source blocks folder not found");
-    return;
-  }
-  copyRecursiveSync(sourceBlocksPath, targetBlocksPath);
-  console.log("✅ Blocks copied to userData");
-}
 const filePath = path.join(electron.app.getPath("userData"), "storage.json");
 const adapter = new node.JSONFile(filePath);
 const db = new lowdb.Low(adapter, {});
@@ -73,6 +47,51 @@ const DB = {
     await db.write();
   }
 };
+function copyRecursiveSync(src, dest) {
+  if (!fs.existsSync(dest)) fs.mkdirSync(dest, { recursive: true });
+  for (const item of fs.readdirSync(src)) {
+    const srcPath = path.join(src, item);
+    const destPath = path.join(dest, item);
+    if (fs.statSync(srcPath).isDirectory()) {
+      copyRecursiveSync(srcPath, destPath);
+    } else {
+      fs.copyFileSync(srcPath, destPath);
+    }
+  }
+}
+function copyInitialDataOnce() {
+  const targetBlocksPath = path.join(electron.app.getPath("userData"), "blocks");
+  const sys = path.join(electron.app.getPath("userData"), "blocks/system");
+  if (fs.existsSync(sys)) return;
+  !electron.app.isPackaged;
+  const sourceBlocksPath = path.join(process.cwd(), "public/blocks");
+  console.log("Copying from:", sourceBlocksPath);
+  if (!fs.existsSync(sourceBlocksPath)) {
+    console.warn("❌ Source blocks folder not found");
+    return;
+  }
+  copyRecursiveSync(sourceBlocksPath, targetBlocksPath);
+  console.log("✅ Blocks copied to userData");
+}
+async function initDbProjects() {
+  const targetBlocksPath = path.join(electron.app.getPath("userData"), "blocks");
+  path.join(electron.app.getPath("userData"), "blocks/system");
+  const result = {};
+  const scopes = fs.readdirSync(targetBlocksPath, { withFileTypes: true }).filter((entry) => entry.isDirectory()).map((entry) => entry.name);
+  for (const scope of scopes) {
+    if (!result[scope]) result[scope] = {};
+    const folderPath = path.join(targetBlocksPath, scope);
+    const files = fs.readdirSync(folderPath).filter((file) => file.endsWith(".json"));
+    files.map((file) => {
+      const filePath2 = path.join(folderPath, file);
+      const content = fs.readFileSync(filePath2, "utf8");
+      const name = file.replace(/\.json$/, "");
+      result[scope][name] = JSON.parse(content);
+    });
+  }
+  await DB.set("projects.test", result);
+  return await DB.get("projects");
+}
 const resolveFetch$3 = (customFetch) => {
   let _fetch;
   if (customFetch) {
@@ -7407,6 +7426,12 @@ const getBounds = () => {
     height: bounds.height
   };
 };
+const initDataDb = async () => {
+  const result = await DB.get("projects");
+  if (!result) {
+    await initDbProjects();
+  }
+};
 const createWindow = () => {
   const win = new electron.BrowserWindow({
     ...getBounds(),
@@ -7429,6 +7454,7 @@ electron.app.whenReady().then(async () => {
   electron.session.defaultSession.clearCache();
   fs.mkdirSync(PROJECTS_DIR, { recursive: true });
   await initDB();
+  await initDataDb();
   copyInitialDataOnce();
   createWindow();
   electron.globalShortcut.register("F12", () => {
@@ -7503,6 +7529,16 @@ electron.app.whenReady().then(async () => {
     try {
       await DB.set(key, value);
       return true;
+    } catch (err) {
+      return { error: err.message };
+    }
+  });
+  electron.ipcMain.handle("db:listFolders", async () => {
+    try {
+      const result = await DB.get("projects");
+      if (!result) {
+        return await initDbProjects();
+      } else return result;
     } catch (err) {
       return { error: err.message };
     }

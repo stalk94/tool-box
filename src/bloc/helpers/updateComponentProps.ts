@@ -52,18 +52,18 @@ export function updateComponentProps({ component, data, undo }: Params) {
 
 /** обновить slice project */
 export const updateProjectState = (scope: string, name: string) => {
+	const project = editorContext.meta.project.get();
 	const layouts = editorContext.layouts.get();
 	const size = editorContext.size.get();
 
-	infoSlice.project.set((prev)=> {
+	infoSlice.projects.set((prev)=> {
 		const data = {
 			layouts: layouts,					// текушая сетка
 			content: cellsSlice.get(true),		// список компонентов в ячейках
 			meta: {
 				scope,
 				name,
-				updatedAt: Date.now(),
-				preview: `snapshots/${scope}-${name}.png`
+				updatedAt: Date.now()
 			},
 			size: {
 				width: size.width,
@@ -72,16 +72,7 @@ export const updateProjectState = (scope: string, name: string) => {
 			}
 		}
 
-		const currentScope = prev?.[scope];
-
-		if(currentScope) {
-			const findIndex = currentScope?.findIndex((x) => x.name === name);
-
-			if(findIndex !== -1) {
-				currentScope[findIndex].data = data;
-			}
-		}
-
+		prev[project][scope][name] = data;
 		return prev;
 	});
 }

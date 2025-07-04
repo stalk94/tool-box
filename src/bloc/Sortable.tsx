@@ -30,22 +30,22 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
         disabled: (!dragEnabled || lock || mod === 'actions')        // ✅ глобальный флаг
     });
     
-
+    
     const styleWrapper: React.CSSProperties = {
         boxSizing: 'border-box',
         position: 'relative',
         transform: CSS.Transform.toString(transform),
         transition,
         opacity: isDragging ? 0.5 : 1,
-        width: children.props.fullWidth ? '100%' : (children.props.width ?? 300),
+        width: children.props?.fullWidth ? '100%' : (children.props?.width ?? 300),
         //height: 'fit-content',
         display: 'flex',
         cursor: dragEnabled ? 'grab' : 'default',
         //alignItems: 'center',
-        borderRight: !children.props.fullWidth && '1px dashed #98989810',
+        borderRight: !children.props?.fullWidth && '1px dashed #98989810',
         transformOrigin: 'center',
         flexShrink: 0,
-        flexBasis: children.props.fullWidth ? '100%' : (children.props.width ?? 30),
+        flexBasis: children.props?.fullWidth ? '100%' : (children.props?.width ?? 30),
         maxWidth: '100%',
         padding: 1,
         pointerEvents: mod === 'grid' ? 'none' : 'auto'
@@ -171,8 +171,8 @@ export function SortableItem({ id, children, cellId, onSelectCell }: SortableIte
             >
                 { mod === 'block' &&
                     <SlotToolBar
-                        dataId={children.props['data-id']}
-                        type={children.props['data-type']}
+                        dataId={children.props?.['data-id']}
+                        type={children.props?.['data-type']}
                         children={children}
                     />
                 }

@@ -12,7 +12,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
 		return result; // ← это будет absPath
 	},
     listFolders: async () => {
-		const result = await ipcRenderer.invoke('fs:listFolders');
+		const result = await ipcRenderer.invoke('db:listFolders');
 		if (result?.error) throw new Error(result.error);
 		return result;
 	},

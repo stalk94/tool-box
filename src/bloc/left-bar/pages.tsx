@@ -8,7 +8,7 @@ import { editorContext, infoSlice, cellsSlice } from "../context";
 import { createBlockToFile, fetchFolders } from "../helpers/export";
 import { usePopUpName, useSafeAsyncEffect } from '../helpers/usePopUp';
 import { getUniqueBlockName } from "../helpers/editor";
-
+import { db } from '../helpers/export'
 
 
 export const RenderListPages = ({ currentCat }) => {
@@ -32,10 +32,12 @@ export const RenderListPages = ({ currentCat }) => {
         return sorted[sorted.length - 1][0];
     }
     const getAllBlockFromScope = () => {
-        const project = infoSlice.project.get();
         const meta = editorContext.meta.get();
+         const project = infoSlice.projects[meta.project].get();
 
-        const currentScope = project[meta.scope];
+        const currentScope = Object.keys(project[meta.scope]).map((name)=> {
+            return({ name })
+        });
         return currentScope ?? [];
     }
     const getKeyNameSize = (name: string) => {
@@ -68,13 +70,13 @@ export const RenderListPages = ({ currentCat }) => {
         if (typeof window === 'undefined') return;
 
         try {
-            await createBlockToFile(meta.scope, uniqueName);
-            const data = await fetchFolders();
-
-            if (isMounted() && data) {
-                editorContext.meta.name.set(uniqueName);
-                infoSlice.project.set(data);
-            }
+            if(isMounted()) createBlockToFile(meta.scope, uniqueName, async(m, t)=> {
+                if(t !== 'error') {
+                    editorContext.meta.name.set(uniqueName);
+                    const data = await db.get(`${meta.project}.${meta.scope}.${uniqueName}`);
+                    infoSlice.projects[meta.project][meta.scope][uniqueName].set(data);
+                }
+            });
         } 
         catch (err) {
             console.error('❌ Ошибка при создании блока:', err);
@@ -162,11 +164,13 @@ export const RenderListPages = ({ currentCat }) => {
 export const RenderProjectTopPanel = () => {
     const { popover, handleOpen, trigger } = usePopUpName();
     const [value, setValue] = React.useState(editorContext.meta?.scope?.get());
+    const curProject = editorContext.meta.project.use();
     
 
     const handleChangeScope = (newScope: string) => {
-        const currentProject = infoSlice.project?.get()?.[newScope];
-        const existingNamesBlocks = currentProject.map(el => el.name);
+        const project = editorContext.meta.project.get();
+        const currentProject = infoSlice.projects[project]?.[newScope]?.get();;
+        const existingNamesBlocks = Object.keys(currentProject);
         
         // 🧹 Чистим layout/render до применения нового
         editorContext.size.set({ width: 0, height: 0, breackpoint: 'lg' });
@@ -222,7 +226,7 @@ export const RenderProjectTopPanel = () => {
                     mt: 0.3 
                 }}
             >
-                {Object.keys(infoSlice.project.get())?.map((scope) => (
+                {Object.keys(infoSlice.projects[curProject]?.get())?.map((scope) => (
                     <MenuItem key={scope} 
                         value={scope} 
                         style={{color: scope === 'system' && 'red'}}

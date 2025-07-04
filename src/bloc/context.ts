@@ -59,7 +59,7 @@ export type InfoStateType = {
         lastData: any
         task: any[];
     };
-    project: Record<string, ScopeData[]>
+    projects: Record<string, ScopeData>
     activeEditorTipTop: Editor
 }
 export type NestedContextStateType = {
@@ -102,6 +102,7 @@ export const editorContext = createState('EDITOR', {
         rowHeight: 10
     },
     meta: {
+        project: 'test',
         scope: 'test',
         name: 'test-block',
     },
@@ -177,7 +178,7 @@ export const infoSlice = createState('infoGlobal', {
             lastAddedType: '',
         },
     },
-    project: {}
+    projects: {}
 } as InfoStateType);
 export const nestedContextSlice = createState('nestedContextGlobal', {
     isEnable: false

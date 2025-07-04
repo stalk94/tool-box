@@ -124,6 +124,7 @@ export const desserealize = (component: ComponentSerrialize, data?: Record<strin
     if(component) {
         const { props, parent } = component;
         const type = props["data-type"];
+        
         const Component = componentMap[type];
         Component.displayName = type;
 

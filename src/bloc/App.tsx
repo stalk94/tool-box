@@ -121,36 +121,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
             return next;
         });
     }
-    const useChangeIndexOld = (event: DragEndEvent, cellId: string) => {
-        const { active, over } = event;
-        if (!active || !over || active.id === over.id) return;
-
-        const currentList = cellsSlice.get(true);
-        
-        const oldIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === active.id);
-        const newIndex = currentList[cellId].findIndex((comp) => comp.props['data-id'] === over.id);
-
-        if (oldIndex === -1 || newIndex === -1) return;
-        
-        // 🔁 Обновляем стейт
-        cellsSlice.set((old) => {
-            const next = { ...old };
-            next [cellId] = arrayMove(next[cellId], oldIndex, newIndex);
-            return next ;
-        });
-
-        if (cacheDrag.current) {
-            document.querySelectorAll('[ref-id]').forEach(el => {
-                if (el != cacheDrag.current) el.classList.remove('editor-selected');
-            });
-            cacheDrag.current.classList.add('editor-selected');
-
-            if (currentList[cellId]) {
-                const findChild = currentList[cellId].find(child => child.props['data-id'] == +cacheDrag.current.getAttribute('ref-id'));
-                if (findChild) requestIdleCallback(() => infoSlice.select.content.set(findChild));
-            }
-        }
-    }
     const useChangeIndex = (event: DragEndEvent, cellId: string) => {
         const { active, over } = event;
         if (!active || !over || active.id === over.id) return;
@@ -319,21 +289,21 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
 
     const getPreview = React.useCallback(() => {
         const meta = editorContext.meta.get();
-        const project = infoSlice.project.get();
-        const header = project.system.find((d) => d.name === 'header');
-        const footer = project.system.find((d) => d.name === 'footer');
+        const project = infoSlice.projects[meta.project].get();
+        const header = project.system.header;
+        const footer = project.system.footer;
         
 
         return {
             theme,
             data: {
-                header: header.data,
+                header: header,
                 body: {
                     layouts: structuredClone(editorContext.layouts.get()),
                     content: cellsSlice.get(true),
                     size: editorContext.size.get()
                 },
-                footer: footer.data,
+                footer: footer,
                 meta
             },
             prev: ()=> editorContext.mod.set('block')
@@ -417,7 +387,6 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                         <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                             <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
                             
-                            
                             { (mod === 'block' || mod === 'grid' || mod === 'actions') && 
                                 <GridComponentEditor 
                                     desserealize={desserealize} 
@@ -458,17 +427,6 @@ export default function EditorApp({ setShowBlocEditor }) {
             updateProjectState(scope, name);
         });
     }
-    const getDataFromCurrentScope =()=> {
-        const scope = editorContext.meta.scope.get();
-        const name = editorContext.meta.name.get();
-        const project = infoSlice.project.get();
-
-        const currentScope = project?.[scope];
-        const found = currentScope?.find((x) => x.name === name);
-        if (!found?.data) return;
-
-        return found.data;
-    }
     const handleChangeNestedContext = (editData: DataNested) => {
         const idComponent = nestedContextSlice.currentData.idParent.get();
         const idSlot = nestedContextSlice.currentData.idSlot.get();
@@ -488,26 +446,18 @@ export default function EditorApp({ setShowBlocEditor }) {
 
         setEnable(false);
     }
-    const useGetDataFileDir = async () => {
-        try {
-            const data = await fetchFolders();
-            
-            if (data) {
-                infoSlice.project.set(data);
-                editorContext.dragEnabled.set(true);
-            }
-        }
-        catch (e) {
-            console.error("❗❗❗ fetchFolders error:", e);
-        }
-    }
 
     React.useLayoutEffect(() => {
-        console.gray('layout effect');
-        
-        useGetDataFileDir()
-            .then(() => setIsLoad(true))
-            .catch(() => console.error('🚨 data projects not load'));
+        if (!meta.project) editorContext.meta.project.set('test');
+
+        db.get(`projects`)
+            .then((data)=> {
+                infoSlice.projects.set(data);
+                editorContext.dragEnabled.set(true);
+            })
+            .catch((err)=> {
+                enqueueSnackbar(err, {variant: 'error'});
+            });
     }, []);
     React.useEffect(() => {
         const handle = (data: SlotDataBus) => {
@@ -549,9 +499,13 @@ export default function EditorApp({ setShowBlocEditor }) {
         editorContext.size.set({ width: 1200, height: 800, breackpoint: 'lg' });
         infoSlice.select.content.set(null);
         
+        
         setTimeout(() => {
-            const data = getDataFromCurrentScope();
-            if(!data) return;
+            const projectData = infoSlice.projects[meta.project].get();
+            const dataScope = projectData[meta.scope];
+            
+            const data = dataScope[meta.name];
+            if(!dataScope || !data) return;
 
             const content = data.content ?? {};
             const layouts = { lg:[], md:[], sm:[], xs:[], ...data.layouts };
@@ -561,8 +515,9 @@ export default function EditorApp({ setShowBlocEditor }) {
             cellsSlice.set(content);
             editorContext.layouts.set(layouts);
             editorContext.size.set(size);
+            setIsLoad(true);
         }, 500);
-    }, [meta.name, meta.scope]);
+    }, [meta.name, meta.scope, meta.project]);
     
 
 

@@ -1,6 +1,9 @@
-interface FolderEntry {
-	name: string;
-	data: any;
+interface FolderProjectsEntry {
+	[key: string]: {
+        [key: string]: {
+            [key: string]: any
+        }
+    }
 }
 
 
@@ -11,7 +14,7 @@ export interface ElectronAPI {
     getAppPath: () => Promise<string>;
     readFile: (filePath: string) => Promise<string | { error: string }>;
     writeFile: (filePath: string, content: string) => Promise<string | { error: string }>;
-    listFolders: () => Promise<Record<string, FolderEntry[]>>;
+    listFolders: () => Promise<FolderProjectsEntry>;
     db: {
 		get: (key: string) => Promise<any>;
 		set: (key: string, value: any) => Promise<void>;

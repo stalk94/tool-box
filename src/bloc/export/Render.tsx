@@ -1,5 +1,6 @@
 import React from "react";
 import { LayoutCustom, ComponentSerrialize, Breakpoint } from '../type';
+import { Splitter, SplitterPanel } from 'primereact/splitter';
 import { Responsive, WidthProvider } from "react-grid-layout";
 import { desserealize } from '../helpers/sanitize';
 import { useTheme } from '@mui/material/styles';
@@ -81,9 +82,43 @@ function Render({ layouts, cells, size, meta, preview }: RenderProps) {
                             boxSizing: 'border-box',
                         }}
                     >
-                        {Array.isArray(content) &&
-                            content.map((component) =>
-                                <div
+                        {Array.isArray(content) && splitCells &&
+                            <Splitter key={layer.i}
+                                style={{ height: '100%', width: '100%' }}
+                                layout={splitCells.orientation}
+                            >
+                                {content.map((components, index) =>
+                                    <SplitterPanel
+                                        key={index}
+                                        size={splitCells.sizes[index] ?? 50}
+                                        style={{marginLeft: 'auto'}}
+                                    >
+                                        {components.map((component)=>
+                                            <div
+                                                key={component.props['data-id']}
+                                                style={{
+                                                    boxSizing: 'border-box',
+                                                    position: 'relative',
+                                                    width: component.props.fullWidth ? '100%' : (component.props.width ?? 300),
+                                                    display: 'flex',
+                                                    transformOrigin: 'center',
+                                                    flexShrink: 0,
+                                                    flexBasis: component.props.fullWidth ? '100%' : (component.props.width ?? 30),
+                                                    maxWidth: '100%',
+                                                    padding: 1,
+                                                }}
+                                            >
+                                                { desserealize(component) }
+                                            </div>
+                                        )}
+                                    </SplitterPanel>
+                                )}
+                            </Splitter>
+                        }
+                        {!splitCells &&
+                            <>
+                            {content.map((component)=>
+                                 <div
                                     key={component.props['data-id']}
                                     style={{
                                         boxSizing: 'border-box',
@@ -99,7 +134,8 @@ function Render({ layouts, cells, size, meta, preview }: RenderProps) {
                                 >
                                     { desserealize(component) }
                                 </div>
-                            )
+                            )}
+                            </>
                         }
                     </div>
                 );

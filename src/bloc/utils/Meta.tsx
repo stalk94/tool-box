@@ -28,17 +28,18 @@ const RenderButton = ({ type }) => (
 //! сделать отключение в режиме вне редактора, рендера вспомогательных
 export function MetaHeader({ width, scope }) {
     const mod = editorContext.mod.use();
+    const curProject = editorContext.meta.project.use();
     if(scope === 'system') return;
 
     const { headerLayouts, height } = React.useMemo(()=> {
-        const proj = infoSlice.project.get();
-        const header = proj.system.find((d) => d.name === 'header');
+        const proj = infoSlice.projects[curProject].get();
+        const header = proj.system.header;
         
         return { 
-            headerLayouts: header.data, 
-            height: header.data.size.height
+            headerLayouts: header, 
+            height: header.size.height
         }
-    }, []);
+    }, [curProject]);
 
 
     return(
@@ -62,14 +63,18 @@ export function MetaHeader({ width, scope }) {
 }
 export function MetaFooter({ width, scope }) {
     const mod = editorContext.mod.use();
+    const curProject = editorContext.meta.project.use();
     if(scope === 'system') return;
 
     const { footerLayouts, height } = React.useMemo(()=> {
-        const proj = infoSlice.project.get();
-        const footer = proj.system.find((d) => d.name === 'footer');
+        const proj = infoSlice.projects[curProject].get();
+        const footer = proj.system.footer;
         
-        return { footerLayouts: footer.data, height: footer.data.size.height};
-    }, []);
+        return { 
+            footerLayouts: footer, 
+            height: footer.size.height
+        };
+    }, [curProject]);
 
     return(
         <>

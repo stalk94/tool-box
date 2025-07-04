@@ -1,6 +1,5 @@
 import { editorContext, infoSlice, cellsSlice } from "../context";
 import { formatJsx } from '../modules/export/utils';
-import type { ComponentSerrialize } from '../type';
 
 
 const isVite = typeof import.meta !== 'undefined' && !!import.meta.env?.DEV;
@@ -10,12 +9,37 @@ const API_BASE = isVite ? '' : '/api';
 const API_DB = isVite ? '' : '/api/db';
 
 
+export const db = {
+	async set(key: string, value: any) {
+		if (isElectron) {
+			return window.electronAPI!.db.set(key, value);
+		}
+		
+		await fetch(`${API_DB}/write`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ key, value })
+		});
+	},
+	async get(key: string) {
+		if (isElectron) {
+			const result = await window.electronAPI!.db.get(key);
+			console.log('DB GET [Electron]:', result);
+			return result;
+		}
+
+		const res = await fetch(`${API_DB}/read?key=${key}`);
+		const data = await res.json();
+		console.log('DB GET [fetch]:', data);
+		return data;
+	}
+}
 
 // ----------------------------------------------------------------------------
 //      работа с файлами editor (next or vite) (! отключить доступ в продакшене)
 // ----------------------------------------------------------------------------
-
 export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: string, type: 'error'|'success')=> void) => {
+	const project = editorContext.meta.project.get();
 	const layouts = editorContext.layouts.get();
 	const size = editorContext.size.get();
 	
@@ -24,10 +48,10 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 		layouts: layouts,					// сетки
 		content: cellsSlice.get(true),		// список компонентов в ячейках
 		meta: {
+			project,
 			scope,
 			name,
-			updatedAt: Date.now(),
-			preview: `snapshots/${scope}-${name}.png`
+			updatedAt: Date.now()
 		},
 		size: {
 			width: size.width,
@@ -36,51 +60,27 @@ export const saveBlockToFile = async (scope: string, name: string, clb?:(msg: st
 		}
 	};
 
-	// electron
-	if (typeof window !== 'undefined' && window.electronAPI?.writeFile) {
-		const relativePath = `blocks/${scope}/${name}.json`;
-		const content = JSON.stringify(data, null, 2);
 
-		try {
-			await window.electronAPI.writeFile(relativePath, content);
-			console.log('✅ Page сохранён через Electron');
+	db.set(`projects.${project}.${scope}.${name}`, data)
+		.then(() => {
+			console.log('✅ Page сохранён');
 			clb?.('Page сохранён', 'success');
-		} 
-		catch (err) {
-			console.error('❌ Electron write error', err);
+		})
+		.catch((err) => {
+			console.error('❌ DB write error', err);
 			clb?.('Ошибка при сохранении page', 'error');
-		}
-		return;
-	}
+		});
 
-	const body = {
-		folder: `public/blocks/${scope}`,
-		filename: `${name}.json`,
-		content: JSON.stringify(data, null, 2)
-	};
-
-	const res = await fetch(`${API_BASE}/write-file`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body)
-	});
-
-	if (!res.ok) {
-		console.error('❌ Ошибка при сохранении page');
-		if(clb) clb('Ошибка при сохранении page', 'error');
-	} 
-	else {
-		console.log('✅ Page сохранён');
-		if(clb) clb('Page сохранён', 'success');
-	}
 }
-export const createBlockToFile = async (scope: string, name: string) => {
+export const createBlockToFile = async (scope: string, name: string, clb?:(msg: string, type: 'error'|'success')=> void) => {
+	const project = editorContext.meta.project.get();
 	const size = editorContext.size.get();
 	
 	const data = {
 		layouts: {lg: [], md: [], sm: [], xs: []},
 		content: {},
 		meta: {
+			project,
 			scope,
 			name,
 			updatedAt: Date.now()
@@ -92,40 +92,32 @@ export const createBlockToFile = async (scope: string, name: string) => {
 		}
 	}
 
-	if (typeof window !== 'undefined' && window.electronAPI?.writeFile) {
-		const relativePath = `blocks/${scope}/${name}.json`;
-		const content = JSON.stringify(data, null, 2);
-
+	db.set(`projects.${project}.${scope}.${name}`, data)
+		.then(() => {
+			console.log('✅ Page сохранён');
+			clb?.('Page сохранён', 'success');
+		})
+		.catch((err) => {
+			console.error('❌ DB write error', err);
+			clb?.('Ошибка при сохранении page', 'error');
+		});
+}
+export const fetchFolders = async () => {
+	if (window.electronAPI?.listFolders) {
 		try {
-			await window.electronAPI.writeFile(relativePath, content);
-			console.log('✅ Page создан через Electron');
+			return await window.electronAPI.listFolders();
 		} 
 		catch (err) {
-			console.error('❌ Electron write error', err);
+			console.error('❌ Ошибка через IPC:', err);
+			throw new Error('Ошибка загрузки папок');
 		}
-		return;
 	}
 
-	const body = {
-		folder: `public/blocks/${scope}`,
-		filename: `${name}.json`,
-		content: JSON.stringify(data, null, 2)
-	}
-
-	//! надо полифил на next и слшать этот маршрут
-	const res = await fetch(`${API_BASE}/write-file`, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(body)
-	});
-
-	if (!res.ok) {
-		console.error('❌ Ошибка при сохранении page');
-	} 
-	else {
-		console.log('✔️ Page создан');
-	}
+    const res = await fetch(`${API_BASE}/list-folders`);
+    if (!res.ok) throw new Error('Ошибка загрузки');
+    return res.json();
 }
+
 
 
 export const exportLiteralToFile = async (path: string[], fileName: string, fileData: string) => {
@@ -200,71 +192,3 @@ export const addModuleToIndex = async(strImport: string) => {
 		else console.log('✅ index file change');
 	}
 }
-
-
-export const fetchFolders = async () => {
-	if (window.electronAPI?.listFolders) {
-		try {
-			return await window.electronAPI.listFolders();
-		} 
-		catch (err) {
-			console.error('❌ Ошибка через IPC:', err);
-			throw new Error('Ошибка загрузки папок');
-		}
-	}
-
-    const res = await fetch(`${API_BASE}/list-folders`);
-    if (!res.ok) throw new Error('Ошибка загрузки');
-    return res.json();
-}
-
-
-export const db = {
-	async set(key: string, value: any) {
-		if (isElectron) {
-			return window.electronAPI!.db.set(key, value);
-		}
-		
-		await fetch(`${API_DB}/write`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ key, value })
-		});
-	},
-	async get(key: string) {
-		if (isElectron) {
-			const result = await window.electronAPI!.db.get(key);
-			console.log('DB GET [Electron]:', result);
-			return result;
-		}
-
-		const res = await fetch(`${API_DB}/read?key=${key}`);
-		const data = await res.json();
-		console.log('DB GET [fetch]:', data);
-		return data;
-	}
-}
-
-
-/**
- * export const buildComponent = async(tag: string, component: ComponentSerrialize, theme?: string) => {
-	const res = await fetch('/build', {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({
-			tag: tag,
-			theme: theme ?? 'darkTheme',
-			schema: component
-		}),
-	});
-
-	if (!res.ok) {
-		console.error('❌ Ошибка при сохранении блока');
-	} 
-	else {
-		const json = await res.json();
-		console.log('✅ build component: ', json.path);
-		return json.path;
-	}
-}
- */

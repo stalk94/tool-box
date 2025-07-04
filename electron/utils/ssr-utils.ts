@@ -57,17 +57,68 @@ function createRoutePattern(file: string): RouteEntry {
     };
 }
 
-// !
-export async function exportProject(config: Config, isStatic?: boolean) {
+/////////////////////////////////////////////////////////////////////////////
+//          BUILD PROJECT
+/////////////////////////////////////////////////////////////////////////////
+const getTsConfig = () => {
+    return JSON.stringify({
+        "compilerOptions": {
+            "module": "ESNext",
+            "moduleResolution": "Bundler",
+            "target": "ES2020",
+            "esModuleInterop": true,
+            "resolveJsonModule": true,
+            "allowImportingTsExtensions": true
+        }
+    }, null, 2);
+}
+const getPackage = (isEdge?: boolean) => {
+    if (isEdge) return JSON.stringify({
+        "name": "project",
+        "version": "1.0.0",
+        "type": "module",
+    }, null, 2);
+    else return JSON.stringify({
+        "name": "project",
+        "version": "1.0.0",
+        "type": "module",
+        "scripts": {
+            "dev": "vite",
+            "build": "vite build",
+            "start": "node index.js"
+        },
+        "dependencies": {
+            "react": "^18.0.0",
+            "react-dom": "^18.0.0",
+            "express": "^4.21.1"
+        },
+        "devDependencies": {
+            "vite": "^5.0.0",
+            "typescript": "^5.0.0"
+        }
+    }, null, 2);
+}
+// ! 
+export async function exportProject(config: Config, isEdge?: boolean) {
     const publicPath = path.join(app.getPath('userData'), 'public');
     const folderPath = path.join(app.getPath('temp'), 'exported');
     const zipPath = path.join(app.getPath('desktop'), 'export.zip');
+
     fs.rmSync(folderPath, { recursive: true, force: true });
     fs.mkdirSync(folderPath, { recursive: true });
-    
     fs.cpSync(publicPath, folderPath, { recursive: true });
-    fs.writeFileSync(path.join(folderPath, 'project.json'), JSON.stringify(config));
-    fs.writeFileSync(path.join(folderPath, 'index.js'), fs.readFileSync('../boirlplate/index.js', {encoding: 'utf-8'}));
+    fs.writeFileSync(path.join(folderPath, 'project.json'), JSON.stringify(config, null, 2));
+
+    if (isEdge) {
+        fs.writeFileSync(path.join(folderPath, 'index.js'), fs.readFileSync('../boirlplate/edge.js', {encoding: 'utf-8'}));
+        fs.writeFileSync(path.join(folderPath, 'tsconfig.json'), fs.readFileSync(getTsConfig(), {encoding: 'utf-8'}));
+        fs.writeFileSync(path.join(folderPath, 'package.json'), fs.readFileSync(getPackage(isEdge), {encoding: 'utf-8'}));
+    }
+    else {
+        fs.writeFileSync(path.join(folderPath, 'index.js'), fs.readFileSync('../boirlplate/index.js', {encoding: 'utf-8'}));
+        fs.writeFileSync(path.join(folderPath, 'tsconfig.json'), fs.readFileSync(getTsConfig(), {encoding: 'utf-8'}));
+        fs.writeFileSync(path.join(folderPath, 'package.json'), fs.readFileSync(getPackage(), {encoding: 'utf-8'}));
+    }
 
     const output = fs.createWriteStream(zipPath);
     const archive = archiver('zip', { zlib: { level: 9 } });

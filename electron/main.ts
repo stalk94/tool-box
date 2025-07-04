@@ -1,5 +1,5 @@
 import { session, app, BrowserWindow, ipcMain, dialog, globalShortcut, screen } from 'electron';
-import { copyInitialDataOnce } from './utils/init';
+import { copyInitialDataOnce, initDbProjects } from './utils/init';
 import { initDB, DB } from './utils/db';
 import { supabase } from './utils/supabase';
 import { startLocalServer } from './utils/server';
@@ -23,6 +23,12 @@ const getBounds =()=> {
         y: bounds.y,
         width: bounds.width,
         height: bounds.height,
+    }
+}
+const initDataDb = async () => {
+    const result = await DB.get('projects');
+    if (!result) {
+        await initDbProjects();
     }
 }
 const createWindow = () => {
@@ -53,6 +59,7 @@ app.whenReady().then(async() => {
     session.defaultSession.clearCache();
     fs.mkdirSync(PROJECTS_DIR, { recursive: true });
     await initDB();
+    await initDataDb();
     copyInitialDataOnce();
     createWindow();
     
@@ -150,6 +157,18 @@ app.whenReady().then(async() => {
             await DB.set(key, value);
             return true;
         } 
+        catch (err) {
+            return { error: err.message };
+        }
+    });
+    ipcMain.handle('db:listFolders', async () => {
+        try {
+            const result = await DB.get('projects');
+            if (!result) {
+                return await initDbProjects();
+            }
+            else return result;
+        }
         catch (err) {
             return { error: err.message };
         }

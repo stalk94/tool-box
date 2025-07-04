@@ -30,13 +30,14 @@ const BasePanel =()=> {
 
     const getRender =()=> {
         const result = [];
-        const project = infoSlice.project.get();
+        const metaProject = editorContext.meta.project.get();
+        const project = infoSlice.projects[metaProject].get();
 
         Object.keys(project).map((scope)=> {
             if (scope !== 'system') result.push({
                 title: scope,
                 content: (
-                    project[scope].map((data, i)=> 
+                    Object.keys(project[scope]).map((name, i)=> 
                         <div key={i}
                             style={{ display: 'flex', flexDirection: 'row', width:'100%' }}
                         >
@@ -49,7 +50,7 @@ const BasePanel =()=> {
                             >
                                 <Adjust sx={{ fontSize: '16px' }} />
                             </button>
-                            { data.name }
+                            { name }
                         </div>
                     )
                 )

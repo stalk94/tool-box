@@ -10,7 +10,7 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
     return result;
   },
   listFolders: async () => {
-    const result = await electron.ipcRenderer.invoke("fs:listFolders");
+    const result = await electron.ipcRenderer.invoke("db:listFolders");
     if (result == null ? void 0 : result.error) throw new Error(result.error);
     return result;
   },

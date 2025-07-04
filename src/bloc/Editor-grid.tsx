@@ -28,21 +28,20 @@ const Cell = ({layer, content, nested}) => {
     
     return(
         <DroppableCell 
-            key={layer.i} 
             id={nested ? layer.i +':'+ nested?.index : layer.i}
             nested={nested}
         >
             {EDITOR &&
                 <SortableContext
-                    items={content ? content.map((cnt) => cnt.props['data-id']) : []}
+                    items={content ? content?.map((cnt) => cnt.props?.['data-id']) : []}
                     strategy={rectSortingStrategy}
                 >
                     {Array.isArray(content) &&
                         <>
-                            {Array.isArray(content) && content.map((component) => (
+                            {Array.isArray(content) && content.map((component) => component && (
                                 <SortableItem
-                                    key={component.props['data-id']}
-                                    id={component.props['data-id']}
+                                    key={component.props?.['data-id']}
+                                    id={component.props?.['data-id']}
                                     cellId={layer.i}
                                     onSelectCell={() => editorContext.currentCell.set(layer)}
                                 >
@@ -65,7 +64,7 @@ export default function ({ desserealize, theme }) {
     const size = editorContext.size.use();
     const mod = editorContext.mod.use();
     const meta = editorContext.meta.use();
-    const project = infoSlice.project.use();                                              
+    const projects = infoSlice.projects.use();                                              
     const curCell = editorContext.currentCell.use();                       
     const settings = editorContext.settings.use();
     const layouts = editorContext.layouts.use();
@@ -105,11 +104,18 @@ export default function ({ desserealize, theme }) {
         });
         infoSlice.select.content.set(null);
     }
-    const handleChangeLayout = (layout: LayoutCustom[]) => {
+    const handleChangeLayout = (layouts: LayoutCustom[]) => {
         const breackpoint = editorContext.size.breackpoint.get();
-        console.red('layout change: ', layout);
 
-        editorContext.layouts[breackpoint].set(layout);
+        
+        editorContext.layouts[breackpoint].set((prev)=> {
+            layouts.map((layout, index)=> {
+                Object.entries(layout).map(([key, val])=> {
+                    if (val !== undefined && key !== 'props') prev[index][key] = val;
+                })
+            });
+        });
+        
     }
     const handleClickCell = (e: React.MouseEvent<HTMLDivElement, MouseEvent>, layer: LayoutCustom) => {
         // (event) переключение на панель компонентов
@@ -212,7 +218,7 @@ export default function ({ desserealize, theme }) {
     const addNewCell = () => {
         const breackpoint = editorContext.size.breackpoint.get();
         const defaultW = 3;
-        const defaultH = 2;
+        const defaultH = 4;
         
         const render = editorContext.layouts[breackpoint].get();
         const spot = findFreeSpot(defaultW, defaultH, render, 12);
@@ -307,7 +313,7 @@ export default function ({ desserealize, theme }) {
             resizeObserver.disconnect();
             if (ref) resizeObserver.unobserve(ref); // ⬅️ важно: unobserve тот же ref
         }
-    }, [meta, project, size]);
+    }, [meta, projects, size]);
     
     
     return (
@@ -358,6 +364,7 @@ export default function ({ desserealize, theme }) {
                             { currentLayout.map((layer) => {
                                 const content = initBlock(layer, cells[layer.i]);
                                 const splitCells = layer.props?.nested;
+
                                 
                                 return (
                                     <Paper
@@ -385,10 +392,10 @@ export default function ({ desserealize, theme }) {
                                             boxSizing: 'border-box',
                                         }}
                                     >
-                                        { splitCells &&
-                                            <Splitter key={layer.i}
+                                        { Array.isArray(content) && splitCells &&
+                                            <Splitter
                                                 style={{ height: '100%', width: '100%' }} 
-                                                layout={splitCells.orientation} 
+                                                layout={splitCells?.orientation} 
                                                 onResizeEnd={(e)=> {
                                                     mergeBlockProps('nested', {
                                                         ...splitCells,
@@ -396,9 +403,9 @@ export default function ({ desserealize, theme }) {
                                                     }, layer);
                                                 }}
                                             >
-                                                { content.map((contentNest, index)=> 
+                                                {content.map((contentNest, index)=> 
                                                     <SplitterPanel 
-                                                        key={index} 
+                                                        key={layer.i + index} 
                                                         size={splitCells.sizes[index] ?? 50}
                                                     >
                                                         <Cell
@@ -410,7 +417,7 @@ export default function ({ desserealize, theme }) {
                                                 )}
                                             </Splitter>
                                         }
-                                        { !splitCells &&
+                                        { Array.isArray(content) && !splitCells &&
                                             <Cell
                                                 key={layer.i}
                                                 content={content}

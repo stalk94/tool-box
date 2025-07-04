@@ -26,4 +26,4 @@ export const mixins = {
             background: "#2e2e2e",
         }
     }
-}
+} as any

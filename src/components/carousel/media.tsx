@@ -239,10 +239,10 @@ export const CarouselHorizontal = ({ height, editor, ...props }: CarouselProps) 
                         background: rgba(0, 0, 0, 0.6);
                     }
                     .carousel-button.left {
-                        left: 12px;
+                        left: 4px;
                     }
                     .carousel-button.right {
-                        right: 12px;
+                        right: 4px;
                     }
                 `}
             </style>
@@ -490,10 +490,10 @@ export const CarouselVertical = ({ editor, ...props }: CarouselProps) => {
                         transition: background 0.25s ease;
                     }
                     .vcarousel-button.top {
-                        top: 12px;
+                        top: 4px;
                     }
                     .vcarousel-button.bottom {
-                        bottom: 12px;
+                        bottom: 4px;
                     }
                 `}
             </style>
