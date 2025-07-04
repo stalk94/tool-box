@@ -39,7 +39,7 @@ export default function TipTapSlotEditor({
     isEditable = true,
     initialInsert,
     autoIndex,
-    style={}
+    style={cursor: 'text'}
 }: PropsEditor) {
     const lock = EDITOR ? editorContext.lock.use() : false;
 
@@ -95,14 +95,14 @@ export default function TipTapSlotEditor({
     React.useEffect(()=> {
         editor.setEditable(lock)
     }, [lock]);
-
+    
 
 
     return (
         <div>
             {editor && lock && 
                 <BubbleMenuText 
-                    editor={editor} 
+                    editor={editor}
                 />
             }
             <EditorContent 

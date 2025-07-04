@@ -131,7 +131,7 @@ export type ColorPickerProps = InputBaseProps & {
     onChange?: (value: string)=> void
     /** включить ли кнопку копирования данных ввода */
     showCopy?: boolean,
-    variant?: 'popup' | 'modal'
+    variant?: 'popup' | 'modal' | 'custom'
 }
 
 export type DateTimeInputProps = {

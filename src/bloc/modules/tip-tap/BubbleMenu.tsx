@@ -4,7 +4,7 @@ import { ColorPickerCompact } from '@components/input/color';
 import { Box, MenuItem, Select, Stack, IconButton, Divider } from '@mui/material';
 import {
     FormatBold, FormatItalic, FormatUnderlined, Title, FormatListBulleted, FormatListNumbered,
-    FormatQuote, FormatColorText, FormatColorFill, InsertLink, FormatAlignLeft, FormatAlignCenter,
+    FormatQuote, SettingsBackupRestore, InsertLink, FormatAlignLeft, FormatAlignCenter,
     FormatAlignRight, FormatAlignJustify,
     FormatStrikethrough, Delete
 } from '@mui/icons-material';
@@ -18,15 +18,73 @@ const SIZES = [
     '16px',
     '18px',
     '24px'
-]
+];
+const Cselect = ({ onChange, items, value, placeholder }) => {
+    const [open, setOpen] = React.useState(false);
+    
+    
+    return (
+        <div style={{ position: 'relative' }}>
+            <div className='Select'
+                style={{
+                    border: '1px solid #ccc',
+                    padding: '4px 8px',
+                    cursor: 'pointer',
+                    background: '#2a2a2a',
+                    color: '#fff',
+                    fontSize: 11,
+                    borderRadius: 4
+                }}
+                
+                onClick={()=> setOpen(!open)}
+            >
+                {value || placeholder}
+            </div>
+
+            {open && (
+                <div
+                    style={{
+                        position: 'fixed',
+                        background: '#333',
+                        border: '1px solid #555',
+                        zIndex: 1000,
+                       
+                    }}
+                >
+                    {items.map((size) => (
+                        <div className='Select'
+                            key={size}
+                            onMouseDown={(e) => {
+                                e.preventDefault(); // не теряем выделение
+                                setOpen(false);
+                                onChange(size);
+                            }}
+                            style={{
+                                padding: '4px 8px',
+                                cursor: 'pointer',
+                                fontSize: 12,
+                                color: '#fff',
+                            }}
+                        >
+                            { size }
+                        </div>
+                    ))}
+                </div>
+            )}
+        </div>
+    );
+}
+
 
 export default function BubbleFormattingMenu({ editor }: { editor: Editor }) {
+    if (!editor) return null;
     const [coords, setCoords] = React.useState({ top: 0, left: 0, visible: false });
     const menuRef = React.useRef<HTMLDivElement | null>(null);
-    if (!editor) return null;
-
-
+    
+    
     React.useEffect(() => {
+        if(!editor) return;
+
         const update = () => {
             const { state, view } = editor;
             const { from, to } = state.selection;
@@ -43,34 +101,39 @@ export default function BubbleFormattingMenu({ editor }: { editor: Editor }) {
                 visible: true,
             });
         };
-
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as HTMLElement;
-
+            
             const isInEditor = editor.view.dom.contains(target);
             const isInMenu = menuRef.current?.contains(target);
             const isInMUI = target.closest('.MuiPopover-root, .MuiMenu-paper, .MuiPaper-root');
-            const isInPrime = target.closest('.p-overlaypanel');
-
+            const isInPrime = target.closest('.p-overlaypanel') || target.closest('.Select');
+            
             if (!isInEditor && !isInMenu && !isInMUI && !isInPrime) {
                 setCoords((prev) => ({ ...prev, visible: false }));
             }
-        }
+        };
+        const handleBlur = (data) => {
+            const isColor = data.event?.relatedTarget?.closest('.react-colorful__interactive');
+            if (!isColor) setCoords((prev) => ({ ...prev, visible: false }));
+        };
 
         document.addEventListener('mousedown', handleClickOutside);
         editor.on('selectionUpdate', update);
+        editor.on('blur', handleBlur);
 
         return () => {
             editor.off('selectionUpdate', update);
+            editor.off('blur', handleBlur);
             document.removeEventListener('mousedown', handleClickOutside);
         }
     }, [editor]);
-
+    
     if (!coords.visible) return null;
     if (editor.state.selection.from === editor.state.selection.to) {
         return null;
     }
-   
+    
     
     return createPortal(
         <div
@@ -153,7 +216,7 @@ export default function BubbleFormattingMenu({ editor }: { editor: Editor }) {
                     direction="row"
                     spacing={0.5}
                     sx={{
-                        pt: 0.5,
+                        pt: 1,
                         borderTop: '1px dotted #d0cdcd29',
                         overflowX: 'auto',
                         overflowY: 'hidden',
@@ -161,45 +224,50 @@ export default function BubbleFormattingMenu({ editor }: { editor: Editor }) {
                         whiteSpace: 'nowrap',
                     }}
                 >
-                    <ColorPickerCompact
+                    <ColorPickerCompact variant='custom'
                         value={editor.getAttributes('textStyle')?.color ?? undefined}
-                        onChange={(color) =>
+                        onChange={(color) => {
                             editor.chain().focus().setColor(color).run()
-                        }
+                        }}
                         style={{ width: 24, height: 26, marginLeft: 7, marginRight: 4 }}
                     />
 
-                    <Select style={{ marginRight: '5px', height: 28 }}
-                        size="small"
-                        onChange={(e) => editor.chain().focus().setFontSize(e.target.value).run()}
+                    <Cselect
                         value={editor.getAttributes('fontSize').size || ''}
-                        displayEmpty
-                        sx={{ fontSize: 10, color: '#ccc', background: '#2a2a2a' }}
-                    >
-                        <MenuItem value="" disabled>size</MenuItem>
-                        {SIZES.map((size) => (
-                            <MenuItem key={size} value={size}>
-                                { size }
-                            </MenuItem>
-                        ))}
-                    </Select>
-                    <Select style={{ marginRight: '5px', height: 28 }}
-                        size="small"
+                        onChange={(value) => {
+                            editor.chain().focus().setFontSize(value).run();
+                        }}
+                        items={SIZES}
+                        placeholder='size'
+                        style={{
+                            fontSize: 10,
+                            padding: 4,
+                            borderRadius: 4,
+                            border: '1px solid #ccc',
+                            background: '#2a2a2a',
+                            color: '#fff',
+                            pointerEvents: 'auto'
+                        }}
+                    />
+                    <Cselect style={{ marginRight: '5px', height: 28 }}
                         value={editor.getAttributes('fontFamily').family || ''}
-                        onChange={(e) => editor.chain().focus().setFontFamily(e.target.value).run()}
-                        displayEmpty
-                        sx={{ fontSize: 10, color: '#ccc', background: '#2a2a2a' }}
-                    >
-                        <MenuItem value="" disabled>none</MenuItem>
-                        {globalThis.FONT_OPTIONS.map((font) => (
-                            <MenuItem key={font} value={font} style={{ fontFamily: font }}>
-                                {font}
-                            </MenuItem>
-                        ))}
-                    </Select>
+                        onChange={(value) => editor.chain().focus().setFontFamily(value).run()}
+                        placeholder='family'
+                        items={globalThis.FONT_OPTIONS}
+                    />
 
-                    <IconButton style={{ marginLeft: 'auto' }} size="small" onClick={() => editor.chain().focus().unsetColor().run()}>
-                        <Delete sx={{ fontSize: 20 }} />
+                    <IconButton style={{ marginLeft: 'auto' }} 
+                        size="small" 
+                        onClick={() => {
+                            editor.chain().focus()
+                                .unsetAllMarks()
+                                .unsetColor()
+                                .setFontSize(null)
+                                .setFontFamily(null)
+                                .run();
+                        }}
+                    >
+                        <SettingsBackupRestore sx={{ fontSize: 20 }} />
                     </IconButton>
 
                 </Stack>

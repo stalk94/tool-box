@@ -154,8 +154,11 @@
 }
 
 
-
-
+/* выделение tip-tap */
+.ProseMirror ::selection {
+  background: rgba(255, 0, 0, 0.35);
+}
+/*  */
 .p-organizationchart .p-organizationchart-line-down {
    background: #e5e7eb;
 }

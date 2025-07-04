@@ -32,6 +32,9 @@ const ColorWindow =({ color, onChange, sx }: ColorWindowProps)=> (
                 ...sx
             },
         }}
+        onMouseDown={(e) => e.preventDefault()}
+        onFocus={(e) => e.preventDefault()}
+        tabIndex={-1}
     >
         <RgbaColorPicker
             className="react-colorful"
@@ -103,7 +106,7 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
 
     return (
         <>
-            <Box
+            <Box className='Select'
                 onClick={handleOpen}
                 //onMouseEnter={handleOpen}
                 sx={{
@@ -115,9 +118,33 @@ export function ColorPickerCompact({ value='rgba(255, 0, 0, 1)', onChange, showC
                     border: `1px solid ${theme.palette.input.border}`,
                     opacity: props.disabled && 0.5,
                     m: 1,
+                    position: variant === 'custom' && 'relative'
                 }}
                 style={{ ...props.style, padding: 0 }}
             />
+
+            {variant === 'custom' && modalOpen && (
+                <div
+                    style={{
+                        borderRadius: 5,
+                        padding: 0,
+                        position: 'fixed',
+                        background: '#333',
+                        border: '1px solid #555',
+                        zIndex: 999999,
+                    }}
+                >
+                    <ColorWindow 
+                        sx={{
+                            width: '20vw',
+                            height: '25vh',
+                        }}
+                        color={color} 
+                        onChange={handlePickerChange} 
+                    />
+                </div>
+            )}
+
             {variant === 'popup' && (
                 <Popover
                     elevation={3}
