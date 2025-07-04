@@ -2,18 +2,17 @@ import React from "react";
 import { Button, IconButton, Box, Select, MenuItem, useTheme, Theme } from "@mui/material";
 import type { Palette } from '@mui/material';
 import {
-    Settings, AccountTree, Logout, Extension, Save, Functions, Palette as Pallet,
+    Settings, Adjust, Logout, Extension, Save, Functions, Palette as Pallet,
     BorderStyle, CheckBox, ColorLens, FormatColorText, More, Widgets
 } from "@mui/icons-material";
-import { editorContext, settingsSlice } from "../context";
+import { editorContext, settingsSlice, infoSlice } from "../context";
 import { motion } from 'framer-motion';
 import TooglerInput from 'src/components/input/toogler';
 import LeftSideBarAndTool from '../../components/nav-bars/tool-left';
-import { Form, Schema, AccordionForm, AccordionScnema } from '../../index';
+import { Form, Schema, AccordionForm, AccordionScnema, Accordion } from '../../index';
 import { componentThemeSettings, componentBaseSettings } from '../config/category';
 import { colorsList, actionsColors, actionsOpacity } from '../config/theme';
 import { usePopUpName, useSafeAsyncEffect } from '../helpers/usePopUp';
-import { LeftToolPanelProps, ProxyComponentName, Component } from '../type';
 import { useKeyboardListener } from '../helpers/hooks';
 import { db } from "../helpers/export";
 import cloneDeep from 'lodash/cloneDeep';
@@ -27,17 +26,48 @@ const listTheme = {
 
 
 const BasePanel =()=> {
-    const [config, setConfig] = React.useState({});
+    const [acordeon, setAcordeon] = React.useState<Schema[]>([]);
 
-    React.useEffect(()=> {
-        db.get('configs').then((res)=> {
-            if(res) setConfig(res);
+    const getRender =()=> {
+        const result = [];
+        const project = infoSlice.project.get();
+
+        Object.keys(project).map((scope)=> {
+            if (scope !== 'system') result.push({
+                title: scope,
+                content: (
+                    project[scope].map((data, i)=> 
+                        <div key={i}
+                            style={{ display: 'flex', flexDirection: 'row', width:'100%' }}
+                        >
+                            <button
+                                className={`
+                                    rounded-md px-2 text-gray-200 
+                                    hover:bg-stone-600 hover:text-zinc-400 
+                                    transition-colors duration-150 cursor-pointer
+                                `}
+                            >
+                                <Adjust sx={{ fontSize: '16px' }} />
+                            </button>
+                            { data.name }
+                        </div>
+                    )
+                )
+            });
         });
+        setAcordeon(result);
+    }
+    React.useEffect(()=> {
+        getRender();
     }, []);
-
+    
 
     return(
         <>
+            <Accordion
+                activeIndexs={[0]}
+                items={acordeon}
+            />
         </>
     );
 }
@@ -214,10 +244,10 @@ const ThemePanel =()=> {
 }
 
 
-export default function ({  }) {
+export default function ({ mod, setMod }) {
+    const baseCtx = settingsSlice.base.use();
     const ctxTheme = settingsSlice.theme.use();
-    const [currentToolPanel, setCurrentToolPanel] = React.useState<'base'|'theme'>('theme');
-    const [currentToolBase, setCurrentToolBase] = React.useState<keyof typeof componentBaseSettings>('any');
+    
     
     const menuItems = [
         { id: 'base', label: '', icon: <Settings />, style: {paddingTop:2} },
@@ -236,18 +266,7 @@ export default function ({  }) {
     const panelRenderers = {
         base: () => ({
             start: ( 
-                <TooglerInput
-                    value={currentToolBase}
-                    onChange={setCurrentToolBase}
-                    sx={{ px: 0.2 }}
-                    items={Object.entries(componentBaseSettings).map(([id, group]) => {
-                        const Icon = group.icon ?? Settings;
-                        return {
-                            id,
-                            label: <Icon sx={{ fontSize: 18 }} />
-                        };
-                    })}
-                />
+                <></>
             ),
             children: ( 
                 <BasePanel/>
@@ -276,15 +295,15 @@ export default function ({  }) {
             )
         })
     }
-    const { start, children } = panelRenderers[currentToolPanel]
-        ? panelRenderers[currentToolPanel]()
+    const { start, children } = panelRenderers[mod]
+        ? panelRenderers[mod]()
         : { start: null, children: null };
 
     
 
     return (
         <LeftSideBarAndTool
-            selected={currentToolPanel}
+            selected={mod}
             sx={{ height: '100%' }}
             schemaNavBar={{ 
                 items: menuItems, 
@@ -292,7 +311,7 @@ export default function ({  }) {
             }}
             width={260}
             onChangeNavigation={(item)=> {
-                if(item.id !== 'save') setCurrentToolPanel(item.id);
+                if(item.id !== 'save') setMod(item.id);
                 else EVENT.emit('saveColor', {});
             }}
             start={[]}

@@ -15,7 +15,7 @@ import { componentMap } from './modules/helpers/registry';
 import LeftToolBar from './Left-bar';
 import LeftToolBarSettings from './left-bar/Left-bar-settings';
 import GridComponentEditor from './Editor-grid';
-import PreviewTheme from './utils/Preview-theme';
+import Settings from './left-bar/Settings';
 import { saveBlockToFile, fetchFolders } from "./helpers/export";
 import { getComponentById } from "./helpers/editor";
 import { serializeJSX, serrialize as serrializeCopy } from './helpers/sanitize';
@@ -42,6 +42,7 @@ colorLog();
 function EditorGlobal({ setShowBlocEditor, dumpRender }) {  
     const { enqueueSnackbar } = useSnackbar();
     const [theme, setTheme] = React.useState(lightTheme);
+    const [currentToolPanel, setCurrentToolPanel] = React.useState<'base'|'theme'>('base');
     const cacheDrag = React.useRef<HTMLDivElement>(null);                                  
     const [activeDragElement, setActiveDragElement] = React.useState<React.ReactNode | null>(null);
     const refs = React.useRef({});                                   // список всех рефов на все компоненты
@@ -327,7 +328,12 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                                 useDump={dumpRender}
                             />
                         }
-                        { mod === 'settings' && <LeftToolBarSettings/> }
+                        { mod === 'settings' && 
+                            <LeftToolBarSettings
+                                mod={currentToolPanel}
+                                setMod={setCurrentToolPanel}
+                            /> 
+                        }
 
                         <div style={{ width: '80%', maxHeight: '100%', display: 'flex', flexDirection: 'column' }}>
                             <ToolBarInfo setShowBlocEditor={setShowBlocEditor} />
@@ -339,7 +345,11 @@ function EditorGlobal({ setShowBlocEditor, dumpRender }) {
                                     theme={theme}
                                 /> 
                             }
-                            { mod === 'settings' && <PreviewTheme /> }
+                            { mod === 'settings' && 
+                                <Settings 
+                                    mod={currentToolPanel}
+                                /> 
+                            }
                         </div>
                     </div>
                 </DndContext>

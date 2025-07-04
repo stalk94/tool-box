@@ -35,6 +35,7 @@ const Helpers = ({ children, theme }) => {
 
 export default function Page({ theme, data, prev }: PageProps) {
     const { addAlert } = useAlert();
+    globalThis.PRODACTION = prev ? false : true;
     globalThis.__META__ = data.meta;
     globalThis.EDITOR = false;
 
@@ -45,7 +46,9 @@ export default function Page({ theme, data, prev }: PageProps) {
         sharedEmmiter.on('info', (msg)=> addAlert('info', msg));
         
         return () => {
-            if (prev) globalThis.EDITOR = true;
+            if (prev) {
+                globalThis.EDITOR = true;
+            }
             sharedEmmiter.off('error', (msg)=> addAlert('error', msg));
             sharedEmmiter.off('success', (msg)=> addAlert('success', msg));
             sharedEmmiter.off('info', (msg)=> addAlert('info', msg));

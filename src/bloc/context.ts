@@ -1,6 +1,6 @@
 import type { 
     ComponentSerrialize, LayoutCustom, LayoutsBreackpoints, 
-    SlotDataBus, Component, ComponentProps, ScopeData, PageMeta
+    SlotDataBus, Component, ComponentProps, ScopeData, PageMeta, ProjectConfig
 } from './type';
 import { Editor } from '@tiptap/react';
 import { createState, useLocalStorage } from 'statekit-react';
@@ -72,6 +72,9 @@ export type SettingsContextStateType = {
         currentGroop: keyof Palette
         pallete: Palette
     }
+    base: {
+        select: string
+    }
     panel: {
         stepSize: 1 | 2 | 5
         stepPosition:  1 | 2 | 5
@@ -142,6 +145,9 @@ export const settingsSlice = create({
         currentTheme: 'dark',
         currentGroop: 'input',
         pallete: {}
+    },
+    base: {
+        select: 'test'
     },
     panel: {
         stepSize: 1,

@@ -17,7 +17,7 @@ import BlockRender from './left-bar/blocks';
 import BlockSettings from './left-bar/settings-block';
 import { DraggableToolItem } from './Dragable';
 import { PiCodeBlockFill } from "react-icons/pi";
-import { RenderListProject, RenderProjectTopPanel } from './left-bar/project';
+import { RenderListPages, RenderProjectTopPanel } from './left-bar/pages';
 import exportsGrid from "./modules/export/Grid";
 
 
@@ -275,7 +275,7 @@ export default function ({ useDump }: LeftToolPanelProps) {
     const panelRenderers = React.useMemo(()=> ({
         project: () => ({
             start: ( <RenderProjectTopPanel /> ),
-            children: ( <RenderListProject currentCat={'all'}/> ) 
+            children: ( <RenderListPages currentCat={'all'}/> ) 
         }),
         block: ()=> useBlock(currentBlock, setCurrentBlock),
         blockSetting: ()=> useBlockSettings(currentSettings, setCurrentSettings),

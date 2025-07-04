@@ -11,7 +11,7 @@ import { getUniqueBlockName } from "../helpers/editor";
 
 
 
-export const RenderListProject = ({ currentCat }) => {
+export const RenderListPages = ({ currentCat }) => {
     const meta = editorContext.meta.use();
     const { popover, handleOpen, trigger } = usePopUpName();
     

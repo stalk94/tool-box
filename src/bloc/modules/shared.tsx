@@ -85,13 +85,15 @@ export const HeaderWrapper = React.forwardRef((props: HeaderWrapperProps, ref) =
     }
     const useEdit = (data) => {
         editorContext.dragEnabled.set(true);
+
         updateComponentProps({
             component: { props },
             data: data
         });
     }
     const handlerClickNavigation = (path: 'string') => {
-        console.log(path);
+        if (globalThis.PRODACTION) window.location.href = path;
+        else console.log('top nav: ', path);
     }
     const transformUseRouter = (items) => {
         const func = (items, parent?: string) => {
@@ -255,6 +257,9 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
     } = props;
 
     const meta = EDITOR ? editorContext.meta.get() : __META__;
+    const usePath = (href: string) => {
+        window.location.href = href;
+    }
     const exportCode = (call) => {
         const linkStyleState = {
             fontFamily: style?.fontFamily,
@@ -304,7 +309,7 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
                 isMobile={!fullWidth}
                 separator={separator}
                 pathname={meta.path ?? `${meta.scope}/${meta.name}`}
-                push={(href) => console.log(href)}
+                push={(href) => console.log('push', href)}
                 linkStyle={{
                     fontFamily: style?.fontFamily,
                     fontSize: fontSize ?? style?.fontSize,
@@ -315,7 +320,10 @@ export const BreadcrumbsWrapper = React.forwardRef((props: BreadcrumbsWrapperPro
                 }}
                 Link={({ href, children }) =>
                     <div
-                        onClick={() => console.log(href)}
+                        onClick={() => {
+                            if (globalThis.PRODACTION) usePath(href);
+                            else console.log(href);
+                        }}
                     >
                         { children }
                     </div>

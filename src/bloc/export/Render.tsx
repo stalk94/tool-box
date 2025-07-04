@@ -17,7 +17,7 @@ type RenderProps = {
     preview?: boolean
 }
 
-
+// height: size.height - 10,
 function Render({ layouts, cells, size, meta, preview }: RenderProps) {
     const theme = useTheme();
     const [currentBreakpoint, setCurrentBreackpoint] = React.useState('lg');
@@ -37,14 +37,15 @@ function Render({ layouts, cells, size, meta, preview }: RenderProps) {
 
     return (
         <ResponsiveGridLayout
-            style={{ height: size.height - 10, minWidth: '100%' }}
+            style={{ minWidth: '100%' }}
             layouts={{ [currentBreakpoint]: currentLayout }}
             breakpoints={{ lg: 1200, md: 980, sm: 640, xs: 480 }}
             cols={{ lg: 24, md: 16, sm: 12, xs: 8 }}
-            rowHeight={meta?.rowHeight ?? 20}        
+            rowHeight={(meta?.rowHeight ?? 20)}        
             margin={meta?.margin ?? [0, 0]}           
             isDraggable={false}
             isResizable={false}
+            compactType={null}
             onBreakpointChange={(br) => setCurrentBreackpoint(br)}
         >
             {currentLayout.map((layer) => {
