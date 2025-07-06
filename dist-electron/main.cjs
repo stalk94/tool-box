@@ -6,8 +6,10 @@ const lowdb = require("lowdb");
 const node = require("lowdb/node");
 const path = require("path");
 const lodash = require("lodash");
+const worker_threads = require("worker_threads");
 const express = require("express");
 const ngrok = require("ngrok");
+require("ts-morph");
 const filePath = path.join(electron.app.getPath("userData"), "storage.json");
 const adapter = new node.JSONFile(filePath);
 const db = new lowdb.Low(adapter, {});
@@ -7546,6 +7548,18 @@ electron.app.whenReady().then(async () => {
   electron.ipcMain.handle("ngrock:start", async (_event, authKey) => {
     const url = await startNgrock(PORT, authKey);
     return url;
+  });
+  electron.ipcMain.handle("type:parse", async (_event, filePath2, name) => {
+    return new Promise((resolve, reject) => {
+      const worker = new worker_threads.Worker(path.join(__dirname, "../electron/", "parse-worker-thread.js"), {
+        workerData: { filePath: filePath2, name }
+      });
+      worker.on("message", resolve);
+      worker.on("error", reject);
+      worker.on("exit", (code) => {
+        if (code !== 0) reject(new Error(`Worker exited with code ${code}`));
+      });
+    });
   });
   electron.ipcMain.handle("auth:google", async () => {
     try {

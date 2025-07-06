@@ -37,31 +37,32 @@ globalThis.sharedContext = sharedContext;
 globalThis.sharedEmmiter = sharedEmmiter;
 ///////////////////////////////////////////////////////////////////////
 
-// buttons
-registerComponent({
-    type: 'Button',
-    component: ButtonWrapper,
-    defaultProps: {
-        fullWidth: true,
-        children: 'Button',
-        variant: 'outlined',
-        size: 'medium',
-        color: 'primary',
-        startIcon: 'none',
-        endIcon: 'none',
-        style: {}
-    },
-    icon: AdsClick,
-    category: 'interactive',
-});
 registerComponent({
     type: 'IconButton',
     component: IconButtonWrapper,
     defaultProps: {
         fullWidth: true,
-        size: 'medium',
+        responsive: false,
+        size: 'md',
         color: 'default',
         icon: 'Add',
+    },
+    icon: AdsClick,
+    category: 'interactive',
+});
+registerComponent({
+    type: 'Button',
+    component: ButtonWrapper,
+    defaultProps: {
+        fullWidth: true,
+        responsive: false,
+        children: 'Button',
+        variant: 'outline',
+        size: 'md',
+        color: 'primary',
+        startIcon: 'none',
+        endIcon: 'none',
+        style: {}
     },
     icon: AdsClick,
     category: 'interactive',

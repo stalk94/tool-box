@@ -1,9 +1,11 @@
 import { session, app, BrowserWindow, ipcMain, dialog, globalShortcut, screen } from 'electron';
 import { copyInitialDataOnce, initDbProjects } from './utils/init';
+import { Worker } from 'worker_threads';
 import { initDB, DB } from './utils/db';
 import { supabase } from './utils/supabase';
 import { startLocalServer } from './utils/server';
 import { startNgrock } from './utils/ngrock';
+import parser from './services/type-parser';
 import path from 'path';
 import fs from 'fs';
 
@@ -178,6 +180,20 @@ app.whenReady().then(async() => {
     ipcMain.handle('ngrock:start', async (_event, authKey: string) => {
         const url = await startNgrock(PORT, authKey);
         return url;
+    });
+    ipcMain.handle('type:parse', async (_event, filePath: string, name: string) => {
+        return new Promise((resolve, reject) => {
+            const worker = new Worker(path.join(__dirname, '../electron/', 'parse-worker-thread.js'), {
+                workerData: { filePath, name },
+            });
+
+            worker.on('message', resolve);
+            worker.on('error', reject);
+            worker.on('exit', (code) => {
+                if (code !== 0) reject(new Error(`Worker exited with code ${code}`));
+            });
+        });
+        return parser(filePath, name);
     });
     ipcMain.handle('auth:google', async () => {
         try {

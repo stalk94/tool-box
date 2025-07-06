@@ -37,5 +37,5 @@ export const fabricsInput: Record<TypeSchema, (schema: any) =>  React.JSX.Elemen
     file: (schema) => <LabelFileLoader {...schema} />,
     'file-combo': (schema)=> <LabelComboFileLoader {...schema} />,
     autocomplete: (schema) => <LabelAutocomplete {...schema} />,
-    divider: (schema) => <DividerWrap {...schema} />
+    divider: (schema) => <DividerWrap {...schema} />,
 }

@@ -1,179 +1,17 @@
 import React from "react";
 export { TextInput, NumberInput, SliderInput } from '../components/input';
 import { Form, Schema, AccordionForm, AccordionScnema } from '../index';
-import { useTheme, Theme } from "@mui/material";
-import { fabrickUnical, fabrickStyleScheme, stylesFabricScheme } from './config/utill';
+import { fabrickStyleScheme, stylesFabricScheme } from './config/utill';
 import { motion } from 'framer-motion';
 import { sanitizeProps } from './helpers/sanitize';
 import { debounce, max } from 'lodash';
 import { PropsForm, ProxyComponentName } from './type';
 import { merge } from 'lodash';
-import { Source, Bookmark, HMobiledata, Circle, CropSquare, Square } from "@mui/icons-material";
-
-
-// составляет индивидуальную схему пропсов
-const useCreateSchemeProp = (typeContent:ProxyComponentName, propName:string, propValue:any, theme) => {
-    const textKeys = ['children', 'src', 'alt', 'sizes', 'placeholder', 'label', 'separator', 'name'];
-    const numberKeys = ['min', 'max', 'step', 'heightMedia', 'elevation'];
-    const switchKeys = ['fullHeight', 'isDirectionColumn', 'showLabels', 'isChildren', 'isSecondary', 'isButton', 'autoplay', 'isHorizontal'];
-    
-    
-    if(switchKeys.includes(propName)) {
-        return {
-            type: 'switch',
-            id: propName,
-            label: propName,
-            labelSx: { fontSize: '12px' },
-            value: propValue
-        }
-    }
-    else if (propName === 'data-source') {
-        propValue === 'table'
-        return {
-            type: 'file',
-            id: 'file',
-            label: 'upload',
-            accept: propValue === 'table' && ".json,.csv,.xlsx,.xls",
-            labelSx: { fontSize: '14px' },
-            style: { maxHeight: 14, height: 16 },
-            value: propValue,
-        };
-    }
-    else if(numberKeys.includes(propName)) {
-        const max = propName==='elevation' ? 12 : (propName==='heightMedia' ? 500 : undefined);
-        const step = propName==='elevation' ? 1 : (propName==='heightMedia' ? 20 : undefined)
-
-        return {
-            type: 'number',
-            id: propName,
-            value: propValue,
-            label: propName,
-            labelSx: { fontSize: '14px' },
-            max: max,
-            step: step,
-            sx: { fontSize: 14 },
-            style: { maxHeight: 14, height: 16 },
-        }
-    }
-    else if(textKeys.includes(propName)) {
-        return {
-            type: 'text',
-            id: propName,
-            multiline: (propName === 'src' && true),
-            value: propValue,
-            label: propName,
-            labelSx: { fontSize: '14px' },
-            style: { maxHeight: 14, height: 16 },
-            sx: { fontSize: 14 }
-        }
-    }
-    else return fabrickUnical(propName, propValue, theme, typeContent);
-}
-const useFabrickSchemeProps = (typeComponent: ProxyComponentName, props: Record<string, any>, theme: Theme) => {
-    const result = {
-        schema: [{
-            type: 'switch',
-            id: 'fullWidth',
-            label: 'fullWidth',
-            labelSx: { fontSize: '14px' },
-            value: props?.fullWidth
-        }], 
-        acSchema: []
-    };
-    const specific = ['Avatar'];
-
-    
-    if(!specific.includes(typeComponent)) Object.keys(props).forEach((propsName) => {
-        const value = props[propsName];
-        
-
-        // проп массив либо обьект
-        if (typeof value === 'object') {
-            //console.log(propsName, value);
-        }
-        // проп является элементарным типом
-        else if(propsName !== 'fullWidth') {
-            const schema = useCreateSchemeProp(
-                typeComponent,
-                propsName,
-                value,
-                theme
-            );
-
-            if (schema) result.schema.push(schema);
-        }
-    });
-    else {
-        //"circular" | "rounded" | "square"
-        result.schema.push({
-            type: 'number',
-            id: 'sizes',
-            value: props.sizes,
-            min: 24,
-            label: 'sizes',
-            labelSx: { fontSize: '14px' },
-            sx: { fontSize: 14 }
-        }, {
-            type: 'toggle',
-            id: 'variant',
-            items: [
-                { id: 'circular', label: <Circle/> },
-                { id: 'rounded', label: <CropSquare/> },
-                { id: 'square', label: <Square/> },
-            ],
-            label: 'variant',
-            value: props?.variant ?? 'circular',
-            labelSx: { fontSize: '14px' },
-            style: { height: 26 }
-        }, {
-            type: 'toggle',
-            id: 'data-source',
-            items: [
-                { id: 'src', label: <Source /> },
-                { id: 'icon', label: <Bookmark /> },
-                { id: 'children', label: <HMobiledata /> }
-            ],
-            label: 'data-source',
-            value: props['data-source'],
-            labelSx: { fontSize: '14px' },
-            style: { height: 26 }
-        });
-
-        result.schema.push({
-            type: 'text',
-            id: 'src',
-            multiline: true,
-            label: 'src',
-            labelSx: { fontSize: '14px' },
-            style: { maxHeight: 14, height: 16 },
-            value: props.src,
-        });
-        result.schema.push({
-            type: 'file',
-            id: 'file',
-            label: 'upload',
-            labelSx: { fontSize: '14px' },
-            value: props.src,
-        });
-        result.schema.push({
-            type: 'text',
-            multiline: true,
-            id: 'children',
-            label: 'children',
-            style: { maxHeight: 14, height: 16 },
-            labelSx: { fontSize: '14px' },
-            value: props.children,
-        });
-        result.schema.push(fabrickUnical('icon', props.icon, theme, 'Avatar'));
-    }
-    
-    return result;
-}
+import constructorScheme from './Constructor'; 
 
 
 
 export default function({ type, elemLink, onChange }: PropsForm) {
-    const theme = useTheme();
     const copyDataContent = React.useRef({});                               // кэш во избежание перерендеров
     const [schema, setSchema] = React.useState<Schema[]>([]);
     const [acSchema, setAcSchema] = React.useState<AccordionScnema[]>([]);
@@ -234,7 +72,7 @@ export default function({ type, elemLink, onChange }: PropsForm) {
     );
     const createScheme = (typeComponent: ProxyComponentName, props: Record<string, any>) => {
         if(type === 'props') {
-            const { schema } = useFabrickSchemeProps(typeComponent, props, theme);
+            const { schema } = constructorScheme(typeComponent, props);
             setSchema(schema);
             setAcSchema([]);
         }

@@ -21,6 +21,7 @@ export type FormProps = {
  * `onSpecificChange` - получить только то значение формы которая обновилась а так же ее предыдушее значение     
  * `labelPosition` - единый алиас на позицию лейблов инпутов (что бы каждому в ручную не прописывать)         
  *  @example scheme: [
+ *      { type: 'custom', id: 'test8', label: 'Принять' },
  *      { type: 'text', id: 'test', placeholder: 'placeholder', label: 'test', position: 'column', left: <AccountBox/> },
  *      { type: 'number', id: 'test2', label: 'test', position: 'column', left: <Calculate/> },
  *      { type: 'color', id: 'test3', label: 'test', position: 'column' },
@@ -71,7 +72,14 @@ export default function Form({ scheme, onChange, onSpecificChange, labelPosition
                         { field.type === 'divider' &&  fabricsInput['divider'](
                             field
                         )}
-                        { field.type !== 'divider' && fabricsInput[field.type]({
+                        { field.type === 'custom' && 
+                            field.render({
+                                ...field,
+                                value: state[field.id],
+                                onChange: (val: any) => handleChange(field.id, val)
+                            }) 
+                        }
+                        { field.type !== 'divider' && field.type !== 'custom' && fabricsInput[field.type]({
                             ...field,
                             value: state[field.id],
                             onChange: (val: any) => handleChange(field.id, val),

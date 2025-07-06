@@ -61,6 +61,7 @@ export default function ({ desserealize, theme }) {
     const { enqueueSnackbar } = useSnackbar();
     const [ready, setReady] = React.useState(false);
     const gridContainerRef = React.useRef(null); 
+    const tnemeName = settingsSlice.theme.currentTheme.use();
     const size = editorContext.size.use();
     const mod = editorContext.mod.use();
     const meta = editorContext.meta.use();
@@ -70,7 +71,7 @@ export default function ({ desserealize, theme }) {
     const layouts = editorContext.layouts.use();
     const cells = cellsSlice.use();
     const currentBreakpoint = editorContext.size.breackpoint.use();
-
+    
 
     const handleDeleteKeyPress = (event: KeyboardEvent) => {
         const curCell = editorContext.currentCell.get(); 
@@ -332,13 +333,16 @@ export default function ({ desserealize, theme }) {
                 }}
             >
                 <DroppableGrid id={1}/>
-                <div ref={gridContainerRef}
+                <div className="PageContainer"
+                    ref={gridContainerRef}
+                    data-theme={tnemeName}
                     style={{
                         margin: 1,
                         maxWidth: size.width ?? '100%',
                         height: '99%',
                         border: '1px dashed #fbfbfa26',
                         overflowY: 'auto',
+                        background: 'none'
                     }}
                 >
                     {ready &&

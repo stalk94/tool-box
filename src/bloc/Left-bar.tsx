@@ -5,7 +5,7 @@ import { Settings, AccountTree, Logout, Palette, Extension, Save, Code } from "@
 import { LuBlocks } from "react-icons/lu";
 import { editorContext, infoSlice, cellsSlice } from "./context";
 import TooglerInput from 'src/components/input/toogler';
-import LeftSideBarAndTool from '../components/nav-bars/tool-left'
+import LeftSideBarAndTool from '../components/nav-bars/tool-left';
 import { updateComponentProps } from './helpers/updateComponentProps';
 import Forms from './Forms';
 import Inspector from './Inspector';

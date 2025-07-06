@@ -317,108 +317,16 @@ export const stylesFabricScheme = (type: RegistreTypeComponent, source: Record<s
 
 
 
-/**
- * ФАБРИКА КОНСТРУИРУЕТ ФОРМЫ ДЛЯ ПРОПСОВ основываясь на распостраненных именах пропсов
- * @param type 
- * @param defaultValue 
- * @param typeProps 
- * @returns 
- */
-export const fabrickUnical = (propName: string, propValue:any, theme, typeComponent?:RegistreTypeComponent) => {
-    Object.keys(displayIcons).map((key) => {
+
+/** 
+ * Object.keys(displayIcons).map((key) => {
         displayIcons[key] = (
             <Tooltip title={key} placement="top" arrow >
                 { displayIcons[key] }
             </Tooltip>
         )
     });
-
-   
-    if (propName === 'color' || propName.includes('color-') || propName.includes('-color')) {
-        return {
-            type: 'toggle',
-            id: propName,
-            items: getColors(theme, typeComponent === 'Tabs'),
-            label: propName,
-            value: propValue,
-            labelSx: { fontSize: '14px' },
-            //style: { height: 36 },
-        }
-    }
-    else if (propName === 'size') {
-        const items = [
-            { id: 'small', label: <var style={{ fontStyle: 'italic' }} > sm </var> },
-            { id: 'medium', label: <var style={{ fontWeight: 400 }}> md </var> },
-            { id: 'large', label: <var style={{ fontWeight: 'bold' }}> lg </var> }
-        ];
-        if(typeComponent === 'Button' || typeComponent === 'IconButton') {
-            items.unshift({
-                id: 'mini', 
-                label: <var style={{ fontStyle: 'italic' }} > mini </var>
-            });
-        }
-
-        return {
-            type: 'toggle',
-            id: propName,
-            items: items,
-            label: propName,
-            value: propValue,
-            labelSx: { fontSize: '14px' },
-            style: { maxHeight: 32, height: 32 },
-        }
-    }
-    else if (propName === 'delay') {
-        return {
-            type: 'number',
-            id: propName,
-            label: propName,
-            value: propValue,
-            min: 1,
-            max: 60,
-            step: 1,
-            labelSx: { fontSize: '14px' }
-        }
-    }
-    else if (propName === 'display' || propName === 'labelPosition') {
-        return {
-            type: 'toggle',
-            id: propName,
-            label: propName,
-            labelSx: { fontSize: '14px' },
-            value: propValue,
-            items: ['none', 'left', 'right', 'column'].map((key) => ({
-                id: key,
-                label: displayIcons[key]
-            }))
-        }
-    }
-    else if (['icon', 'endIcon', 'startIcon', 'leftIcon', 'rightIcon'].includes(propName)) {
-        const items = Object.keys(iconsList).map((key) => {
-            const Render = iconsList[key];
-
-            return ({
-                id: key,
-                label: <Render />
-            })
-        });
-        items.unshift({
-            id: 'none',
-            label: <span style={{ fontSize: '10px', whiteSpace: 'nowrap', color: 'gray' }}>✖️</span>
-        });
-
-        return {
-            type: 'toggle',
-            id: propName,
-            label: propName,
-            isColapsed: true,
-            style: {height: 30},
-            labelSx: { fontSize: '14px' },
-            value: propValue,
-            items: items
-        }
-    }
-    else if(propName === 'iconName') {
+ * else if(propName === 'iconName') {
         const mapItems = Object.entries(fill).map(([key, value]) => {
             const Tag = value;
             
@@ -437,60 +345,17 @@ export const fabrickUnical = (propName: string, propValue:any, theme, typeCompon
             labelSx: { fontSize: '14px' }
         }
     }
-    // индвивидуальные пропсы для типов
-    else if(typeComponent && metaProps[typeComponent]?.[propName]) {
-        const vars = metaProps[typeComponent][propName];
-        
-        if(Array.isArray(vars)) {
-            const type = vars.length < 5 ? 'toggle' : 'select';
-
-            const result = {
-                type: type,
-                id: propName,
-                label: propName,
-                labelSx: { fontSize: '14px' },
-                value: propValue,
-                items: vars.map((key) => ({
-                    id: key,
-                    label: (
-                        <>
-                            { type === 'select' && <span style={{ fontSize: '14px', whiteSpace: 'nowrap' }}>{key}</span>}
-                            { type === 'toggle' && <span style={{ fontSize: '8px', whiteSpace: 'nowrap' }}>{key}</span>}
-                        </>
-                    )
-                }))
-            }
-
-            if(type === 'select') result.onlyId = true;
-            return result;
-        }
-        else if (typeof vars === 'object' && vars !== null) {
-            const data = { ...vars };
-
-            if (vars.type === 'slider') {
-                if (!propValue) propValue = 0;
-                else propValue = +propValue;
-            }
-            else if (vars?.type === 'toggle') {
-                data.items = vars.items.map((elem) => ({
-                    id: elem.id,
-                    label: (
-                        <span style={{ fontSize: '10px', whiteSpace: 'nowrap', color: 'gray' }}>
-                            { elem.label }
-                        </span>
-                    )
-                }));
-            }
-
-            return({
-                ...data,
-                id: propName,
-                label: propName,
-                value: propValue,
-                labelSx: {
-                    fontSize: '12px',
-                },
-            });
+ * else if (propName === 'display' || propName === 'labelPosition') {
+        return {
+            type: 'toggle',
+            id: propName,
+            label: propName,
+            labelSx: { fontSize: '14px' },
+            value: propValue,
+            items: ['none', 'left', 'right', 'column'].map((key) => ({
+                id: key,
+                label: displayIcons[key]
+            }))
         }
     }
-}
+ */

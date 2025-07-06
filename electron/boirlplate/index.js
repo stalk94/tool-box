@@ -14,7 +14,11 @@ const getData = (route) => {
 
     return {
         html: result.html,
-        styles: `<style>${config.style}</style>`
+        styles: `<style>${config.style}</style>`,
+        meta: {
+            theme: config.theme,
+            data: result
+        }
     }
 }
 
@@ -26,7 +30,7 @@ server.get('*', (req, res) => {
         return res.sendFile(htmlFilePath);
     }
     else {
-        const { html, styles } = getData(route);
+        const { html, styles, meta } = getData(route);
 
         const render =`
             <html>
@@ -40,6 +44,10 @@ server.get('*', (req, res) => {
                     ${styles}
                 </head>
                 <body>
+                    <script>
+                        globalThis.__DATA__ = ${JSON.stringify(meta).replace(/</g, '\\u003c')};
+                    </script>
+                    
                     <div class="root">${html}</div>
         
                     <script type="module" src="/main.js"></script>

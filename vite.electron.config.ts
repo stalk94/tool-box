@@ -30,7 +30,9 @@ export default defineConfig({
                 'steno',
                 'lodash',
                 'ngrok',
-                'dotenv'
+                'dotenv',
+                'ts-morph',
+                'worker_threads'
             ], // системные модули
         },
         lib: {

@@ -21,6 +21,7 @@ export interface ElectronAPI {
 	}
     startNgrock: (token: string) => Promise<string>;
     signInWithGoogle: ()=> Promise<{success?:any,error?:string,token?:string}>;
+    typeParse: (filePath: string, name: string)=> Promise<any>;
 }
 
 

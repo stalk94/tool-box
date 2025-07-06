@@ -1,6 +1,7 @@
 import { contextBridge, ipcRenderer } from 'electron';
 
 
+
 contextBridge.exposeInMainWorld('electronAPI', {
     openFile: () => ipcRenderer.invoke('dialog:openFile'),
     saveFile: (data: string) => ipcRenderer.invoke('fs:saveFile', data),
@@ -34,4 +35,8 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getAppPath: () => ipcRenderer.invoke('sys:getAppPath'),
 	startNgrock: (token: string) => ipcRenderer.invoke('ngrock:start', token),
 	signInWithGoogle: () => ipcRenderer.invoke('auth:google'),
+	typeParse: async (filePath, name) => {
+		const result = await ipcRenderer.invoke('type:parse', filePath, name);
+		return result;
+	}
 });

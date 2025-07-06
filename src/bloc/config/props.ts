@@ -18,41 +18,10 @@ export const AVAILABLE_CLASSNAMES = ['rounded'];
  * ---------------------------------------------
  */
 const propsButton = {
-    variant: ['text', 'outlined', 'contained'], // Стиль кнопки
-    color: ['inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], // Цвета
-    size: ['mini', 'small', 'medium', 'large'], // Размеры
-    disabled: [true, false], // Отключение кнопки
-    fullWidth: [true, false], // Растянуть на 100%
-    //type: ['button', 'submit', 'reset'], // Тип HTML-кнопки
-    startIcon: 'ReactNode', // Иконка до текста (например, <SaveIcon />)
-    endIcon: 'ReactNode', // Иконка после текста
-    onClick: 'function', // Обработчик клика
-    href: 'string', // Ссылка (если кнопка как ссылка)
-    component: 'elementType', // Например, Link из react-router
-    children: 'ReactNode', // Текст или элементы внутри кнопки
-    sx: 'SxProps', // Стили через sx пропс
-    className: 'string', // CSS класс
-    style: 'CSSStyleDeclaration', // Инлайн стили
-    id: 'string', // id элемента
-    disableElevation: [true, false], // Убрать тень у кнопки (только для contained)
-    disableRipple: [true, false], // Убрать ripple-эффект при клике
-    disableFocusRipple: [true, false], // Убрать ripple при фокусе
+    
 }
 const propsIconButton = {
-    color: ['default', 'inherit', 'primary', 'secondary', 'success', 'error', 'info', 'warning'], // Цвет
-    size: ['small', 'medium', 'large'], // Размер
-    edge: [false, 'start', 'end'], // Смещение к краю контейнера
-    disabled: [true, false], // Отключение
-    onClick: 'function', // Обработчик клика
-    children: 'ReactNode', // Иконка внутри
-    href: 'string', // Если нужна ссылка
-    component: 'elementType', // Например, Link из react-router
-    sx: 'SxProps', // Стили через sx
-    className: 'string', // CSS-класс
-    style: 'CSSStyleDeclaration', // Инлайн стили
-    id: 'string', // id элемента
-    disableFocusRipple: [true, false], // Отключить ripple при фокусе
-    disableRipple: [true, false], // Отключить ripple-эффект
+    
 }
 const propsTypography = {
     variant: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'subtitle1', 'subtitle2', 'body1', 'body2', 'caption', 'overline', 'button', 'srOnly'], // Типы текста

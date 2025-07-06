@@ -16,15 +16,21 @@ import { store } from 'statekit-react';
 import './bloc/modules/index';
 import { AlertProvider } from './index';
 import Page from './bloc/export/Page';
+import SandBox from './sand/SandBox';
 import './bloc/modules/index';
 import "./style/edit.css";
 
 
 const App = () => {
     const savedTheme = localStorage.getItem('theme');
+    const mod = localStorage.getItem('MOD');
+    const [mode, setMode] = React.useState(mod ?? 'sand');
     const [darkMode, setDarkMode] = React.useState(savedTheme === 'light' ? false: true);
 
-    
+    const useMode =(type: 'sand' | 'editor')=> {
+        setMode(type);
+        localStorage.setItem('MOD', type);
+    }
     React.useEffect(()=> {
         if (!globalThis.__DATA__) globalThis.EDITOR = true;
     }, []);
@@ -47,7 +53,12 @@ const App = () => {
                         autoHideDuration={4000}
                         preventDuplicate
                     >
-                        <Editor/>
+                        { mode === 'sand' &&
+                            <SandBox setMode={useMode} />
+                        }
+                        { mode !== 'sand' &&
+                            <Editor setMode={useMode} />
+                        }
                     </SnackbarProvider>
                 </AlertProvider>
             </ThemeProvider>
@@ -58,8 +69,9 @@ const App = () => {
 
 //------------------------------------------------------------------------
 
-
-createRoot(document.querySelector(".root")).render(<App/>);
+const container = document.querySelector('.root');
+const root = createRoot(container);
+root.render(<App />);
 
 
 /**

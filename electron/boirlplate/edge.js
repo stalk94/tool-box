@@ -8,19 +8,23 @@ export const config = {
 
 function getData(route) {
     let result;
-    if (route === '/index') result = config.home;
-    else result = config.pages[route] || { html: "<h1>404</h1>" };
+    if (route === '/index') result = DATA.home;
+    else result = DATA.pages[route] || { html: "<h1>404</h1>" };
 
     return {
         html: result.html,
-        styles: `<style>${config.style}</style>`
+        styles: `<style>${DATA.style}</style>`,
+        meta: {
+            theme: DATA.theme,
+            data: result
+        }
     };
 }
 
 export async function GET(request) {
     const url = new URL(request.url);
     const route = url.pathname === '/' ? '/index' : url.pathname;
-    const { html, styles } = getData(route);
+    const { html, styles, meta } = getData(route);
 
     const fullHtml = `
         <!DOCTYPE html>
@@ -35,7 +39,12 @@ export async function GET(request) {
                 ${styles}
             </head>
             <body>
+                <script>
+                    globalThis.__DATA__ = ${JSON.stringify(meta).replace(/</g, '\\u003c')};
+                </script>
+
                 <div class="root">${html}</div>
+            
                 <script type="module" src="/main.js"></script>
             </body>
         </html>

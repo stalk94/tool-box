@@ -10,7 +10,11 @@ import { iconsList } from '../../components/tools/icons';
 import render, { sliderRender } from './export/inputs';
 
 
-
+type BaseProps = {
+    fullWidth: boolean
+    type: 'text' | 'email' | 'password'
+    placeholder: string
+}
 type InputStyles = {
     form?: {
         borderStyle?: 'solid' | 'dashed' | 'dotted' | 'double' | 'groove' | 'ridge' | 'inset' | 'outset' | 'none'
@@ -47,6 +51,19 @@ type SliderWrapperProps = {
     marks?: boolean
 }
 
+function Baseinput({ fullWidth, type, placeholder, ...props }: BaseProps) {
+    return(
+        <input 
+            type={type} 
+            placeholder={placeholder} 
+            className={`
+                input 
+                input-bordered
+            `}
+            { ...props }
+        />
+    );
+}
 
 
 export const TextInputWrapper = React.forwardRef((props: TextWrapperProps, ref) => {

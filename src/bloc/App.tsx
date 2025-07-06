@@ -542,6 +542,12 @@ export default function EditorApp({ setShowBlocEditor }) {
                     dumpRender={fileSaveFromDumpRender}
                 />
             }
+            <div className="hidden">
+                btn btn-primary btn-secondary btn-accent btn-error btn-success btn-warning btn-info btn-neutral
+                btn-outline btn-dash btn-soft btn-ghost btn-link
+                btn-xs btn-sm btn-md btn-lg btn-xl
+                text-success text-warning text-error
+            </div>
         </>
     );
 }

@@ -29,5 +29,9 @@ electron.contextBridge.exposeInMainWorld("electronAPI", {
   readDir: (dirPath) => electron.ipcRenderer.invoke("fs:readDir", dirPath),
   getAppPath: () => electron.ipcRenderer.invoke("sys:getAppPath"),
   startNgrock: (token) => electron.ipcRenderer.invoke("ngrock:start", token),
-  signInWithGoogle: () => electron.ipcRenderer.invoke("auth:google")
+  signInWithGoogle: () => electron.ipcRenderer.invoke("auth:google"),
+  typeParse: async (filePath, name) => {
+    const result = await electron.ipcRenderer.invoke("type:parse", filePath, name);
+    return result;
+  }
 });

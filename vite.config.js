@@ -4,6 +4,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import writeFilePlugin from './server/vite-write';
 import quickDbPlugin from './server/vite-db.js';
 import viteBuild from './server/vite-build.js';
+import viteSource from './server/vite-source.js';
 import tailwindcss from '@tailwindcss/vite';
 import path from 'path';
 
@@ -11,7 +12,7 @@ import path from 'path';
 export default defineConfig({
     root: 'src',
     publicDir: '../public',
-    plugins: [react(), tailwindcss(), writeFilePlugin(), viteBuild(), quickDbPlugin(), tsconfigPaths()],
+    plugins: [react(), tailwindcss(), viteSource(), writeFilePlugin(), viteBuild(), quickDbPlugin(), tsconfigPaths()],
     server: {
         port: 3001
     },

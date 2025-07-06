@@ -53,6 +53,7 @@ export type ComponentProps = {
     'data-slot'?: boolean | string | number
     'data-parent': string
     'data-group'?: any
+    responsive?: boolean
     isArea?: boolean
     apiPath?: string
     children ?: string | any

@@ -6,7 +6,7 @@ import { TextInputProps, NumberInputProps, SliderInputProps, SwitchInputProps,
 
 
 export type TypeSchema = 'text' | 'number' | 'date' | 'color' | 'time' | 'slider' | 'file' | 'file-combo'
-| 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete' | 'divider';
+| 'switch' | 'toggle' | 'select' | 'checkbox' | 'autocomplete' | 'divider' | 'custom';
 
 
 type OmitText = Omit<TextInputProps, 'onChange' | 'value'>
@@ -52,6 +52,9 @@ type TypeToSchema = {
     autocomplete: AutoCompleteProps
     'file-combo': any
     divider: DividerProps
+    custom: {
+        render: (props: any)=> React.ReactElement
+    }
 }
 
 
