@@ -1,3 +1,23 @@
+//////////////////////////////////////////////////////////////////
+//      CONFIGS
+///////////////////////////////////////////////////////////////////
+interface BaseConfig {
+
+}
+interface SliderConfig {
+    'track-height'?: number
+    'track-color'?: string
+    'track-fill-height'?: number
+    'track-fill-color'?: string
+    'thumb-color'?: string
+    'thumb-height'?: number
+    'thumb-width'?: number
+    'thumb:hover-color'?: string
+}
+
+//////////////////////////////////////////////////////////////////
+//      COMPONENTS PROPS
+///////////////////////////////////////////////////////////////////
 export type LabelsSliderProps = {
     children: any
     labelLeft?: string | React.ReactElement
@@ -29,25 +49,26 @@ export type BaseProps = {
     required?: boolean
     type: 'text' | 'number' | 'email' | 'password' | 'date' | 'textarea' | 'tel' | 'url' | 'time' | 'datetime-local' | 'search'
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
-    placeholder: string
+    placeholder?: string
     labelLeft?: string | React.ReactElement
     labelRight?: string | React.ReactElement
     labelTop?: string | React.ReactElement
     validator?: string | React.ReactElement | boolean
-    color?: string
+    colorBorder?: string
     /** tooltip текст подсказка при наведении */
     title?: string
     value?: string | number
+    /** style прокидывается на саму обертку (div input class) */
     style?: React.CSSProperties
-    onChange?: (val: string)=> void
+    onChange?: React.Dispatch<React.SetStateAction<number|string>> | ((val: string)=> void)
 }
 
-export type NumberInputProps = BaseProps & {
+export type NumberInputProps = Omit<BaseProps, 'type'> & {
     type?: 'number'
     iconEnable?: boolean
     value?: number
     step?: number
-    onChange?: (val: number)=> void
+    onChange?: React.Dispatch<React.SetStateAction<number>> | ((val: number)=> void)
 }
 
 export type FileInputProps = {
@@ -55,12 +76,31 @@ export type FileInputProps = {
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     color?: string
     value?: number
-    onChange?: (val: any)=> void
+    onChange?: (val: File)=> void
+    onError?: (err: string)=> void
     accept?: string
+    /** в megabite */
+    maxSize?: number
+    placeholder?: string | React.ReactElement
+    labelLeft?: string | React.ReactElement
+    labelRight?: string | React.ReactElement
+    labelTop?: string | React.ReactElement
 }
 
-export type SelectInputProps = Omit<BaseProps, 'labelRight'> & {
+type ItemSelect = {
+    id: string | number
+    label: string | React.ReactElement
+}
+export type SelectInputProps = Omit<BaseProps, 'labelRight'|'type'> & {
     value?: string
+    color?: string
+    onChange?: (val: string)=> void
+    items?: string[] | ItemSelect[]
+}
+
+export type AutoInputProps = Omit<BaseProps, 'labelRight'|'type'> & {
+    value?: string
+    color?: string
     onChange?: (val: string)=> void
     items?: string[]
 }
@@ -77,17 +117,24 @@ export type CheckBoxInputProps = {
     labelTop?: string | React.ReactElement
 }
 
+export type SwitchBoxInputProps = Omit<CheckBoxInputProps, 'type'>
+
+
 export type SliderInputProps = {
     'data-id'?: string | number
+    disableForm?: boolean
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     color?: string
     labelLeft?: string | React.ReactElement
     labelRight?: string | React.ReactElement
     labelTop?: string | React.ReactElement
     value?: number | number[]
+    config?: SliderConfig
     onChange?: (val: number | number[])=> void
+    /** вызывается в конце перетаскивания */
     onChangeEnd?: (val: number)=> void
     min?: number
     max?: number
     step?: number
 }
+

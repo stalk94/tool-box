@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useCallback } from 'react';
 
 
 /**
@@ -13,23 +13,36 @@ export function useDebounced<T extends (...args: any[]) => void>(
     delay: number,
     deps: any[] = []
 ): T {
-    const timeoutRef = useRef<NodeJS.Timeout>(null);
-    const savedCallback = useRef(callback);
+    const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const callbackRef = useRef(callback);
 
+    // Сохраняем последнюю версию callback
     useEffect(() => {
-        savedCallback.current = callback;
+        callbackRef.current = callback;
     }, [callback]);
-
+    // Очищаем таймер при размонтировании
     useEffect(() => {
-        return () => clearTimeout(timeoutRef.current);
+        return () => {
+            if (typeof window !== 'undefined') {
+                clearTimeout(timeoutRef.current!);
+            }
+        };
     }, []);
 
-    return ((...args: any[]) => {
-        clearTimeout(timeoutRef.current);
+    // Мемоизированная функция
+    const debounced = useCallback((...args: Parameters<T>) => {
+        if (typeof window === 'undefined') return; // SSR-safe
+
+        if (timeoutRef.current) {
+            clearTimeout(timeoutRef.current);
+        }
+
         timeoutRef.current = setTimeout(() => {
-            savedCallback.current(...args);
+            callbackRef.current(...args);
         }, delay);
-    }) as T;
+    }, [delay, ...deps]);
+
+    return debounced as T;
 }
 
 

@@ -17,8 +17,11 @@ import './bloc/modules/index';
 import { AlertProvider } from './index';
 import Page from './bloc/export/Page';
 import SandBox from './sand/SandBox';
+import SafeTailwindClasses from './generated/TailwindSafeClasses';
 import './bloc/modules/index';
+import "./style/tailwind.css";
 import "./style/edit.css";
+
 
 
 const App = () => {
@@ -59,6 +62,7 @@ const App = () => {
                         { mode !== 'sand' &&
                             <Editor setMode={useMode} />
                         }
+                        <SafeTailwindClasses />
                     </SnackbarProvider>
                 </AlertProvider>
             </ThemeProvider>

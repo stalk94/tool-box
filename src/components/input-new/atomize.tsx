@@ -2,15 +2,18 @@ import React from 'react';
 
 type LabelProps = {
     'data-id'?: string | number
+    /** отключить видимость формы */
+    disabledVisibility?: boolean
+    popovertarget?: string
     required?: boolean
     children: any
     labelLeft?: string | React.ReactElement
     labelRight?: string | React.ReactElement
     labelTop?: string | React.ReactElement
-    color?: string
+    colorBorder?: string
     size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl'
     validator?: string | React.ReactElement | boolean
-    style?: React.CSSProperties
+    style?: React.CSSProperties & { anchorName?: string }
 }
 type LabelTopProps = {
     'data-id'?: string | number
@@ -22,13 +25,18 @@ type LabelTopProps = {
 
 
 export const LabelTop = ({ children, color, size, required, 'data-id': dataId }: LabelTopProps) => {
+    const getSize = size ? `input-${size}` : 'input-sm sm:input-md md:input-md lg:input-lg xl:input-lg';
+
     return(
-        <label 
+        <label
             className={`
                 flex
+                ${getSize}
             `}
         >
-            { children }
+            <span className='brightness-50'>
+                { children }
+            </span>
             { required &&
                 <div className='ml-1 text-red-600'>
                     *
@@ -37,36 +45,48 @@ export const LabelTop = ({ children, color, size, required, 'data-id': dataId }:
         </label>
     );
 }
-export const Label = ({ 
+export const FormWrapper = ({ 
     children, 
     labelLeft, 
     labelRight, 
     labelTop, 
-    color, 
+    colorBorder, 
     size,
     validator, 
     required,
     style,
-    'data-id': dataId
+    disabledVisibility,
+    ...props
 }: LabelProps) => {
+    //todo: вынести в настройки проекта
+    const getSize = size ? `input-${size}` : 'input-sm sm:input-md md:input-md lg:input-lg xl:input-lg';
+    
+
     return(
         <React.Fragment>
             { labelTop &&
-                <LabelTop required={required}>
+                <LabelTop size={size} required={required}>
                     { labelTop }
                 </LabelTop>
             }
-            <label 
+            <div 
                 style={style}
-                className={`
-                    input 
-                    input-${color}
-                    input-${size}
+                className={disabledVisibility ? `${getSize}` : `
+                    input
+                    w-full
+                    input-${colorBorder}
+                    ${getSize}
                     ${validator && 'validator'}
                 `}
+                { ...props }
             >
                 { labelLeft &&
-                    <span className="label">
+                    <span 
+                        className={`
+                            label
+                            ${disabledVisibility && 'mr-4'}
+                        `}
+                    >
                         { labelLeft }
                     </span>
                 }
@@ -74,7 +94,13 @@ export const Label = ({
                 { children }
 
                 { labelRight &&
-                    <span className="label">
+                    <span 
+                        //style={{border: labelLeft && 'none'}}
+                        className={`
+                            label
+                            ${disabledVisibility && 'ml-4'}
+                        `}
+                    >
                         { labelRight }
                         { required && !labelTop &&
                             <div className='ml-1 text-red-600'>
@@ -83,7 +109,7 @@ export const Label = ({
                         }
                     </span>
                 }
-            </label>
+            </div>
         </React.Fragment>
     );
 }

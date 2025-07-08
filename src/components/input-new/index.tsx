@@ -6,6 +6,7 @@ export { default as TextAreaInput } from './text-area';
 export { default as CheckBoxInput } from './checks';
 export { default as FileInput } from './file';
 export { default as SliderInput } from './slider';
+export { default as AutoComplete } from './autocomplete';
 
 /** паттерны регулярок */
 export const baseValidators = {

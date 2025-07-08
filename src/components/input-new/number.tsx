@@ -19,7 +19,7 @@ const Icon = ({ useClick, tag, 'data-id': dataId }) => {
                 shadow-none
             `}
         >
-            <IconTag className="w-4 h-4" />
+            <IconTag className="label w-[1.1em] h-[1.1em] fill-current" />
         </button>
     );
 }

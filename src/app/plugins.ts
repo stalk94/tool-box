@@ -67,3 +67,15 @@ export async function uploadFile(blob: Blob, filename?: string): Promise<string>
 		reader.readAsDataURL(blob); // читаем blob как base64
 	});
 }
+
+export async function safeTw(classes: string[]) {
+	fetch('http://localhost:3001/tailwind-safe', {
+		method: 'POST',
+		headers: { 'Content-Type': 'application/json' },
+		body: JSON.stringify({
+			classGroups: classes,
+			outputFile: 'src/generated/TailwindSafeClasses.tsx',
+			componentName: 'TailwindSafeClasses'
+		})
+	});
+}

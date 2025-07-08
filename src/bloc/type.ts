@@ -37,7 +37,9 @@ declare global {
 export type ProxyComponentName = RegistreTypeComponent;
 export type Breakpoint = 'lg' | 'md' | 'sm' | 'xs';
 
+export type ConfigComponent = {
 
+}
 export type ComponentRegister = {
     type: string;
     component: React.FC<any>;
@@ -45,7 +47,7 @@ export type ComponentRegister = {
     icon?: React.FC;
     category?: 'block' | 'interactive' | 'media' | 'complex' | 'misc';
     description?: string;
-    nest?: ComponentRegisterNestMetaData 
+    config?: ConfigComponent
 }
 export type ComponentProps = {
     'data-id': number

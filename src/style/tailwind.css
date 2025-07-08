@@ -1,0 +1,16 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+@tailwind utilities;
+
+
+@plugin "daisyui/theme" {
+    name: "dark";
+    default: true;
+    --color-primary: rgba(3, 242, 246, 1);
+    --color-secondary: teal;
+    --color-base-100: rgba(255, 255, 255, 0.05);
+    --color-base-300: rgb(58, 58, 58);
+    --color-base-400: rgb(50, 52, 54);
+}
+

@@ -1,5 +1,5 @@
 import React from 'react';
-import { componentMap, componentDefaultsProps } from '../modules/helpers/registry';
+import { componentMap, componentDefaultsProps, componentsRegistry } from '../modules/helpers/registry';
 import { ComponentProps, DataRegisterComponent } from '../type';
 
 
@@ -8,8 +8,8 @@ import { ComponentProps, DataRegisterComponent } from '../type';
 export function createComponentFromRegistry(type: string): DataRegisterComponent {
     const Component = componentMap[type];
     const props = { ...componentDefaultsProps[type] };
-    console.log(Component)
-  
+    
+   
     const id = Date.now();
     props['data-id'] = id;
     props['data-type'] = type;

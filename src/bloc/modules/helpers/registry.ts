@@ -16,6 +16,7 @@ export function registerComponent(def: ComponentRegister) {
         icon: def.icon,
         category: def.category,
         description: def.description ?? def.type,
+        config: def.config
     };
 }
 

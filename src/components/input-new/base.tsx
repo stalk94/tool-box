@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label, ValidatorBottomLabel } from './atomize';
+import { FormWrapper, ValidatorBottomLabel } from './atomize';
 import { useClientValidity } from './hooks';
 import type { BaseProps } from './type';
 
@@ -9,7 +9,7 @@ export default function BaseInput({
     type, 
     placeholder, 
     size, 
-    color, 
+    colorBorder, 
     labelLeft, 
     labelTop, 
     labelRight, 
@@ -21,15 +21,15 @@ export default function BaseInput({
     const inputRef = React.useRef<HTMLInputElement>(null);
     const isInvalid = useClientValidity(inputRef);
 
-
+    
     return(
-        <fieldset className={labelTop && 'fieldset'}>
-            <Label 
+        <div className='w-full'>
+            <FormWrapper 
                 labelLeft={labelLeft}
                 labelRight={labelRight}
                 labelTop={labelTop}
                 size={size}
-                color={color}
+                colorBorder={colorBorder}
                 validator={validator}
                 required={required}
                 data-id={props['data-id']}
@@ -40,7 +40,7 @@ export default function BaseInput({
                     type={type}
                     placeholder={placeholder}
                     required={required}
-                    style={{display: 'block'}}
+                    style={{display: 'block', width:'100%'}}
                     onChange={(e)=> onChange?.(e.target.value)}
                     { ...props }
                 />
@@ -49,13 +49,13 @@ export default function BaseInput({
                         !
                     </ValidatorBottomLabel>
                 }
-            </Label>
+            </FormWrapper>
             { validator && isInvalid &&
                 (typeof validator === 'object' || typeof validator === 'string') && 
                     <ValidatorBottomLabel data-id={props['data-id']}>
                         { validator }
                     </ValidatorBottomLabel>
             }
-        </fieldset>
+        </div>
     );
 }
